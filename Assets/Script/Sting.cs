@@ -27,20 +27,10 @@ public class Sting : MonoBehaviour
 
 	public void AttackLeft()
 	{
-		//Vector3 pos = _leftPos;
-		//Vector3 scale = _leftScale;
+//		Vector3 scale = _Left.localScale;
 //		scale.z = 3f;
-//
-//		Vector3 mv = Vector3.zero;
-//		mv.z = (1 - (1 * scale.z)) * -0.5f;
-//		_Left.localPosition = _leftPos + mv;
-//		_Left.localScale = scale;
-
-		Vector3 scale = _Left.localScale;
-		scale.z = 3f;
-		_leftAnchor.Scale (scale);
-
-
+//		_leftAnchor.Scale (scale);
+		_leftAnchor.ScaleZ(3f);
 
 	}
 
@@ -52,21 +42,18 @@ public class Sting : MonoBehaviour
 	}
 
 	//first stance
-	public void ReadyStance()
-	{
-		//_Left.localPosition = _leftPos;
-		//_Left.localScale = _leftScale;
-	}
+//	public void ReadyStance()
+//	{
+//	}
 
 	// Use this for initialization
 	void Start () 
 	{
 		_leftGlobalPos = _Left.position;
-		//_leftPos = _Left.localPosition;
-		//_leftScale = _Left.localScale;
 
 		_leftAnchor = new AnchorPoint (_Left);
-		_leftAnchor.SetAnchorRate (new Vector3 (0,0,-0.5f));
+		_leftAnchor.SetAnchorRateZ (-0.5f);
+		//_leftAnchor.SetAnchorRate (new Vector3 (0,0,-0.5f));
 	}
 	
 	// Update is called once per frame

@@ -59,6 +59,12 @@ namespace ExtendPart_Unity
 
 			_anchorRate = rate;
 		}
+		public void SetAnchorRateZ(float z)
+		{
+			this.calcMovePos ();
+
+			_anchorRate.z = z;
+		}
 
 		private void calcMovePos()
 		{
@@ -87,7 +93,14 @@ namespace ExtendPart_Unity
 
 			//3
 			_tr.localPosition = _originalPos + _movePos;
+		}
 
+		public void ScaleZ(float z)
+		{
+			Vector3 scale = _tr.localScale;
+			scale.z = z;
+
+			this.Scale (scale);
 		}
 	}
 }
