@@ -15,12 +15,20 @@ public class Sting : MonoBehaviour
 
 	private AnchorPoint _leftAnchor = null;
 
+	void Start () 
+	{
+		//_leftGlobalPos = _Left.position;
+
+		_leftAnchor = new AnchorPoint (_Left);
+		_leftAnchor.SetAnchorRateZ (-0.5f);
+	}
+
+
 //	private Vector3 _leftGlobalPos;
 //	public void AttackLeft_Rotate()
 //	{
 //		_Left.RotateAround (_leftGlobalPos, Vector3.left, 45f);
 //	}
-
 
 
 	public void AttackLeft()
@@ -37,13 +45,7 @@ public class Sting : MonoBehaviour
 	}
 
 
-	void Start () 
-	{
-		//_leftGlobalPos = _Left.position;
 
-		_leftAnchor = new AnchorPoint (_Left);
-		_leftAnchor.SetAnchorRateZ (-0.5f);
-	}
 	
 	float accumulate = 0;
 	float maxSecond = 1.5f;

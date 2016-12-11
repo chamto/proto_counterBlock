@@ -2,15 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : MonoBehaviour {
+public class Block : MonoBehaviour 
+{
+	public Transform _RightUpperArm	= null;
+	public Transform _RightForeArm	= null;
+	public bool 	_Active = false;
 
-	// Use this for initialization
-	void Start () {
+
+	void Start () 
+	{
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+
+	void Update () 
+	{
+		if (true == _Active) 
+		{
+			
+		}
+		_Active = false;
 	}
 }
