@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ExtendPart_Unity;
+using Utility;
 
 
 public class Sting : MonoBehaviour 
@@ -54,8 +55,8 @@ public class Sting : MonoBehaviour
 	}
 	
 	float accumulate = 0;
-	float maxSecond = 0.5f;
-	float maxSize = 3f;
+	float maxSecond = 1.5f;
+	float maxSize = 5f;
 	void Update () 
 	{
 		//min 0s -> 0
@@ -67,8 +68,8 @@ public class Sting : MonoBehaviour
 		//3dt/2 = ?
 
 		accumulate += Time.deltaTime;
-		//float scaleDelta = 1 + Mathf.Abs (this.punch (maxSize, accumulate / maxSecond));
-		float scaleDelta = easeOutBounce(1,maxSize,accumulate/maxSecond);
+		float scaleDelta = 1 + Mathf.Abs (Interpolation.punch (maxSize, accumulate / maxSecond));
+		//float scaleDelta = easeOutBounce(1,maxSize,accumulate/maxSecond);
 		//Debug.Log (accumulate + "   " + scaleDelta); //chamto test
 		_leftAnchor.ScaleZ (scaleDelta);
 		//_leftAnchor.ScaleZ(maxSize*accumulate/maxSecond);
@@ -88,44 +89,6 @@ public class Sting : MonoBehaviour
 		_Active = false;
 	}
 
-	private float easeOutQuad(float start, float end, float value){
-		end -= start;
-		return -end * value * (value - 2) + start;
-	}
-
-	private float punch(float amplitude, float percentage){
-		float s = 9;
-		if (percentage == 0){
-			return 0;
-		}
-		if (percentage == 1){
-			return 0;
-		}
-		float period = 1 * 0.3f;
-		s = period / (2 * Mathf.PI) * Mathf.Asin(0);
-		return (amplitude * Mathf.Pow(2, -10 * percentage) * Mathf.Sin((percentage * 1 - s) * (2 * Mathf.PI) / period));
-	}
-
-	private float easeInBounce(float start, float end, float value){
-		end -= start;
-		float d = 1f;
-		return end - easeOutBounce(0, end, d-value) + start;
-	}
-
-	private float easeOutBounce(float start, float end, float value){
-		value /= 1f;
-		end -= start;
-		if (value < (1 / 2.75f)){
-			return end * (7.5625f * value * value) + start;
-		}else if (value < (2 / 2.75f)){
-			value -= (1.5f / 2.75f);
-			return end * (7.5625f * (value) * value + .75f) + start;
-		}else if (value < (2.5 / 2.75)){
-			value -= (2.25f / 2.75f);
-			return end * (7.5625f * (value) * value + .9375f) + start;
-		}else{
-			value -= (2.625f / 2.75f);
-			return end * (7.5625f * (value) * value + .984375f) + start;
-		}
-	}
 }
+
+
