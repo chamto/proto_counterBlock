@@ -12,17 +12,14 @@ public class Sting : MonoBehaviour
 	public Transform _Right	= null;
 	public bool 	_Active = false;
 
-	//private Vector3	_leftPos;
-	//private Vector3	_leftScale;
+
 	private AnchorPoint _leftAnchor = null;
 
-	private Vector3 _leftGlobalPos;
-
-	public void AttackLeft_Rotate()
-	{
-		
-		_Left.RotateAround (_leftGlobalPos, Vector3.left, 45f);
-	}
+//	private Vector3 _leftGlobalPos;
+//	public void AttackLeft_Rotate()
+//	{
+//		_Left.RotateAround (_leftGlobalPos, Vector3.left, 45f);
+//	}
 
 
 
@@ -39,19 +36,13 @@ public class Sting : MonoBehaviour
 		iTween.PunchPosition(_Right.gameObject, iTween.Hash("z",3,"loopType","loop","time",0.5f));
 	}
 
-	//first stance
-//	public void ReadyStance()
-//	{
-//	}
 
-	// Use this for initialization
 	void Start () 
 	{
-		_leftGlobalPos = _Left.position;
+		//_leftGlobalPos = _Left.position;
 
 		_leftAnchor = new AnchorPoint (_Left);
 		_leftAnchor.SetAnchorRateZ (-0.5f);
-		//_leftAnchor.SetAnchorRate (new Vector3 (0,0,-0.5f));
 	}
 	
 	float accumulate = 0;
@@ -59,24 +50,26 @@ public class Sting : MonoBehaviour
 	float maxSize = 5f;
 	void Update () 
 	{
-		//min 0s -> 0
-		//    1s -> 1.5
-		//max 2s -> 3
+		//    second  -> size
+		//min 0s 	  -> 0
+		//    1s 	  -> 1.5
+		//max 2s 	  -> 3
 		//
-		//2 : 3 = dt : ?
-		//3dt = 2? 
-		//3dt/2 = ?
+		//2s : 3 = deltaTime(accumulate) : deltaSize
+		//3 * deltaTime = 2s * deltaSize 
+		//3 * deltaTime / 2s = deltaSize
+		//!!! _leftAnchor.ScaleZ( maxSize * accumulate / maxSecond);
 
 		accumulate += Time.deltaTime;
 		float scaleDelta = 1 + Mathf.Abs (Interpolation.punch (maxSize, accumulate / maxSecond));
-		//float scaleDelta = easeOutBounce(1,maxSize,accumulate/maxSecond);
+		//float scaleDelta = Interpolation.easeOutBounce(1,maxSize,accumulate/maxSecond);
 		//Debug.Log (accumulate + "   " + scaleDelta); //chamto test
 		_leftAnchor.ScaleZ (scaleDelta);
-		//_leftAnchor.ScaleZ(maxSize*accumulate/maxSecond);
-		//Debug.Log (accumulate + "   " + this.punch(maxSize, accumulate/maxSecond)); //chamto test
-		if (maxSecond <= accumulate) {
-			accumulate = 0;
-			//accumulate = maxSecond;
+
+		if (maxSecond <= accumulate) 
+		{
+			accumulate = 0; 			//a. repeat
+			//accumulate = maxSecond;	//b. one time
 		}
 
 		if (true == _Active) 
@@ -84,7 +77,7 @@ public class Sting : MonoBehaviour
 			//this.AttackLeft ();
 			//this.AttackLeft_Rotate ();
 
-			//this.AttackRight ();
+			this.AttackRight ();
 		}
 		_Active = false;
 	}
