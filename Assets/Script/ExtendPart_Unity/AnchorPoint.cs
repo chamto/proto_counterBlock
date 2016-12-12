@@ -8,7 +8,8 @@ namespace ExtendPart_Unity
 	//extend part Transform 
 	public class AnchorPoint
 	{
-		private Vector3 _anchorRate; //[-1~1]
+		private Vector3 _anchorPoint; //real position standard center
+		//private Vector3 _anchorRate;  //[-1~1]
 		private Transform _tr = null;
 
 
@@ -18,16 +19,16 @@ namespace ExtendPart_Unity
 		Vector3 _originalPos;
 
 
-		public Vector3 anchorRate 
+		public Vector3 anchorPoint
 		{
 			get
 			{
-				return _anchorRate;
+				return _anchorPoint;
 			}
 
 		}
 		///
-		///this is position value what following anchorRate 
+		///this is position value what following anchorPoint
 		/// 
 		public Vector3 position
 		{
@@ -39,7 +40,7 @@ namespace ExtendPart_Unity
 
 		public AnchorPoint(Transform tr)
 		{
-			_anchorRate = Vector3.zero;
+			_anchorPoint = Vector3.zero;
 			_movePosScale = Vector3.zero;
 			_movePosRotate = Vector3.zero;
 
@@ -59,13 +60,13 @@ namespace ExtendPart_Unity
 		{
 			this.calcMovePosScale ();
 
-			_anchorRate = rate;
+			_anchorPoint = rate;
 		}
 		public void SetAnchorRateZ(float z)
 		{
 			this.calcMovePosScale ();
 
-			_anchorRate.z = z;
+			_anchorPoint.z = z;
 		}
 
 		private void calcMovePosScale()
@@ -78,11 +79,14 @@ namespace ExtendPart_Unity
 			//MV = move value
 			//(L-L') * AP = MV
 
-			const int CUBE_LENGTH = 1;
+			Vector3 CUBE_LENGTH = Vector3.one;
+			Vector3 ap = _anchorPoint;
 
-			_movePosScale.x = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.x)) * _anchorRate.x;
-			_movePosScale.y = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.y)) * _anchorRate.y;
-			_movePosScale.z = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.z)) * _anchorRate.z;
+			_movePosScale.x = (CUBE_LENGTH.x - (CUBE_LENGTH.x * _tr.localScale.x)) * ap.x;
+			_movePosScale.y = (CUBE_LENGTH.y - (CUBE_LENGTH.y * _tr.localScale.y)) * ap.y;
+			_movePosScale.z = (CUBE_LENGTH.z - (CUBE_LENGTH.z * _tr.localScale.z)) * ap.z;
+
+
 		}
 
 		public void Scale(Vector3 scale)
@@ -109,8 +113,9 @@ namespace ExtendPart_Unity
 		{
 			_tr.Rotate (v3Degree.x, v3Degree.y, v3Degree.z);
 
-			_movePosRotate = (_tr.localRotation * _anchorRate) + _anchorRate; //standard cube length 1
-			_tr.localPosition = _originalPos + _movePosRotate;
+			Vector3 apScale = Vector3.Scale (_tr.localScale, _anchorPoint);  //Scale AnchorPoint  when transform sequence  : 1.scale 2.rotate
+			_movePosRotate = (_tr.localRotation * apScale) + apScale; 
+			_tr.localPosition = _originalPos + _movePosRotate + _movePosScale;
 
 			//Debug.Log (_tr.localRotation.eulerAngles + "    " + _movePosRotate); //chamto test
 		}

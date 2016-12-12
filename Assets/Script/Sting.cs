@@ -42,8 +42,10 @@ public class Sting : MonoBehaviour
 //		//_Left.localPosition = _leftAnchor.position;
 //		Debug.Log (_Left.localRotation.eulerAngles + "    " + mp); //chamto test
 
-		_leftAnchor.ScaleZ(3f);
+		_leftAnchor.ScaleZ(3f); //successful : order 1.scale 2.rotate
 		_leftAnchor.RotateX (1f);
+		//_leftAnchor.ScaleZ(3f); //failed : order 1.rotate 2.scale
+
 
 	}
 
