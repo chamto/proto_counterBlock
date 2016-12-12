@@ -88,8 +88,8 @@ namespace ExtendPart_Unity
 			_movePosScale.z = (CUBE_LENGTH.z - (CUBE_LENGTH.z * _tr.localScale.z)) * _anchorPoint.z;
 
 			Vector3 apScale = Vector3.Scale (_tr.localScale, _anchorPoint);  //Scale AnchorPoint  when transform sequence  : "scale => rotate" or "rotate => scale"" 
-			_movePosRotate = (_tr.localRotation * apScale) + apScale; 
-
+			_movePosRotate = apScale - (_tr.localRotation * apScale); 
+			//Debug.Log (apScale + "   " + _movePosRotate); //chamto test
 
 		}
 

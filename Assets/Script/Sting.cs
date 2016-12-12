@@ -68,7 +68,7 @@ public class Sting : MonoBehaviour
 		float scaleDelta = 1 + Mathf.Abs (Interpolation.punch (maxSize, accumulate / maxSecond));
 		//float scaleDelta = Interpolation.easeOutBounce(1,maxSize,accumulate/maxSecond);
 		//Debug.Log (accumulate + "   " + scaleDelta); //chamto test
-		//_leftAnchor.ScaleZ (scaleDelta);
+		_leftAnchor.ScaleZ (scaleDelta);
 
 		if (maxSecond <= accumulate) 
 		{
@@ -76,12 +76,13 @@ public class Sting : MonoBehaviour
 			//accumulate = maxSecond;	//b. one time
 		}
 
-		//_leftAnchor.RotateX (1f); //chamto test
-
-		AttackLeft_Rotate ();
+		//_Left.Rotate (Vector3.left , 1f);
+		_leftAnchor.RotateX (-1f); 
 
 		if (true == _Active) 
 		{
+			//_leftAnchor.ScaleZ (3);
+
 			//this.AttackLeft_Rotate ();
 			//this.AttackLeft ();
 
