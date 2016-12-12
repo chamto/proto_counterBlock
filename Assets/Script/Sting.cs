@@ -17,34 +17,16 @@ public class Sting : MonoBehaviour
 
 	void Start () 
 	{
-		_leftInitPos = _Left.localPosition;
-
 		_leftAnchor = new AnchorPoint (_Left);
 		_leftAnchor.SetAnchorRateZ (-0.5f);
 	}
-
-
-	private Vector3 _leftInitPos;
+		
 	public void AttackLeft_Rotate()
 	{
-		//_Left.RotateAround (_leftGlobalPos, Vector3.left, 45f);
-//		Vector3 ap = new Vector3(0,0,-0.5f);
-//		float ROTATE_DEGREE = 1f;
-//
-//
-//		_Left.Rotate (ROTATE_DEGREE, 0, 0);
-//		//_leftAnchor.ScaleZ(3f);
-//
-//		Quaternion v3Rotation = _Left.localRotation;
-//		//Quaternion v3Rotation = Quaternion.Euler(ROTATE_DEGREE,0,0);
-//		Vector3 mp = (v3Rotation * ap) + ap;
-//		_Left.localPosition = _leftInitPos + mp;
-//		//_Left.localPosition = _leftAnchor.position;
-//		Debug.Log (_Left.localRotation.eulerAngles + "    " + mp); //chamto test
-
-		_leftAnchor.ScaleZ(3f); //successful : order 1.scale 2.rotate
-		_leftAnchor.RotateX (1f);
-		//_leftAnchor.ScaleZ(3f); //failed : order 1.rotate 2.scale
+		
+		//_leftAnchor.ScaleZ(3f); //successful : order 1.scale 2.rotate
+		_leftAnchor.RotateX (-1f);
+		_leftAnchor.ScaleZ(3f); //successful : order 1.rotate 2.scale
 
 
 	}
@@ -94,8 +76,10 @@ public class Sting : MonoBehaviour
 			//accumulate = maxSecond;	//b. one time
 		}
 
+		//_leftAnchor.RotateX (1f); //chamto test
 
-		this.AttackLeft_Rotate ();
+		AttackLeft_Rotate ();
+
 		if (true == _Active) 
 		{
 			//this.AttackLeft_Rotate ();

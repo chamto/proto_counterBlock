@@ -34,7 +34,7 @@ namespace ExtendPart_Unity
 		{
 			get
 			{
-				return _originalPos + _movePosScale;
+				return _originalPos + _movePosScale + _movePosRotate;
 			}
 		}
 
@@ -50,26 +50,28 @@ namespace ExtendPart_Unity
 
 		public void SetPosition(Vector3 pos)
 		{
-			this.calcMovePosScale ();
+			this.calcMovePos ();
 
-			_originalPos = pos - _movePosScale;
+			_originalPos = pos - _movePosScale - _movePosRotate;
 			_tr.localPosition = pos;
 		}
 
 		public void SetAnchorRate(Vector3 rate)
 		{
-			this.calcMovePosScale ();
+			//fix me : need calc : rate => point
+
+			this.calcMovePos ();
 
 			_anchorPoint = rate;
 		}
 		public void SetAnchorRateZ(float z)
 		{
-			this.calcMovePosScale ();
+			this.calcMovePos ();
 
 			_anchorPoint.z = z;
 		}
 
-		private void calcMovePosScale()
+		private void calcMovePos()
 		{
 
 			//anchor point calc
@@ -80,11 +82,13 @@ namespace ExtendPart_Unity
 			//(L-L') * AP = MV
 
 			Vector3 CUBE_LENGTH = Vector3.one;
-			Vector3 ap = _anchorPoint;
 
-			_movePosScale.x = (CUBE_LENGTH.x - (CUBE_LENGTH.x * _tr.localScale.x)) * ap.x;
-			_movePosScale.y = (CUBE_LENGTH.y - (CUBE_LENGTH.y * _tr.localScale.y)) * ap.y;
-			_movePosScale.z = (CUBE_LENGTH.z - (CUBE_LENGTH.z * _tr.localScale.z)) * ap.z;
+			_movePosScale.x = (CUBE_LENGTH.x - (CUBE_LENGTH.x * _tr.localScale.x)) * _anchorPoint.x;
+			_movePosScale.y = (CUBE_LENGTH.y - (CUBE_LENGTH.y * _tr.localScale.y)) * _anchorPoint.y;
+			_movePosScale.z = (CUBE_LENGTH.z - (CUBE_LENGTH.z * _tr.localScale.z)) * _anchorPoint.z;
+
+			Vector3 apScale = Vector3.Scale (_tr.localScale, _anchorPoint);  //Scale AnchorPoint  when transform sequence  : "scale => rotate" or "rotate => scale"" 
+			_movePosRotate = (_tr.localRotation * apScale) + apScale; 
 
 
 		}
@@ -95,10 +99,10 @@ namespace ExtendPart_Unity
 			_tr.localScale = scale;
 
 			//2
-			this.calcMovePosScale ();
+			this.calcMovePos ();
 
 			//3
-			_tr.localPosition = _originalPos + _movePosScale;
+			_tr.localPosition = _originalPos + _movePosScale + _movePosRotate;
 		}
 
 		public void ScaleZ(float z)
@@ -111,10 +115,13 @@ namespace ExtendPart_Unity
 
 		public void Rotate(Vector3 v3Degree)
 		{
+			//1
 			_tr.Rotate (v3Degree.x, v3Degree.y, v3Degree.z);
 
-			Vector3 apScale = Vector3.Scale (_tr.localScale, _anchorPoint);  //Scale AnchorPoint  when transform sequence  : 1.scale 2.rotate
-			_movePosRotate = (_tr.localRotation * apScale) + apScale; 
+			//2
+			this.calcMovePos();
+
+			//3
 			_tr.localPosition = _originalPos + _movePosRotate + _movePosScale;
 
 			//Debug.Log (_tr.localRotation.eulerAngles + "    " + _movePosRotate); //chamto test
