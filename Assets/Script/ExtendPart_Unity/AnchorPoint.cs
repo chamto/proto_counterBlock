@@ -13,7 +13,8 @@ namespace ExtendPart_Unity
 
 
 		/// [temp value]
-		Vector3 _movePos;
+		Vector3 _movePosScale;
+		Vector3 _movePosRotate;
 		Vector3 _originalPos;
 
 
@@ -32,14 +33,15 @@ namespace ExtendPart_Unity
 		{
 			get
 			{
-				return _originalPos + _movePos;
+				return _originalPos + _movePosScale;
 			}
 		}
 
 		public AnchorPoint(Transform tr)
 		{
 			_anchorRate = Vector3.zero;
-			_movePos = Vector3.zero;
+			_movePosScale = Vector3.zero;
+			_movePosRotate = Vector3.zero;
 
 			_tr = tr;
 			_originalPos = _tr.localPosition;
@@ -47,26 +49,26 @@ namespace ExtendPart_Unity
 
 		public void SetPosition(Vector3 pos)
 		{
-			this.calcMovePos ();
+			this.calcMovePosScale ();
 
-			_originalPos = pos - _movePos;
+			_originalPos = pos - _movePosScale;
 			_tr.localPosition = pos;
 		}
 
 		public void SetAnchorRate(Vector3 rate)
 		{
-			this.calcMovePos ();
+			this.calcMovePosScale ();
 
 			_anchorRate = rate;
 		}
 		public void SetAnchorRateZ(float z)
 		{
-			this.calcMovePos ();
+			this.calcMovePosScale ();
 
 			_anchorRate.z = z;
 		}
 
-		private void calcMovePos()
+		private void calcMovePosScale()
 		{
 
 			//anchor point calc
@@ -78,9 +80,9 @@ namespace ExtendPart_Unity
 
 			const int CUBE_LENGTH = 1;
 
-			_movePos.x = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.x)) * _anchorRate.x;
-			_movePos.y = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.y)) * _anchorRate.y;
-			_movePos.z = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.z)) * _anchorRate.z;
+			_movePosScale.x = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.x)) * _anchorRate.x;
+			_movePosScale.y = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.y)) * _anchorRate.y;
+			_movePosScale.z = (CUBE_LENGTH - (CUBE_LENGTH * _tr.localScale.z)) * _anchorRate.z;
 		}
 
 		public void Scale(Vector3 scale)
@@ -89,10 +91,10 @@ namespace ExtendPart_Unity
 			_tr.localScale = scale;
 
 			//2
-			this.calcMovePos ();
+			this.calcMovePosScale ();
 
 			//3
-			_tr.localPosition = _originalPos + _movePos;
+			_tr.localPosition = _originalPos + _movePosScale;
 		}
 
 		public void ScaleZ(float z)
@@ -101,6 +103,21 @@ namespace ExtendPart_Unity
 			scale.z = z;
 
 			this.Scale (scale);
+		}
+
+		public void Rotate(Vector3 v3Degree)
+		{
+			_tr.Rotate (v3Degree.x, v3Degree.y, v3Degree.z);
+
+			_movePosRotate = (_tr.localRotation * _anchorRate) + _anchorRate; //standard cube length 1
+			_tr.localPosition = _originalPos + _movePosRotate;
+
+			//Debug.Log (_tr.localRotation.eulerAngles + "    " + _movePosRotate); //chamto test
+		}
+
+		public void RotateX(float degree)
+		{
+			this.Rotate (new Vector3 (degree,0,0));
 		}
 	}
 }
