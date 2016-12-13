@@ -31,11 +31,11 @@ public class Sting : MonoBehaviour
 	}
 
 
-	float directAngle = 1f;
-	float angleSum = 0;
 	float accumulate = 0;
 	float maxSecond = 1.5f;
 	float maxSize = 5f;
+	float directAngle = 5f;
+	float angleSum = 0;
 	void AttackLeft () 
 	{
 		//    second  -> size
