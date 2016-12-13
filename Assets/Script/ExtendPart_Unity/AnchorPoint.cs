@@ -113,7 +113,7 @@ namespace ExtendPart_Unity
 			this.Scale (scale);
 		}
 
-		public void Rotate(Vector3 v3Degree)
+		public Vector3 Rotate(Vector3 v3Degree)
 		{
 			//1
 			_tr.Rotate (v3Degree.x, v3Degree.y, v3Degree.z);
@@ -125,11 +125,15 @@ namespace ExtendPart_Unity
 			_tr.localPosition = _originalPos + _movePosRotate + _movePosScale;
 
 			//Debug.Log (_tr.localRotation.eulerAngles + "    " + _movePosRotate); //chamto test
+
+			return _tr.localEulerAngles;
 		}
 
-		public void RotateX(float degree)
+		public float RotateX(float degree)
 		{
-			this.Rotate (new Vector3 (degree,0,0));
+			return this.Rotate (new Vector3 (degree,0,0)).x;
 		}
+
+
 	}
 }

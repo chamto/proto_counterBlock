@@ -21,22 +21,6 @@ public class Sting : MonoBehaviour
 		_leftAnchor.SetAnchorRateZ (-0.5f);
 	}
 		
-	public void AttackLeft_Rotate()
-	{
-		
-		//_leftAnchor.ScaleZ(3f); //successful : order 1.scale 2.rotate
-		_leftAnchor.RotateX (-1f);
-		_leftAnchor.ScaleZ(3f); //successful : order 1.rotate 2.scale
-
-
-	}
-
-
-	public void AttackLeft()
-	{
-		_leftAnchor.ScaleZ(3f);
-
-	}
 
 
 	public void AttackRight()
@@ -47,12 +31,12 @@ public class Sting : MonoBehaviour
 	}
 
 
-
-	
+	float directAngle = 1f;
+	float angleSum = 0;
 	float accumulate = 0;
 	float maxSecond = 1.5f;
 	float maxSize = 5f;
-	void Update () 
+	void AttackLeft () 
 	{
 		//    second  -> size
 		//min 0s 	  -> 0
@@ -76,22 +60,29 @@ public class Sting : MonoBehaviour
 			//accumulate = maxSecond;	//b. one time
 		}
 
-		//_Left.Rotate (Vector3.left , 1f);
-		_leftAnchor.RotateX (-1f); 
+		_leftAnchor.RotateX (directAngle);
+
+
+		if (10f < angleSum || angleSum < -10f) {
+			directAngle *= -1;
+		}
+		angleSum += directAngle;
+
+
+	}
+
+
+	void Update ()
+	{
+		this.AttackLeft ();
 
 		if (true == _Active) 
 		{
-			//_leftAnchor.ScaleZ (3);
-
-			//this.AttackLeft_Rotate ();
 			//this.AttackLeft ();
-
-
 			//this.AttackRight ();
 		}
 		_Active = false;
 	}
-
 }
 
 
