@@ -64,6 +64,14 @@ namespace ExtendPart_Unity
 
 			_anchorPoint = rate;
 		}
+
+		public void SetAnchorRateX(float x)
+		{
+			this.calcMovePos ();
+
+			_anchorPoint.x = x;
+		}
+
 		public void SetAnchorRateZ(float z)
 		{
 			this.calcMovePos ();
@@ -132,6 +140,11 @@ namespace ExtendPart_Unity
 		public float RotateX(float degree)
 		{
 			return this.Rotate (new Vector3 (degree,0,0)).x;
+		}
+
+		public float RotateZ(float degree)
+		{
+			return this.Rotate (new Vector3 (0,0,degree)).z;
 		}
 
 
