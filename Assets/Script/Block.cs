@@ -35,15 +35,43 @@ public class Block : MonoBehaviour
 		_active = false;
 	}
 
-	float directAngle = 5f;
+
+	float accumulate = 0;
+	float maxSecond = 1.0f;
+	float direct = 0;
 	float angleSum = 0;
 	public void RightBlock()
 	{
 		//_rightUpperArmAnchor.RotateZ(directAngle);
-		_rightForeArmAnchor.RotateZ (directAngle);
-		if (0f < angleSum || angleSum < -90f) {
-			directAngle *= -1;
+		//_rightForeArmAnchor.RotateZ (directAngle);
+
+		//[0~   1]
+		//[0~ -90]
+
+		//float scaleDelta = Interpolation.punch (-90f, accumulate/maxSecond);
+
+		//0~1 : (1)-0~(1)-1 => 1~0 , (0)-0~(0)-1 => 0~ -1
+		//1~0 : (1)-1~(1)-0 => 0~1
+		float scaleDelta = Interpolation.easeInQuad (0,-90f, Mathf.Abs(direct-accumulate/maxSecond));
+		_rightForeArmAnchor.SetEulerAngleZ(scaleDelta);
+
+		if (maxSecond <= accumulate) 
+		{
+			accumulate = 0; 			//a. repeat
+			//accumulate = maxSecond;	//b. one time
+
+//			if (1 == direct)
+//				direct = 0;
+//			else
+//				direct = 1;
+
+
+			//1=>0   (-1)^1=-1
+			//0=>1   (-1)^0= 1
+			direct = direct+Mathf.Pow(-1,direct);	//a-2. ping pong
+		
 		}
-		angleSum += directAngle;
+
+		accumulate += Time.deltaTime;
 	}
 }

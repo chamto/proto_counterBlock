@@ -147,6 +147,25 @@ namespace ExtendPart_Unity
 			return this.Rotate (new Vector3 (0,0,degree)).z;
 		}
 
+		public void SetEulerAngles(Vector3 v3Degree)
+		{
+			//1
+			_tr.eulerAngles = v3Degree;
+
+			//2
+			this.calcMovePos();
+
+			//3
+			_tr.localPosition = _originalPos + _movePosRotate + _movePosScale;
+		}
+
+		public void SetEulerAngleZ(float z)
+		{
+			Vector3 angles = _tr.eulerAngles;
+			angles.z = z;
+			this.SetEulerAngles (angles);
+		}
+
 
 	}
 }
