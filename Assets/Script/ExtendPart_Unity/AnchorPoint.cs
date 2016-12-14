@@ -159,6 +159,13 @@ namespace ExtendPart_Unity
 			_tr.localPosition = _originalPos + _movePosRotate + _movePosScale;
 		}
 
+		public void SetEulerAngleX(float x)
+		{
+			Vector3 angles = _tr.eulerAngles;
+			angles.x = x;
+			this.SetEulerAngles (angles);
+		}
+
 		public void SetEulerAngleZ(float z)
 		{
 			Vector3 angles = _tr.eulerAngles;
