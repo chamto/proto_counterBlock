@@ -50,12 +50,12 @@ public class Move : MonoBehaviour
 		}
 		else if (Input.GetKey ("left")) 
 		{
-			const float MAX_SECOND = 0.5f;
+			const float MAX_SECOND = 0.2f;
 			if (accumulate_left > MAX_SECOND)
 				accumulate_left = 0;
 
 			accumulate_left += Time.deltaTime;
-			float delta = Interpolation.easeInOutBack (0f,10f, accumulate_left/MAX_SECOND);
+			float delta = Interpolation.easeInOutBack (0f,5f, accumulate_left/MAX_SECOND);
 			_knight.Rotate (Vector3.up, -1 * delta); 
 		}
 
@@ -67,12 +67,12 @@ public class Move : MonoBehaviour
 		}
 		else if (Input.GetKey ("right")) 
 		{
-			const float MAX_SECOND = 0.5f;
+			const float MAX_SECOND = 0.2f;
 			if (accumulate_right > MAX_SECOND)
 				accumulate_right = 0;
 
 			accumulate_right += Time.deltaTime;
-			float delta = Interpolation.easeInOutBack (0f,10f, accumulate_right/MAX_SECOND);
+			float delta = Interpolation.easeInOutBack (0f,5f, accumulate_right/MAX_SECOND);
 			_knight.Rotate (Vector3.up, 1 * delta);
 			//Debug.Log ("r");
 		}

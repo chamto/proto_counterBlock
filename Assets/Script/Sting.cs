@@ -63,7 +63,7 @@ public class Sting : MonoBehaviour
 		_leftAnchor.RotateX (directAngle);
 
 
-		if (10f < angleSum || angleSum < -10f) {
+		if (5f < angleSum || angleSum < -20f) {
 			directAngle *= -1;
 		}
 		angleSum += directAngle;
