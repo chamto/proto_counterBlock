@@ -52,7 +52,8 @@ public class Sting : MonoBehaviour
 		float scaleDelta = 1 + Mathf.Abs (Interpolation.punch (maxSize, accumulate / maxSecond));
 		//float scaleDelta = Interpolation.easeOutBounce(1,maxSize,accumulate/maxSecond);
 		//Debug.Log (accumulate + "   " + scaleDelta); //chamto test
-		_leftAnchor.ScaleZ (scaleDelta);
+		//_leftAnchor.ScaleZ (scaleDelta);
+		_leftAnchor.ScaleZ (maxSize);
 
 		if (maxSecond <= accumulate) 
 		{
@@ -72,7 +73,28 @@ public class Sting : MonoBehaviour
 	}
 
 
-	void Update ()
+	//death
+	//hited
+	//
+
+	void OnTriggerEnter(Collider other)
+	{
+		Debug.Log ("trigger Enter " + transform.forward);
+		//Vector3 reDir = transform.rotation.eulerAngles.normalized;
+		transform.Translate (transform.forward * -0.5f);
+	}
+	void OnTriggerStay(Collider other)
+	{
+		//Debug.Log ("trigger stay");
+
+
+	}
+	void OnTriggerExit(Collider other)
+	{
+	}
+
+
+	void FixedUpdate ()
 	{
 		this.AttackLeft ();
 

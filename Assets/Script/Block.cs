@@ -37,29 +37,33 @@ public class Block : MonoBehaviour
 
 
 	float accumulate = 0;
-	float maxSecond = 0.8f;
+	float maxSecond = 0.3f;
 	float angleSum = 0;
-	float start = 0, end = -90f;
+	float startFore = 0, endFore = -90f;
+	float startUpper = 0, endUpper = -10f;
 	public void RightBlock()
 	{
-		float scaleDelta = Interpolation.easeOutElastic (0,10f, accumulate/maxSecond);
-		_rightUpperArmAnchor.SetEulerAngleX(scaleDelta);
+		float scaleDelta = Interpolation.easeOutElastic (startUpper,endUpper, accumulate/maxSecond);
+		_rightUpperArmAnchor.SetEulerAngleZ(scaleDelta);
 
 
 
 		//float scaleDelta = Interpolation.easeInOutBack (start,end, accumulate/maxSecond);
-		scaleDelta = Interpolation.easeOutElastic (start,end, accumulate/maxSecond);
+		scaleDelta = Interpolation.easeOutElastic (startFore,endFore, accumulate/maxSecond);
 		_rightForeArmAnchor.SetEulerAngleZ(scaleDelta);
 
 		if (maxSecond <= accumulate) 
 		{
 			accumulate = 0; 			//a. 	repeat normal
-
-			float temp = start;			//a-1. 	repeat ping pong 
-			start = end;
-			end = temp;
-
 			//accumulate = maxSecond;	//b. 	one time
+
+			float temp = startFore;		//a-1. 	repeat ping pong 
+			startFore = endFore;
+			endFore = temp;
+
+			temp = startUpper;			//a-2. 	repeat ping pong 
+			startUpper = endUpper;
+			endUpper = temp;
 		
 		}
 
