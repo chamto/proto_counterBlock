@@ -15,6 +15,7 @@ public class Animator_Char : MonoBehaviour
 		Attack_sting	= 7,
 		Block_up		= 5,
 		Block_middle	= 6,
+		Damage			= 8,
 	}
 
 	Animator _ani = null;
@@ -70,11 +71,11 @@ public class Animator_Char : MonoBehaviour
 		}
 
 		//====================================
-		if (Input.GetKey ("left")) 
+		if (Input.GetKey ("left") ) 
 		{
 			transform.Translate (Vector3.back * Time.deltaTime * 3.5f);
 		}
-		if (Input.GetKey ("right")) 
+		if (Input.GetKey ("right") && _isCollision == false) 
 		{
 			transform.Translate (Vector3.forward * Time.deltaTime * 5.5f);
 		}
@@ -91,19 +92,54 @@ public class Animator_Char : MonoBehaviour
 
 	}
 
+
+	public bool _isCollision = false;
 	void OnTriggerEnter(Collider other)
 	{
-		Debug.Log ("trigger Enter : " +  other.tag + "  " + other.name);
+		
 
 		//transform.Translate (transform.forward * -0.5f);
+		if (other.name == "body" || other.name == "sword")
+		{
+			
+			_isCollision = true;
+		}
+
+		if (other.name == "sword") 
+		{
+				
+		}
+
+		if (other.name == "knife") 
+		{
+			//Debug.Log ("trigger Enter : " +  other.tag + "  " + other.name);
+			_ani.SetInteger ("state", (int)eAniState.Damage);
+		}
+
+
 	}
 	void OnTriggerStay(Collider other)
 	{
-		//Debug.Log ("trigger stay");
+		if (other.name == "body" || other.name == "sword")
+		{
+			//Debug.Log ("trigger Stay : " +  other.tag + "  " + other.name);
+			_isCollision = true;
+		}
 
 
 	}
 	void OnTriggerExit(Collider other)
 	{
+		if (other.name == "knife") 
+		{
+			_ani.SetInteger ("state", (int)eAniState.Idle);
+		}
+
+		if (other.name == "body" || other.name == "sword") 
+		{
+			//Debug.Log ("trigger Exit : " +  other.tag + "  " + other.name);
+			_isCollision = false;
+		}
+
 	}
 }
