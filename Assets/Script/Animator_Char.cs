@@ -24,56 +24,86 @@ public class Animator_Char : MonoBehaviour
 		_ani = this.GetComponent<Animator> ();	
 	}
 	
-	// Update is called once per frame
-	void Update () 
+	void Update()
 	{
+		this.Update_KeyInput ();
 
-		//_ani["Attack_up"]
+
+	}
+
+
+	void Update_KeyInput () 
+	{
 		//====================================
-		if (Input.GetKeyDown ("up")) 
+		if (Input.GetKeyDown ("w")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Attack_up);
-		} 
-		else if (Input.GetKey ("up")) 
-		{
 		}
-
-
-		//====================================
-		if (Input.GetKeyDown ("right")) 
+		if (Input.GetKeyDown ("e")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Attack_hand);
 		}
-
-		//====================================
-		if (Input.GetKeyDown ("down")) 
+		if (Input.GetKeyDown ("s")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Attack_middle);
 		}
+		if (Input.GetKeyDown ("d")) 
+		{
+			_ani.SetInteger ("state", (int)eAniState.Attack_down);
+		}
+		if (Input.GetKeyDown ("q")) 
+		{
+			_ani.SetInteger ("state", (int)eAniState.Attack_sting);
+		}
+
 
 		//====================================
-		if (Input.GetKey ("left") && Input.GetKey("up")) 
+		if (Input.GetKeyDown ("up")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Block_up);
 		}
 
 		//====================================
-		if (Input.GetKey ("left") && Input.GetKey("down")) 
+		if (Input.GetKeyDown ("down")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Block_middle);
 		}
 
+		//====================================
+		if (Input.GetKey ("left")) 
+		{
+			transform.Translate (Vector3.back * Time.deltaTime * 3.5f);
+		}
+		if (Input.GetKey ("right")) 
+		{
+			transform.Translate (Vector3.forward * Time.deltaTime * 5.5f);
+		}
 
 
-		if (Input.GetKeyUp ("up") || Input.GetKeyUp("down") || Input.GetKeyUp("left") || Input.GetKeyUp("right")) 
+
+
+		//====================================
+		if (Input.GetKeyUp ("up") || Input.GetKeyUp("down") || Input.GetKeyUp("q") || Input.GetKeyUp("w")
+			|| Input.GetKeyUp("e") || Input.GetKeyUp("s") || Input.GetKeyUp("d")) 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Idle);
 		}
 
 	}
 
-	public void TestAni()
+	void OnTriggerEnter(Collider other)
 	{
-		Debug.Log("sdfsdf");
+		Debug.Log ("trigger Enter : " +  other.tag + "  " + other.name);
+
+		//transform.Translate (transform.forward * -0.5f);
+	}
+	void OnTriggerStay(Collider other)
+	{
+		//Debug.Log ("trigger stay");
+
+
+	}
+	void OnTriggerExit(Collider other)
+	{
 	}
 }
