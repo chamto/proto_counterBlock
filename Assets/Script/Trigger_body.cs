@@ -18,10 +18,14 @@ public class Trigger_body : MonoBehaviour
 	}
 
 
-	//body head sword knife
+
+
 	void OnTriggerEnter(Collider other)
 	{
-		Debug.Log ("body - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+		//Debug.Log ("body - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+
+		_tPcs.SetMyColliderKind (eColliderKind.Body);
+		_tPcs.SetOppColliderKind (other);
 
 	}
 	void OnTriggerStay(Collider other)
@@ -32,5 +36,8 @@ public class Trigger_body : MonoBehaviour
 	void OnTriggerExit(Collider other)
 	{
 		//Debug.Log ("body - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+
+		_tPcs.SetMyColliderKind (eColliderKind.None);
+		_tPcs.SetOppColliderKind (eColliderKind.None);
 	}
 }

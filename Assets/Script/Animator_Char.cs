@@ -18,11 +18,13 @@ public class Animator_Char : MonoBehaviour
 		Damage			= 8,
 	}
 
-	Animator _ani = null;
+	private Animator _ani = null;
+	private TriggerProcess _tPcs = null;
 
 	void Start () 
 	{
 		_ani = this.GetComponent<Animator> ();	
+		_tPcs = this.GetComponent<TriggerProcess> ();
 	}
 	
 	void Update()
@@ -75,12 +77,10 @@ public class Animator_Char : MonoBehaviour
 		{
 			transform.Translate (Vector3.back * Time.deltaTime * 3.5f);
 		}
-		if (Input.GetKey ("right") && _isCollision == false) 
+		if (Input.GetKey ("right") && _tPcs.DetectedStatus() == eCollisionStatus.None) 
 		{
 			transform.Translate (Vector3.forward * Time.deltaTime * 5.5f);
 		}
-
-
 
 
 		//====================================
@@ -93,57 +93,37 @@ public class Animator_Char : MonoBehaviour
 	}
 
 
-	public bool _isCollision = false;
+
 	void OnTriggerEnter(Collider other)
 	{
-		
 
-		//transform.Translate (transform.forward * -0.5f);
-		if (other.name == "body" || other.name == "sword")
+		switch (_tPcs.DetectedStatus ()) 
 		{
-			
-			_isCollision = true;
+		case eCollisionStatus.Damage:
+			{
+				_ani.SetInteger ("state", (int)eAniState.Damage);
+			}
+			break;
+		case eCollisionStatus.Block_Body:
+			{
+				//_ani.SetInteger ("state", (int)eAniState.Damage);
+			}
+			break;
+		case eCollisionStatus.Block_Weapon:
+			{
+				//_ani.SetInteger ("state", (int)eAniState.Damage);
+			}
+			break;
 		}
-
-		if (other.name == "sword") 
-		{
-				
-		}
-
-		if (other.name == "knife") 
-		{
-			_ani.SetInteger ("state", (int)eAniState.Damage);
-		}
-
-
-		//Debug.Log ("body - " + _ani.name + " - trigger Enter : " +  other.tag + "  " + other.name);
 
 	}
 	void OnTriggerStay(Collider other)
 	{
-		//Debug.Log ("body - " + _ani.name + " - trigger Stay : " +  other.tag + "  " + other.name);
-
-		if (other.name == "body" || other.name == "sword")
-		{
-			_isCollision = true;
-		}
-
+		
 
 	}
 	void OnTriggerExit(Collider other)
 	{
-		//Debug.Log ("body - " + _ani.name + " - trigger Exit : " +  other.tag + "  " + other.name);
-
-		if (other.name == "knife") 
-		{
-			_ani.SetInteger ("state", (int)eAniState.Idle);
-		}
-
-		if (other.name == "body" || other.name == "sword") 
-		{
-			
-			_isCollision = false;
-		}
-
+		_ani.SetInteger ("state", (int)eAniState.Idle);
 	}
 }
