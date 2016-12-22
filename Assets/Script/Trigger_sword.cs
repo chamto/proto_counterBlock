@@ -21,7 +21,7 @@ public class Trigger_sword : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		//Debug.Log ("sword - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"sword - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
 
 		_tPcs.SetMyColliderKind (eColliderKind.Weapon);
 		_tPcs.SetOppColliderKind (other);
@@ -29,11 +29,14 @@ public class Trigger_sword : MonoBehaviour
 	}
 	void OnTriggerStay(Collider other)
 	{
-		//Debug.Log ("sword - " + _tPcs.name + " - trigger Stay : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"sword - " + _tPcs.name + " - trigger Stay : " +  other.tag + "  " + other.name);
+
+		//_tPcs.SetMyColliderKind (eColliderKind.Weapon);
+		//_tPcs.SetOppColliderKind (_tPcs.oppColliderKind);
 	}
 	void OnTriggerExit(Collider other)
 	{
-		//Debug.Log ("sword - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "sword - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
 
 		_tPcs.SetMyColliderKind (eColliderKind.None);
 		_tPcs.SetOppColliderKind (eColliderKind.None);

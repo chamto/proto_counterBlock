@@ -22,7 +22,7 @@ public class Trigger_body : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		//Debug.Log ("body - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"body - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
 
 		_tPcs.SetMyColliderKind (eColliderKind.Body);
 		_tPcs.SetOppColliderKind (other);
@@ -30,12 +30,17 @@ public class Trigger_body : MonoBehaviour
 	}
 	void OnTriggerStay(Collider other)
 	{
-		//Debug.Log ("body - " + _tPcs.name + " - trigger Stay : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"body - " + _tPcs.name + " - trigger Stay : " +  other.tag + "  " + other.name);
+
+		_tPcs.SetMyColliderKind (eColliderKind.Body);
+		_tPcs.SetOppColliderKind (other);
+		//_tPcs.SetOppColliderKind (_tPcs.oppColliderKind);
 
 	}
 	void OnTriggerExit(Collider other)
 	{
-		//Debug.Log ("body - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "body - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+		//DebugWide.LogBlue (_tPcs.DetectedStatus() + "  my:" + _tPcs.myColliderKind + "  opp:" + _tPcs.oppColliderKind);
 
 		_tPcs.SetMyColliderKind (eColliderKind.None);
 		_tPcs.SetOppColliderKind (eColliderKind.None);

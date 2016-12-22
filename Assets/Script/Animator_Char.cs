@@ -32,6 +32,8 @@ public class Animator_Char : MonoBehaviour
 		this.Update_KeyInput ();
 
 
+
+
 	}
 
 
@@ -77,9 +79,11 @@ public class Animator_Char : MonoBehaviour
 		{
 			transform.Translate (Vector3.back * Time.deltaTime * 3.5f);
 		}
-		if (Input.GetKey ("right") && _tPcs.DetectedStatus() == eCollisionStatus.None) 
+		if (Input.GetKey ("right")) 
 		{
-			transform.Translate (Vector3.forward * Time.deltaTime * 5.5f);
+			if (_status == eCollisionStatus.None)
+				transform.Translate (Vector3.forward * Time.deltaTime * 5.5f);
+			
 		}
 
 
@@ -93,11 +97,14 @@ public class Animator_Char : MonoBehaviour
 	}
 
 
-
+	private eCollisionStatus _status = eCollisionStatus.None;
 	void OnTriggerEnter(Collider other)
 	{
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
 
-		switch (_tPcs.DetectedStatus ()) 
+
+		_status = _tPcs.DetectedStatus ();
+		switch (_status) 
 		{
 		case eCollisionStatus.Damage:
 			{
@@ -116,14 +123,39 @@ public class Animator_Char : MonoBehaviour
 			break;
 		}
 
+		//Debug.Log ("---animator status Enter--------"+ _tPcs.name + "  "+_tPcs.DetectedStatus()); //chamto test
 	}
 	void OnTriggerStay(Collider other)
 	{
-		
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"---animator status Stay--------"+ _tPcs.name + "  "+_tPcs.DetectedStatus()); //chamto test
+		_status = _tPcs.DetectedStatus ();
+
+		switch (_status) 
+		{
+		case eCollisionStatus.Damage:
+			{
+				
+			}
+			break;
+		case eCollisionStatus.Block_Body:
+			{
+				transform.Translate (Vector3.back * Time.deltaTime * 0.7f);
+			}
+			break;
+		case eCollisionStatus.Block_Weapon:
+			{
+				
+			}
+			break;
+		}
 
 	}
 	void OnTriggerExit(Collider other)
 	{
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+
+		//Debug.Log ("---animator status Exit--------"+ _tPcs.name + "  "+_tPcs.DetectedStatus()); //chamto test
+		_status = _tPcs.DetectedStatus ();
 		_ani.SetInteger ("state", (int)eAniState.Idle);
 	}
 }

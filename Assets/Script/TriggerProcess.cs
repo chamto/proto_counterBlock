@@ -25,21 +25,21 @@ public enum eColliderKind
 public class TriggerProcess : MonoBehaviour 
 {
 	
-	private eColliderKind _myCollider = eColliderKind.None;
-	private eColliderKind _oppCollider = eColliderKind.None;
+	private eColliderKind _myColliderKind = eColliderKind.None;
+	private eColliderKind _oppColliderKind = eColliderKind.None;
 
-	public eColliderKind myCollider 
+	public eColliderKind myColliderKind 
 	{
 		get
 		{
-			return _myCollider;
+			return _myColliderKind;
 		}
 	}
-	public eColliderKind oppCollider
+	public eColliderKind oppColliderKind
 	{
 		get
 		{
-			return _oppCollider;
+			return _oppColliderKind;
 		}
 	}
 
@@ -55,31 +55,39 @@ public class TriggerProcess : MonoBehaviour
 
 	public void SetMyColliderKind(eColliderKind my)
 	{
-		this._myCollider = my;
+		this._myColliderKind = my;
 	}
 	public void SetOppColliderKind(eColliderKind opp)
 	{
-		this._oppCollider = opp;
+		this._oppColliderKind = opp;
 	}
 	public void SetOppColliderKind(Collider opp)
 	{
-		this._oppCollider = eColliderKind.None;
+		this._oppColliderKind = eColliderKind.None;
 
 		if (opp.tag.Equals ("weapon")) 
 		{
-			_oppCollider = eColliderKind.Weapon;
+			_oppColliderKind = eColliderKind.Weapon;
 		} 
 		else if(opp.name.Equals("body")) 
 		{
-			_oppCollider = eColliderKind.Body;
+			_oppColliderKind = eColliderKind.Body;
+		}
+		else if(opp.name.Equals("hand_left")) 
+		{
+			_oppColliderKind = eColliderKind._HandLeft;
+		}
+		else if(opp.name.Equals("hand_right")) 
+		{
+			_oppColliderKind = eColliderKind._HandRight;
 		}
 		else if(opp.name.Equals("head")) 
 		{
-			_oppCollider = eColliderKind._Head;
+			_oppColliderKind = eColliderKind._Head;
 		}
 		else if(opp.name.Equals("knife")) 
 		{
-			_oppCollider = eColliderKind._Knife;
+			_oppColliderKind = eColliderKind._Knife;
 		}
 
 	}
@@ -102,18 +110,30 @@ public class TriggerProcess : MonoBehaviour
 		eCollisionStatus detect = eCollisionStatus.None;
 
 
-		switch (this._myCollider) 
+		switch (this._myColliderKind) 
 		{
 
 		case eColliderKind.Body:
 			{
 				//1.myBody <- body : my block_body
-				if (eColliderKind.Body == this._oppCollider) 
+				if (eColliderKind.Body == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Block_Body;
+				}
+				if (eColliderKind._HandLeft == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Block_Body;
+				}
+				if (eColliderKind._HandRight == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Block_Body;
+				}
+				if (eColliderKind._Head == this._oppColliderKind) 
 				{
 					detect = eCollisionStatus.Block_Body;
 				}
 				//2.myBody <- weapon : my damage
-				if (eColliderKind.Weapon == this._oppCollider) 
+				if (eColliderKind.Weapon == this._oppColliderKind) 
 				{
 					detect = eCollisionStatus.Damage;
 				}
@@ -122,7 +142,7 @@ public class TriggerProcess : MonoBehaviour
 		//3.myWeapon -> weapon : opponent block_weapon
 		case eColliderKind.Weapon:
 			{
-				if (eColliderKind.Weapon == this._oppCollider) 
+				if (eColliderKind.Weapon == this._oppColliderKind) 
 				{
 					detect = eCollisionStatus.Block_Weapon;
 				}
