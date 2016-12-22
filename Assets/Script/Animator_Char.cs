@@ -13,7 +13,9 @@ public enum eAniState : int
 	Block_up		= 5,
 	Block_middle	= 6,
 	Damage			= 8,
+	Blocked_weapon	= 9,
 }
+
 
 public class Animator_Char : MonoBehaviour 
 {
@@ -34,6 +36,11 @@ public class Animator_Char : MonoBehaviour
 
 
 
+	public void PlayBlockWeapon()
+	{
+		_ani.SetInteger ("state", (int)eAniState.Blocked_weapon);
+	}
+
 	void OnTriggerEnter(Collider other)
 	{
 		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
@@ -52,6 +59,24 @@ public class Animator_Char : MonoBehaviour
 			break;
 		case eCollisionStatus.Block_Weapon:
 			{
+				//Block_up : Attack_up , Attack_sting
+				//Block_middle : Attack_hand , Attack_middle , Attack_down
+
+				switch ((eAniState)_ani.GetInteger ("state")) 
+				{
+				case eAniState.Attack_up:
+				case eAniState.Attack_sting:
+
+				case eAniState.Attack_hand:
+				case eAniState.Attack_middle:
+				case eAniState.Attack_down:
+					{
+						this.PlayBlockWeapon ();
+					}
+					break;
+				}
+				
+
 				//_ani.SetInteger ("state", (int)eAniState.Damage);
 			}
 			break;
