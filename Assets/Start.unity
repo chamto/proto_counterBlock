@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 47475968}
   - component: {fileID: 47475967}
   - component: {fileID: 47475966}
+  - component: {fileID: 47475969}
   m_Layer: 0
   m_Name: sword
   m_TagString: weapon
@@ -172,6 +173,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 47475964}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &47475969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 47475964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf56e7bc2d254642a9f59d636dfb5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &66136863
 GameObject:
   m_ObjectHideFlags: 0
@@ -1165,7 +1177,7 @@ GameObject:
   - component: {fileID: 696460649}
   - component: {fileID: 696460648}
   m_Layer: 0
-  m_Name: hand_left
+  m_Name: hand_left_op
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1245,9 +1257,10 @@ GameObject:
   - component: {fileID: 806224351}
   - component: {fileID: 806224350}
   - component: {fileID: 806224349}
+  - component: {fileID: 806224352}
   m_Layer: 0
-  m_Name: sword
-  m_TagString: weapon
+  m_Name: sword_op
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1303,7 +1316,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 806224347}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -1315,6 +1328,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 806224347}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &806224352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 806224347}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf56e7bc2d254642a9f59d636dfb5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &845263713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1788,7 +1812,7 @@ GameObject:
   - component: {fileID: 982647845}
   - component: {fileID: 982647844}
   m_Layer: 0
-  m_Name: head
+  m_Name: head_op
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1845,7 +1869,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 982647842}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -1866,7 +1890,7 @@ GameObject:
   m_Component:
   - component: {fileID: 984444183}
   m_Layer: 0
-  m_Name: p_sword
+  m_Name: p_sword_op
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2159,7 +2183,7 @@ GameObject:
   - component: {fileID: 1220048466}
   m_Layer: 0
   m_Name: knife
-  m_TagString: Untagged
+  m_TagString: weapon
   m_Icon: {fileID: -3839803715187477772, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2184,7 +2208,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1220048464}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.30093515, y: 0.8478899, z: 0.53822935}
@@ -2690,7 +2714,7 @@ GameObject:
   - component: {fileID: 1392513101}
   - component: {fileID: 1392513102}
   m_Layer: 0
-  m_Name: knife
+  m_Name: knife_op
   m_TagString: Untagged
   m_Icon: {fileID: -3839803715187477772, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2716,7 +2740,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1392513100}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.30093515, y: 0.8478899, z: 0.53822935}
@@ -2968,7 +2992,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1499428380}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -3352,7 +3376,7 @@ GameObject:
   - component: {fileID: 1803946942}
   - component: {fileID: 1803946941}
   m_Layer: 0
-  m_Name: body
+  m_Name: body_op
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3712,6 +3736,7 @@ GameObject:
   - component: {fileID: 1951164273}
   - component: {fileID: 1951164272}
   - component: {fileID: 1951164271}
+  - component: {fileID: 1951164274}
   m_Layer: 0
   m_Name: body
   m_TagString: Untagged
@@ -3787,6 +3812,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1951164269}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1951164274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1951164269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56e6081f275a14d2bbc8c4fc44261d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1979958209
 GameObject:
   m_ObjectHideFlags: 0
@@ -3798,6 +3834,7 @@ GameObject:
   - component: {fileID: 1979958211}
   - component: {fileID: 1979958210}
   - component: {fileID: 1979958214}
+  - component: {fileID: 1979958213}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -3849,6 +3886,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1979958213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1979958209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6bfa62bcc55041ad87a1bedc524555c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &1979958214
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3957,7 +4005,7 @@ GameObject:
   - component: {fileID: 2052248173}
   - component: {fileID: 2052248172}
   m_Layer: 0
-  m_Name: hand_right
+  m_Name: hand_right_op
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

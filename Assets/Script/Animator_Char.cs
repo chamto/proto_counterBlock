@@ -112,17 +112,19 @@ public class Animator_Char : MonoBehaviour
 
 		if (other.name == "knife") 
 		{
-			//Debug.Log ("trigger Enter : " +  other.tag + "  " + other.name);
 			_ani.SetInteger ("state", (int)eAniState.Damage);
 		}
 
 
+		//Debug.Log ("body - " + _ani.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+
 	}
 	void OnTriggerStay(Collider other)
 	{
+		//Debug.Log ("body - " + _ani.name + " - trigger Stay : " +  other.tag + "  " + other.name);
+
 		if (other.name == "body" || other.name == "sword")
 		{
-			//Debug.Log ("trigger Stay : " +  other.tag + "  " + other.name);
 			_isCollision = true;
 		}
 
@@ -130,6 +132,8 @@ public class Animator_Char : MonoBehaviour
 	}
 	void OnTriggerExit(Collider other)
 	{
+		//Debug.Log ("body - " + _ani.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+
 		if (other.name == "knife") 
 		{
 			_ani.SetInteger ("state", (int)eAniState.Idle);
@@ -137,7 +141,7 @@ public class Animator_Char : MonoBehaviour
 
 		if (other.name == "body" || other.name == "sword") 
 		{
-			//Debug.Log ("trigger Exit : " +  other.tag + "  " + other.name);
+			
 			_isCollision = false;
 		}
 
