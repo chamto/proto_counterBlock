@@ -24,7 +24,7 @@ public enum eColliderKind
 
 public class TriggerProcess : MonoBehaviour 
 {
-	
+	private eCollisionStatus _status = eCollisionStatus.None;
 	private eColliderKind _myColliderKind = eColliderKind.None;
 	private eColliderKind _oppColliderKind = eColliderKind.None;
 
@@ -40,6 +40,13 @@ public class TriggerProcess : MonoBehaviour
 		get
 		{
 			return _oppColliderKind;
+		}
+	}
+	public eCollisionStatus status
+	{
+		get
+		{
+			return _status;
 		}
 	}
 
@@ -155,18 +162,22 @@ public class TriggerProcess : MonoBehaviour
 
 
 
+
 	void OnTriggerEnter(Collider other)
 	{
-		
-
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
+		_status = this.DetectedStatus ();
 	}
 	void OnTriggerStay(Collider other)
 	{
-		
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"),"---animator status Stay--------"+ _tPcs.name + "  "+_tPcs.DetectedStatus()); //chamto test
+		_status = this.DetectedStatus ();
+
 	}
 	void OnTriggerExit(Collider other)
 	{
-		
+		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Exit : " +  other.tag + "  " + other.name);
+		_status = this.DetectedStatus ();
 	}
 
 }
