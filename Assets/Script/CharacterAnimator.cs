@@ -17,7 +17,7 @@ public enum eAniState : int
 }
 
 
-public class Animator_Char : MonoBehaviour 
+public class CharacterAnimator : MonoBehaviour 
 {
 	
 	private Animator _ani = null;

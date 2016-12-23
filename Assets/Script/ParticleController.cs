@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Controller : MonoBehaviour {
+public class ParticleController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
