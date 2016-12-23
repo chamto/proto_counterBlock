@@ -22,11 +22,13 @@ public class CharacterAnimator : MonoBehaviour
 	
 	private Animator _ani = null;
 	private TriggerProcess _tPcs = null;
+	private ParticleController _particle = null;
 
 	void Start () 
 	{
 		_ani = this.GetComponent<Animator> ();	
 		_tPcs = this.GetComponent<TriggerProcess> ();
+		_particle = CSingletonMono<ParticleController>.Instance;
 	}
 	
 	void Update()
@@ -50,6 +52,10 @@ public class CharacterAnimator : MonoBehaviour
 		case eCollisionStatus.Damage:
 			{
 				_ani.SetInteger ("state", (int)eAniState.Damage);
+
+				_particle.PlayDamage(other.transform.position);
+
+
 			}
 			break;
 		case eCollisionStatus.Block_Body:
