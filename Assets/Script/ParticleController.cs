@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
 public class ParticleController : MonoBehaviour 
 {
-
+	
 	public ParticleSystem[] _particList = null; //4size
 
 	private int _nextIndex = 0;
@@ -15,7 +18,8 @@ public class ParticleController : MonoBehaviour
 		foreach (ParticleSystem ps in _particList) 
 		{
 			ps.gameObject.SetActive (false);
-		}	
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -40,10 +44,15 @@ public class ParticleController : MonoBehaviour
 
 		ps.Stop ();
 
-		ParticleSystem.EmissionModule emission = ps.emission;
-		ParticleSystem.MinMaxCurve rateOverTime = emission.rateOverTime.constant;
-		rateOverTime.constant = 10f;
-		emission.rateOverTime = rateOverTime;
+
+		//var em = ps.emission;
+		ParticleSystem.EmissionModule em = ps.emission;
+		//em.rateOverTime = new ParticleSystem.MinMaxCurve (4f);
+		em.rateOverTime = 3f;
+
+
+		//ps.emission.rateOverTime = new ParticleSystem.MinMaxCurve(5f);
+		DebugWide.LogBlue (ps.emission.rateOverTime.constant);
 
 
 
