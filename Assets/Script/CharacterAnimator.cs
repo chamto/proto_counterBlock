@@ -64,21 +64,20 @@ public class CharacterAnimator : MonoBehaviour
 		case eCollisionStatus.Hit:
 			{
 				const float MAX_SCALE = 2f;
-				const float INCREASE_RATE = 0.02f;
+				const float INCREASE_RATE = 0.05f;
 				_damageRate += INCREASE_RATE;
 				_damageRate = _damageRate > MAX_SCALE ? MAX_SCALE : _damageRate;
-				DebugWide.LogBlue ("hit  "+_damageRate);
-
+				//DebugWide.LogBlue ("hit  "+_damageRate);
 				_head.localScale = new Vector3(_damageRate,_damageRate,_damageRate);
 			}
 			break;
 		case eCollisionStatus.Damage:
 			{
 				const float MIN_SCALE = 0.2f;
-				const float DECREASE_RATE = 0.02f;
+				const float DECREASE_RATE = 0.05f;
 				_damageRate -= DECREASE_RATE;
 				_damageRate = _damageRate < MIN_SCALE ? MIN_SCALE : _damageRate;
-				DebugWide.LogBlue ("damage   "+_damageRate);
+				//DebugWide.LogBlue ("damage   "+_damageRate);
 				this.PlayDamage (_damageRate, other.transform.position);
 			}
 			break;
