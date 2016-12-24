@@ -24,11 +24,16 @@ public class CharacterAnimator : MonoBehaviour
 	private TriggerProcess _tPcs = null;
 	private ParticleController _particle = null;
 
+	public Transform	_head = null;
+
+	private float _damageRate = 1;
+
 	void Start () 
 	{
 		_ani = this.GetComponent<Animator> ();	
 		_tPcs = this.GetComponent<TriggerProcess> ();
 		_particle = CSingletonMono<ParticleController>.Instance;
+
 	}
 	
 	void Update()
@@ -36,7 +41,14 @@ public class CharacterAnimator : MonoBehaviour
 		
 	}
 
+	public void PlayDamage(float scaleRate, Vector3 collisionPoint)
+	{
+		_ani.SetInteger ("state", (int)eAniState.Damage);
 
+		_particle.PlayDamage(collisionPoint);
+
+		_head.localScale = new Vector3(scaleRate,scaleRate,scaleRate);
+	}
 
 	public void PlayBlockWeapon()
 	{
@@ -49,13 +61,25 @@ public class CharacterAnimator : MonoBehaviour
 
 		switch (_tPcs.status) 
 		{
+		case eCollisionStatus.Hit:
+			{
+				const float MAX_SCALE = 2f;
+				const float INCREASE_RATE = 0.02f;
+				_damageRate += INCREASE_RATE;
+				_damageRate = _damageRate > MAX_SCALE ? MAX_SCALE : _damageRate;
+				DebugWide.LogBlue ("hit  "+_damageRate);
+
+				_head.localScale = new Vector3(_damageRate,_damageRate,_damageRate);
+			}
+			break;
 		case eCollisionStatus.Damage:
 			{
-				_ani.SetInteger ("state", (int)eAniState.Damage);
-
-				_particle.PlayDamage(other.transform.position);
-
-
+				const float MIN_SCALE = 0.2f;
+				const float DECREASE_RATE = 0.02f;
+				_damageRate -= DECREASE_RATE;
+				_damageRate = _damageRate < MIN_SCALE ? MIN_SCALE : _damageRate;
+				DebugWide.LogBlue ("damage   "+_damageRate);
+				this.PlayDamage (_damageRate, other.transform.position);
 			}
 			break;
 		case eCollisionStatus.Block_Body:

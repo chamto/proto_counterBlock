@@ -6,6 +6,7 @@ using UnityEngine;
 public enum eCollisionStatus
 {
 	None = 0,
+	Hit,
 	Damage,
 	Block_Body,
 	Block_Weapon,
@@ -152,6 +153,23 @@ public class TriggerProcess : MonoBehaviour
 				if (eColliderKind.Weapon == this._oppColliderKind) 
 				{
 					detect = eCollisionStatus.Block_Weapon;
+				}
+
+				if (eColliderKind.Body == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Hit;
+				}
+				if (eColliderKind._HandLeft == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Hit;
+				}
+				if (eColliderKind._HandRight == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Hit;
+				}
+				if (eColliderKind._Head == this._oppColliderKind) 
+				{
+					detect = eCollisionStatus.Hit;
 				}
 			}	
 			break;

@@ -664,6 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239d08a972cbe4a819897a3d4b1b5aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _head: {fileID: 0}
 --- !u!54 &352698081
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1203,6 +1204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239d08a972cbe4a819897a3d4b1b5aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _head: {fileID: 463520377}
 --- !u!54 &548357283
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2954,6 +2956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239d08a972cbe4a819897a3d4b1b5aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _head: {fileID: 1280937499}
 --- !u!54 &1443712496
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3822,7 +3825,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 374548461
+  randomSeed: -108093992
   InitialModule:
     serializedVersion: 3
     enabled: 1
