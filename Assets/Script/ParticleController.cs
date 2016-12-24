@@ -8,17 +8,32 @@ using UnityEngine;
 public class ParticleController : MonoBehaviour 
 {
 	
-	public ParticleSystem[] _particList = null; //4size
+	public ParticleSystem _originalParticle = null; 
 
+
+	private List<ParticleSystem> _particles = new List<ParticleSystem> ();
 	private int _nextIndex = 0;
 
 	// Use this for initialization
 	void Start () 
 	{
-		foreach (ParticleSystem ps in _particList) 
+
+		if (null != _originalParticle) 
+		{
+			_particles.Add (_originalParticle);
+
+			for (int i = 0; i < 10; i++) 
+			{
+				_particles.Add (this.CloneParticle ());
+			}
+
+		}
+			
+		foreach (ParticleSystem ps in _particles) 
 		{
 			ps.gameObject.SetActive (false);
 		}
+
 
 	}
 	
@@ -28,12 +43,23 @@ public class ParticleController : MonoBehaviour
 		
 	}
 
+
+	private ParticleSystem CloneParticle()
+	{
+		ParticleSystem ps = GameObject.Instantiate<ParticleSystem> (_originalParticle, transform);
+
+		return ps;
+	}
+
+
+
+
 	private ParticleSystem NextParticle()
 	{
-		ParticleSystem ps = _particList [_nextIndex];
+		ParticleSystem ps = _particles[_nextIndex];
 
 		_nextIndex++;
-		_nextIndex %= _particList.Length;
+		_nextIndex %= _particles.Count;
 
 		return ps;
 	}
@@ -44,17 +70,10 @@ public class ParticleController : MonoBehaviour
 
 		ps.Stop ();
 
-
-		//var em = ps.emission;
-		ParticleSystem.EmissionModule em = ps.emission;
-		//em.rateOverTime = new ParticleSystem.MinMaxCurve (4f);
-		em.rateOverTime = 3f;
-
-
-		//ps.emission.rateOverTime = new ParticleSystem.MinMaxCurve(5f);
-		DebugWide.LogBlue (ps.emission.rateOverTime.constant);
-
-
+		//ParticleSystem.EmissionModule em = ps.emission;
+		//em.rateOverTime = new ParticleSystem.MinMaxCurve (3f);
+		//em.rateOverTime = 3f;
+		//DebugWide.LogBlue (ps.emission.rateOverTime.constant);
 
 		ps.transform.position = worldPos;
 		ps.gameObject.SetActive (true);
