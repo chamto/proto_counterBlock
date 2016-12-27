@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour 
+public class Character_Controller : MonoBehaviour 
 {
 
 	private Animator _ani = null;
