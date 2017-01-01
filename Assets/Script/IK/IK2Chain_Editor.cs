@@ -29,8 +29,8 @@ public class IK2Chan_Editor : Editor
         if (GUILayout.Button(myScript.toggleIK?"IK ON": "IK OFF"))
             myScript.toggleIK = !myScript.toggleIK;
 
-        if (GUILayout.Button("Update Bones"))
-            myScript.UpdateBones();
+//        if (GUILayout.Button("Update Bones"))
+//            myScript.UpdateBones();
 
         EditorGUILayout.EndHorizontal();
     }
