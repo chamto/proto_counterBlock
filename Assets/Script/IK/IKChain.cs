@@ -70,19 +70,46 @@ public class IKChain : MonoBehaviour
 {
 	
     public Transform 	_targetPos;
+	public  bool 		_isOneCCDLink = false;
+	public  int			_OneCCdLinkNum = 0;
 	public	bool 		_isDamping = false;
 	public	bool 		_isDOF_Restrict = false;
-	public bool 		_toggleIK = false;
+	private bool 		_toggleIK = false;
+
+	public bool toggleIK
+	{
+		get {return _toggleIK; }
+	}
 
 	private List<IKLink> _linkes = new List<IKLink>();
 
 
     public void Start()
     {
-		Transform next = transform;
+    }
 
-		for (int i = 0; i < 6; i++) 
+	public void ToggleOff()
+	{
+		//true => false
+		if(false == this._toggleIK) return;
+		this._toggleIK = false;
+		//----------------------------------------
+	}
+
+	public void ToggleOn()
+	{
+		//false => true
+		if(true == this._toggleIK) return;
+		this._toggleIK = true;
+		//----------------------------------------
+
+		_linkes.Clear ();
+		Transform next = transform;
+		for (int i = 0; i < 10; i++) 
 		{
+			//DebugWide.LogBlue (i);
+			if (null == next) break;
+
 			//DebugWide.LogBlue (i+" "+next.name);
 			_linkes.Add (new IKLink (next, 2f));
 			foreach (Transform child in next.GetComponentsInChildren<Transform> ()) 
@@ -91,10 +118,10 @@ public class IKChain : MonoBehaviour
 					next = child;
 					break;
 				}
+				next = null; //더이상 추가할 자식링크가 없다.
 			}
 		}
-
-    }
+	}
 
 
 	public float VectorSquaredDistance (Vector3 a, Vector3 b)
@@ -109,7 +136,7 @@ public class IKChain : MonoBehaviour
 	// Arguments:	End Target (x,y)
 	// Returns:		TRUE if a solution exists, FALSE if the position isn't in reach
 	///////////////////////////////////////////////////////////////////////////////		
-	public bool ComputeOneCCDLink(Vector3 endPos,int link)
+	public bool ComputeOneCCDLink(Vector3 targetPos,int link)
 	{
 		/// Local Variables ///////////////////////////////////////////////////////////
 		Vector3		rootPos,curEnd,desiredEnd,targetVector,curVector,crossResult;
@@ -124,17 +151,34 @@ public class IKChain : MonoBehaviour
 
 		curEnd = _linkes [EFFECTOR_POS].transform.position;
 
-		desiredEnd = endPos;
-		desiredEnd.z = 0; //fix me
+		desiredEnd = targetPos;
+		desiredEnd.z = 0; //ONLY DOING 2D NOW
 
-		if (this.VectorSquaredDistance(curEnd, desiredEnd) > 1.0f)
+		if ((curEnd-desiredEnd).sqrMagnitude > 1.0f)
 		{
+
+			//마지막 링크는 마지막 전 링크의 방향값으로 사용된다.
+			//조종할 링크와 마지막 링크가 같을 경우 방향값이 동일해저 회전각을 구할 수가 없다. 
 			curVector = curEnd - rootPos;
 			curVector.Normalize ();
 
-			targetVector = endPos - rootPos;
+			targetVector = targetPos - rootPos;
 			targetVector.z = 0.0f;						// ONLY DOING 2D NOW
 			targetVector.Normalize();
+
+			//마지막 링크의 방향값을 직접 구해 준다.
+			if (link == EFFECTOR_POS) 
+			{
+				float angleZ = _linkes [link].transform.rotation.eulerAngles.z;
+				angleZ = Mathf.Deg2Rad * angleZ;
+
+				Vector3 cv2;
+				cv2.x = Vector3.right.x * Mathf.Cos (angleZ) - Vector3.right.y * Mathf.Sin (angleZ);
+				cv2.y = Vector3.right.x * Mathf.Sin (angleZ) + Vector3.right.y * Mathf.Cos (angleZ);
+				cv2.z = 0;
+				curVector = cv2;
+				curVector.Normalize();
+			}
 
 			cosAngle = Vector3.Dot(targetVector,curVector);
 
@@ -154,8 +198,9 @@ public class IKChain : MonoBehaviour
 					turnAngle = Mathf.Acos(cosAngle);
 					turnDeg = Mathf.Rad2Deg * turnAngle;
 					_linkes [link].AddLocalRotateZ (turnDeg);
+
 				}
-				//drawScene(FALSE);		// CHANGE THIS TO TRUE IF YOU WANT TO SEE THE ITERATION
+
 			}
 		}
 		return true;
@@ -251,6 +296,7 @@ public class IKChain : MonoBehaviour
 			}
 			// QUIT IF I AM CLOSE ENOUGH OR BEEN RUNNING LONG ENOUGH
 		} while (tries++ < MAX_IK_TRIES && VectorSquaredDistance(curEnd, desiredEnd) > IK_POS_THRESH);
+
 		
 		return true;
 	}
@@ -258,17 +304,26 @@ public class IKChain : MonoBehaviour
 
     public void LateUpdate()
     {
-		if(_toggleIK)
-			this.ComputeCCDLink (_targetPos.position);
+		if (_toggleIK) 
+		{
+			if(null == _targetPos || 0 == _linkes.Count) return;
+
+			if (_isOneCCDLink) 
+				this.ComputeOneCCDLink (_targetPos.position, _OneCCdLinkNum);
+			else
+				this.ComputeCCDLink (_targetPos.position);
+			
+		}
     }
 
     void OnDrawGizmos()
     {
 #if UNITY_EDITOR
+		if(null == _targetPos || 0 == _linkes.Count) return;
+
 		if (Selection.Contains(_targetPos.gameObject) && _toggleIK)
         {
-			if(_linkes.Count == 0) return;
-            
+			
 			Gizmos.color = Color.white;
 			Vector3 prev = _linkes[0].transform.position;
 			foreach(IKLink link in _linkes)
