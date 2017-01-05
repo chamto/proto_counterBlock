@@ -12,6 +12,8 @@ public class IK2Chain : MonoBehaviour
 	public Transform _joint_2 = null;
 	public float _joint_1_length = 0;	//upperArm Length 
 	public float _joint_2_Length = 0;	//foreArm Length
+	public bool		_isOneChain = false;
+	public int 		_oneChainNum = 0;
 
     [HideInInspector]
     public bool invert;
@@ -41,7 +43,7 @@ public class IK2Chain : MonoBehaviour
 		
 		Vector3 v3UpperLength = (_joint_1.position - _joint_2.position);
 		v3UpperLength.x = 0; //2D
-		//_upperLength = Mathf.Abs (v3UpperLength.magnitude);
+		_joint_1_length = Mathf.Abs (v3UpperLength.magnitude);
 
 		_joint_1_initAngle = _joint_1.localRotation.eulerAngles;
 		_joint_2_initAngle = _joint_2.localRotation.eulerAngles;
@@ -57,33 +59,32 @@ public class IK2Chain : MonoBehaviour
 		_joint_2.localRotation = Quaternion.Euler (_joint_2_initAngle);
 	}
 
-    float theta1 = 0;
-    float theta2 = 0;
-    bool outOfRange;
-    public void LateUpdate()
-    {
-		
 
+	float theta1 = 0;
+	float theta2 = 0;
+	bool outOfRange;
+	public void Compute2Chain()
+	{
 		if(false == toggleIK || null == _targetPos || null == _joint_2 || null == _joint_1)
 			return;
-		
+
 		float z = _targetPos.position.z - _joint_1.position.z;
 		float y = _targetPos.position.y - _joint_1.position.y;
 		y = -y; //y->z 회전방향을 z->-y 회전방향으로 돌려서 계산한다. (x->y 에서의 식에 맞추기 위함)
 
 		//제2코사인법칙 : a*a = b*b + c*c - 2bcCosA , //파타고라스의 정리 : z*z + y*y = x*x
-        //float num = Mathf.Pow(z, 2) + Mathf.Pow(y, 2) - Mathf.Pow(d1, 2) - Mathf.Pow(d2, 2); 
+		//float num = Mathf.Pow(z, 2) + Mathf.Pow(y, 2) - Mathf.Pow(d1, 2) - Mathf.Pow(d2, 2); 
 		float num = _joint_1_length*_joint_1_length + _joint_2_Length*_joint_2_Length - (z*z + y*y);
-        float denom = 2 * _joint_1_length * _joint_2_Length;
+		float denom = 2 * _joint_1_length * _joint_2_Length;
 		float costheta2 = -(num / denom); //cosA = -cos(180-A)
 
 		//삼각형 모양이 깨진 경우
 		outOfRange = (Mathf.Abs(costheta2) > 1);
 		costheta2 = Mathf.Clamp(costheta2, -1, 1);
-        theta2 = Mathf.Acos(costheta2);
+		theta2 = Mathf.Acos(costheta2);
 
-        if (invert)
-            theta2 = -theta2;
+		if (invert)
+			theta2 = -theta2;
 
 		//y->z
 		//ycos + -zsin 
@@ -96,6 +97,52 @@ public class IK2Chain : MonoBehaviour
 
 		_joint_1.localEulerAngles = new Vector3((Mathf.Rad2Deg * theta1),0,0);
 		_joint_2.localEulerAngles = new Vector3((Mathf.Rad2Deg * theta2),0,0);
+	}
+
+	public void Compute1Chain(int chainNum)
+	{
+		if (0 == chainNum) 
+		{
+			Vector3 dirFrom = _joint_2.position - _joint_1.position;
+			dirFrom.x = 0;
+			Vector3 dirTo = _targetPos.position - _joint_1.position;
+			dirTo.x = 0;
+			float degree = Vector3.Angle (dirFrom, dirTo);
+			if(0 < Vector3.Cross(dirFrom,dirTo).x)
+				_joint_1.transform.Rotate (degree, 0, 0);
+			else
+				_joint_1.transform.Rotate (-degree, 0, 0);
+
+			//DebugWide.LogBlue (chainNum+" "+degree);
+
+		} else if (1 == chainNum) 
+		{
+			Vector3 dirTo = _targetPos.position - _joint_2.position;
+			dirTo.x = 0;
+
+			float degree = Vector3.Angle (_joint_2.forward, dirTo);
+			if(0 < Vector3.Cross(_joint_2.forward,dirTo).x)
+				_joint_2.transform.Rotate (degree, 0, 0);
+			else
+				_joint_2.transform.Rotate (-degree, 0, 0);
+			//DebugWide.LogBlue (chainNum+" "+degree);
+		}
+	}
+
+    
+    public void LateUpdate()
+    {
+		if (true == this.toggleIK) 
+		{
+			if (true == _isOneChain) 
+			{
+				this.Compute1Chain (_oneChainNum);
+			} else 
+			{
+				this.Compute2Chain ();
+			}
+		}
+
     }
 
     void OnDrawGizmos()

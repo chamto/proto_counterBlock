@@ -32,33 +32,37 @@ public struct IKLink
 	}
 
 
-	public void AddLocalRotateX(float x)
+	public void AddLocalRotateX(float degreeX)
 	{
-		Vector3 temp = this.transform.localRotation.eulerAngles;
-		temp.x = x;
-		this.transform.Rotate (temp);
+		//Vector3 temp = this.transform.localRotation.eulerAngles;
+		//temp.x = x;
+		this.transform.Rotate (degreeX,0,0);
 	}
-	public void AddLocalRotateY(float y)
+	public void AddLocalRotateY(float degreeY)
 	{
-		Vector3 temp = this.transform.localRotation.eulerAngles;
-		temp.y = y;
-		this.transform.Rotate (temp);
+		//Vector3 temp = this.transform.localRotation.eulerAngles;
+		//temp.y = y;
+		this.transform.Rotate (0,degreeY,0);
 	}
-	public void AddLocalRotateZ(float z)
+	public void AddLocalRotateZ(float degreeZ)
 	{
-		Vector3 temp = this.transform.localRotation.eulerAngles;
-		temp.z = z;
-		this.transform.Rotate (temp);
+		//Vector3 temp = this.transform.localRotation.eulerAngles;
+		//temp.z = z;
+		this.transform.Rotate (0,0,degreeZ);
 	}
 
-	public void SetLocalRotationZ(float z)
+	public void SetLocalRotationZ(float degreeZ)
 	{
-		Quaternion q = this.transform.localRotation;
-		Vector3 temp = q.eulerAngles;
-		temp.z = z;
-		q.eulerAngles = temp;
-		//this.transform.localRotation.eulerAngles = temp;
-		this.transform.localRotation = q;
+//		Quaternion q = this.transform.localRotation;
+//		Vector3 temp = q.eulerAngles;
+//		temp.z = z;
+//		q.eulerAngles = temp;
+//		this.transform.localRotation = q;
+
+		Vector3 angles = this.transform.localEulerAngles;
+		angles.z = degreeZ;
+		this.transform.localEulerAngles = angles;
+
 
 	}
 }
