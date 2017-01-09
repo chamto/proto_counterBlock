@@ -14,14 +14,16 @@ public class IK2Chain : MonoBehaviour
 	public float _joint_2_Length = 0;	//foreArm Length
 	public bool		_isOneChain = false;
 	public int 		_oneChainNum = 0;
+	public Transform _targetEndPos = null;
 
     [HideInInspector]
     public bool invert;
     
-	private bool _toggleIK = false;
+	public bool _toggleIK = false;
 	public bool toggleIK
 	{
-		get {return _toggleIK; }
+		get{ return _toggleIK;}
+		set{ _toggleIK = value;}
 	}
 
 	private Vector3 _joint_1_initAngle;
@@ -65,7 +67,7 @@ public class IK2Chain : MonoBehaviour
 	bool outOfRange;
 	public void Compute2Chain()
 	{
-		if(false == toggleIK || null == _targetPos || null == _joint_2 || null == _joint_1)
+		if(false == _toggleIK || null == _targetPos || null == _joint_2 || null == _joint_1)
 			return;
 
 		float z = _targetPos.position.z - _joint_1.position.z;
@@ -112,7 +114,6 @@ public class IK2Chain : MonoBehaviour
 				_joint_1.transform.Rotate (degree, 0, 0);
 			else
 				_joint_1.transform.Rotate (-degree, 0, 0);
-
 			//DebugWide.LogBlue (chainNum+" "+degree);
 
 		} else if (1 == chainNum) 
@@ -132,7 +133,7 @@ public class IK2Chain : MonoBehaviour
     
     public void LateUpdate()
     {
-		if (true == this.toggleIK) 
+		if (true == this._toggleIK) 
 		{
 			if (true == _isOneChain) 
 			{
@@ -151,7 +152,7 @@ public class IK2Chain : MonoBehaviour
 		if(null == _targetPos || null == _joint_2 || null == _joint_1)
 			return;
 		
-        if (Selection.Contains(_targetPos.gameObject)&& toggleIK )
+        if (Selection.Contains(_targetPos.gameObject)&& _toggleIK )
         {
             Gizmos.DrawIcon(_targetPos.position, "IKHandle.png", false);
 

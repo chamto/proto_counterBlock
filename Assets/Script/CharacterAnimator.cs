@@ -57,6 +57,7 @@ public class CharacterAnimator : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
+		DebugWide.LogBlue (other.gameObject.name + "  " + _tPcs.status);
 		//DebugWide.LogBool (_tPcs.name.Equals("Character"), "animator - " + _tPcs.name + " - trigger Enter : " +  other.tag + "  " + other.name);
 
 		switch (_tPcs.status) 
@@ -109,6 +110,11 @@ public class CharacterAnimator : MonoBehaviour
 				//_ani.SetInteger ("state", (int)eAniState.Damage);
 			}
 			break;
+		case eCollisionStatus.Block_Objects:
+			{
+				//DebugWide.LogBlue ("block_objects");
+			}
+			break;
 		}
 
 		//Debug.Log ("---animator status Enter--------"+ _tPcs.name + "  "+_tPcs.DetectedStatus()); //chamto test
@@ -145,4 +151,7 @@ public class CharacterAnimator : MonoBehaviour
 
 		_ani.SetInteger ("state", (int)eAniState.Idle);
 	}
+
+
+
 }

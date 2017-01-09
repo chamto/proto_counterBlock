@@ -4,7 +4,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Animator))] 
 
-public class IKControl : MonoBehaviour {
+public class AvatarIKControl : MonoBehaviour {
 
 	protected Animator animator;
 

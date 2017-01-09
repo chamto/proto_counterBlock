@@ -25,7 +25,7 @@ public class Trigger_sword : MonoBehaviour
 
 		_tPcs.SetMyColliderKind (eColliderKind.Weapon);
 		_tPcs.SetOppColliderKind (other);
-
+		_tPcs.OnEnter (other);
 	}
 	void OnTriggerStay(Collider other)
 	{
@@ -33,6 +33,7 @@ public class Trigger_sword : MonoBehaviour
 
 		//_tPcs.SetMyColliderKind (eColliderKind.Weapon);
 		//_tPcs.SetOppColliderKind (_tPcs.oppColliderKind);
+		_tPcs.OnStay (other);
 	}
 	void OnTriggerExit(Collider other)
 	{
@@ -40,5 +41,21 @@ public class Trigger_sword : MonoBehaviour
 
 		_tPcs.SetMyColliderKind (eColliderKind.None);
 		_tPcs.SetOppColliderKind (eColliderKind.None);
+		_tPcs.OnExit (other);
+	}
+
+	void OnCollisionEnter(Collision collision) 
+	{
+		_tPcs.OnEnter (collision);
+	}
+
+	void OnCollisionStay(Collision collision) 
+	{
+		_tPcs.OnStay (collision);
+	}
+
+	void OnCollisionExit(Collision collision) 
+	{
+		_tPcs.OnExit (collision);
 	}
 }

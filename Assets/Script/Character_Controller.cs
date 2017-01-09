@@ -24,9 +24,6 @@ public class Character_Controller : MonoBehaviour
 	{
 		_ani.speed = 0.5f;
 		_ani.SetInteger ("state", (int)eAniState.Attack_up);
-
-		_ani.SetInteger ("state", (int)eAniState.Attack_hand);
-
 	}
 
 	public void AttackHand()
