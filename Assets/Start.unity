@@ -1753,7 +1753,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 502696992}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0.484}
+  m_LocalPosition: {x: 0, y: 1.3, z: 0.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 868042856}
@@ -3536,7 +3536,7 @@ MonoBehaviour:
   _joint_1_length: 1
   _joint_2_Length: 6
   _isOneChain: 1
-  _oneChainNum: 0
+  _oneChainNum: 1
   _targetEndPos: {fileID: 502696993}
   invert: 0
   _toggleIK: 0
