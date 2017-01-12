@@ -190,35 +190,25 @@ public class TriggerProcess : MonoBehaviour
 		
 	}
 
-	public bool _availableAttack = false;
-	//bool isSetTargetLeft = false;
+
 	public void OnTransitionEnter()
 	{
-		//_ik_armLeft._joint_2.eulerAngles = new Vector3 (-90, 0, 0);
-		//_ik_armRight._joint_2.eulerAngles = new Vector3 (-90, 0, 0);
-
-		//_availableAttack = false;
-		//_ik_armLeft.ToggleOff ();
-		//_ik_armRight.ToggleOff ();
-		//DebugWide.LogBlue ("1111 ");
+		
 	}
 	public void OnTransitionExit()
 	{
-		//_availableAttack = true;
-
-		//_ik_armLeft.ToggleOff ();
-		//_ik_armRight.ToggleOff ();
-
-		//DebugWide.LogBlue ("2222 ");
+		
 	}
 
-	public void OnAniEnter ()
+	private bool _availableAttack = false;
+	public void OnAniAttackEnter ()
 	{
 		_availableAttack = true;
+		//_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
 
 
 	}
-	public void OnAniExit()
+	public void OnAniAttackExit()
 	{
 		_availableAttack = false;
 		_ik_armLeft.ToggleOff ();
@@ -273,41 +263,18 @@ public class TriggerProcess : MonoBehaviour
 	{
 		_status = this.DetectedStatus ();
 
-
-		//_ik_armLeft.ToggleOff ();
-		//_ik_armRight.ToggleOff ();
-		//DebugWide.LogBlue ("OnExit " + other.name);
 	}
 
-	public Transform _fowardZ = null;
+	//public Transform _fowardZ = null;
 	ContactPoint [] cpList = null;
 	public void OnEnter(Collision collision , Transform src)
 	{
 		cpList = collision.contacts;
-
-//		if (collision.transform.tag == "dummy") 
-//		{
-//			if (src.name.Equals ("hand_left")) 
-//			{
-//				_ik_armLeft.ToggleOn ();
-//				_ik_armLeft._targetPos.position = cpList [0].point;
-//			}
-//
-//			if (src.name.Equals ("hand_right"))
-//			{
-//				_ik_armRight.ToggleOn ();
-//				if(0 > Vector3.Dot (cpList [0].normal, _fowardZ.position - transform.position))
-//					_ik_armRight._targetPos.position = cpList [0].point + (cpList[0].normal * 1.5f);
-//			} 
-//		}
 	}
 
 	public void OnStay(Collision collision , Transform src)
-	{
-		//_ik2Chain._targetPos.position = other.contacts[0].point;	
+	{		
 		cpList = collision.contacts;
-//		if(0 > Vector3.Dot (cpList [0].normal, _fowardZ.position - transform.position))
-//			_ik_armRight._targetPos.position = cpList [0].point + (cpList[0].normal * 1.5f);
 	}
 
 	public void OnExit(Collision collision , Transform src)

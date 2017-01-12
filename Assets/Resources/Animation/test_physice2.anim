@@ -880,15 +880,15 @@ AnimationClip:
   m_GenerateMotionCurves: 0
   m_IsEmpty: 0
   m_Events:
-  - time: 0
-    functionName: OnAniEnter
+  - time: 0.45
+    functionName: OnAniAttackEnter
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.8833333
-    functionName: OnAniExit
+    functionName: OnAniAttackExit
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
