@@ -8,13 +8,14 @@ public class IK2Chain : MonoBehaviour
 {
 
     public Transform _targetPos = null;
+	public Transform _targetEndPos = null;
 	public Transform _joint_1 = null;
 	public Transform _joint_2 = null;
 	public float _joint_1_length = 0;	//upperArm Length 
 	public float _joint_2_Length = 0;	//foreArm Length
 	public bool		_isOneChain = false;
 	public int 		_oneChainNum = 0;
-	public Transform _targetEndPos = null;
+
 
     [HideInInspector]
     public bool invert;
@@ -28,6 +29,11 @@ public class IK2Chain : MonoBehaviour
 
 	private Vector3 _joint_1_initAngle;
 	private Vector3 _joint_2_initAngle;
+
+	public Vector3 Joint2Dir()
+	{
+		return _targetEndPos.position - _joint_2.position;
+	}
 
 
     public void Start()
@@ -57,8 +63,10 @@ public class IK2Chain : MonoBehaviour
 		this._toggleIK = false;
 		//----------------------------------------
 		
-		_joint_1.localRotation = Quaternion.Euler (_joint_1_initAngle);
-		_joint_2.localRotation = Quaternion.Euler (_joint_2_initAngle);
+		//_joint_1.localRotation = Quaternion.Euler (_joint_1_initAngle);
+		//_joint_2.localRotation = Quaternion.Euler (_joint_2_initAngle);
+		_joint_1.localEulerAngles = _joint_1_initAngle;
+		_joint_2.localEulerAngles = _joint_2_initAngle;
 	}
 
 
@@ -110,10 +118,11 @@ public class IK2Chain : MonoBehaviour
 			Vector3 dirTo = _targetPos.position - _joint_1.position;
 			dirTo.x = 0;
 			float degree = Vector3.Angle (dirFrom, dirTo);
-			if(0 < Vector3.Cross(dirFrom,dirTo).x)
-				_joint_1.transform.Rotate (degree, 0, 0);
-			else
-				_joint_1.transform.Rotate (-degree, 0, 0);
+			if (0 > Vector3.Cross (dirFrom, dirTo).x)
+				degree *= -1;
+
+			_joint_1.transform.Rotate (degree, 0, 0);
+
 			//DebugWide.LogBlue (chainNum+" "+degree);
 
 		} else if (1 == chainNum) 
@@ -122,10 +131,11 @@ public class IK2Chain : MonoBehaviour
 			dirTo.x = 0;
 
 			float degree = Vector3.Angle (_joint_2.forward, dirTo);
-			if(0 < Vector3.Cross(_joint_2.forward,dirTo).x)
-				_joint_2.transform.Rotate (degree, 0, 0);
-			else
-				_joint_2.transform.Rotate (-degree, 0, 0);
+			if (0 > Vector3.Cross (_joint_2.forward, dirTo).x)
+				degree *= -1;
+			
+			_joint_2.transform.Rotate (degree, 0, 0);
+			
 			//DebugWide.LogBlue (chainNum+" "+degree);
 		}
 	}
@@ -133,6 +143,7 @@ public class IK2Chain : MonoBehaviour
     
     public void LateUpdate()
     {
+		
 		if (true == this._toggleIK) 
 		{
 			if (true == _isOneChain) 
@@ -149,6 +160,7 @@ public class IK2Chain : MonoBehaviour
     void OnDrawGizmos()
     {
 #if UNITY_EDITOR
+
 		if(null == _targetPos || null == _joint_2 || null == _joint_1)
 			return;
 		

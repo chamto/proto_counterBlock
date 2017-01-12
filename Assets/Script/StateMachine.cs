@@ -9,9 +9,9 @@ public class StateMachine : StateMachineBehaviour {
 		base.OnStateEnter (animator, stateInfo, layerIndex);
 
 
-		//DebugWide.LogBlue ("start");
+		//DebugWide.LogBlue ("OnStateEnter : " + stateInfo.normalizedTime);
 		TriggerProcess tp = animator.gameObject.GetComponentInParent<TriggerProcess>();
-		tp.EnterAniState ();
+		tp.OnTransitionEnter ();
 
 
 	}
@@ -26,9 +26,11 @@ public class StateMachine : StateMachineBehaviour {
 	{
 		base.OnStateExit (animator, stateInfo, layerIndex);
 	
-
+		//DebugWide.LogBlue ("OnStateExit : " + stateInfo.normalizedTime);
 		TriggerProcess tp = animator.gameObject.GetComponentInParent<TriggerProcess>();
-		tp.ExirAniState ();
+		tp.OnTransitionExit ();
+
+
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

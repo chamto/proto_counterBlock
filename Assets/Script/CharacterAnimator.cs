@@ -16,6 +16,37 @@ public enum eAniState : int
 	Blocked_weapon	= 9,
 }
 
+public enum eCubeBoneId
+{
+	Root		= 0,
+	Bone_Body,
+	Mesh__Body,
+
+	Bone_Neck,
+	Mesh__Head,
+
+	Bone_Arm_Left,
+	Mesh__Arm_Left,
+	Bone_Arm_Right,
+	Mesh__Arm_Right,
+}
+
+
+
+public class CubeBoneInfo
+{
+	Dictionary<eCubeBoneId,Transform> _boneList = new Dictionary<eCubeBoneId,Transform> ();
+
+
+	public void InitBone(Transform root)
+	{
+		_boneList.Clear ();
+		_boneList.Add (eCubeBoneId.Root, root);
+
+
+	}
+
+}
 
 public class CharacterAnimator : MonoBehaviour 
 {
@@ -25,6 +56,7 @@ public class CharacterAnimator : MonoBehaviour
 	private ParticleController _particle = null;
 
 	public Transform	_head = null;
+
 
 	private float _damageRate = 1;
 
@@ -151,7 +183,5 @@ public class CharacterAnimator : MonoBehaviour
 
 		_ani.SetInteger ("state", (int)eAniState.Idle);
 	}
-
-
 
 }

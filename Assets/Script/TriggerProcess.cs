@@ -53,19 +53,14 @@ public class TriggerProcess : MonoBehaviour
 		}
 	}
 
-	public IK2Chain _ik2Chain = null;
+	public IK2Chain _ik_armLeft = null;
+	public IK2Chain _ik_armRight = null;
 
-	// Use this for initialization
+
 	void Start () 
 	{
-		_ik2Chain = this.GetComponent<IK2Chain> ();
-		
 	}
 	
-	// Update is called once per frame
-	void Update () 
-	{
-	}
 
 	public void SetMyColliderKind(eColliderKind my)
 	{
@@ -190,72 +185,152 @@ public class TriggerProcess : MonoBehaviour
 		return detect;
 	}
 
-
-	public void EnterAniState()
+	void Update () 
 	{
 		
+	}
+
+	public bool _availableAttack = false;
+	//bool isSetTargetLeft = false;
+	public void OnTransitionEnter()
+	{
+		//_ik_armLeft._joint_2.eulerAngles = new Vector3 (-90, 0, 0);
+		//_ik_armRight._joint_2.eulerAngles = new Vector3 (-90, 0, 0);
+
+		//_availableAttack = false;
+		//_ik_armLeft.ToggleOff ();
+		//_ik_armRight.ToggleOff ();
 		//DebugWide.LogBlue ("1111 ");
 	}
-	public void ExirAniState()
+	public void OnTransitionExit()
 	{
-		//DebugWide.LogBlue ("2222 ");
-		_ik2Chain.ToggleOff ();
+		//_availableAttack = true;
 
+		//_ik_armLeft.ToggleOff ();
+		//_ik_armRight.ToggleOff ();
+
+		//DebugWide.LogBlue ("2222 ");
 	}
 
-	//IK targetPos 설정 문제 : 이 문제의 해결을 위해서는 가정이 필요하다.
-	//- 가정 : 한 애니메이션이 진행되는 동안 1번만 충돌한다. 
+	public void OnAniEnter ()
+	{
+		_availableAttack = true;
+
+
+	}
+	public void OnAniExit()
+	{
+		_availableAttack = false;
+		_ik_armLeft.ToggleOff ();
+		_ik_armRight.ToggleOff ();
+	}
+
+
 //	int test_physice1 = Animator.StringToHash("Base Layer.test_physice1");
 //	int test_physice2 = Animator.StringToHash("Base Layer.test_physice2");
-//	Vector3 targetPos = Vector3.zero;
-//	float aniTime = 0f;
-	public void OnEnter(Collider other)
+	public void OnEnter(Collider other , Transform src)
 	{
 		_status = this.DetectedStatus ();	
+		Animator ani = this.GetComponent<Animator> ();
+		AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
+
 
 		if (other.tag == "dummy") 
 		{
-			_ik2Chain.ToggleOn ();
-			_ik2Chain._targetPos.position = _ik2Chain._targetEndPos.position;
-		}
-
-		//DebugWide.LogBlue ("OnEnter " + other.name);
 			
-		//Animator ani = this.GetComponent<Animator> ();
-		//AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
+			if (src.name.Equals ("hand_left")) 
+			{
+				_ik_armLeft.ToggleOn ();
+				_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
+			}
+
+			if (src.name.Equals ("hand_right") && true == _availableAttack)
+			{
+				_ik_armRight.ToggleOn ();
+				RaycastHit rh;
+				if (false == other.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
+				{
+					//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
+					//충돌체가 없을때만 “IK목표점"을 갱신한다.
+					_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
+
+				}
+			} 
+
+		}
+			
 		//DebugWide.LogBlue("normalizedTime :" + info.normalizedTime + "  length  :" + info.length + "  speedMultiplier :" + info.speedMultiplier + "  speed :" + info.speed);
 
-
 	}
 
-	public void OnStay(Collider other)
-	{
-		_status = this.DetectedStatus ();
-		//_ik2Chain._targetPos.position = other.contacts[0].point;
-	}
-
-	public void OnExit(Collider other)
+	public void OnStay(Collider other , Transform src)
 	{
 		_status = this.DetectedStatus ();
 
+	}
+
+	public void OnExit(Collider other , Transform src)
+	{
+		_status = this.DetectedStatus ();
+
+
+		//_ik_armLeft.ToggleOff ();
+		//_ik_armRight.ToggleOff ();
 		//DebugWide.LogBlue ("OnExit " + other.name);
-
 	}
 
-	public void OnEnter(Collision collision) 
+	public Transform _fowardZ = null;
+	ContactPoint [] cpList = null;
+	public void OnEnter(Collision collision , Transform src)
 	{
-		
+		cpList = collision.contacts;
+
+//		if (collision.transform.tag == "dummy") 
+//		{
+//			if (src.name.Equals ("hand_left")) 
+//			{
+//				_ik_armLeft.ToggleOn ();
+//				_ik_armLeft._targetPos.position = cpList [0].point;
+//			}
+//
+//			if (src.name.Equals ("hand_right"))
+//			{
+//				_ik_armRight.ToggleOn ();
+//				if(0 > Vector3.Dot (cpList [0].normal, _fowardZ.position - transform.position))
+//					_ik_armRight._targetPos.position = cpList [0].point + (cpList[0].normal * 1.5f);
+//			} 
+//		}
 	}
 
-	public void OnStay(Collision collision) 
+	public void OnStay(Collision collision , Transform src)
 	{
-		
+		//_ik2Chain._targetPos.position = other.contacts[0].point;	
+		cpList = collision.contacts;
+//		if(0 > Vector3.Dot (cpList [0].normal, _fowardZ.position - transform.position))
+//			_ik_armRight._targetPos.position = cpList [0].point + (cpList[0].normal * 1.5f);
 	}
 
-	public void OnExit(Collision collision) 
+	public void OnExit(Collision collision , Transform src)
 	{
-		
+		cpList = null;
 	}
+
+	void OnDrawGizmos()
+	{
+		if (null == cpList)
+			return;
+		//Gizmos.DrawIcon(Vector3.zero,"iTweenIcon", true);
+		Gizmos.color = Color.green;
+		Vector3 prev = cpList [0].point;
+		foreach (ContactPoint cp in cpList) 
+		{
+			Gizmos.DrawSphere (cp.point, 0.5f);
+			//Gizmos.DrawLine(prev, cp.point);
+			prev = cp.point;
+		}
+	}
+
+
 
 //	void OnTriggerEnter(Collider other)
 //	{
