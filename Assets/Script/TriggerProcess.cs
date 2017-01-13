@@ -197,7 +197,8 @@ public class TriggerProcess : MonoBehaviour
 	}
 	public void OnTransitionExit()
 	{
-		
+		_firstTrigger = true;	
+//		_prevCollider = null;
 	}
 
 	private bool _availableAttack = false;
@@ -213,17 +214,28 @@ public class TriggerProcess : MonoBehaviour
 		_availableAttack = false;
 		_ik_armLeft.ToggleOff ();
 		_ik_armRight.ToggleOff ();
+
 	}
 
 
 //	int test_physice1 = Animator.StringToHash("Base Layer.test_physice1");
 //	int test_physice2 = Animator.StringToHash("Base Layer.test_physice2");
+	bool _firstTrigger = true;
+//	Collider _prevCollider = null;
+//	Vector3 _prevColliderPos = Vector3.zero;
 	public void OnEnter(Collider other , Transform src)
 	{
 		_status = this.DetectedStatus ();	
 		Animator ani = this.GetComponent<Animator> ();
 		AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
 
+//		if (null != _prevCollider && _prevCollider == other) 
+//		{
+//			if(false == _prevColliderPos.Equals(other.transform.position))
+//			{
+//				_firstTrigger = true;
+//			}
+//		}
 
 		if (other.tag == "dummy") 
 		{
@@ -234,17 +246,23 @@ public class TriggerProcess : MonoBehaviour
 				_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
 			}
 
-			if (src.name.Equals ("hand_right") && true == _availableAttack)
+			if (src.name.Equals ("hand_right") && true == _availableAttack && true == _firstTrigger)
 			{
+				//DebugWide.LogBlue ("first!!");
+//				_prevColliderPos = other.transform.position;
+//				_prevCollider = other;
+				_firstTrigger = false;
 				_ik_armRight.ToggleOn ();
-				RaycastHit rh;
-				if (false == other.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
-				{
-					//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
-					//충돌체가 없을때만 “IK목표점"을 갱신한다.
-					_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
+				_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
 
-				}
+//				RaycastHit rh;
+//				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
+//				//충돌체가 없을때만 “IK목표점"을 갱신한다.
+//				if (false == other.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
+//				{
+//					_ik_armRight.ToggleOn ();
+//					_ik_armRight._targetPos.position = other.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
+//				}
 			} 
 
 		}
