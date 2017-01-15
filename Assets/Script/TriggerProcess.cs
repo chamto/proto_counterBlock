@@ -237,7 +237,7 @@ public class TriggerProcess : MonoBehaviour
 //			}
 //		}
 
-		if (other.tag == "dummy") 
+		if (other.tag == "dummy" || other.tag == "weapon") 
 		{
 			
 			if (src.name.Equals ("hand_left")) 

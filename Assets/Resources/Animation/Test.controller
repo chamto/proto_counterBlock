@@ -10,7 +10,7 @@ AnimatorController:
   m_AnimatorParameters:
   - m_Name: direction
     m_Type: 1
-    m_DefaultFloat: 0.4
+    m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
@@ -170,4 +170,4 @@ AnimatorStateMachine:
   m_EntryPosition: {x: 72, y: 108, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-  m_DefaultState: {fileID: 1102378393644725706}
+  m_DefaultState: {fileID: 1102135491904009760}

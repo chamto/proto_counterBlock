@@ -109,35 +109,74 @@ public class IK2Chain : MonoBehaviour
 		_joint_2.localEulerAngles = new Vector3((Mathf.Rad2Deg * theta2),0,0);
 	}
 
+	void compute1_Chain0()
+	{
+		Vector3 dirFrom = _joint_2.position - _joint_1.position;
+		Vector3 dirTo = _targetPos.position - _joint_1.position;
+		dirFrom.Normalize ();
+		dirTo.Normalize ();
+		float cos = Vector3.Dot (dirFrom, dirTo);
+		float theta = Mathf.Acos (cos);
+
+		Vector3 foward = dirFrom;
+		Vector3 up = Vector3.Cross (dirFrom, dirTo);
+		up.Normalize ();
+
+		_joint_1.transform.Rotate (up,theta * Mathf.Rad2Deg,Space.World);
+	}
+
+	void compute1_Chain1()
+	{
+		Vector3 dirTo = _targetPos.position - _joint_2.position;
+
+		float degree = Vector3.Angle (_joint_2.forward, dirTo);
+
+		Vector3 up = Vector3.Cross (_joint_2.forward, dirTo);
+
+		_joint_2.transform.Rotate (up, degree, Space.World);
+	}
+
 	public void Compute1Chain(int chainNum)
 	{
+
 		if (0 == chainNum) 
 		{
-			Vector3 dirFrom = _joint_2.position - _joint_1.position;
-			dirFrom.x = 0;
-			Vector3 dirTo = _targetPos.position - _joint_1.position;
-			dirTo.x = 0;
-			float degree = Vector3.Angle (dirFrom, dirTo);
-			if (0 > Vector3.Cross (dirFrom, dirTo).x)
-				degree *= -1;
-
-			_joint_1.transform.Rotate (degree, 0, 0);
-
-			//DebugWide.LogBlue (chainNum+" "+degree);
-
-		} else if (1 == chainNum) 
-		{
-			Vector3 dirTo = _targetPos.position - _joint_2.position;
-			dirTo.x = 0;
-
-			float degree = Vector3.Angle (_joint_2.forward, dirTo);
-			if (0 > Vector3.Cross (_joint_2.forward, dirTo).x)
-				degree *= -1;
-			
-			_joint_2.transform.Rotate (degree, 0, 0);
-			
-			//DebugWide.LogBlue (chainNum+" "+degree);
+			this.compute1_Chain0 ();
 		}
+		else if(1 == chainNum)
+		{
+			this.compute1_Chain1 ();
+		}
+
+//		if (0 == chainNum) 
+//		{
+//			this.Compute1_Chain0 (); return;
+//
+//			Vector3 dirFrom = _joint_2.position - _joint_1.position;
+//			dirFrom.x = 0;
+//			Vector3 dirTo = _targetPos.position - _joint_1.position;
+//			dirTo.x = 0;
+//			float degree = Vector3.Angle (dirFrom, dirTo);
+//			if (0 > Vector3.Cross (dirFrom, dirTo).x)
+//				degree *= -1;
+//
+//			_joint_1.transform.Rotate (degree, 0, 0);
+//	
+//			//DebugWide.LogBlue (chainNum+" "+degree);
+//
+//		} else if (1 == chainNum) 
+//		{
+//			Vector3 dirTo = _targetPos.position - _joint_2.position;
+//			dirTo.x = 0;
+//
+//			float degree = Vector3.Angle (_joint_2.forward, dirTo);
+//			if (0 > Vector3.Cross (_joint_2.forward, dirTo).x)
+//				degree *= -1;
+//			
+//			_joint_2.transform.Rotate (degree, 0, 0);
+//			
+//			//DebugWide.LogBlue (chainNum+" "+degree);
+//		}
 	}
 
     
