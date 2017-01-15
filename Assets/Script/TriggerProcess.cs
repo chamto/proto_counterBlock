@@ -244,6 +244,7 @@ public class TriggerProcess : MonoBehaviour
 			{
 				_ik_armLeft.ToggleOn ();
 				_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
+				//CSingletonMono<ParticleController>.Instance.PlayDamage (_ik_armLeft._targetEndPos.position);
 			}
 
 			if (src.name.Equals ("hand_right") && true == _availableAttack && true == _firstTrigger)
@@ -251,18 +252,20 @@ public class TriggerProcess : MonoBehaviour
 				//DebugWide.LogBlue ("first!!");
 //				_prevColliderPos = other.transform.position;
 //				_prevCollider = other;
+
 				_firstTrigger = false;
 				_ik_armRight.ToggleOn ();
 				_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
 
+				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
+				//충돌체가 없을때만 “IK목표점"을 갱신한다.
 //				RaycastHit rh;
-//				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
-//				//충돌체가 없을때만 “IK목표점"을 갱신한다.
 //				if (false == other.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
 //				{
 //					_ik_armRight.ToggleOn ();
 //					_ik_armRight._targetPos.position = other.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
 //				}
+				CSingletonMono<ParticleController>.Instance.PlayDamage (_ik_armRight._targetEndPos.position);
 			} 
 
 		}
