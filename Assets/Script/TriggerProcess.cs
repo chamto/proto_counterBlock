@@ -196,15 +196,15 @@ public class TriggerProcess : MonoBehaviour
 
 	public void OnTransitionEnter()
 	{
-		_trail.enabled = false;
+		//_trail.enabled = false;
 	}
 	public void OnTransitionExit()
 	{
 		_firstTrigger = true;	
 
-		_trail.enabled = true;
-		_trail.endWidth = 1;
-		_trail.startWidth = 4;
+//		_trail.enabled = true;
+//		_trail.endWidth = 1;
+//		_trail.startWidth = 4;
 	}
 
 	private bool _availableAttack = false;
@@ -284,7 +284,7 @@ public class TriggerProcess : MonoBehaviour
 	{
 		cpList = collision.contacts;
 
-		_trail.enabled = false;
+		//_trail.enabled = false;
 
 		_status = this.DetectedStatus ();	
 		Animator ani = this.GetComponent<Animator> ();
