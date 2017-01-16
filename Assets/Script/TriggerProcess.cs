@@ -56,9 +56,10 @@ public class TriggerProcess : MonoBehaviour
 	public IK2Chain _ik_armLeft = null;
 	public IK2Chain _ik_armRight = null;
 
-
+	private TrailRenderer _trail = null;
 	void Start () 
 	{
+		_trail = this.GetComponentInChildren<TrailRenderer> ();
 	}
 	
 
@@ -185,6 +186,8 @@ public class TriggerProcess : MonoBehaviour
 		return detect;
 	}
 
+
+
 	void Update () 
 	{
 		
@@ -193,11 +196,15 @@ public class TriggerProcess : MonoBehaviour
 
 	public void OnTransitionEnter()
 	{
-		
+		_trail.enabled = false;
 	}
 	public void OnTransitionExit()
 	{
 		_firstTrigger = true;	
+
+		_trail.enabled = true;
+		_trail.endWidth = 1;
+		_trail.startWidth = 4;
 	}
 
 	private bool _availableAttack = false;
@@ -276,6 +283,8 @@ public class TriggerProcess : MonoBehaviour
 	public void OnEnter(Collision collision , Transform src)
 	{
 		cpList = collision.contacts;
+
+		_trail.enabled = false;
 
 		_status = this.DetectedStatus ();	
 		Animator ani = this.GetComponent<Animator> ();
