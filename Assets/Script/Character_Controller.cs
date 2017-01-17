@@ -28,6 +28,6 @@ public class Character_Controller : MonoBehaviour
 
 	public void AttackHand()
 	{
-		_ani.SetInteger ("state", (int)eAniState.Attack_hand);
+		//_ani.SetInteger ("state", (int)eAniState.Attack_hand);
 	}
 }

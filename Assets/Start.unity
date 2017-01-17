@@ -10888,7 +10888,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0.5, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.87, y: -0.08000004, z: 0.75000054}
+  m_ConnectedAnchor: {x: 0.51, y: -0.08000004, z: 0.75000054}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -12433,7 +12433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239d08a972cbe4a819897a3d4b1b5aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _head: {fileID: 0}
+  _head: {fileID: 803901829}
 --- !u!95 &1394743594
 Animator:
   serializedVersion: 3

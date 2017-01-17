@@ -29,19 +29,19 @@ public class KeyInput : MonoBehaviour
 		}
 		if (Input.GetKeyDown ("e")) 
 		{
-			_ani.SetInteger ("state", (int)eAniState.Attack_hand);
+			//_ani.SetInteger ("state", (int)eAniState.Attack_hand);
 		}
 		if (Input.GetKeyDown ("s")) 
 		{
-			_ani.SetInteger ("state", (int)eAniState.Attack_middle);
+			//_ani.SetInteger ("state", (int)eAniState.Attack_middle);
 		}
 		if (Input.GetKeyDown ("d")) 
 		{
-			_ani.SetInteger ("state", (int)eAniState.Attack_down);
+			//_ani.SetInteger ("state", (int)eAniState.Attack_down);
 		}
 		if (Input.GetKeyDown ("q")) 
 		{
-			_ani.SetInteger ("state", (int)eAniState.Attack_sting);
+			//_ani.SetInteger ("state", (int)eAniState.Attack_sting);
 		}
 
 
@@ -54,7 +54,7 @@ public class KeyInput : MonoBehaviour
 		//====================================
 		if (Input.GetKeyDown ("down")) 
 		{
-			_ani.SetInteger ("state", (int)eAniState.Block_middle);
+			//_ani.SetInteger ("state", (int)eAniState.Block_middle);
 		}
 
 		//====================================

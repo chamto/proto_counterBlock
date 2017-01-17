@@ -60,6 +60,7 @@ public class TriggerProcess : MonoBehaviour
 	void Start () 
 	{
 		_trail = this.GetComponentInChildren<TrailRenderer> ();
+
 	}
 	
 
@@ -71,8 +72,13 @@ public class TriggerProcess : MonoBehaviour
 	{
 		this._oppColliderKind = opp;
 	}
+
+
+
 	public void SetOppColliderKind(Collider opp)
 	{
+			
+		
 		this._oppColliderKind = eColliderKind.None;
 
 		if (opp.tag.Equals ("weapon")) 

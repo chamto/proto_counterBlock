@@ -5,15 +5,10 @@ using UnityEngine;
 public enum eAniState : int
 {
 	Idle 			= 0,
-	Attack_up		= 1,
-	Attack_hand		= 2,
-	Attack_middle	= 3,
-	Attack_down		= 4,
-	Attack_sting	= 7,
-	Block_up		= 5,
-	Block_middle	= 6,
-	Damage			= 8,
-	Blocked_weapon	= 9,
+	Move			= 100,
+	Attack_up		= 200,
+	Block_up		= 300,
+	Damage			= 400,
 }
 
 public enum eCubeBoneId
@@ -84,7 +79,7 @@ public class CharacterAnimator : MonoBehaviour
 
 	public void PlayBlockWeapon()
 	{
-		_ani.SetInteger ("state", (int)eAniState.Blocked_weapon);
+		//_ani.SetInteger ("state", (int)eAniState.Blocked_weapon);
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -127,11 +122,11 @@ public class CharacterAnimator : MonoBehaviour
 				switch ((eAniState)_ani.GetInteger ("state")) 
 				{
 				case eAniState.Attack_up:
-				case eAniState.Attack_sting:
-
-				case eAniState.Attack_hand:
-				case eAniState.Attack_middle:
-				case eAniState.Attack_down:
+//				case eAniState.Attack_sting:
+//
+//				case eAniState.Attack_hand:
+//				case eAniState.Attack_middle:
+//				case eAniState.Attack_down:
 					{
 						this.PlayBlockWeapon ();
 					}
