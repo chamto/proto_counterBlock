@@ -32,4 +32,11 @@ public class Single
 		}
 	}
 
+	public static ParticleController particle
+	{
+		get
+		{
+			return CSingletonMono<ParticleController>.Instance;
+		}
+	}
 }

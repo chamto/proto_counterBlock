@@ -21,7 +21,6 @@ public enum eColliderKind
 	_HandRight,
 	_HandLeft,
 	Weapon,
-	_Knife,	//the blade of a weapon
 	Objects,
 }
 
@@ -56,10 +55,10 @@ public class TriggerProcess : MonoBehaviour
 	public IK2Chain _ik_armLeft = null;
 	public IK2Chain _ik_armRight = null;
 
-	private TrailRenderer _trail = null;
+	//private TrailRenderer _trail = null;
 	void Start () 
 	{
-		_trail = this.GetComponentInChildren<TrailRenderer> ();
+		//_trail = this.GetComponentInChildren<TrailRenderer> ();
 
 	}
 	
@@ -100,10 +99,6 @@ public class TriggerProcess : MonoBehaviour
 		else if(opp.name.Equals("head")) 
 		{
 			_oppColliderKind = eColliderKind._Head;
-		}
-		else if(opp.name.Equals("knife")) 
-		{
-			_oppColliderKind = eColliderKind._Knife;
 		}
 		else
 			_oppColliderKind = eColliderKind.Objects;
@@ -235,7 +230,7 @@ public class TriggerProcess : MonoBehaviour
 	{
 		_status = this.DetectedStatus ();	
 		Animator ani = this.GetComponent<Animator> ();
-		AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
+		//AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
 
 
 		if (other.tag == "dummy" || other.tag == "weapon") 
@@ -245,7 +240,7 @@ public class TriggerProcess : MonoBehaviour
 			{
 				_ik_armLeft.ToggleOn ();
 				_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
-				//CSingletonMono<ParticleController>.Instance.PlayDamage (_ik_armLeft._targetEndPos.position);
+				//Single.particle.PlayDamage (_ik_armLeft._targetEndPos.position);
 			}
 
 			if (src.name.Equals ("hand_right") && true == _availableAttack && true == _firstTrigger)
@@ -263,7 +258,7 @@ public class TriggerProcess : MonoBehaviour
 //					_ik_armRight.ToggleOn ();
 //					_ik_armRight._targetPos.position = other.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
 //				}
-				CSingletonMono<ParticleController>.Instance.PlayDamage (_ik_armRight._targetEndPos.position);
+				Single.particle.PlayDamage (_ik_armRight._targetEndPos.position);
 			} 
 
 		}
@@ -294,7 +289,7 @@ public class TriggerProcess : MonoBehaviour
 
 		_status = this.DetectedStatus ();	
 		Animator ani = this.GetComponent<Animator> ();
-		AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
+		//AnimatorStateInfo info =  ani.GetCurrentAnimatorStateInfo(0);
 
 
 		if (collision.transform.tag == "dummy" || collision.transform.tag == "weapon" || collision.transform.name == "head") 
@@ -304,7 +299,7 @@ public class TriggerProcess : MonoBehaviour
 			{
 				_ik_armLeft.ToggleOn ();
 				_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
-				CSingletonMono<ParticleController>.Instance.PlayDamage (_ik_armLeft._targetEndPos.position);
+				Single.particle.PlayDamage (_ik_armLeft._targetEndPos.position);
 			}
 
 //			if (src.name.Equals ("hand_right") && true == _availableAttack && true == _firstTrigger)
@@ -327,7 +322,7 @@ public class TriggerProcess : MonoBehaviour
 					_ik_armRight.ToggleOn ();
 					_ik_armRight._targetPos.position = collision.contacts[0].point;
 				}
-				CSingletonMono<ParticleController>.Instance.PlayDamage (collision.contacts[0].point);
+				Single.particle.PlayDamage (collision.contacts[0].point);
 			}
 
 		}

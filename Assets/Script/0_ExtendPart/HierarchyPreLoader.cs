@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class HierarchyPreLoader
 {
 	private UInt32 _keySecquence = 0;
-	protected Dictionary<string, UInt32> _pathToKey = new Dictionary<string, UInt32>();
+	protected Dictionary<string, UInt32> 	_pathToKey = new Dictionary<string, UInt32>();
 	protected Dictionary<UInt32, Transform> _keyToData = new Dictionary<UInt32, Transform>();
 	protected Dictionary<Transform, string> _dataToPath = new Dictionary<Transform, string>();
 	
@@ -44,6 +44,13 @@ public class HierarchyPreLoader
 	{
 		//1. visit
 		//DebugWide.LogRed (path +"    "+ data.name); //chamto test
+		uint value;
+		if (true == _pathToKey.TryGetValue (path, out value)) 
+		{
+			//Debug.Assert (false);
+			UnityEngine.Assertions.Assert.IsFalse (true);
+		}
+
 		_pathToKey.Add (path, this.createKey ());
 		_keyToData.Add (_pathToKey [path], data);
 		_dataToPath.Add (data, path);
@@ -84,10 +91,12 @@ public class HierarchyPreLoader
 	
 	public void TestPrint()
 	{
+		
+
 		Debug.Log ("---------- HierarchyLoader : TestPrint ----------");
 		foreach(KeyValuePair<Transform, string> keyValue in _dataToPath)
 		{
-			Debug.Log(keyValue.Key.name + " : " + keyValue.Value);
+			Debug.Log("<color=blue>" + keyValue.Key.name + " : </color> <color=green>" + keyValue.Value + "</color> \n");
 		}
 	}
 }

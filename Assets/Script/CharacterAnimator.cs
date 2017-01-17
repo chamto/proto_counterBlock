@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CounterBlockSting;
 
 public enum eAniState : int
 {
@@ -16,7 +17,6 @@ public class CharacterAnimator : MonoBehaviour
 	
 	private Animator _ani = null;
 	private TriggerProcess _tPcs = null;
-	private ParticleController _particle = null;
 	private HashInfoMap	_hashInfoMap = new HashInfoMap();
 
 	public Transform	_head = null;
@@ -28,8 +28,7 @@ public class CharacterAnimator : MonoBehaviour
 	{
 		_ani = this.GetComponent<Animator> ();	
 		_tPcs = this.GetComponent<TriggerProcess> ();
-		_particle = CSingletonMono<ParticleController>.Instance;
-
+		this.initHashInfoMap ();
 	}
 	
 	void Update()
@@ -37,34 +36,35 @@ public class CharacterAnimator : MonoBehaviour
 		
 	}
 
+
+	delegate  Transform DeleMethod(string path);
 	private void initHashInfoMap()
 	{
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Root, transform.name, transform);
+		string basePath = "/"+transform.parent.name+"/"+transform.name+"/";
+		DeleMethod GetTForm = p => Single.hierarchy.GetData (basePath + p);
 
-//		Bone_Body,
-//		Bone_Mesh_Body,
-//		Bone_Neck,
-//		Bone_Mesh_Head,
-//
-//		Bone_Arm_Left,
-//		Bone_Mesh_Hand_Left,
-//		Bone_Weapon_Sword_Left,
-//		Bone_Weapon_Sword_EndPosition_Left,
-//
-//		Bone_Arm_Right,
-//		Bone_Mesh_Hand_Right,
-//		Bone_Weapon_Sword_Right,
-//		Bone_Weapon_Sword_EndPosition_Right,
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Body, GetTForm("b_body"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Body, GetTForm("b_body/body"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Neck, GetTForm("b_body/b_neck"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Head, GetTForm("b_body/b_neck/head"));
 
-		//Transform bone = 
-		//_hashInfoMap.Add ((int)eHashIdx.Bone_Body, bone, transform);
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Arm_Left, GetTForm("b_body/b_arm_left"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Left, GetTForm("b_body/b_arm_left/hand_left"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik/endPos"));
+
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Arm_Right, GetTForm("b_body/b_arm_right"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Right, GetTForm("b_body/b_arm_right/hand_right"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik"));
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik/endPos"));
+
 	}
 
 	public void PlayDamage(float scaleRate, Vector3 collisionPoint)
 	{
 		_ani.SetInteger ("state", (int)eAniState.Damage);
 
-		_particle.PlayDamage(collisionPoint);
+		Single.particle.PlayDamage(collisionPoint);
 
 		_head.localScale = new Vector3(scaleRate,scaleRate,scaleRate);
 	}

@@ -11,6 +11,7 @@ public class Trigger_sword : MonoBehaviour
 	void Start () 
 	{
 		_tPcs = this.GetComponentInParent<TriggerProcess> ();
+
 	}
 	
 	// Update is called once per frame
