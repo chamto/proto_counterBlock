@@ -9,38 +9,24 @@ using System.Globalization;
 public class DebugWide 
 {
 
-#if UNITY_EDITOR
-    static bool m_DebugLogView = true;
-#else
-	static bool m_DebugLogView = true;
-#endif
-
-    //static CommonNet.CEzLog m_Log = null;  
-    static string m_strCommon = "";
+	private static string _strCommon = "";
 
     public enum eDebugLogMode
     {
-        _None = 0,
-        _Waring = 1,
-        _Error = 2,
-        _Exception = 3,
+        _None 		= 0,
+        _Waring 	= 1,
+        _Error 		= 2,
+        _Exception 	= 3,
     }
 
-    public static void Close()
-    {
-       // CDefine.m_Log.Close();
-       // m_Log = null;
-    }
 
     public static void _BaseLog(object message , Object context , System.Exception exception ,eDebugLogMode eMode)
     {
-        //CommonNet.CNetLog.OutputDebugString((string)message);
+		//_strCommon = "[Thr:"+System.AppDomain.GetCurrentThreadId().ToString("00000") + "] "; // window only? 
+		//_strCommon = CommonNet.CUnitUtil.TimeStamp();
+		_strCommon = _strCommon + message;
 
-		//m_strCommon = "[Thr:"+System.AppDomain.GetCurrentThreadId().ToString("00000") + "] "; // window only? 
-		//m_strCommon = CommonNet.CUnitUtil.TimeStamp();
-		message = m_strCommon + message;
-
-        if (m_DebugLogView == true)
+		if (true == UnityEngine.Debug.isDebugBuild)
         {
             switch (eMode)
             {
@@ -62,25 +48,36 @@ public class DebugWide
                 case eDebugLogMode._Exception:
                     {
                         Debug.LogException(exception, context);    
-
-                        message = exception.ToString();
                     }
                     break;
             }
             
         }
 
-        
-//        if (null == m_Log)
-//            m_Log = new CommonNet.CEzLog("Client_debugLog.txt");
-//        else
-//        {
-//            //m_Log.ReCreate("Client_debugLog.txt"); 
-//            m_Log.Log(message.ToString(), CommonNet.LOG_TYPE.INFO);
-//            //m_Log.Close();
-//        }
-
     }
+
+	const string start_color_White 	= "<color=white>";
+	const string start_color_Red 	= "<color=red>";
+	const string start_color_Yellow = "<color=yellow>";
+	const string start_color_Green 	= "<color=green>";
+	const string start_color_Blue 	= "<color=blue>";
+	const string end_color 			= "</color>";
+	static StringBuilder _strBD = new StringBuilder ("", 1000);
+
+	public static void LogBuilder(string message)
+	{
+		_strBD.Append ("[Thr:");
+		_strBD.Append (System.AppDomain.GetCurrentThreadId ().ToString ("00000"));
+		_strBD.Append ("] ");
+
+		_strBD.Append (start_color_White);
+		_strBD.Append (message);
+		_strBD.Append (end_color);
+		_strBD.AppendLine ();
+
+		Debug.Log(_strBD); 
+
+	}
 
 	public static void LogBool(bool boolColor, object message)
 	{
@@ -93,6 +90,7 @@ public class DebugWide
 			_BaseLog("<color=red>"+message+"</color>",null,null, eDebugLogMode._None);
 		}
 	}
+
 
 	public static void LogWhite(object message)
 	{
@@ -155,19 +153,6 @@ public class DebugWide
     {
         _BaseLog(message, context,null, eDebugLogMode._Waring);
     }
-
-
-	//ref : http://fishpoint.tistory.com/677
-//	public static bool CheckBoxToBox(Rect _rt1, Rect _rt2)
-//	{
-//
-//		if(_rt1.right > _rt2.left && 
-//		   _rt1.left <_rt2.right &&
-//		   _rt1.top > _rt2.bottom &&
-//		   _rt1.bottom < _rt2.top) return true;
-//		
-//		return false;		
-//	}
 
 }
 

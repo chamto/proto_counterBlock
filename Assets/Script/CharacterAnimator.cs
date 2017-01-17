@@ -11,44 +11,13 @@ public enum eAniState : int
 	Damage			= 400,
 }
 
-public enum eCubeBoneId
-{
-	Root		= 0,
-	Bone_Body,
-	Mesh__Body,
-
-	Bone_Neck,
-	Mesh__Head,
-
-	Bone_Arm_Left,
-	Mesh__Arm_Left,
-	Bone_Arm_Right,
-	Mesh__Arm_Right,
-}
-
-
-
-public class CubeBoneInfo
-{
-	Dictionary<eCubeBoneId,Transform> _boneList = new Dictionary<eCubeBoneId,Transform> ();
-
-
-	public void InitBone(Transform root)
-	{
-		_boneList.Clear ();
-		_boneList.Add (eCubeBoneId.Root, root);
-
-
-	}
-
-}
-
 public class CharacterAnimator : MonoBehaviour 
 {
 	
 	private Animator _ani = null;
 	private TriggerProcess _tPcs = null;
 	private ParticleController _particle = null;
+	private HashInfoMap	_hashInfoMap = new HashInfoMap();
 
 	public Transform	_head = null;
 
@@ -66,6 +35,29 @@ public class CharacterAnimator : MonoBehaviour
 	void Update()
 	{
 		
+	}
+
+	private void initHashInfoMap()
+	{
+		_hashInfoMap.Add ((int)eHashIdx.Bone_Root, transform.name, transform);
+
+//		Bone_Body,
+//		Bone_Mesh_Body,
+//		Bone_Neck,
+//		Bone_Mesh_Head,
+//
+//		Bone_Arm_Left,
+//		Bone_Mesh_Hand_Left,
+//		Bone_Weapon_Sword_Left,
+//		Bone_Weapon_Sword_EndPosition_Left,
+//
+//		Bone_Arm_Right,
+//		Bone_Mesh_Hand_Right,
+//		Bone_Weapon_Sword_Right,
+//		Bone_Weapon_Sword_EndPosition_Right,
+
+		//Transform bone = 
+		//_hashInfoMap.Add ((int)eHashIdx.Bone_Body, bone, transform);
 	}
 
 	public void PlayDamage(float scaleRate, Vector3 collisionPoint)
