@@ -17,7 +17,12 @@ public class CharacterAnimator : MonoBehaviour
 	
 	private Animator _ani = null;
 	private TriggerProcess _tPcs = null;
-	private HashInfoMap	_hashInfoMap = new HashInfoMap();
+	private HashInfoMap	_boneMap = new HashInfoMap();
+	public HashInfoMap boneMap
+	{ 
+		get 
+		{ return _boneMap;}
+	}
 
 	public Transform	_head = null;
 
@@ -43,20 +48,20 @@ public class CharacterAnimator : MonoBehaviour
 		string basePath = "/"+transform.parent.name+"/"+transform.name+"/";
 		DeleMethod GetTForm = p => Single.hierarchy.GetData (basePath + p);
 
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Body, GetTForm("b_body"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Body, GetTForm("b_body/body"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Neck, GetTForm("b_body/b_neck"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Head, GetTForm("b_body/b_neck/head"));
+		_boneMap.Add ((int)eHashIdx.Bone_Body, GetTForm("b_body"));
+		_boneMap.Add ((int)eHashIdx.Bone_Mesh_Body, GetTForm("b_body/body"));
+		_boneMap.Add ((int)eHashIdx.Bone_Neck, GetTForm("b_body/b_neck"));
+		_boneMap.Add ((int)eHashIdx.Bone_Mesh_Head, GetTForm("b_body/b_neck/head"));
 
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Arm_Left, GetTForm("b_body/b_arm_left"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Left, GetTForm("b_body/b_arm_left/hand_left"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik/endPos"));
+		_boneMap.Add ((int)eHashIdx.Bone_Arm_Left, GetTForm("b_body/b_arm_left"));
+		_boneMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Left, GetTForm("b_body/b_arm_left/hand_left"));
+		_boneMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik"));
+		_boneMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Left, GetTForm("b_body/b_arm_left/hand_left/weapon_01/sword_ik/endPos"));
 
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Arm_Right, GetTForm("b_body/b_arm_right"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Right, GetTForm("b_body/b_arm_right/hand_right"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik"));
-		_hashInfoMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik/endPos"));
+		_boneMap.Add ((int)eHashIdx.Bone_Arm_Right, GetTForm("b_body/b_arm_right"));
+		_boneMap.Add ((int)eHashIdx.Bone_Mesh_Hand_Right, GetTForm("b_body/b_arm_right/hand_right"));
+		_boneMap.Add ((int)eHashIdx.Bone_Weapon_Sword_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik"));
+		_boneMap.Add ((int)eHashIdx.Bone_Weapon_Sword_EndPosition_Right, GetTForm("b_body/b_arm_right/hand_right/weapon_01/sword_ik/endPos"));
 
 	}
 

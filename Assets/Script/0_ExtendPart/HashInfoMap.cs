@@ -57,7 +57,7 @@ public class HashInfoMap
 	{
 		return this._hashMap[key].str;
 	}
-	public int GetHash(int key)
+	public int GetHashValue(int key)
 	{
 		return this._hashMap[key].hashValue;
 	}
