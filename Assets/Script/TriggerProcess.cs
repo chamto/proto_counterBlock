@@ -26,9 +26,12 @@ public enum eColliderKind
 
 public class TriggerProcess : MonoBehaviour 
 {
+	private Multi _multi = null;
+
 	private eCollisionStatus _status = eCollisionStatus.None;
 	private eColliderKind _myColliderKind = eColliderKind.None;
 	private eColliderKind _oppColliderKind = eColliderKind.None;
+
 
 	public eColliderKind myColliderKind 
 	{
@@ -52,16 +55,16 @@ public class TriggerProcess : MonoBehaviour
 		}
 	}
 
-	public IK2Chain _ik_armLeft = null;
-	public IK2Chain _ik_armRight = null;
+	private IK2Chain _ik_armLeft = null;
+	private IK2Chain _ik_armRight = null;
 
-	public CharacterAnimator _charAni = null;
 
-	//private TrailRenderer _trail = null;
 	void Start () 
 	{
-		//_trail = this.GetComponentInChildren<TrailRenderer> ();
-		_charAni = this.GetComponent<CharacterAnimator>();
+		_multi = this.GetComponentInParent<Multi> ();
+
+		_ik_armLeft = _multi.hashMap.GetTransform (eHashIdx.Bone_Arm_Left).GetComponent<IK2Chain> ();
+		_ik_armRight = _multi.hashMap.GetTransform (eHashIdx.Bone_Arm_Right).GetComponent<IK2Chain> ();
 	}
 	
 
@@ -78,29 +81,32 @@ public class TriggerProcess : MonoBehaviour
 
 	public void SetOppColliderKind(Collider opp)
 	{
-		
 		this._oppColliderKind = eColliderKind.None;
-		HashInfoMap map = _charAni.boneMap;
+
+		if (true == _multi.hashMap.IsMyTransform (opp.transform))
+			return;
+		
+		HashInfoMap map = _multi.hashMap;
 		int oppHashCode = opp.name.GetHashCode ();
 
 
-		if(oppHashCode == map.GetHashValue((int)eHashIdx.Bone_Weapon_Sword_Right))
+		if(oppHashCode == map.GetHash((int)eHashIdx.Bone_Weapon_Sword_Right))
 		{
 			_oppColliderKind = eColliderKind.Weapon;
 		} 
-		else if(oppHashCode == map.GetHashValue((int)eHashIdx.Bone_Mesh_Body))
+		else if(oppHashCode == map.GetHash((int)eHashIdx.Bone_Mesh_Body))
 		{
 			_oppColliderKind = eColliderKind.Body;
 		}
-		if(oppHashCode == map.GetHashValue((int)eHashIdx.Bone_Mesh_Hand_Left))
+		if(oppHashCode == map.GetHash((int)eHashIdx.Bone_Mesh_Hand_Left))
 		{
 			_oppColliderKind = eColliderKind._HandLeft;
 		}
-		if(oppHashCode == map.GetHashValue((int)eHashIdx.Bone_Mesh_Hand_Right))
+		if(oppHashCode == map.GetHash((int)eHashIdx.Bone_Mesh_Hand_Right))
 		{
 			_oppColliderKind = eColliderKind._HandRight;
 		}
-		if(oppHashCode == map.GetHashValue((int)eHashIdx.Bone_Mesh_Head))
+		if(oppHashCode == map.GetHash((int)eHashIdx.Bone_Mesh_Head))
 		{
 			_oppColliderKind = eColliderKind._Head;
 		}
@@ -192,80 +198,93 @@ public class TriggerProcess : MonoBehaviour
 	}
 
 
-
+	float aniTime = 0;
 	void Update () 
 	{
-		
+//		aniTime += Time.deltaTime;
+//		if (1f <= aniTime)
+//			aniTime = 0;
+//		AnimatorStateInfo info =  _multi.animator.GetCurrentAnimatorStateInfo(0);
+//
+//		_multi.animator.Play (info.fullPathHash, 0, aniTime);
 	}
 
 
 	public void OnTransitionEnter()
 	{
+		//DebugWide.LogBlue ("tr_enter");
 		//_trail.enabled = false;
 	}
 	public void OnTransitionExit()
 	{
+		//DebugWide.LogBlue ("tr_exit");
+
 		_firstTrigger = true;	
 
-//		_trail.enabled = true;
-//		_trail.endWidth = 1;
-//		_trail.startWidth = 4;
+
+		_ik_armRight.ToggleOff (true);
 	}
 
 	private bool _availableAttack = false;
 	public void OnAniAttackEnter ()
 	{
+		//DebugWide.LogBlue ("OnAniAttackEnter");
+
 		_availableAttack = true;
 
 	}
 	public void OnAniAttackExit()
 	{
+		//DebugWide.LogBlue ("OnAniAttackExit");
+		
 		_availableAttack = false;
-		_ik_armLeft.ToggleOff ();
-		_ik_armRight.ToggleOff ();
+
+		_ik_armRight.ToggleOff (true);
 
 	}
 		
-	bool _firstTrigger = true;
-	public void ComputeIKTarget(Collider oppPart, Transform myPart)
+	private bool _firstTrigger = true;
+	public void ComputeIKTarget(Collision oppClsPart, Collider oppCldPart, Transform myPart)
 	{
 		//Animator ani = this.GetComponent<Animator> ();
 		//AnimatorStateInfo info =  ani.GetCurrentAniatorStateInfo(0);
-		HashInfoMap map = _charAni.boneMap;
 
+		Vector3 back = _multi.hashMap.back;
 
-		if(myPart.name.GetHashCode() == map.GetHashValue((int)eHashIdx.Bone_Mesh_Hand_Left))
+//		if(myPart.name.GetHashCode() == _multi.hashMap.GetHash(eHashIdx.Bone_Weapon_Sword_Left))
+//		{
+//			_ik_armLeft.ToggleOn ();
+//			_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
+//		}
+
+		if(myPart.name.GetHashCode() == _multi.hashMap.GetHash(eHashIdx.Bone_Weapon_Sword_Right))
 		{
-			_ik_armLeft.ToggleOn ();
-			_ik_armLeft._targetPos.position = _ik_armLeft._targetEndPos.position;
-			Single.particle.PlayDamage (_ik_armLeft._targetEndPos.position);
-		}
-
-		if(myPart.name.GetHashCode() == map.GetHashValue((int)eHashIdx.Bone_Mesh_Hand_Right))
-		{
-			if (true && true == _availableAttack && true == _firstTrigger) 
+			_firstTrigger = true;
+			bool onceCompute = true;
+			if (true == onceCompute && true == _availableAttack && true == _firstTrigger) 
 			{
-				//DebugWide.LogBlue ("first!!");
+				//Vector3 closestPos = oppCldPart.ClosestPointOnBounds (_ik_armRight._targetEndPos.position + back*3);
 				_firstTrigger = false;
 				_ik_armRight.ToggleOn ();
-				_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
+				//_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
+				_ik_armRight._targetPos.position = oppCldPart.ClosestPointOnBounds (oppClsPart.contacts[0].point + back*3) + back * 0.2f;
+				//_ik_armRight._targetPos.position = oppClsPart.contacts[0].normal + oppClsPart.contacts[0].point;
 
-				Single.particle.PlayDamage (_ik_armRight._targetEndPos.position);
+
 			}
 
-
-			if (false && true == _availableAttack) 
-			{
-				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
-				//충돌체가 없을때만 “IK목표점"을 갱신한다.
-				RaycastHit rh;
-				if (false == oppPart.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
-				{
-					_ik_armRight.ToggleOn ();
-					_ik_armRight._targetPos.position = oppPart.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
-				}
-				Single.particle.PlayDamage (_ik_armRight._targetEndPos.position);
-			}
+//			if (false == onceCompute && true == _availableAttack) 
+//			{
+//				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
+//				//충돌체가 없을때만 “IK목표점"을 갱신한다.
+//				RaycastHit rh;
+//				if (false == oppCldPart.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
+//				{
+//					_ik_armRight.ToggleOn ();
+//					_ik_armRight._targetPos.position = oppCldPart.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
+//				}
+//
+//			}
 
 		}
 
@@ -277,8 +296,8 @@ public class TriggerProcess : MonoBehaviour
 	{
 		_status = this.DetectedStatus ();	
 
-			
-		this.ComputeIKTarget (other, src);
+		//DebugWide.LogBlue ("sdfsdfsf");
+		this.ComputeIKTarget (null,other, src);
 
 	}
 
@@ -301,7 +320,17 @@ public class TriggerProcess : MonoBehaviour
 		cpList = collision.contacts;
 		_status = this.DetectedStatus ();	
 
-		this.ComputeIKTarget (collision.collider, src);
+
+		if (_status == eCollisionStatus.Hit || _status == eCollisionStatus.Block_Objects) 
+		{
+			if (0 != cpList.Length) 
+			{
+				this.ComputeIKTarget (collision,collision.collider, src);
+				Single.particle.PlayDamage (cpList[0].point);
+			}
+
+		}
+
 	}
 
 	public void OnStay(Collision collision , Transform src)

@@ -2,7 +2,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using CounterBlockSting;
 
 //string <=> hash <= index
 public class HashInfoMap
@@ -53,12 +53,22 @@ public class HashInfoMap
 	{
 		return this._hashMap[key].tr;
 	}
+	public Transform GetTransform(eHashIdx eKey)
+	{
+		return this._hashMap[(int)eKey].tr;
+	}
 	public string GetString(int key)
 	{
 		return this._hashMap[key].str;
 	}
-	public int GetHashValue(int key)
+	public int GetHash(int key)
 	{
 		return this._hashMap[key].hashValue;
 	}
+
+	public int GetHash(eHashIdx eKey)
+	{
+		return this._hashMap[(int)eKey].hashValue;
+	}
+
 }

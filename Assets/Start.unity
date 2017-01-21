@@ -397,6 +397,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 1275869383}
   _ik_armRight: {fileID: 1120813543}
+  _charAni: {fileID: 0}
 --- !u!114 &84380794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,7 +445,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &89330229
 Transform:
   m_ObjectHideFlags: 0
@@ -742,7 +743,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 132198238}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1224362573}
@@ -915,7 +916,7 @@ ParticleSystemRenderer:
   m_VelocityScale: 0
   m_LengthScale: 2
   m_SortingFudge: 0
-  m_NormalDirection: 1
+  m_NormalDirection: 0
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
   m_VertexStreamMask: 27
@@ -978,7 +979,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -282622987
+  randomSeed: -1882703683
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4022,6 +4023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 0}
   _ik_armRight: {fileID: 0}
+  _charAni: {fileID: 0}
 --- !u!114 &352698080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7977,6 +7979,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 0}
   _ik_armRight: {fileID: 0}
+  _charAni: {fileID: 0}
 --- !u!114 &548357282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9072,7 +9075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &687080621
 Transform:
   m_ObjectHideFlags: 0
@@ -10131,6 +10134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 0}
   _ik_armRight: {fileID: 0}
+  _charAni: {fileID: 0}
 --- !u!114 &925878321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11045,7 +11049,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1153590151}
   m_Layer: 0
-  m_Name: fowardZ
+  m_Name: forwardZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11090,7 +11094,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1166053012}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3.63, y: 2.03, z: 6.51}
+  m_LocalPosition: {x: 0, y: 3, z: 4.66}
   m_LocalScale: {x: 1, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 687080621}
@@ -11124,7 +11128,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 206203185408e4e7181a62b6269eac02, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12153,7 +12157,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1379428780}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.05, z: 0.518}
+  m_LocalPosition: {x: 0, y: -0, z: 0.518}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 671674464}
@@ -12399,7 +12403,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1394743589}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 132198239}
@@ -12422,6 +12426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 614334776}
   _ik_armRight: {fileID: 664781073}
+  _charAni: {fileID: 0}
 --- !u!114 &1394743593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12513,6 +12518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ik_armLeft: {fileID: 0}
   _ik_armRight: {fileID: 0}
+  _charAni: {fileID: 0}
 --- !u!114 &1443712495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12638,7 +12644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef8f5453a1f84c42a940f12dc985076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _originalParticle: {fileID: 1603193965}
+  _originalParticle: {fileID: 167654760}
 --- !u!1 &1503542737
 GameObject:
   m_ObjectHideFlags: 0
@@ -12767,7 +12773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1539111840
 Transform:
   m_ObjectHideFlags: 0
@@ -16129,7 +16135,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664464854}
   m_Layer: 0
-  m_Name: fowardZ
+  m_Name: forwardZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16532,7 +16538,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -199616098
+  randomSeed: 252655329
   InitialModule:
     serializedVersion: 3
     enabled: 1

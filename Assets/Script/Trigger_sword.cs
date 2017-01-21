@@ -26,7 +26,7 @@ public class Trigger_sword : MonoBehaviour
 
 		_tPcs.SetMyColliderKind (eColliderKind.Weapon);
 		_tPcs.SetOppColliderKind (other);
-		_tPcs.OnEnter (other , this.transform.parent.parent);
+		//_tPcs.OnEnter (other , this.transform);
 	}
 	void OnTriggerStay(Collider other)
 	{
@@ -34,7 +34,7 @@ public class Trigger_sword : MonoBehaviour
 
 		//_tPcs.SetMyColliderKind (eColliderKind.Weapon);
 		//_tPcs.SetOppColliderKind (_tPcs.oppColliderKind);
-		_tPcs.OnStay (other , this.transform.parent.parent);
+		//_tPcs.OnStay (other , this.transform);
 	}
 	void OnTriggerExit(Collider other)
 	{
@@ -42,21 +42,25 @@ public class Trigger_sword : MonoBehaviour
 
 		_tPcs.SetMyColliderKind (eColliderKind.None);
 		_tPcs.SetOppColliderKind (eColliderKind.None);
-		_tPcs.OnExit (other , this.transform.parent.parent);
+		//_tPcs.OnExit (other , this.transform);
 	}
 
 	void OnCollisionEnter(Collision collision) 
 	{
-		_tPcs.OnEnter (collision , this.transform.parent.parent);
+		_tPcs.SetMyColliderKind (eColliderKind.Weapon);
+		_tPcs.SetOppColliderKind (collision.collider);
+		_tPcs.OnEnter (collision , this.transform);
 	}
 
 	void OnCollisionStay(Collision collision) 
 	{
-		_tPcs.OnStay (collision , this.transform.parent.parent);
+		_tPcs.OnStay (collision , this.transform);
 	}
 
 	void OnCollisionExit(Collision collision) 
 	{
-		_tPcs.OnExit (collision , this.transform.parent.parent);
+		_tPcs.SetMyColliderKind (eColliderKind.None);
+		_tPcs.SetOppColliderKind (eColliderKind.None);
+		_tPcs.OnExit (collision , this.transform);
 	}
 }

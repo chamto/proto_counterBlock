@@ -7,7 +7,11 @@ namespace CounterBlockSting
 	public enum eHashIdx : int
 	{
 		None = 0,
-		Bone_Root,
+
+		Root,
+
+		ForwardZ,
+
 		Bone_Body,
 		Bone_Mesh_Body,
 		Bone_Neck,

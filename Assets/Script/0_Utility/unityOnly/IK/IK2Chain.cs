@@ -56,17 +56,21 @@ public class IK2Chain : MonoBehaviour
 		_joint_1_initAngle = _joint_1.localRotation.eulerAngles;
 		_joint_2_initAngle = _joint_2.localRotation.eulerAngles;
 	}
-	public void ToggleOff()
+	public void ToggleOff(bool restoreAngles)
 	{
 		//true => false
 		if(false == this._toggleIK) return;
 		this._toggleIK = false;
 		//----------------------------------------
-		
-		//_joint_1.localRotation = Quaternion.Euler (_joint_1_initAngle);
-		//_joint_2.localRotation = Quaternion.Euler (_joint_2_initAngle);
-		_joint_1.localEulerAngles = _joint_1_initAngle;
-		_joint_2.localEulerAngles = _joint_2_initAngle;
+
+		if (true == restoreAngles) 
+		{
+			//_joint_1.localRotation = Quaternion.Euler (_joint_1_initAngle);
+			//_joint_2.localRotation = Quaternion.Euler (_joint_2_initAngle);
+			_joint_1.localEulerAngles = _joint_1_initAngle;
+			_joint_2.localEulerAngles = _joint_2_initAngle;
+		}
+
 	}
 
 

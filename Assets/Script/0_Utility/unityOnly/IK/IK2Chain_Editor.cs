@@ -30,7 +30,7 @@ public class IK2Chan_Editor : Editor
 		{
 			//true -> false
 			if(true == myScript.toggleIK)
-				myScript.ToggleOff ();
+				myScript.ToggleOff (true);
 			//false -> true
 			else
 				myScript.ToggleOn ();
