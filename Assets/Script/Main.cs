@@ -9,7 +9,7 @@ public class Main : MonoBehaviour
 	{
 		Single.hierarchy.Init ();
 		//Single.hierarchy.TestPrint ();
-		//DebugWide.LogBlue ("awake");
+		//DebugWide.LogBlue ("Main awake");
 	}
 
 	void OnEnable()

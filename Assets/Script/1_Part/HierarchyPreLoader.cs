@@ -76,7 +76,6 @@ public class HierarchyPreLoader
 		_dataToPath.Clear ();
 		_keySecquence = 0;
 
-		List<GameObject> rootObjects = new List<GameObject>();
 		foreach (Transform root in UnityEngine.Object.FindObjectsOfType<Transform>())
 		{
 			if (root.parent == null)

@@ -33,14 +33,18 @@ public class Multi : MonoBehaviour
 	}
 
 
-	void Start()
+
+	void Awake()
 	{
+		//DebugWide.LogBlue ("Multi awake");
+
 		_hashMap.InitHashInfoMap (this.transform);
 
 		_animator = this.GetComponent<Animator> ();
 		_charAnimator = this.GetComponent<CharacterAnimator> ();
 
 		_trgPrcs = this.GetComponent<TriggerProcess> ();
+
 	}
 
 }	
@@ -74,8 +78,11 @@ public class Character_HashInfoMap : HashInfoMap
 	delegate  Transform DeleMethod(string path);
 	public void InitHashInfoMap(Transform transform)
 	{
+		
 		string basePath = "/"+transform.parent.name+"/"+transform.name;
 		DeleMethod GetTForm = p => Single.hierarchy.GetData (basePath + p);
+
+		//DebugWide.LogBlue (basePath);
 
 		this.Add ((int)eHashIdx.Root, GetTForm(""));
 		this.Add ((int)eHashIdx.ForwardZ, GetTForm("/forwardZ"));
