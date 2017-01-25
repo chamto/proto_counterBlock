@@ -5,29 +5,85 @@ using UnityEngine;
 public class TestCombineRotate : MonoBehaviour 
 {
 	public Transform _testTarget = null;
+	public string _multiOrder = " x  y  z";
+	//public string _multiOrder = " x90  y90  z";
+
+	public bool _apply = false;
+	public void Parse()
+	{
+			
+		Matrix4x4 r = Matrix4x4.identity;
+		
+		float degree = 0;
+		string temp;
+		string[] s =  _multiOrder.Split(" "[0]);
+		foreach (string item in s) 
+		{
+			temp = item.Trim ();
+			if (0 == temp.Length)
+				continue;
+			
+
+			if (temp [0] == 'x') 
+			{
+				temp = temp.TrimStart (temp [0]);
+				//DebugWide.LogBlue (temp);
+				if (false == float.TryParse (temp, out degree))
+					degree = 0;
+				
+				r = r * this.GetRotateX (degree);
+			} else if (temp [0] == 'y') 
+			{
+				temp = temp.TrimStart (temp [0]);
+				if (false == float.TryParse (temp, out degree))
+					degree = 0;
+				
+				r = r * this.GetRotateY (degree);
+			} else if (temp [0] == 'z') 
+			{
+				temp = temp.TrimStart (temp [0]);
+				if (false == float.TryParse (temp, out degree))
+					degree = 0;
+				
+				r = r * this.GetRotateZ (degree);
+			}
+		}
+
+		this.MatrixToTransform(_testTarget, r);
+		DebugWide.LogRed ("angles : "+_testTarget.eulerAngles);
+	}
+
+	void Update () 
+	{
+		if (true == _apply) 
+		{
+			this.Parse ();	
+
+			_apply = false;
+		}
+
+	}
 
 	void Start () 
 	{
-		Matrix4x4 r = Matrix4x4.zero;
-		Matrix4x4 m1 = this.GetRotateZ(45f);
-		Matrix4x4 m2 = this.GetRotateY(45f);
-		Matrix4x4 m3 = this.GetRotateX(45f);
+//		Matrix4x4 r = Matrix4x4.zero;
+//		Matrix4x4 m1 = this.GetRotateZ(45f);
+//		Matrix4x4 m2 = this.GetRotateY(45f);
+//		Matrix4x4 m3 = this.GetRotateX(45f);
 
 		//r = m1 * m2 * m3;
-		r = m3 * m2 * m1;
+		//r = m3 * m2 * m1;
 
+		//DebugWide.LogBlue (m1);
+		//DebugWide.LogBlue (m2);
+		//DebugWide.LogRed (r);
 
-		DebugWide.LogBlue (m1);
-		DebugWide.LogBlue (m2);
-		DebugWide.LogRed (r);
+		//this.MatrixToTransform(_testTarget, r);
 
-
-		//_testTarget.position = r * _testTarget.position;
-		this.MatrixToTransform(_testTarget, r);
-
-		DebugWide.LogRed (_testTarget.position);
+		//DebugWide.LogRed (_testTarget.position);
 	}
 
+	//ref : http://answers.unity3d.com/questions/1134216/how-to-set-transformation-matrices-of-transform.html
 	public void MatrixToTransform(Transform tr, Matrix4x4 mat)
 	{
 		tr.localPosition = mat.GetColumn( 3 );
@@ -115,8 +171,6 @@ public class TestCombineRotate : MonoBehaviour
 		return m;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+
 }
