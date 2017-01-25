@@ -8,6 +8,7 @@ public class TestCombineRotate : MonoBehaviour
 	public string _multiOrder = " x  y  z";
 	//public string _multiOrder = " x90  y90  z";
 
+	public bool _repeat = false;
 	public bool _apply = false;
 	public void Parse()
 	{
@@ -49,10 +50,17 @@ public class TestCombineRotate : MonoBehaviour
 			}
 		}
 
+		prev_angles = dest_angles;
 		this.MatrixToTransform(_testTarget, r);
+		dest_angles = _testTarget.eulerAngles;
+		elapsedTime = 0;
+
 		DebugWide.LogRed ("angles : "+_testTarget.eulerAngles);
 	}
 
+	float elapsedTime = 0;
+	Vector3 prev_angles = Vector3.zero;
+	Vector3 dest_angles = Vector3.zero;
 	void Update () 
 	{
 		if (true == _apply) 
@@ -61,6 +69,26 @@ public class TestCombineRotate : MonoBehaviour
 
 			_apply = false;
 		}
+
+		//interpolation
+
+		elapsedTime += Time.deltaTime;
+
+
+		if (true == _repeat)
+		{
+			elapsedTime = Mathf.Repeat (elapsedTime, 2f);
+
+			//0~1
+			if(0 <= elapsedTime && elapsedTime <= 1f)
+				_testTarget.eulerAngles = Vector3.Lerp (dest_angles, prev_angles, elapsedTime);
+			//1~2
+			else if(1f < elapsedTime && elapsedTime <= 2f)
+			_testTarget.eulerAngles = Vector3.Lerp (prev_angles, dest_angles, elapsedTime -1f);
+		}
+		else
+			_testTarget.eulerAngles = Vector3.Lerp (prev_angles, dest_angles, elapsedTime);
+
 
 	}
 
