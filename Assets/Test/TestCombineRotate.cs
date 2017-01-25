@@ -120,7 +120,7 @@ public class TestCombineRotate : MonoBehaviour
 		tr.localRotation = new Quaternion( ( mat.m21 - mat.m12 ) / ( 4.0f * w ), ( mat.m02 - mat.m20 ) / ( 4.0f * w ), ( mat.m10 - mat.m01 ) / ( 4.0f * w ), w );
 	}
 
-
+	// 유니티엔진의 회전행렬 결합 순서 : y => x => z
 
 	//열우선 행렬 : v' = m * v
 	//v1: 00 01 02 03
