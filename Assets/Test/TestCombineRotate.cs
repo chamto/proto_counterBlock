@@ -385,7 +385,19 @@ public class TestCombineRotate : MonoBehaviour
 		foreach (Transform tr in groupTr.GetComponentsInChildren<Transform> ()) 
 		{
 			tr.position = mat.MultiplyPoint (tr.position);
+			//tr.position = this.MultiplyFirstRow(tr.position, mat); //chamto test
 		}
+	}
+
+	public Vector4 MultiplyFirstRow(Vector4 p_left ,Matrix4x4 m_right )
+	{
+		Vector4 result;
+		result.x = Vector4.Dot (m_right.GetColumn (0), p_left);
+		result.y = Vector4.Dot (m_right.GetColumn (1), p_left);
+		result.z = Vector4.Dot (m_right.GetColumn (2), p_left);
+		result.w = Vector4.Dot (m_right.GetColumn (3), p_left);
+
+		return result;
 	}
 
 	// 유니티엔진의 회전행렬 결합 순서 : y => x => z
@@ -438,6 +450,7 @@ public class TestCombineRotate : MonoBehaviour
 		m.SetRow (2, new Vector4 (0, sin,  cos, 0));
 		m.SetRow (3, new Vector4 (0,   0,    0, 1));
 
+		//m = m.transpose; //chamto test
 		return m;
 		 
 	}
@@ -458,6 +471,7 @@ public class TestCombineRotate : MonoBehaviour
 		m.SetRow (2, new Vector4 (-sin,  0,  cos, 0));
 		m.SetRow (3, new Vector4 (   0,  0,    0, 1));
 
+		//m = m.transpose; //chamto test
 		return m;
 
 	}
@@ -478,6 +492,7 @@ public class TestCombineRotate : MonoBehaviour
 		m.SetRow (2, new Vector4 (  0,    0, 1, 0));
 		m.SetRow (3, new Vector4 (  0,    0, 0, 1));
 
+		//m = m.transpose; //chamto test
 		return m;
 	}
 	
