@@ -1,14 +1,16 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-public class SimpleParser : List<SimpleParser.Sentences>
+/// <summary>
+/// TRS parser.
+/// T : Translation *  R : Rotate * S : Scale
+/// multiOrder : "s(x y z) rz0 ry0 rx0 t(x y z)" 
+/// </summary>
+public class TRSParser : List<TRSParser.Sentences>
 {
-	
 
-	//text > sentence > commansGroup > command
+	//text > sentence > commansList > command
 
 	public class Sentences : List<Command> 
 	{
@@ -24,11 +26,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 		public eKind kind = eKind.None;
 		public string text = "";
 
-//		public Matrix4x4 GetMatrix()
-//		{
-//		}
 	}
-
 
 	public class Command
 	{
@@ -49,7 +47,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 		public Vector3 xyz;
 	}
 
-
+	//Parsing -> _incision -> SentenceDecomposition -> CommandDecomposition
 
 	//"s(x y z) rz0 ry0 rx0 t(x y z)";
 	public void Parsing(string text)
@@ -63,8 +61,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 		}
 	}
 
-
-
+	//문장 분해
 	public Sentences SentenceDecomposition(string text)
 	{
 		Sentences sts = new Sentences ();
@@ -86,6 +83,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 		return sts;
 	}
 
+	//명령어 분해
 	//"s(x y z) rz0 ry0 rx0 t(x y z)";
 	public void CommandDecomposition(Sentences sts)
 	{
@@ -140,7 +138,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 				if (false == float.TryParse (temp, out value)) {
 					value = 0;
 				}
-				sts.Add(new Command(SimpleParser.Command.eKind.X, value));
+				sts.Add(new Command(TRSParser.Command.eKind.X, value));
 			}
 			if (temp.Length != 0 && 'y' == temp[0]) 
 			{
@@ -149,7 +147,7 @@ public class SimpleParser : List<SimpleParser.Sentences>
 				if (false == float.TryParse (temp, out value)) {
 					value = 0;
 				}
-				sts.Add(new Command(SimpleParser.Command.eKind.Y, value));
+				sts.Add(new Command(TRSParser.Command.eKind.Y, value));
 			}
 			if (temp.Length != 0 && 'z' == temp[0]) 
 			{
@@ -158,13 +156,13 @@ public class SimpleParser : List<SimpleParser.Sentences>
 				if (false == float.TryParse (temp, out value)) {
 					value = 0;
 				}
-				sts.Add(new Command(SimpleParser.Command.eKind.Z, value));
+				sts.Add(new Command(TRSParser.Command.eKind.Z, value));
 			}
 
 		}
 	}
 
-
+	//자르기 - 명령어 구분하기
 	private List<string> _incision(string text)
 	{
 		int L = text.Length - 1;
@@ -208,7 +206,6 @@ public class SimpleParser : List<SimpleParser.Sentences>
 		return list;
 	}
 
-
 	public void TestPrint(string text)
 	{
 		List<string> list = this._incision (text);
@@ -220,184 +217,48 @@ public class SimpleParser : List<SimpleParser.Sentences>
 
 }
 
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 
-
-public class TestCombineRotate : MonoBehaviour 
+static public class TRSHelper
 {
-	public Transform _testTarget = null;
-	public Transform _testAxis = null;
-	public string _multiOrder = "s(x y z) rz0 ry0 rx0 t(x y z)";
-
-	public bool _repeat = false;
-	public bool _apply = false;
-
-	private SimpleParser _parser = new SimpleParser();
-
-
-
-
-	void Start () 
+	static public Matrix4x4 ParsingMatrix(TRSParser parser , string order)
 	{
-		Matrix4x4 mrx = Matrix4x4.identity;
-		Matrix4x4 mry = Matrix4x4.identity;
-		Matrix4x4 mrz = Matrix4x4.identity;
-		Matrix4x4 mt = Matrix4x4.identity;
-		Matrix4x4 r = Matrix4x4.zero;
+		parser.Parsing(order);
 
-		mrx = this.GetRotateX (45f);
-		mry = this.GetRotateY (45f);
-		mrz = this.GetRotateY (0f);
-		mt = this.GetTranslate(new Vector3(0,0,0));
-
-		//r = mrx * mry * mrz * mt;
-		r = mt* mrx * mry * mrz;
-		//r = mrx * mry * mrz;
-
-		//this.MatrixToGroupTransform (_testAxis, r);
-
-		//_testTarget.position = r.MultiplyPoint (_testTarget.position);
-		//_testTarget.position = mt.MultiplyPoint (_testTarget.position);
-
-		this.SavePosition (_testAxis);
-	}
-
-
-	void Update () 
-	{
-		if (true == _apply) 
-		{
-			
-			this.Parsing();
-
-			//-----------
-			prev_angles = dest_angles;
-			this.MatrixToTransform(_testTarget, trs);
-			dest_angles = _testTarget.eulerAngles;
-			DebugWide.LogRed ("angles : "+_testTarget.eulerAngles + "\n" + trs);
-
-			this.MatrixToGroupTransform (_testAxis, trs);
-			//-----------
-
-			elapsedTime = 0;
-			_apply = false;
-		}
-
-		elapsedTime += Time.deltaTime;
-
-		this.Repeat ();
-
-	}
-
-	float elapsedTime = 0;
-	Vector3 prev_angles = Vector3.zero;
-	Vector3 dest_angles = Vector3.zero;
-	public void Repeat()
-	{
-		//interpolation
-		if (true == _repeat)
-		{
-			elapsedTime = Mathf.Repeat (elapsedTime, 2f);
-
-			//0~1
-			if(0 <= elapsedTime && elapsedTime <= 1f)
-				_testTarget.eulerAngles = Vector3.Lerp (dest_angles, prev_angles, elapsedTime);
-			//1~2
-			else if(1f < elapsedTime && elapsedTime <= 2f)
-				_testTarget.eulerAngles = Vector3.Lerp (prev_angles, dest_angles, elapsedTime -1f);
-		}
-		else
-			_testTarget.eulerAngles = Vector3.Lerp (prev_angles, dest_angles, elapsedTime);
-		
-	}
-
-
-
-	Matrix4x4 trs = Matrix4x4.identity;
-	public void Parsing()
-	{
-		_parser.Parsing(_multiOrder);
-
-		trs = Matrix4x4.identity;
-		foreach (SimpleParser.Sentences sts in _parser) 
+		Matrix4x4 trs = Matrix4x4.identity;
+		foreach (TRSParser.Sentences sts in parser) 
 		{
 			if (0 == sts.Count)
 				continue;
 
 			switch (sts.kind) 
 			{
-			case SimpleParser.Sentences.eKind.Translate:
-				trs = trs * this.GetTranslate (sts [0].xyz);
-				break;
-			case SimpleParser.Sentences.eKind.Rotate:
+			case TRSParser.Sentences.eKind.Translate:
 				{
-					if (SimpleParser.Command.eKind.X == sts [0].kind)
-						trs = trs * this.GetRotateX (sts [0].degree);
-					if (SimpleParser.Command.eKind.Y == sts [0].kind)
-						trs = trs * this.GetRotateY (sts [0].degree);
-					if (SimpleParser.Command.eKind.Z == sts [0].kind)
-						trs = trs * this.GetRotateZ (sts [0].degree);
+					trs = trs * TRSHelper.GetTranslate (sts [0].xyz);
 				}
 				break;
-			case SimpleParser.Sentences.eKind.Scale:
-				trs = trs * this.GetScale (sts [0].xyz);
+			case TRSParser.Sentences.eKind.Rotate:
+				{
+					if (TRSParser.Command.eKind.X == sts [0].kind)
+						trs = trs * TRSHelper.GetRotateX (sts [0].degree);
+					if (TRSParser.Command.eKind.Y == sts [0].kind)
+						trs = trs * TRSHelper.GetRotateY (sts [0].degree);
+					if (TRSParser.Command.eKind.Z == sts [0].kind)
+						trs = trs * TRSHelper.GetRotateZ (sts [0].degree);
+				}
+				break;
+			case TRSParser.Sentences.eKind.Scale:
+				trs = trs * TRSHelper.GetScale (sts [0].xyz);
 				break;
 			}
 		}
 
-	}
+		return trs;
 
-	//ref : http://answers.unity3d.com/questions/1134216/how-to-set-transformation-matrices-of-transform.html
-	public void MatrixToTransform(Transform tr, Matrix4x4 mat)
-	{
-		tr.localPosition = mat.GetColumn( 3 );
-		tr.localScale = new Vector3( mat.GetColumn( 0 ).magnitude, mat.GetColumn( 1 ).magnitude, mat.GetColumn( 2 ).magnitude );
-
-		float w = Mathf.Sqrt( 1.0f + mat.m00 + mat.m11 + mat.m22 ) / 2.0f;
-		tr.localRotation = new Quaternion( ( mat.m21 - mat.m12 ) / ( 4.0f * w ), ( mat.m02 - mat.m20 ) / ( 4.0f * w ), ( mat.m10 - mat.m01 ) / ( 4.0f * w ), w );
-	}
-
-
-	Dictionary<Transform ,Vector3> savePositions = new Dictionary<Transform ,Vector3> ();
-	public void SavePosition(Transform groupTr)
-	{
-		savePositions.Clear ();
-		foreach (Transform tr in groupTr.GetComponentsInChildren<Transform> ()) 
-		{
-			savePositions.Add (tr,tr.position);
-		}
-	}
-
-	public void LoadPosition(Transform groupTr)
-	{
-		foreach (KeyValuePair<Transform, Vector3> p in savePositions) 
-		{
-			p.Key.position = p.Value;
-		}
-	}
-
-	public void MatrixToGroupTransform(Transform groupTr, Matrix4x4 mat)
-	{
-		if (null == groupTr)
-			return;
-
-		this.LoadPosition (groupTr);
-		foreach (Transform tr in groupTr.GetComponentsInChildren<Transform> ()) 
-		{
-			tr.position = mat.MultiplyPoint (tr.position);
-			//tr.position = this.MultiplyFirstRow(tr.position, mat); //chamto test
-		}
-	}
-
-	public Vector4 MultiplyFirstRow(Vector4 p_left ,Matrix4x4 m_right )
-	{
-		Vector4 result;
-		result.x = Vector4.Dot (m_right.GetColumn (0), p_left);
-		result.y = Vector4.Dot (m_right.GetColumn (1), p_left);
-		result.z = Vector4.Dot (m_right.GetColumn (2), p_left);
-		result.w = Vector4.Dot (m_right.GetColumn (3), p_left);
-
-		return result;
 	}
 
 	// 유니티엔진의 회전행렬 결합 순서 : y => x => z
@@ -408,7 +269,7 @@ public class TestCombineRotate : MonoBehaviour
 	//v3: 20 21 22 23
 	//v4: 30 31 32 33
 
-	public Matrix4x4 GetScale(Vector3 scale)
+	static public Matrix4x4 GetScale(Vector3 scale)
 	{
 		//s1 : 00
 		//s2 : 11
@@ -422,7 +283,7 @@ public class TestCombineRotate : MonoBehaviour
 		return m;
 	}
 
-	public Matrix4x4 GetTranslate(Vector3 pos)
+	static public Matrix4x4 GetTranslate(Vector3 pos)
 	{
 		//t1 : 03
 		//t2 : 13
@@ -434,7 +295,7 @@ public class TestCombineRotate : MonoBehaviour
 		return m;
 	}
 
-	public Matrix4x4 GetRotateX(float degree)
+	static public Matrix4x4 GetRotateX(float degree)
 	{
 		// 1   0    0 
 		// 0  cos -sin 
@@ -452,10 +313,10 @@ public class TestCombineRotate : MonoBehaviour
 
 		//m = m.transpose; //chamto test
 		return m;
-		 
+
 	}
 
-	public Matrix4x4 GetRotateY(float degree)
+	static public Matrix4x4 GetRotateY(float degree)
 	{
 		// cos  0  sin
 		//  0   1   0
@@ -476,7 +337,7 @@ public class TestCombineRotate : MonoBehaviour
 
 	}
 
-	public Matrix4x4 GetRotateZ(float degree)
+	static public Matrix4x4 GetRotateZ(float degree)
 	{
 		// cos -sin  0
 		// sin  cos  0
@@ -495,7 +356,4 @@ public class TestCombineRotate : MonoBehaviour
 		//m = m.transpose; //chamto test
 		return m;
 	}
-	
-
-
 }

@@ -1,0 +1,891 @@
+﻿//===============================================================================
+// @ IvQuat.h
+// 
+// Quaternion class
+// ------------------------------------------------------------------------------
+// Copyright (C) 2004 by Elsevier, Inc. All rights reserved.
+//
+//
+//
+//===============================================================================
+
+
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+
+namespace ML
+{
+	
+	public class Util
+	{
+		static public float  kEpsilon = 1.0e-6f; //허용오차
+		//float.Epsilon : 실수 오차값이 너무 작아, 계산 범위에 못 들어 올 수 있다.
+
+		static public bool IsZero( float a ) 
+		{
+			
+			return ( Mathf.Abs(a) < kEpsilon );
+
+		}
+
+		static public float InvSqrt( float val )     
+		{ 
+			return 1.0f/ Mathf.Sqrt( val ); 
+		}
+
+		static public void SinCos( float a, ref float sina, ref float cosa )
+		{
+			sina = Mathf.Sin(a);
+			cosa = Mathf.Cos(a);
+		} 
+
+
+	}
+}
+
+public class IvQuat 
+{
+	// member variables
+	private float w, x, y, z;      
+
+	// useful defaults
+	static public IvQuat   zero = new IvQuat(0,0,0,0);
+	static public IvQuat   identity = new IvQuat(1f,0,0,0);
+
+
+
+	public IvQuat()
+	{
+		w = 1.0f; x = 0f; y = 0f; z = 0f;
+	}
+
+	public IvQuat(float w, float x, float y, float z)
+	{
+		this.w = w; this.x = x; this.y = y; this.z = z;
+	}
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IvQuat()
+	//-------------------------------------------------------------------------------
+	// Axis-angle constructor
+	//-------------------------------------------------------------------------------
+	public IvQuat( ref Vector3 axis, float angle )
+	{
+		Set(ref axis, angle );
+	}   // End of IvQuat::IvQuat()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IvQuat()
+	//-------------------------------------------------------------------------------
+	// To-from vector constructor
+	//-------------------------------------------------------------------------------
+	public IvQuat( ref Vector3 from, ref Vector3 to )
+	{
+		Set(ref from,ref to );
+	}   // End of IvQuat::IvQuat()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IvQuat()
+	//-------------------------------------------------------------------------------
+	// Vector constructor
+	//-------------------------------------------------------------------------------
+	public IvQuat( ref Vector3 vector )
+	{
+		Set( 0.0f, vector.x, vector.y, vector.z );
+	}   // End of IvQuat::IvQuat()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IvQuat()
+	//-------------------------------------------------------------------------------
+	// Rotation matrix constructor
+	//-------------------------------------------------------------------------------
+	//public IvQuat( ref Matrix33 rotation )
+	public IvQuat( ref Matrix4x4 rotation )
+	{
+		
+		//float trace = rotation.Trace();
+		float trace = rotation.m00 + rotation.m11 + rotation.m22;
+		if ( trace > 0.0f )
+		{
+			float s = Mathf.Sqrt( trace + 1.0f );
+			w = s*0.5f;
+			float recip = 0.5f/s;
+			x = (rotation.m21 - rotation.m12)*recip;
+			y = (rotation.m02 - rotation.m20)*recip;
+			z = (rotation.m10 - rotation.m01)*recip;
+		}
+		else
+		{ 
+
+			int i = 0;
+			if ( rotation.m11 > rotation.m00 )
+				i = 1;
+			if ( rotation[2,2] > rotation[i,i] )
+				i = 2;
+			int j = (i+1)%3;
+			int k = (j+1)%3;
+			float s = Mathf.Sqrt( rotation[i,i] - rotation[j,j] - rotation[k,k] + 1.0f );
+			//(*this)[i] = 0.5f*s;
+			this.setXYZ(i, 0.5f * s);
+			float recip = 0.5f/s;
+			w = (rotation[k,j] - rotation[j,k])*recip;
+			//(*this)[j] = (rotation[j,i] + rotation[i,j])*recip;
+			this.setXYZ(j, (rotation[j,i] + rotation[i,j])*recip);
+			//(*this)[k] = (rotation[k,i] + rotation[i,k])*recip;
+			this.setXYZ(k, (rotation[k,i] + rotation[i,k])*recip);
+		}
+
+	}   // End of IvQuat::IvQuat()
+
+	private void setXYZ(int index, float value)
+	{
+		switch (index) 
+		{
+		case 0:
+			this.x = value;
+			break;
+		case 1:
+			break;
+			this.y = value;
+		case 2:
+			this.z = value;
+			break;
+		}
+	}
+
+	public void Set( float _w, float _x, float _y, float _z )
+	{
+		w = _w; x = _x; y = _y; z = _z;
+	}   // End of IvQuat::Set()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Set()
+	//-------------------------------------------------------------------------------
+	// Set quaternion based on axis-angle
+	//-------------------------------------------------------------------------------
+	public void Set(ref Vector3 axis, float angle )
+	{
+		// if axis of rotation is zero vector, just set to identity quat
+		float length = axis.sqrMagnitude;
+		if ( ML.Util.IsZero( length ) )
+		{
+			Identity();
+			return;
+		}
+
+		// take half-angle
+		angle *= 0.5f;
+
+		float sintheta=0, costheta=0;
+		ML.Util.SinCos(angle, ref sintheta, ref costheta);
+
+		float scaleFactor = sintheta/Mathf.Sqrt( length );
+
+		w = costheta;
+		x = scaleFactor * axis.x;
+		y = scaleFactor * axis.y;
+		z = scaleFactor * axis.z;
+
+	}   // End of IvQuat::Set()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Set()
+	//-------------------------------------------------------------------------------
+	// Set quaternion based on start and end vectors
+	// 
+	// This is a slightly faster method than that presented in the book, and it 
+	// doesn't require unit vectors as input.  Found on GameDev.net, in an article by
+	// minorlogic.  Original source unknown.
+	//-------------------------------------------------------------------------------
+	public void Set(ref Vector3 from, ref Vector3 to )
+	{
+		// get axis of rotation
+		Vector3 axis = Vector3.Cross (from, to);
+
+
+		// get scaled cos of angle between vectors and set initial quaternion
+		Set(  Vector3.Dot(from, to), axis.x, axis.y, axis.z );
+		// quaternion at this point is ||from||*||to||*( cos(theta), r*sin(theta) )
+
+		// normalize to remove ||from||*||to|| factor
+		Normalize();
+		// quaternion at this point is ( cos(theta), r*sin(theta) )
+		// what we want is ( cos(theta/2), r*sin(theta/2) )
+
+		// set up for half angle calculation
+		w += 1.0f;
+
+		// now when we normalize, we'll be dividing by sqrt(2*(1+cos(theta))), which is 
+		// what we want for r*sin(theta) to give us r*sin(theta/2)  (see pages 487-488)
+		// 
+		// w will become 
+		//                 1+cos(theta)
+		//            ----------------------
+		//            sqrt(2*(1+cos(theta)))        
+		// which simplifies to
+		//                cos(theta/2)
+
+		// before we normalize, check if vectors are opposing
+		if ( w <= ML.Util.kEpsilon )
+		{
+			// rotate pi radians around orthogonal vector
+			// take cross product with x axis
+			if ( from.z*from.z > from.x*from.x )
+				Set( 0.0f, 0.0f, from.z, -from.y );
+			// or take cross product with z axis
+			else
+				Set( 0.0f, from.y, -from.x, 0.0f );
+		}
+
+		// normalize again to get rotation quaternion
+		Normalize();
+
+	}   // End of IvQuat::Set()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Set()
+	//-------------------------------------------------------------------------------
+	// Set quaternion based on fixed angles
+	//-------------------------------------------------------------------------------
+	public void Set( float zRotation, float yRotation, float xRotation ) 
+	{
+		zRotation *= 0.5f;
+		yRotation *= 0.5f;
+		xRotation *= 0.5f;
+
+		// get sines and cosines of half angles
+		float Cx=0, Sx=0;
+		ML.Util.SinCos(xRotation, ref Sx, ref Cx);
+
+		float Cy=0, Sy=0;
+		ML.Util.SinCos(yRotation, ref Sy, ref Cy);
+
+		float Cz=0, Sz=0;
+		ML.Util.SinCos(zRotation, ref Sz, ref Cz);
+
+		// multiply it out
+		w = Cx*Cy*Cz - Sx*Sy*Sz;
+		x = Sx*Cy*Cz + Cx*Sy*Sz;
+		y = Cx*Sy*Cz - Sx*Cy*Sz;
+		z = Cx*Cy*Sz + Sx*Sy*Cx;
+
+	}   // End of IvQuat::Set()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Zero()
+	//-------------------------------------------------------------------------------
+	// Zero all elements
+	//-------------------------------------------------------------------------------
+	public void Zero()
+	{
+	    x = y = z = w = 0.0f;
+	}   // End of IvQuat::Zero()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Identity()
+	//-------------------------------------------------------------------------------
+	// Set to identity quaternion
+	//-------------------------------------------------------------------------------
+	public void Identity()
+	{
+	    x = y = z = 0.0f;
+	    w = 1.0f;
+	}   // End of IvQuat::Identity
+
+
+
+
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Magnitude()
+	//-------------------------------------------------------------------------------
+	// Quaternion magnitude (square root of norm)
+	//-------------------------------------------------------------------------------
+	public float Magnitude()
+	{
+		return Mathf.Sqrt( w*w + x*x + y*y + z*z );
+
+	}   // End of IvQuat::Magnitude()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Norm()
+	//-------------------------------------------------------------------------------
+	// Quaternion norm
+	//-------------------------------------------------------------------------------
+	public float Norm()
+	{
+		return ( w*w + x*x + y*y + z*z );
+
+	}   // End of IvQuat::Norm()
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IsZero()
+	//-------------------------------------------------------------------------------
+	// Check for zero quat
+	//-------------------------------------------------------------------------------
+	public bool IsZero()
+	{
+		return ML.Util.IsZero(w*w + x*x + y*y + z*z);
+
+	}   // End of IvQuat::IsZero()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IsUnit()
+	//-------------------------------------------------------------------------------
+	// Check for unit quat
+	//-------------------------------------------------------------------------------
+	public bool IsUnit()
+	{
+		return ML.Util.IsZero(1.0f - w*w - x*x - y*y - z*z);
+
+	}   // End of IvQuat::IsUnit()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::IsIdentity()
+	//-------------------------------------------------------------------------------
+	// Check for identity quat
+	//-------------------------------------------------------------------------------
+	public bool IsIdentity()
+	{
+		return ML.Util.IsZero(1.0f - w)
+			&& ML.Util.IsZero( x ) 
+			&& ML.Util.IsZero( y )
+			&& ML.Util.IsZero( z );
+
+	}   // End of IvQuat::IsIdentity()
+
+
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::GetAxisAngle()
+	//-------------------------------------------------------------------------------
+	// Get axis-angle based on quaternion
+	//-------------------------------------------------------------------------------
+	public void GetAxisAngle( ref Vector3 axis, ref float angle )
+	{
+		angle = 2.0f*Mathf.Acos( w );
+		float length = Mathf.Sqrt( 1.0f - w*w );
+		if ( ML.Util.IsZero(length) )
+			axis = Vector3.zero;
+		else
+		{
+			length = 1.0f/length;
+			axis.Set( x*length, y*length, z*length );
+		}
+
+	}   // End of IvQuat::GetAxisAngle()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Clean()
+	//-------------------------------------------------------------------------------
+	// Set elements close to zero equal to zero
+	//-------------------------------------------------------------------------------
+	public void Clean()
+	{
+		if ( ML.Util.IsZero( w ) )
+			w = 0.0f;
+		if ( ML.Util.IsZero( x ) )
+			x = 0.0f;
+		if ( ML.Util.IsZero( y ) )
+			y = 0.0f;
+		if ( ML.Util.IsZero( z ) )
+			z = 0.0f;
+
+	}   // End of IvQuat::Clean()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Normalize()
+	//-------------------------------------------------------------------------------
+	// Set to unit quaternion
+	//-------------------------------------------------------------------------------
+	public void Normalize()
+	{
+		float lengthsq = w*w + x*x + y*y + z*z;
+
+		if ( ML.Util.IsZero( lengthsq ) )
+		{
+			Zero();
+		}
+		else
+		{
+			float factor = ML.Util.InvSqrt( lengthsq );
+			w *= factor;
+			x *= factor;
+			y *= factor;
+			z *= factor;
+		}
+
+	}   // End of IvQuat::Normalize()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Dot()
+	//-------------------------------------------------------------------------------
+	// Dot product by self
+	//-------------------------------------------------------------------------------
+	public float Dot( ref IvQuat quat )
+	{
+		return ( w*quat.w + x*quat.x + y*quat.y + z*quat.z);
+
+	}   // End of IvQuat::Dot()
+
+
+	//-------------------------------------------------------------------------------
+	// @ Dot()
+	//-------------------------------------------------------------------------------
+	// Dot product friend operator
+	//-------------------------------------------------------------------------------
+	public float Dot(ref IvQuat quat1, ref IvQuat quat2 )
+	{
+		return (quat1.w*quat2.w + quat1.x*quat2.x + quat1.y*quat2.y + quat1.z*quat2.z);
+
+	}   // End of Dot()
+
+	//-------------------------------------------------------------------------------
+	// @ ::Conjugate()
+	//-------------------------------------------------------------------------------
+	// Compute complex conjugate
+	//-------------------------------------------------------------------------------
+	public IvQuat Conjugate( ref IvQuat quat ) 
+	{
+		return new IvQuat( quat.w, -quat.x, -quat.y, -quat.z );
+
+	}   // End of Conjugate()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Conjugate()
+	//-------------------------------------------------------------------------------
+	// Set self to complex conjugate
+	//-------------------------------------------------------------------------------
+	public IvQuat Conjugate()
+	{
+		x = -x;
+		y = -y;
+		z = -z;
+
+		return this;
+
+	}   // End of Conjugate()
+
+
+	//-------------------------------------------------------------------------------
+	// @ ::Inverse()
+	//-------------------------------------------------------------------------------
+	// Compute quaternion inverse
+	//-------------------------------------------------------------------------------
+	public IvQuat Inverse(ref IvQuat quat )
+	{
+		float norm = quat.w*quat.w + quat.x*quat.x + quat.y*quat.y + quat.z*quat.z;
+		// if we're the zero quaternion, just return identity
+		if ( false == ML.Util.IsZero( norm ) )
+		{
+			//ASSERT( false );
+			return new IvQuat();
+		}
+
+		float normRecip = 1.0f / norm;
+		return new IvQuat( normRecip*quat.w, -normRecip*quat.x, -normRecip*quat.y, 
+			-normRecip*quat.z );
+
+	}   // End of Inverse()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Inverse()
+	//-------------------------------------------------------------------------------
+	// Set self to inverse
+	//-------------------------------------------------------------------------------
+	public  IvQuat Inverse()
+	{
+		float norm = w*w + x*x + y*y + z*z;
+		// if we're the zero quaternion, just return
+		if ( ML.Util.IsZero( norm ) )
+			return this;
+
+		float normRecip = 1.0f / norm;
+		w = normRecip*w;
+		x = -normRecip*x;
+		y = -normRecip*y;
+		z = -normRecip*z;
+
+		return this;
+
+	}   // End of Inverse()
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::Rotate()
+	//-------------------------------------------------------------------------------
+	// Rotate vector by quaternion
+	// Assumes quaternion is normalized!
+	//-------------------------------------------------------------------------------
+	public Vector3  Rotate(ref Vector3 vector )
+	{
+		//ASSERT( IsUnit() );
+
+		float vMult = 2.0f*(x*vector.x + y*vector.y + z*vector.z);
+		float crossMult = 2.0f*w;
+		float pMult = crossMult*w - 1.0f;
+
+		return new Vector3( pMult*vector.x + vMult*x + crossMult*(y*vector.z - z*vector.y),
+			pMult*vector.y + vMult*y + crossMult*(z*vector.x - x*vector.z),
+			pMult*vector.z + vMult*z + crossMult*(x*vector.y - y*vector.x) );
+
+	}   // End of IvQuat::Rotate()
+
+
+	//-------------------------------------------------------------------------------
+	// @ Lerp()
+	//-------------------------------------------------------------------------------
+	// Linearly interpolate two quaternions
+	// This will always take the shorter path between them
+	//-------------------------------------------------------------------------------
+	public void Lerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	{
+		// get cos of "angle" between quaternions
+		float cosTheta = start.Dot( ref end );
+
+		// initialize result
+		result = t*end;
+
+		// if "angle" between quaternions is less than 90 degrees
+		if ( cosTheta >= ML.Util.kEpsilon )
+		{
+			// use standard interpolation
+			result += (1.0f-t)*start;
+		}
+		else
+		{
+			// otherwise, take the shorter path
+			result += (t-1.0f)*start;
+		}
+
+	}   // End of Lerp()
+
+
+	//-------------------------------------------------------------------------------
+	// @ Slerp()
+	//-------------------------------------------------------------------------------
+	// Spherical linearly interpolate two quaternions
+	// This will always take the shorter path between them
+	//-------------------------------------------------------------------------------
+	public void Slerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	{
+		// get cosine of "angle" between quaternions
+		float cosTheta = start.Dot( ref end );
+		float startInterp, endInterp;
+
+		// if "angle" between quaternions is less than 90 degrees
+		if ( cosTheta >= ML.Util.kEpsilon )
+		{
+			// if angle is greater than zero
+			if ( (1.0f - cosTheta) > ML.Util.kEpsilon )
+			{
+				// use standard slerp
+				float theta = Mathf.Acos( cosTheta );
+				float recipSinTheta = 1.0f/ Mathf.Sin( theta );
+
+				startInterp = Mathf.Sin( (1.0f - t)*theta )*recipSinTheta;
+				endInterp = Mathf.Sin( t*theta )*recipSinTheta;
+			}
+			// angle is close to zero
+			else
+			{
+				// use linear interpolation
+				startInterp = 1.0f - t;
+				endInterp = t;
+			}
+		}
+		// otherwise, take the shorter route
+		else
+		{
+			// if angle is less than 180 degrees
+			if ( (1.0f + cosTheta) > ML.Util.kEpsilon )
+			{
+				// use slerp w/negation of start quaternion
+				float theta = Mathf.Acos( -cosTheta );
+				float recipSinTheta = 1.0f/Mathf.Sin( theta );
+
+				startInterp = Mathf.Sin( (t-1.0f)*theta )*recipSinTheta;
+				endInterp = Mathf.Sin( t*theta )*recipSinTheta;
+			}
+			// angle is close to 180 degrees
+			else
+			{
+				// use lerp w/negation of start quaternion
+				startInterp = t - 1.0f;
+				endInterp = t;
+			}
+		}
+
+		result = startInterp*start + endInterp*end;
+
+	}   // End of Slerp()
+
+
+	//-------------------------------------------------------------------------------
+	// @ ApproxSlerp()
+	//-------------------------------------------------------------------------------
+	// Approximate spherical linear interpolation of two quaternions
+	// Based on "Hacking Quaternions", Jonathan Blow, Game Developer, March 2002.
+	// See Game Developer, February 2004 for an alternate method.
+	//-------------------------------------------------------------------------------
+	public void ApproxSlerp( ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	{
+		float cosTheta = start.Dot(ref end );
+
+		// correct time by using cosine of angle between quaternions
+		float factor = 1.0f - 0.7878088f*cosTheta;
+		float k = 0.5069269f;
+		factor *= factor;
+		k *= factor;
+
+		float b = 2*k;
+		float c = -3*k;
+		float d = 1 + k;
+
+		t = t*(b*t + c) + d;
+
+		// initialize result
+		result = t*end;
+
+		// if "angle" between quaternions is less than 90 degrees
+		if ( cosTheta >= ML.Util.kEpsilon )
+		{
+			// use standard interpolation
+			result += (1.0f-t)*start;
+		}
+		else
+		{
+			// otherwise, take the shorter path
+			result += (t-1.0f)*start;
+		}
+
+	}   // End of ApproxSlerp()
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator=()
+	//-------------------------------------------------------------------------------
+	// Assignment operator
+	//-------------------------------------------------------------------------------
+	//	IvQuat operator=(const IvQuat& other)
+	//	{
+	//		// if same object
+	//		if ( this == &other )
+	//			return *this;
+	//
+	//		w = other.w;
+	//		x = other.x;
+	//		y = other.y;
+	//		z = other.z;
+	//
+	//		return *this;
+	//
+	//	}   // End of IvQuat::operator=()
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator==()
+	//-------------------------------------------------------------------------------
+	// Comparison operator
+	//-------------------------------------------------------------------------------
+	//	public bool operator==( const IvQuat& other ) const
+	//	{
+	//		if ( ::IsZero( other.w - w )
+	//			&& ::IsZero( other.x - x )
+	//			&& ::IsZero( other.y - y )
+	//			&& ::IsZero( other.z - z ) )
+	//			return true;
+	//
+	//		return false;   
+	//	}   // End of IvQuat::operator==()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator!=()
+	//-------------------------------------------------------------------------------
+	// Comparison operator
+	//-------------------------------------------------------------------------------
+	//	bool operator!=( const IvQuat& other ) const
+	//	{
+	//		if ( ::IsZero( other.w - w )
+	//			|| ::IsZero( other.x - x )
+	//			|| ::IsZero( other.y - y )
+	//			|| ::IsZero( other.z - z ) )
+	//			return false;
+	//
+	//		return true;
+	//	}   // End of IvQuat::operator!=()
+
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator+()
+	//-------------------------------------------------------------------------------
+	// Add quat to self and return
+	//-------------------------------------------------------------------------------
+	//	public IvQuat operator+( const IvQuat& other ) const
+	//	{
+	//		return IvQuat( w + other.w, x + other.x, y + other.y, z + other.z );
+	//
+	//	}   // End of IvQuat::operator+()
+	public static IvQuat operator +(IvQuat left, IvQuat right) 
+	{
+		return new IvQuat( left.w + right.w, left.x + right.x, left.y + right.y, left.z + right.z );
+	}
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator+=()
+	//-------------------------------------------------------------------------------
+	// Add quat to self, store in self
+	//-------------------------------------------------------------------------------
+	//	IvQuat& operator+=( const IvQuat& other )
+	//	{
+	//		w += other.w;
+	//		x += other.x;
+	//		y += other.y;
+	//		z += other.z;
+	//
+	//		return *this;
+	//
+	//	}   // End of IvQuat::operator+=()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator-()
+	//-------------------------------------------------------------------------------
+	// Subtract quat from self and return
+	//-------------------------------------------------------------------------------
+	//	IvQuat operator-( const IvQuat& other ) const
+	//	{
+	//		return IvQuat( w - other.w, x - other.x, y - other.y, z - other.z );
+	//
+	//	}   // End of IvQuat::operator-()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator-=()
+	//-------------------------------------------------------------------------------
+	// Subtract quat from self, store in self
+	//-------------------------------------------------------------------------------
+	//	IvQuat& operator-=( const IvQuat& other )
+	//	{
+	//		w -= other.w;
+	//		x -= other.x;
+	//		y -= other.y;
+	//		z -= other.z;
+	//
+	//		return *this;
+	//
+	//	}   // End of IvQuat::operator-=()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator-=() (unary)
+	//-------------------------------------------------------------------------------
+	// Negate self and return
+	//-------------------------------------------------------------------------------
+	//	IvQuat operator-() const
+	//	{
+	//		return IvQuat(-w, -x, -y, -z);
+	//	}    // End of IvQuat::operator-()
+
+
+	//-------------------------------------------------------------------------------
+	// @ operator*()
+	//-------------------------------------------------------------------------------
+	// Scalar multiplication
+	//-------------------------------------------------------------------------------
+	//	IvQuat operator*( float scalar, const IvQuat& quat )
+	//	{
+	//		return IvQuat( scalar*quat.w, scalar*quat.x, scalar*quat.y, scalar*quat.z );
+	//
+	//	}   // End of operator*()
+	public static IvQuat operator *(float scalar, IvQuat quat) 
+	{
+		return new IvQuat( scalar*quat.w, scalar*quat.x, scalar*quat.y, scalar*quat.z );
+	}
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator*=()
+	//-------------------------------------------------------------------------------
+	// Scalar multiplication by self
+	//-------------------------------------------------------------------------------
+	//	IvQuat& operator*=( float scalar )
+	//	{
+	//		w *= scalar;
+	//		x *= scalar;
+	//		y *= scalar;
+	//		z *= scalar;
+	//
+	//		return *this;
+	//
+	//	}   // End of IvQuat::operator*=()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator*()
+	//-------------------------------------------------------------------------------
+	// Quaternion multiplication
+	//-------------------------------------------------------------------------------
+	//	IvQuat operator*( const IvQuat& other ) const
+	//	{
+	//		return IvQuat( w*other.w - x*other.x - y*other.y - z*other.z,
+	//			w*other.x + x*other.w + y*other.z - z*other.y,
+	//			w*other.y + y*other.w + z*other.x - x*other.z,
+	//			w*other.z + z*other.w + x*other.y - y*other.x );
+	//
+	//	}   // End of IvQuat::operator*()
+	public static IvQuat operator *(IvQuat left, IvQuat right) 
+	{
+		return new IvQuat( 
+			left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z,
+			left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
+			left.w * right.y + left.y * right.w + left.z * right.x - left.x * right.z,
+			left.w * right.z + left.z * right.w + left.x * right.y - left.y * right.x );
+	}
+
+	//-------------------------------------------------------------------------------
+	// @ IvQuat::operator*=()
+	//-------------------------------------------------------------------------------
+	// Quaternion multiplication by self
+	//-------------------------------------------------------------------------------
+	//	IvQuat& operator*=( const IvQuat& other )
+	//	{
+	//		Set( w*other.w - x*other.x - y*other.y - z*other.z,
+	//			w*other.x + x*other.w + y*other.z - z*other.y,
+	//			w*other.y + y*other.w + z*other.x - x*other.z,
+	//			w*other.z + z*other.w + x*other.y - y*other.x );
+	//
+	//		return *this;
+	//
+	//	}   // End of IvQuat::operator*=()
+
+
+
+
+}
+
+
+
+
+
