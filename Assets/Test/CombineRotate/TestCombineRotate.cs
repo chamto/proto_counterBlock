@@ -58,7 +58,7 @@ public class TestCombineRotate : MonoBehaviour
 			DebugWide.LogRed ("angles : "+_testTarget.eulerAngles + "\n" + trs); //chamto test
 
 			//1. 좌표계모양으로 배치된 객체에 적용 : _testAxis
-			this.ApplyMatrixToGroupTransform (_testAxis, trs);
+			this.ApplyMatrixToGroupPosition (_testAxis, trs);
 			//-----------
 
 			elapsedTime = 0;
@@ -110,7 +110,7 @@ public class TestCombineRotate : MonoBehaviour
 	}
 
 	//그룹 전체 tr에 행렬을 곱한다. 
-	public void ApplyMatrixToGroupTransform(Transform groupTr, Matrix4x4 mat)
+	public void ApplyMatrixToGroupPosition(Transform groupTr, Matrix4x4 mat)
 	{
 		if (null == groupTr)
 			return;
@@ -156,6 +156,12 @@ public class TestCombineRotate : MonoBehaviour
 			p.Key.position = p.Value;
 		}
 	}
+
+
+	//----------------------
+
+
+
 
 
 

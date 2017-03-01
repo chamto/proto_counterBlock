@@ -35,7 +35,7 @@ namespace ML
 			return 1.0f/ Mathf.Sqrt( val ); 
 		}
 
-		static public void SinCos( float a, ref float sina, ref float cosa )
+		static public void SinCos( float a, out float sina, out float cosa )
 		{
 			sina = Mathf.Sin(a);
 			cosa = Mathf.Cos(a);
@@ -71,9 +71,9 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Axis-angle constructor
 	//-------------------------------------------------------------------------------
-	public IvQuat( ref Vector3 axis, float angle )
+	public IvQuat(Vector3 axis, float angle )
 	{
-		Set(ref axis, angle );
+		Set( axis, angle );
 	}   // End of IvQuat::IvQuat()
 
 
@@ -82,9 +82,9 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// To-from vector constructor
 	//-------------------------------------------------------------------------------
-	public IvQuat( ref Vector3 from, ref Vector3 to )
+	public IvQuat(  Vector3 from,  Vector3 to )
 	{
-		Set(ref from,ref to );
+		Set( from, to );
 	}   // End of IvQuat::IvQuat()
 
 	//-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public class IvQuat
 	// Rotation matrix constructor
 	//-------------------------------------------------------------------------------
 	//public IvQuat( ref Matrix33 rotation )
-	public IvQuat( ref Matrix4x4 rotation )
+	public IvQuat(  Matrix4x4 rotation )
 	{
 		
 		//float trace = rotation.Trace();
@@ -167,7 +167,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Set quaternion based on axis-angle
 	//-------------------------------------------------------------------------------
-	public void Set(ref Vector3 axis, float angle )
+	public void Set( Vector3 axis, float angle )
 	{
 		// if axis of rotation is zero vector, just set to identity quat
 		float length = axis.sqrMagnitude;
@@ -181,7 +181,7 @@ public class IvQuat
 		angle *= 0.5f;
 
 		float sintheta=0, costheta=0;
-		ML.Util.SinCos(angle, ref sintheta, ref costheta);
+		ML.Util.SinCos(angle, out sintheta, out costheta);
 
 		float scaleFactor = sintheta/Mathf.Sqrt( length );
 
@@ -202,7 +202,7 @@ public class IvQuat
 	// doesn't require unit vectors as input.  Found on GameDev.net, in an article by
 	// minorlogic.  Original source unknown.
 	//-------------------------------------------------------------------------------
-	public void Set(ref Vector3 from, ref Vector3 to )
+	public void Set( Vector3 from,  Vector3 to )
 	{
 		// get axis of rotation
 		Vector3 axis = Vector3.Cross (from, to);
@@ -261,13 +261,13 @@ public class IvQuat
 
 		// get sines and cosines of half angles
 		float Cx=0, Sx=0;
-		ML.Util.SinCos(xRotation, ref Sx, ref Cx);
+		ML.Util.SinCos(xRotation, out Sx, out Cx);
 
 		float Cy=0, Sy=0;
-		ML.Util.SinCos(yRotation, ref Sy, ref Cy);
+		ML.Util.SinCos(yRotation, out Sy, out Cy);
 
 		float Cz=0, Sz=0;
-		ML.Util.SinCos(zRotation, ref Sz, ref Cz);
+		ML.Util.SinCos(zRotation, out Sz, out Cz);
 
 		// multiply it out
 		w = Cx*Cy*Cz - Sx*Sy*Sz;
@@ -376,8 +376,9 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Get axis-angle based on quaternion
 	//-------------------------------------------------------------------------------
-	public void GetAxisAngle( ref Vector3 axis, ref float angle )
+	public void GetAxisAngle( out Vector3 axis, out float angle )
 	{
+		axis = Vector3.zero;
 		angle = 2.0f*Mathf.Acos( w );
 		float length = Mathf.Sqrt( 1.0f - w*w );
 		if ( ML.Util.IsZero(length) )
@@ -439,7 +440,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Dot product by self
 	//-------------------------------------------------------------------------------
-	public float Dot( ref IvQuat quat )
+	public float Dot( IvQuat quat )
 	{
 		return ( w*quat.w + x*quat.x + y*quat.y + z*quat.z);
 
@@ -451,7 +452,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Dot product friend operator
 	//-------------------------------------------------------------------------------
-	public float Dot(ref IvQuat quat1, ref IvQuat quat2 )
+	static public float Dot( IvQuat quat1,  IvQuat quat2 )
 	{
 		return (quat1.w*quat2.w + quat1.x*quat2.x + quat1.y*quat2.y + quat1.z*quat2.z);
 
@@ -462,7 +463,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Compute complex conjugate
 	//-------------------------------------------------------------------------------
-	public IvQuat Conjugate( ref IvQuat quat ) 
+	public IvQuat Conjugate( IvQuat quat ) 
 	{
 		return new IvQuat( quat.w, -quat.x, -quat.y, -quat.z );
 
@@ -490,7 +491,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Compute quaternion inverse
 	//-------------------------------------------------------------------------------
-	public IvQuat Inverse(ref IvQuat quat )
+	public IvQuat Inverse(IvQuat quat )
 	{
 		float norm = quat.w*quat.w + quat.x*quat.x + quat.y*quat.y + quat.z*quat.z;
 		// if we're the zero quaternion, just return identity
@@ -537,7 +538,7 @@ public class IvQuat
 	// Rotate vector by quaternion
 	// Assumes quaternion is normalized!
 	//-------------------------------------------------------------------------------
-	public Vector3  Rotate(ref Vector3 vector )
+	public Vector3  Rotate( Vector3 vector )
 	{
 		//ASSERT( IsUnit() );
 
@@ -561,7 +562,7 @@ public class IvQuat
 	public void Lerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
 	{
 		// get cos of "angle" between quaternions
-		float cosTheta = start.Dot( ref end );
+		float cosTheta = start.Dot( end );
 
 		// initialize result
 		result = t*end;
@@ -590,7 +591,7 @@ public class IvQuat
 	public void Slerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
 	{
 		// get cosine of "angle" between quaternions
-		float cosTheta = start.Dot( ref end );
+		float cosTheta = start.Dot( end );
 		float startInterp, endInterp;
 
 		// if "angle" between quaternions is less than 90 degrees
@@ -650,7 +651,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	public void ApproxSlerp( ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
 	{
-		float cosTheta = start.Dot(ref end );
+		float cosTheta = start.Dot( end );
 
 		// correct time by using cosine of angle between quaternions
 		float factor = 1.0f - 0.7878088f*cosTheta;
@@ -882,7 +883,185 @@ public class IvQuat
 
 
 
+	//----------------------------------------------------------------------------
+	//----------------------------------------------------------------------------
+	//----------------------------------------------------------------------------
 
+
+
+	//----------------------------------------------------------------------------
+	// @ IvMatrix44::GetFixedAngles()
+	// ---------------------------------------------------------------------------
+	// Gets one set of possible z-y-x fixed angles that will generate this matrix
+	// Assumes that upper 3x3 is a rotation matrix
+	//----------------------------------------------------------------------------
+	static public void GetFixedAngles(ref Matrix4x4 mV ,  out Vector3 rotation )
+	{
+		//IvMatrixx
+		// 0  4  8   12
+		// 1  5  9   13
+		// 2  6  10  14
+		// 3  7  11  15
+
+		//Unity Matrix
+		//m00  m01  m02  m03
+		//m10  m11  m12  m13
+		//m20  m21  m22  m23
+		//m30  m31  m32  m33
+
+		float Cx, Sx;
+		float Cy, Sy;
+		float Cz, Sz;
+
+		Sy = mV.m02; //mV[8]
+		Cy = Mathf.Sqrt( 1.0f - Sy*Sy );
+		// normal case
+		if ( false == ML.Util.IsZero( Cy ) )
+		{
+			float factor = 1.0f/Cy;
+			Sx = -mV.m11 * factor; //mV[9]
+			Cx =  mV.m12 * factor; //mV[10]
+			Sz = -mV.m01 * factor; //mV[4]
+			Cz =  mV.m00 * factor;  //mV[0]
+		}
+		// x and z axes aligned
+		else
+		{
+			Sz = 0.0f;
+			Cz = 1.0f;
+			Sx = mV.m21;  //mV[6]
+			Cx = mV.m11;  //mV[5]
+		}
+
+		rotation.z = Mathf.Atan2( Sz, Cz );
+		rotation.y = Mathf.Atan2( Sy, Cy );
+		rotation.x = Mathf.Atan2( Sx, Cx );
+
+	}  // End of IvMatrix44::GetFixedAngles()
+
+
+	//----------------------------------------------------------------------------
+	// @ IvMatrix44::GetAxisAngle()
+	// ---------------------------------------------------------------------------
+	// Gets one possible axis-angle pair that will generate this matrix
+	// Assumes that upper 3x3 is a rotation matrix
+	//----------------------------------------------------------------------------
+	static public void GetAxisAngle(ref Matrix4x4 mV , out Vector3 axis, out float angle )
+	{
+		//IvMatrixx - i + 4 * j = [i,j]
+		// 0  4  8   12
+		// 1  5  9   13
+		// 2  6  10  14
+		// 3  7  11  15
+
+
+		//Unity Matrix
+		//m00  m01  m02  m03
+		//m10  m11  m12  m13
+		//m20  m21  m22  m23
+		//m30  m31  m32  m33
+
+
+		axis = Vector3.zero;
+		float trace = mV[0,0] + mV[1,1] + mV[2,2]; 
+		float cosTheta = 0.5f*(trace - 1.0f);
+		angle = Mathf.Acos( cosTheta );
+
+		// angle is zero, axis can be anything
+		if ( ML.Util.IsZero( angle ) )
+		{
+			axis = Vector3.right;
+		}
+		// standard case
+		else if ( angle < Mathf.PI - ML.Util.kEpsilon)
+		{
+			axis = new Vector3( mV[2,1]-mV[1,2], mV[0,2]-mV[2,0], mV[1,0]-mV[0,1] );
+			axis.Normalize();
+		}
+		// angle is 180 degrees
+		else
+		{
+			int i = 0;
+			if ( mV[1,1] > mV[0,0] )
+				i = 1;
+			if ( mV[2,2] > mV[i,i] )
+				i = 2;
+			int j = (i+1)%3;
+			int k = (j+1)%3;
+			float s = Mathf.Sqrt( mV[i,i] - mV[j,j] - mV[k,k] + 1.0f );
+			axis[i] = 0.5f*s;
+			float recip = 1.0f/s;
+			axis[j] = (mV[i,j])*recip;
+			axis[k] = (mV[k,i])*recip;
+		}
+
+	}  // End of IvMatrix44::GetAxisAngle()
+
+
+	//-------------------------------------------------------------------------------
+	// @ IvMatrix44::Rotation()
+	//-------------------------------------------------------------------------------
+	// Set as rotation matrix based on quaternion
+	//-------------------------------------------------------------------------------
+	public Matrix4x4 Rotation( ref IvQuat rotate )
+	{
+
+		//IvMatrixx - i + 4 * j = [i,j]
+		// 0  4  8   12
+		// 1  5  9   13
+		// 2  6  10  14
+		// 3  7  11  15
+
+
+		//Unity Matrix
+		//m00  m01  m02  m03
+		//m10  m11  m12  m13
+		//m20  m21  m22  m23
+		//m30  m31  m32  m33
+
+
+		//ASSERT( rotate.IsUnit() );
+
+		float xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz;
+
+		xs = rotate.x+rotate.x;   
+		ys = rotate.y+rotate.y;
+		zs = rotate.z+rotate.z;
+		wx = rotate.w*xs;
+		wy = rotate.w*ys;
+		wz = rotate.w*zs;
+		xx = rotate.x*xs;
+		xy = rotate.x*ys;
+		xz = rotate.x*zs;
+		yy = rotate.y*ys;
+		yz = rotate.y*zs;
+		zz = rotate.z*zs;
+
+		Matrix4x4 mV = Matrix4x4.zero;
+
+		mV[0,0] = 1.0f - (yy + zz);
+		mV[0,1] = xy - wz;
+		mV[0,2] = xz + wy;
+		mV[0,3] = 0.0f;
+
+		mV[1,0] = xy + wz;
+		mV[1,1] = 1.0f - (xx + zz);
+		mV[1,2] = yz - wx;
+		mV[1,3] = 0.0f;
+
+		mV[2,0] = xz - wy;
+		mV[2,1] = yz + wx;
+		mV[2,2] = 1.0f - (xx + yy);
+		mV[2,3] = 0.0f;
+
+		mV[3,0] = 0.0f;
+		mV[3,1] = 0.0f;
+		mV[3,2] = 0.0f;
+		mV[3,3] = 1.0f;
+
+		return mV;
+
+	}   // End of Rotation()
 }
 
 
