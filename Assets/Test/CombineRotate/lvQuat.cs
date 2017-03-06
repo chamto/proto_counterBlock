@@ -1004,7 +1004,7 @@ public class IvQuat
 	//-------------------------------------------------------------------------------
 	// Set as rotation matrix based on quaternion
 	//-------------------------------------------------------------------------------
-	static public Matrix4x4 Rotation( ref IvQuat rotate )
+	static public Matrix4x4 Rotation(  IvQuat rotate )
 	{
 
 		//IvMatrixx - i + 4 * j = [i,j]
@@ -1067,12 +1067,12 @@ public class IvQuat
 	static public Matrix4x4 Rotation( ref Quaternion rotate )
 	{
 		IvQuat ivQ = new IvQuat (rotate.w, rotate.x, rotate.y, rotate.z);
-		return IvQuat.Rotation (ref ivQ);
+		return IvQuat.Rotation ( ivQ);
 	}
 
 	public Matrix4x4 Rotation()
 	{
-		return IvQuat.Rotation (ref this);
+		return IvQuat.Rotation ( this);
 	}
 }
 
