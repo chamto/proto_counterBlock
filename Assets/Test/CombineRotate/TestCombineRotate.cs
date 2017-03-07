@@ -34,10 +34,18 @@ public class TestCombineRotate : MonoBehaviour
 		r = mt* mrx * mry * mrz;
 		//r = mrx * mry * mrz;
 
-		//this.MatrixToGroupTransform (_testAxis, r);
+
+
+		IvQuat quat = new IvQuat ();
+		quat.Set (0f, 45f, 45f);
+		r = quat.GetMatrix ();
+		//this.ApplyMatrixToGroupPosition (_testAxis, r);
+		//this.ApplyMatrixToGroupPosition (_testAxis, r);
+
 
 		//_testTarget.position = r.MultiplyPoint (_testTarget.position);
 		//_testTarget.position = mt.MultiplyPoint (_testTarget.position);
+
 
 		this.SavePosition (_testAxis);
 	}

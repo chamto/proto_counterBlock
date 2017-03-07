@@ -249,6 +249,7 @@ public class IvQuat
 	}   // End of IvQuat::Set()
 
 
+	//x(월드) -> y(로컬) -> z(로컬) 순서로 결합
 	//-------------------------------------------------------------------------------
 	// @ IvQuat::Set()
 	//-------------------------------------------------------------------------------
@@ -539,7 +540,7 @@ public class IvQuat
 	// Rotate vector by quaternion
 	// Assumes quaternion is normalized!
 	//-------------------------------------------------------------------------------
-	public Vector3  Rotate( Vector3 vector )
+	public Vector3  Rotate( Vector3 vector ) //???
 	{
 		//ASSERT( IsUnit() );
 
@@ -560,13 +561,13 @@ public class IvQuat
 	// Linearly interpolate two quaternions
 	// This will always take the shorter path between them
 	//-------------------------------------------------------------------------------
-	public void Lerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	public IvQuat Lerp(ref IvQuat start, ref IvQuat end, float t )
 	{
 		// get cos of "angle" between quaternions
 		float cosTheta = start.Dot( end );
 
 		// initialize result
-		result = t*end;
+		IvQuat result = t*end;
 
 		// if "angle" between quaternions is less than 90 degrees
 		if ( cosTheta >= ML.Util.kEpsilon )
@@ -580,6 +581,8 @@ public class IvQuat
 			result += (t-1.0f)*start;
 		}
 
+		return result;
+
 	}   // End of Lerp()
 
 
@@ -589,7 +592,7 @@ public class IvQuat
 	// Spherical linearly interpolate two quaternions
 	// This will always take the shorter path between them
 	//-------------------------------------------------------------------------------
-	public void Slerp(ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	public IvQuat Slerp(ref IvQuat start, ref IvQuat end, float t )
 	{
 		// get cosine of "angle" between quaternions
 		float cosTheta = start.Dot( end );
@@ -638,7 +641,7 @@ public class IvQuat
 			}
 		}
 
-		result = startInterp*start + endInterp*end;
+		return startInterp*start + endInterp*end;
 
 	}   // End of Slerp()
 
@@ -650,7 +653,7 @@ public class IvQuat
 	// Based on "Hacking Quaternions", Jonathan Blow, Game Developer, March 2002.
 	// See Game Developer, February 2004 for an alternate method.
 	//-------------------------------------------------------------------------------
-	public void ApproxSlerp( ref IvQuat result, ref IvQuat start, ref IvQuat end, float t )
+	public IvQuat ApproxSlerp( ref IvQuat start, ref IvQuat end, float t )
 	{
 		float cosTheta = start.Dot( end );
 
@@ -667,7 +670,7 @@ public class IvQuat
 		t = t*(b*t + c) + d;
 
 		// initialize result
-		result = t*end;
+		IvQuat result = t*end;
 
 		// if "angle" between quaternions is less than 90 degrees
 		if ( cosTheta >= ML.Util.kEpsilon )
@@ -680,6 +683,8 @@ public class IvQuat
 			// otherwise, take the shorter path
 			result += (t-1.0f)*start;
 		}
+
+		return result;
 
 	}   // End of ApproxSlerp()
 
@@ -896,7 +901,7 @@ public class IvQuat
 	// Gets one set of possible z-y-x fixed angles that will generate this matrix
 	// Assumes that upper 3x3 is a rotation matrix
 	//----------------------------------------------------------------------------
-	static public void GetFixedAngles(ref Matrix4x4 mV ,  out Vector3 rotation )
+	static public Vector3 GetFixedAnglesFrom(ref Matrix4x4 mV)
 	{
 		//IvMatrixx
 		// 0  4  8   12
@@ -910,6 +915,7 @@ public class IvQuat
 		//m20  m21  m22  m23
 		//m30  m31  m32  m33
 
+		Vector3 rotation;
 		float Cx, Sx;
 		float Cy, Sy;
 		float Cz, Sz;
@@ -938,6 +944,8 @@ public class IvQuat
 		rotation.y = Mathf.Atan2( Sy, Cy );
 		rotation.x = Mathf.Atan2( Sx, Cx );
 
+		return rotation;
+
 	}  // End of IvMatrix44::GetFixedAngles()
 
 
@@ -947,7 +955,7 @@ public class IvQuat
 	// Gets one possible axis-angle pair that will generate this matrix
 	// Assumes that upper 3x3 is a rotation matrix
 	//----------------------------------------------------------------------------
-	static public void GetAxisAngle(ref Matrix4x4 mV , out Vector3 axis, out float angle )
+	static public void GetAxisAngleFrom(ref Matrix4x4 mV , out Vector3 axis, out float angle )
 	{
 		//IvMatrixx - i + 4 * j = [i,j]
 		// 0  4  8   12
@@ -1000,11 +1008,11 @@ public class IvQuat
 
 
 	//-------------------------------------------------------------------------------
-	// @ IvMatrix44::Rotation()
+	// @ IvMatrix44::GetMatrix()
 	//-------------------------------------------------------------------------------
 	// Set as rotation matrix based on quaternion
 	//-------------------------------------------------------------------------------
-	static public Matrix4x4 Rotation(  IvQuat rotate )
+	static public Matrix4x4 GetMatrix(  IvQuat rotate )
 	{
 
 		//IvMatrixx - i + 4 * j = [i,j]
@@ -1064,15 +1072,27 @@ public class IvQuat
 
 	}   // End of Rotation()
 
-	static public Matrix4x4 Rotation( ref Quaternion rotate )
+	static public Matrix4x4 GetMatrix( ref Quaternion rotate )
 	{
 		IvQuat ivQ = new IvQuat (rotate.w, rotate.x, rotate.y, rotate.z);
-		return IvQuat.Rotation ( ivQ);
+		return IvQuat.GetMatrix ( ivQ);
 	}
 
-	public Matrix4x4 Rotation()
+	/// <summary>
+	/// Gets the matrix.
+	/// </summary>
+	/// <returns>The matrix.</returns>
+	/// <param name="fixedAngles">Fixed angles. Degree value </param>
+	static public Matrix4x4 GetMatrix(Vector3 fixedAngles)
 	{
-		return IvQuat.Rotation ( this);
+		IvQuat ivQ = new IvQuat ();
+		ivQ.Set (fixedAngles.z * Mathf.Deg2Rad, fixedAngles.y * Mathf.Deg2Rad, fixedAngles.x * Mathf.Deg2Rad);
+		return IvQuat.GetMatrix (ivQ);
+	}
+
+	public Matrix4x4 GetMatrix()
+	{
+		return IvQuat.GetMatrix ( this);
 	}
 }
 

@@ -19,6 +19,7 @@ public class TRSParser : List<TRSParser.Sentences>
 			None = 0,
 			Translate,
 			Rotate,
+			Quaternion,
 			Scale,
 
 		}
@@ -50,6 +51,7 @@ public class TRSParser : List<TRSParser.Sentences>
 	//Parsing -> _incision -> SentenceDecomposition -> CommandDecomposition
 
 	//"s(x y z) rz0 ry0 rx0 t(x y z)";
+	//"s(x y z) q(x y z) t(x y z)";
 	public void Parsing(string text)
 	{
 		this.Clear ();
@@ -59,6 +61,50 @@ public class TRSParser : List<TRSParser.Sentences>
 		{
 			this.Add ( this.SentenceDecomposition (stsText));
 		}
+	}
+
+	//자르기 - 명령어 구분하기
+	private List<string> _incision(string text)
+	{
+		int L = text.Length - 1;
+
+		int start = -1;
+		int end = -1;
+
+		List<string> list = new List<string> ();
+
+		for(int i=0;i<text.Length;i++)
+		{
+			//scale , translate , quaternion
+			if ('s' == text[i] || 't' == text[i] || 'q' == text[i]) 
+			{
+				start = text.IndexOf ('(', i);
+				end = text.IndexOf (')', start);
+
+				list.Add( text.Substring (i, end - i + 1));
+			}
+
+			//rotate
+			if ('r' == text [i]) 
+			{
+				end = -1;
+				if (L >= i + 1) 
+				{
+					if('x' == text [i + 1] || 'y' == text [i + 1] || 'z' == text [i + 1]) 
+					{
+						end = text.IndexOf (' ', i);
+						if (end < 0)
+							end = L+1;
+
+						list.Add( text.Substring (i, end - i));
+						//DebugWide.LogBlue ("  : " + end + " " + i + "  " + (end - i)); //chamto test
+
+					}
+				}
+			}
+		}
+
+		return list;
 	}
 
 	//문장 분해
@@ -73,6 +119,10 @@ public class TRSParser : List<TRSParser.Sentences>
 		if ('r' == text [0]) 
 		{
 			sts.kind = Sentences.eKind.Rotate;
+		}
+		if ('q' == text [0]) 
+		{
+			sts.kind = Sentences.eKind.Quaternion;
 		}
 		if ('s' == text [0]) 
 		{
@@ -94,9 +144,9 @@ public class TRSParser : List<TRSParser.Sentences>
 		string[] split = null;
 		Vector3 xyz = Vector3.zero;
 
-		if (Sentences.eKind.Translate == sts.kind || Sentences.eKind.Scale == sts.kind)
+		if (Sentences.eKind.Translate == sts.kind || Sentences.eKind.Scale == sts.kind || Sentences.eKind.Quaternion == sts.kind)
 		{
-			temp = sts.text.Trim ('t','s', ')',' ');
+			temp = sts.text.Trim ('t','s','q', ')',' ');
 			temp = temp.Trim ('(', ' ');
 			temp = temp.Trim ();
 			split = temp.Split(' ');
@@ -162,49 +212,7 @@ public class TRSParser : List<TRSParser.Sentences>
 		}
 	}
 
-	//자르기 - 명령어 구분하기
-	private List<string> _incision(string text)
-	{
-		int L = text.Length - 1;
 
-		int start = -1;
-		int end = -1;
-
-		List<string> list = new List<string> ();
-
-		for(int i=0;i<text.Length;i++)
-		{
-			//scale , translate
-			if ('s' == text[i] || 't' == text[i]) 
-			{
-				start = text.IndexOf ('(', i);
-				end = text.IndexOf (')', start);
-
-				list.Add( text.Substring (i, end - i + 1));
-			}
-
-			//rotate
-			if ('r' == text [i]) 
-			{
-				end = -1;
-				if (L >= i + 1) 
-				{
-					if('x' == text [i + 1] || 'y' == text [i + 1] || 'z' == text [i + 1]) 
-					{
-						end = text.IndexOf (' ', i);
-						if (end < 0)
-							end = L+1;
-						
-						list.Add( text.Substring (i, end - i));
-						//DebugWide.LogBlue ("  : " + end + " " + i + "  " + (end - i)); //chamto test
-
-					}
-				}
-			}
-		}
-
-		return list;
-	}
 
 	public void TestPrint(string text)
 	{
@@ -249,6 +257,11 @@ static public class TRSHelper
 						trs = trs * TRSHelper.GetRotateY (sts [0].degree);
 					if (TRSParser.Command.eKind.Z == sts [0].kind)
 						trs = trs * TRSHelper.GetRotateZ (sts [0].degree);
+				}
+				break;
+			case TRSParser.Sentences.eKind.Quaternion:
+				{
+					trs = trs * IvQuat.GetMatrix (sts [0].xyz);
 				}
 				break;
 			case TRSParser.Sentences.eKind.Scale:

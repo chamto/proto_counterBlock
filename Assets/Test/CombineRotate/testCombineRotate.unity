@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _testTarget: {fileID: 855163457}
   _testAxis: {fileID: 362676008}
-  _multiOrder: t(x y z) rx0  ry0  rz0 s(x1 y1 z1)
+  _multiOrder: t(x y z)  q(x y z) rx0  ry0  rz0 s(x1 y1 z1)
   _repeat: 0
   _apply: 0
 --- !u!4 &1087037951
