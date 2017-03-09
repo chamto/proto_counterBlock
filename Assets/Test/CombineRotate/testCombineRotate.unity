@@ -268,7 +268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &362676008
 Transform:
   m_ObjectHideFlags: 0
@@ -773,7 +773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &855163454
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _testTarget: {fileID: 855163457}
   _testAxis: {fileID: 362676008}
-  _multiOrder: t(x y z)  q(x y z) rx0  ry0  rz0 s(x1 y1 z1)
+  _multiOrder: t(x y z)  q(x y z) ry0 rx0  rz0 s(x1 y1 z1)
   _repeat: 0
   _apply: 0
 --- !u!4 &1087037951

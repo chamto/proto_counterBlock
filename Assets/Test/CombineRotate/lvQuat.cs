@@ -249,11 +249,14 @@ public class IvQuat
 	}   // End of IvQuat::Set()
 
 
-	//x(월드) -> y(로컬) -> z(로컬) 순서로 결합
+
 	//-------------------------------------------------------------------------------
 	// @ IvQuat::Set()
 	//-------------------------------------------------------------------------------
 	// Set quaternion based on fixed angles
+	//
+	// 오일러각: x(월드) -> y(로컬) -> z(로컬) 순서로 결합
+	// 고정각 : z(월드) -> y(월드) -> x(월드) 순서로 결합
 	//-------------------------------------------------------------------------------
 	public void Set( float zRotation, float yRotation, float xRotation ) 
 	{
@@ -896,7 +899,7 @@ public class IvQuat
 
 
 	//----------------------------------------------------------------------------
-	// @ IvMatrix44::GetFixedAngles()
+	// @ IvMatrix44::GetFixedAnglesFrom()
 	// ---------------------------------------------------------------------------
 	// Gets one set of possible z-y-x fixed angles that will generate this matrix
 	// Assumes that upper 3x3 is a rotation matrix
@@ -926,8 +929,8 @@ public class IvQuat
 		if ( false == ML.Util.IsZero( Cy ) )
 		{
 			float factor = 1.0f/Cy;
-			Sx = -mV.m11 * factor; //mV[9]
-			Cx =  mV.m12 * factor; //mV[10]
+			Sx = -mV.m12 * factor; //mV[9]
+			Cx =  mV.m22 * factor; //mV[10]
 			Sz = -mV.m01 * factor; //mV[4]
 			Cz =  mV.m00 * factor;  //mV[0]
 		}

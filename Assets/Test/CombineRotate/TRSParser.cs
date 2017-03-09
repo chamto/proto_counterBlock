@@ -261,7 +261,17 @@ static public class TRSHelper
 				break;
 			case TRSParser.Sentences.eKind.Quaternion:
 				{
-					trs = trs * IvQuat.GetMatrix (sts [0].xyz);
+					IvQuat q = new IvQuat ();
+					Vector3 v3Rad = sts [0].xyz * Mathf.Deg2Rad;
+					q.Set (v3Rad.z , v3Rad.y , v3Rad.x); 
+					Matrix4x4 m = q.GetMatrix ();
+					trs = trs * m;
+
+					//chamto test - print fixedAngles of IvQuat
+					Vector3 angles = IvQuat.GetFixedAnglesFrom (ref m);
+					angles *= Mathf.Rad2Deg;
+					DebugWide.LogRed ("1: IvQuat angles : "+angles + "\n"); //chamto test
+
 				}
 				break;
 			case TRSParser.Sentences.eKind.Scale:
@@ -274,7 +284,7 @@ static public class TRSHelper
 
 	}
 
-	// 유니티엔진의 회전행렬 결합 순서 : y(월드) => x(로컬) => z(로컬)
+	// 유니티엔진의 회전행렬 결합 순서 : 오일러각 : y(월드) => x(로컬) => z(로컬)
 
 	//열우선 행렬 : v' = m * v
 	//v1: 00 01 02 03

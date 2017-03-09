@@ -63,7 +63,7 @@ public class TestCombineRotate : MonoBehaviour
 			prev_angles = dest_angles;
 			this.ApplyMatrixToTransform(_testTarget, trs);
 			dest_angles = _testTarget.eulerAngles;
-			DebugWide.LogRed ("angles : "+_testTarget.eulerAngles + "\n" + trs); //chamto test
+			DebugWide.LogBlue ("2: unity angles : "+_testTarget.eulerAngles + "\n"); //chamto test
 
 			//1. 좌표계모양으로 배치된 객체에 적용 : _testAxis
 			this.ApplyMatrixToGroupPosition (_testAxis, trs);
