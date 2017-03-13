@@ -42,9 +42,50 @@ namespace ML
 			cosa = Mathf.Cos(a);
 		}
 
-		static public string ToBit(float number)
+
+		static public string ToBit(double number , bool setBigEndian = true) 
 		{
 			byte[] arByte =  BitConverter.GetBytes (number);
+			if (true == setBigEndian && true == BitConverter.IsLittleEndian) 
+			{
+				Array.Reverse (arByte); //사용자 직관적인 빅인디언으로 바꿔준다 
+			}
+			string buffer = "";
+			foreach(byte b in arByte)
+			{
+				buffer += string.Format ("{0} ", Convert.ToString(b,2)); //2진수 문자열로 변환
+			}
+
+			//Debug.Log (BitConverter.ToDouble (arByte, 0)); //chamto test
+
+			return buffer;
+		}
+
+		static public string ToBit(float number , bool setBigEndian = true) 
+		{
+			byte[] arByte =  BitConverter.GetBytes (number);
+			if (true == setBigEndian && true == BitConverter.IsLittleEndian) 
+			{
+				Array.Reverse (arByte); //사용자 직관적인 빅인디언으로 바꿔준다 
+			}
+			string buffer = "";
+			foreach(byte b in arByte)
+			{
+				buffer += string.Format ("{0} ", Convert.ToString(b,2)); //2진수 문자열로 변환
+			}
+
+			//Debug.Log (BitConverter.ToDouble (arByte, 0)); //chamto test
+
+			return buffer;
+		}
+
+		static public string ToBit(int number , bool setBigEndian = true) 
+		{
+			byte[] arByte =  BitConverter.GetBytes (number);
+			if (true == setBigEndian && true == BitConverter.IsLittleEndian) 
+			{
+				Array.Reverse (arByte); //사용자 직관적인 빅인디언으로 바꿔준다 
+			}
 			string buffer = "";
 			foreach(byte b in arByte)
 			{
@@ -53,6 +94,23 @@ namespace ML
 
 			return buffer;
 		}
+
+
+		//123 456 789
+		//789 456 123
+		//321 654 987
+		static public  float ConvertEndian(float number)
+		{
+			byte[] arByte = BitConverter.GetBytes(number);
+		
+			Array.Reverse(arByte);
+		
+			number = BitConverter.ToInt32(arByte, 0);
+
+			return number;
+		}
+
+
 
 	}
 }

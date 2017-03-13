@@ -51,17 +51,28 @@ public class TestCombineRotate : MonoBehaviour
 		float a = 1.0f;
 		//DebugWide.LogBlue ((a-a) + "  " +  (1.0f - a*a)); //chamto test
 
-		DebugWide.LogBlue(ML.Util.ToBit(0f) + ": 0f");
-		DebugWide.LogBlue(ML.Util.ToBit(1f) + ": 1f");
-		DebugWide.LogBlue(ML.Util.ToBit(2f) + ": 2f");
-		DebugWide.LogBlue(ML.Util.ToBit(3f) + ": 3f");
-		DebugWide.LogBlue(ML.Util.ToBit(0.00001f) + ": 0.00001f");
-		DebugWide.LogBlue(ML.Util.ToBit(-0.00001f) + ": -0.00001f");
-		DebugWide.LogBlue(ML.Util.ToBit(0.00008f) + ": 0.00008f");
-		DebugWide.LogBlue(ML.Util.ToBit(-0.00008f) + ": -0.00008f");
-		DebugWide.LogBlue(ML.Util.ToBit(float.NaN) + ": Nan");
-		DebugWide.LogBlue(ML.Util.ToBit(float.Epsilon) + ": Epsilon");
-		DebugWide.LogBlue(ML.Util.ToBit(float.PositiveInfinity) + ": PositiveInfinity");
+		DebugWide.LogBlue(ML.Util.ToBit(46) + ": 46");
+		DebugWide.LogBlue(ML.Util.ToBit(46, false) + ": 46 lit");
+		DebugWide.LogBlue(ML.Util.ToBit(46f) + ": 46f");
+		DebugWide.LogBlue(ML.Util.ToBit(46f,false) + ": 46f lit");
+		DebugWide.LogBlue(ML.Util.ToBit(46d) + ": 46d");
+		DebugWide.LogBlue(ML.Util.ToBit(46d,false) + ": 46d lit");
+		DebugWide.LogBlue(ML.Util.ToBit(46f) + ": 46f  " + 46f);
+		DebugWide.LogBlue(ML.Util.ToBit(0.000000000000000046f) + ": 0.000000000000000046f  " + 0.000000000000000046f );
+
+//		DebugWide.LogBlue(ML.Util.ToBit(0f) + ": 0f" + BitConverter.IsLittleEndian);
+//		DebugWide.LogBlue(ML.Util.ToBit(1f) + ": 1f");
+//		DebugWide.LogBlue(ML.Util.ToBit(-1f) + ": -1f");
+//		DebugWide.LogBlue(ML.Util.ToBit(2f) + ": 2f");
+//		DebugWide.LogBlue(ML.Util.ToBit(27f) + ": 27f");
+//		DebugWide.LogBlue(ML.Util.ToBit(0.00001f) + ": 0.00001f");
+//		DebugWide.LogBlue(ML.Util.ToBit(-0.00001f) + ": -0.00001f");
+//		DebugWide.LogBlue(ML.Util.ToBit(0.00008f) + ": 0.00008f");
+//		DebugWide.LogBlue(ML.Util.ToBit(-0.00008f) + ": -0.00008f");
+//		DebugWide.LogBlue(ML.Util.ToBit(float.NaN) + ": Nan");
+//		DebugWide.LogBlue(ML.Util.ToBit(float.Epsilon) + ": Epsilon");
+//		DebugWide.LogBlue(ML.Util.ToBit(float.PositiveInfinity) + ": PositiveInfinity");
+//		DebugWide.LogBlue(ML.Util.ToBit(float.NegativeInfinity) + ": NegativeInfinity");
 
 
 
