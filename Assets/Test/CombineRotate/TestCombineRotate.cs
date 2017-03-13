@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,6 +46,23 @@ public class TestCombineRotate : MonoBehaviour
 
 		//_testTarget.position = r.MultiplyPoint (_testTarget.position);
 		//_testTarget.position = mt.MultiplyPoint (_testTarget.position);
+
+
+		float a = 1.0f;
+		//DebugWide.LogBlue ((a-a) + "  " +  (1.0f - a*a)); //chamto test
+
+		DebugWide.LogBlue(ML.Util.ToBit(0f) + ": 0f");
+		DebugWide.LogBlue(ML.Util.ToBit(1f) + ": 1f");
+		DebugWide.LogBlue(ML.Util.ToBit(2f) + ": 2f");
+		DebugWide.LogBlue(ML.Util.ToBit(3f) + ": 3f");
+		DebugWide.LogBlue(ML.Util.ToBit(0.00001f) + ": 0.00001f");
+		DebugWide.LogBlue(ML.Util.ToBit(-0.00001f) + ": -0.00001f");
+		DebugWide.LogBlue(ML.Util.ToBit(0.00008f) + ": 0.00008f");
+		DebugWide.LogBlue(ML.Util.ToBit(-0.00008f) + ": -0.00008f");
+		DebugWide.LogBlue(ML.Util.ToBit(float.NaN) + ": Nan");
+		DebugWide.LogBlue(ML.Util.ToBit(float.Epsilon) + ": Epsilon");
+		DebugWide.LogBlue(ML.Util.ToBit(float.PositiveInfinity) + ": PositiveInfinity");
+
 
 
 		this.SavePosition (_testAxis);

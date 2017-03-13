@@ -10,41 +10,11 @@
 //
 //===============================================================================
 
-
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
-namespace ML
-{
-	
-	public class Util
-	{
-		static public float  kEpsilon = 1.0e-6f; //허용오차
-		//float.Epsilon : 실수 오차값이 너무 작아, 계산 범위에 못 들어 올 수 있다.
-
-		static public bool IsZero( float a ) 
-		{
-			
-			return ( Mathf.Abs(a) < kEpsilon );
-
-		}
-
-		static public float InvSqrt( float val )     
-		{ 
-			return 1.0f/ Mathf.Sqrt( val ); 
-		}
-
-		static public void SinCos( float a, out float sina, out float cosa )
-		{
-			sina = Mathf.Sin(a);
-			cosa = Mathf.Cos(a);
-		} 
-
-
-	}
-}
 
 public class IvQuat 
 {
@@ -923,12 +893,27 @@ public class IvQuat
 		float Cy, Sy;
 		float Cz, Sz;
 
+
+
 		Sy = mV.m02; //mV[8]
+
+		DebugWide.LogGreen(ML.Util.ToBit(Sy) + ": Sy: " + Sy); //chamto test
+		//DebugWide.LogGreen(Convert.ToString(Sy,2));
+		//DebugWide.LogGreen(Convert.ToString(1.0f,2));
+		//if(0 == Sy.CompareTo(1.0f)) DebugWide.LogGreen("1.0f ???? : " + mV.m02);
+
+		//DebugWide.LogBlue (mV.ToString("F10")); //chamto test
+		//if(Sy != 1.0f) DebugWide.LogGreen("1.0f ???? : " + mV.m02);
+//		float temp = 1;
+//		DebugWide.LogBlue (1.0f - temp); //chamto test
+//		Cy = Mathf.Sqrt( 1.0f - temp);
+
 		Cy = Mathf.Sqrt( 1.0f - Sy*Sy );
 		// normal case
 		if ( false == ML.Util.IsZero( Cy ) )
 		{
 			float factor = 1.0f/Cy;
+			DebugWide.LogBlue (Sy + " , " + Cy + " , " + (1.0f-Sy*Sy) + " , " + (1.0f - 1.0f*1.0f)); //chamto test
 			Sx = -mV.m12 * factor; //mV[9]
 			Cx =  mV.m22 * factor; //mV[10]
 			Sz = -mV.m01 * factor; //mV[4]
@@ -942,6 +927,8 @@ public class IvQuat
 			Sx = mV.m21;  //mV[6]
 			Cx = mV.m11;  //mV[5]
 		}
+
+		DebugWide.LogYellow (" Sz: " + Sz + " Cz: " + Cz + " Sy: " + Sy + " Cy: " + Cy + " Sx: " + Sx + " Cx: " + Cx); //chamto test
 
 		rotation.z = Mathf.Atan2( Sz, Cz );
 		rotation.y = Mathf.Atan2( Sy, Cy );
