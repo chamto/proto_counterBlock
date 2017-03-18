@@ -898,22 +898,22 @@ public class IvQuat
 		Sy = mV.m02; //mV[8]
 
 		//chamto test
-		Sy = 1.00000011920929f; //  1 + 1/(2^23) : 문제가 되는 Sy의 실제 비트값
-		DebugWide.LogGreen(ML.Util.ToBit(Sy) + ": Sy: " + Sy); //비정상 1.0f
-		DebugWide.LogGreen(ML.Util.ToBit(1.0f) + ": 1.0f "); //정상 1.0f
+		//Sy = 1.00000011920929f; //  1 + 1/(2^23) : 문제가 되는 Sy의 실제 비트값
+		//DebugWide.LogGreen(ML.Util.ToBit(Sy) + ": Sy: " + Sy); //비정상 1.0f
+		//DebugWide.LogGreen(ML.Util.ToBit(1.0f) + ": 1.0f "); //정상 1.0f
 
 
 		//Sy가 1.0f보다 아주 작은 차이로 크기 때문에 (1.0f - Sy*Sy)는 음수가 나오게 된다.
 		//제곱근시 음수가 들어가면 NaN이 나오게 된다.
-		Cy = Mathf.Sqrt( 1.0f - Sy*Sy ); 
+		Cy = Mathf.Sqrt( Mathf.Abs(1.0f - Sy*Sy) ); 
 
 		// normal case
 		if ( false == ML.Util.IsZero( Cy ) )
 		{
 			float factor = 1.0f/Cy;
-			DebugWide.LogBlue (Sy + " , " + Cy + " , " + (1.0f-Sy*Sy) + " , " + (1.0f - 1.0f*1.0f)); //chamto test
-			DebugWide.LogGreen(ML.Util.ToBit(Cy) + ": Cy : " + Cy);
-			DebugWide.LogGreen(ML.Util.ToBit(Sy*Sy) + ": Sy*Sy : " + Sy*Sy);
+			//DebugWide.LogBlue (Sy + " , " + Cy + " , " + (1.0f-Sy*Sy) + " , " + (1.0f - 1.0f*1.0f)); //chamto test
+			//DebugWide.LogGreen(ML.Util.ToBit(Cy) + ": Cy : " + Cy);
+			//DebugWide.LogGreen(ML.Util.ToBit(Sy*Sy) + ": Sy*Sy : " + Sy*Sy);
 
 			Sx = -mV.m12 * factor; //mV[9]
 			Cx =  mV.m22 * factor; //mV[10]
@@ -929,7 +929,7 @@ public class IvQuat
 			Cx = mV.m11;  //mV[5]
 		}
 
-		DebugWide.LogYellow (" Sz: " + Sz + " Cz: " + Cz + " Sy: " + Sy + " Cy: " + Cy + " Sx: " + Sx + " Cx: " + Cx); //chamto test
+		//DebugWide.LogYellow (" Sz: " + Sz + " Cz: " + Cz + " Sy: " + Sy + " Cy: " + Cy + " Sx: " + Sx + " Cx: " + Cx); //chamto test
 
 		rotation.z = Mathf.Atan2( Sz, Cz );
 		rotation.y = Mathf.Atan2( Sy, Cy );
