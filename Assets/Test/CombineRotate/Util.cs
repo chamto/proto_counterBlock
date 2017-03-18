@@ -53,7 +53,7 @@ namespace ML
 			string buffer = "";
 			foreach(byte b in arByte)
 			{
-				buffer += string.Format ("{0} ", Convert.ToString(b,2)); //2진수 문자열로 변환
+				buffer += string.Format ("{0,8} ", Convert.ToString(b,2).PadLeft(8,'0')); //2진수 문자열로 변환
 			}
 
 			//Debug.Log (BitConverter.ToDouble (arByte, 0)); //chamto test
@@ -71,7 +71,7 @@ namespace ML
 			string buffer = "";
 			foreach(byte b in arByte)
 			{
-				buffer += string.Format ("{0} ", Convert.ToString(b,2)); //2진수 문자열로 변환
+				buffer += string.Format ("{0,8} ", Convert.ToString(b,2).PadLeft(8,'0')); //2진수 문자열로 변환
 			}
 
 			//Debug.Log (BitConverter.ToDouble (arByte, 0)); //chamto test
@@ -89,7 +89,7 @@ namespace ML
 			string buffer = "";
 			foreach(byte b in arByte)
 			{
-				buffer += string.Format ("{0} ", Convert.ToString(b,2)); //2진수 문자열로 변환
+				buffer += string.Format ("{0,8} ", Convert.ToString(b,2).PadLeft(8,'0')); //2진수 문자열로 변환
 			}
 
 			return buffer;

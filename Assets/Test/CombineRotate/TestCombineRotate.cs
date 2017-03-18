@@ -48,31 +48,41 @@ public class TestCombineRotate : MonoBehaviour
 		//_testTarget.position = mt.MultiplyPoint (_testTarget.position);
 
 
-		float a = 1.0f;
-		//DebugWide.LogBlue ((a-a) + "  " +  (1.0f - a*a)); //chamto test
+		bool bigIndian = true;
+		DebugWide.LogBlue(ML.Util.ToBit(10.25f) + ": 10.25f");
+		DebugWide.LogBlue(ML.Util.ToBit(1f,bigIndian) + ": 1f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-1f,bigIndian) + ": -1f ");
+		DebugWide.LogBlue(ML.Util.ToBit(2f,bigIndian) + ": 2f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-2f,bigIndian) + ": -2f ");
+		DebugWide.LogBlue(ML.Util.ToBit(3f,bigIndian) + ": 3f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-3f,bigIndian) + ": -3f ");
+		DebugWide.LogBlue(ML.Util.ToBit(4f,bigIndian) + ": 4f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-4f,bigIndian) + ": -4f ");
+		DebugWide.LogBlue(ML.Util.ToBit(5f,bigIndian) + ": 5f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-5f,bigIndian) + ": -5f ");
+		DebugWide.LogBlue(ML.Util.ToBit(6f,bigIndian) + ": 6f ");
+		DebugWide.LogBlue(ML.Util.ToBit(-6f,bigIndian) + ": -6f ");
+		DebugWide.LogBlue(ML.Util.ToBit(float.NaN) + ": Nan");
+		DebugWide.LogBlue(ML.Util.ToBit(float.Epsilon) + ": Epsilon " + float.Epsilon);
+		DebugWide.LogBlue(ML.Util.ToBit(float.PositiveInfinity) + ": PositiveInfinity");
+		DebugWide.LogBlue(ML.Util.ToBit(float.NegativeInfinity) + ": NegativeInfinity");
 
-		DebugWide.LogBlue(ML.Util.ToBit(46) + ": 46");
-		DebugWide.LogBlue(ML.Util.ToBit(46, false) + ": 46 lit");
-		DebugWide.LogBlue(ML.Util.ToBit(46f) + ": 46f");
-		DebugWide.LogBlue(ML.Util.ToBit(46f,false) + ": 46f lit");
-		DebugWide.LogBlue(ML.Util.ToBit(46d) + ": 46d");
-		DebugWide.LogBlue(ML.Util.ToBit(46d,false) + ": 46d lit");
-		DebugWide.LogBlue(ML.Util.ToBit(46f) + ": 46f  " + 46f);
-		DebugWide.LogBlue(ML.Util.ToBit(0.000000000000000046f) + ": 0.000000000000000046f  " + 0.000000000000000046f );
 
-//		DebugWide.LogBlue(ML.Util.ToBit(0f) + ": 0f" + BitConverter.IsLittleEndian);
-//		DebugWide.LogBlue(ML.Util.ToBit(1f) + ": 1f");
-//		DebugWide.LogBlue(ML.Util.ToBit(-1f) + ": -1f");
-//		DebugWide.LogBlue(ML.Util.ToBit(2f) + ": 2f");
-//		DebugWide.LogBlue(ML.Util.ToBit(27f) + ": 27f");
-//		DebugWide.LogBlue(ML.Util.ToBit(0.00001f) + ": 0.00001f");
-//		DebugWide.LogBlue(ML.Util.ToBit(-0.00001f) + ": -0.00001f");
-//		DebugWide.LogBlue(ML.Util.ToBit(0.00008f) + ": 0.00008f");
-//		DebugWide.LogBlue(ML.Util.ToBit(-0.00008f) + ": -0.00008f");
-//		DebugWide.LogBlue(ML.Util.ToBit(float.NaN) + ": Nan");
-//		DebugWide.LogBlue(ML.Util.ToBit(float.Epsilon) + ": Epsilon");
-//		DebugWide.LogBlue(ML.Util.ToBit(float.PositiveInfinity) + ": PositiveInfinity");
-//		DebugWide.LogBlue(ML.Util.ToBit(float.NegativeInfinity) + ": NegativeInfinity");
+		float a = 1.00000011920929f; //1 + 1.0 * 1/(2^23)
+		float b = 1.0f - a;
+		DebugWide.LogBlue (Mathf.Log (8388608, 2)); //Log2^8388608 = 23
+
+		DebugWide.LogBlue(ML.Util.ToBit(a) + ": a1 : " + a + " sqrt : " + Mathf.Sqrt(b));
+		//a = 1.00000011111f; 
+		//a = 1.0000001f;
+		//a = 1.000001f;
+
+		if(float.Epsilon < Mathf.Abs(b))
+			DebugWide.LogBlue(ML.Util.ToBit(b) + ": a2 : " + a);
+
+		DebugWide.LogBlue(ML.Util.ToBit(b) + ": b3 : " + b);
+
+
 
 
 
