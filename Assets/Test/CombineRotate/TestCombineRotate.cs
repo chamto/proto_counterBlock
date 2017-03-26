@@ -102,7 +102,10 @@ public class TestCombineRotate : MonoBehaviour
 			//-----------
 			//1. 비행기모양으로 배치된 객체에 적용 : _testTarget
 			prev_angles = dest_angles;
+			//1. 우주선모양으로 배치된 객체에 적용 : _testTarget
 			this.ApplyMatrixToTransform(_testTarget, trs);
+			//_testTarget.localRotation = TRSHelper.GetQuaternion(_parser); //chamto test - Iv쿼터니언 바로 적용 
+
 			dest_angles = _testTarget.eulerAngles;
 			DebugWide.LogBlue ("2: unity angles : "+_testTarget.eulerAngles + "\n"); //chamto test
 

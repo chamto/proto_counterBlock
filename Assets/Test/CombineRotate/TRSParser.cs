@@ -232,6 +232,32 @@ public class TRSParser : List<TRSParser.Sentences>
 
 static public class TRSHelper
 {
+
+	static public Quaternion GetQuaternion(TRSParser parser)
+	{
+		Quaternion q = Quaternion.identity;
+
+
+		foreach (TRSParser.Sentences sts in parser) 
+		{
+			if (0 == sts.Count)
+				continue;
+
+			switch (sts.kind) 
+			{
+
+			case TRSParser.Sentences.eKind.Quaternion:
+				{
+					q.eulerAngles = sts[0].xyz;
+				}
+				break;
+			
+			}
+		}
+
+		return q;
+	}
+
 	static public Matrix4x4 ParsingMatrix(TRSParser parser , string order)
 	{
 		parser.Parsing(order);
