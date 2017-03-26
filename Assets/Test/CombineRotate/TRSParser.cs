@@ -235,7 +235,7 @@ static public class TRSHelper
 
 	static public Quaternion GetQuaternion(TRSParser parser)
 	{
-		Quaternion q = Quaternion.identity;
+		Quaternion u_q = Quaternion.identity;
 
 
 		foreach (TRSParser.Sentences sts in parser) 
@@ -248,14 +248,26 @@ static public class TRSHelper
 
 			case TRSParser.Sentences.eKind.Quaternion:
 				{
-					q.eulerAngles = sts[0].xyz;
+					///1.
+					//u_q.eulerAngles = sts[0].xyz;
+
+
+					///2.
+					IvQuat iv_q = new IvQuat ();
+					Vector3 v3Rad = sts [0].xyz * Mathf.Deg2Rad;
+					iv_q.Set (v3Rad.z , v3Rad.y , v3Rad.x); 
+
+					u_q.w = iv_q.w;
+					u_q.x = iv_q.x;
+					u_q.y = iv_q.y;
+					u_q.z = iv_q.z;
 				}
 				break;
 			
 			}
 		}
 
-		return q;
+		return u_q;
 	}
 
 	static public Matrix4x4 ParsingMatrix(TRSParser parser , string order)

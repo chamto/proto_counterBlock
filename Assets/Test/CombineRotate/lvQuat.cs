@@ -19,7 +19,7 @@ using System.Collections.Generic;
 public class IvQuat 
 {
 	// member variables
-	private float w, x, y, z;      
+	public float w, x, y, z;      
 
 	// useful defaults
 	static public IvQuat   zero = new IvQuat(0,0,0,0);
