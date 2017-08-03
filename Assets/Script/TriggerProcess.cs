@@ -260,31 +260,18 @@ public class TriggerProcess : MonoBehaviour
 		if(myPart.name.GetHashCode() == _multi.hashMap.GetHash(eHashIdx.Bone_Weapon_Sword_Right))
 		{
 			_firstTrigger = true;
-			bool onceCompute = true;
-			if (true == onceCompute && true == _availableAttack && true == _firstTrigger) 
+
+			if (true == _availableAttack && true == _firstTrigger) 
 			{
-				//Vector3 closestPos = oppCldPart.ClosestPointOnBounds (_ik_armRight._targetEndPos.position + back*3);
+				
 				_firstTrigger = false;
 				_ik_armRight.ToggleOn ();
-				//_ik_armRight._targetPos.position = _ik_armRight._targetEndPos.position;
-				_ik_armRight._targetPos.position = oppCldPart.ClosestPointOnBounds (oppClsPart.contacts[0].point + back*3) + back * 0.2f;
+				_ik_armRight._targetPos.position = _ik_armRight._joint2EndPos.position;
+				//_ik_armRight._targetPos.position = oppCldPart.ClosestPointOnBounds (oppClsPart.contacts[0].point + back*3);
 				//_ik_armRight._targetPos.position = oppClsPart.contacts[0].normal + oppClsPart.contacts[0].point;
 
 
 			}
-
-//			if (false == onceCompute && true == _availableAttack) 
-//			{
-//				//관절2에서 검의 방향으로 광선을 쏘아 충돌체가 있는지 검사한다.
-//				//충돌체가 없을때만 “IK목표점"을 갱신한다.
-//				RaycastHit rh;
-//				if (false == oppCldPart.Raycast (new Ray (_ik_armRight._joint_2.position, _ik_armRight.Joint2Dir ()), out rh, 10f)) 
-//				{
-//					_ik_armRight.ToggleOn ();
-//					_ik_armRight._targetPos.position = oppCldPart.ClosestPointOnBounds (_ik_armRight._targetEndPos.position);
-//				}
-//
-//			}
 
 		}
 
@@ -321,7 +308,8 @@ public class TriggerProcess : MonoBehaviour
 		_status = this.DetectedStatus ();	
 
 
-		if (_status == eCollisionStatus.Hit || _status == eCollisionStatus.Block_Objects) 
+		if (_status == eCollisionStatus.Hit || _status == eCollisionStatus.Block_Objects || 
+			_status == eCollisionStatus.Block_Weapon) 
 		{
 			if (0 != cpList.Length) 
 			{

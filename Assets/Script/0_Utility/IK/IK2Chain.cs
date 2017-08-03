@@ -8,13 +8,17 @@ public class IK2Chain : MonoBehaviour
 {
 
     public Transform _targetPos = null;
-	public Transform _targetEndPos = null;
+	public Transform _joint2EndPos = null;
 	public Transform _joint_1 = null;
 	public Transform _joint_2 = null;
-	public float _joint_1_length = 0;	//upperArm Length 
+	public float _joint_1_Length = 0;	//upperArm Length 
 	public float _joint_2_Length = 0;	//foreArm Length
 	public bool		_isOneChain = false;
 	public int 		_oneChainNum = 0;
+
+	//DOF(Degree of Free)
+	public Vector3 _DOF_Min = new Vector3(-180f,-180f,-180f);
+	public Vector3 _DOF_Max = new Vector3(180f,180f,180f);
 
 
     [HideInInspector]
@@ -32,7 +36,7 @@ public class IK2Chain : MonoBehaviour
 
 	public Vector3 Joint2Dir()
 	{
-		return _targetEndPos.position - _joint_2.position;
+		return _joint2EndPos.position - _joint_2.position;
 	}
 
 
@@ -49,9 +53,11 @@ public class IK2Chain : MonoBehaviour
 		this._toggleIK = true;
 		//----------------------------------------
 		
-		Vector3 v3UpperLength = (_joint_1.position - _joint_2.position);
-		v3UpperLength.x = 0; //2D
-		_joint_1_length = Mathf.Abs (v3UpperLength.magnitude);
+		Vector3 dir = (_joint_2.position - _joint_1.position);
+		_joint_1_Length = dir.magnitude;
+
+		dir = (_joint2EndPos.position - _joint_2.position);
+		_joint_2_Length = dir.magnitude;
 
 		_joint_1_initAngle = _joint_1.localRotation.eulerAngles;
 		_joint_2_initAngle = _joint_2.localRotation.eulerAngles;
@@ -88,8 +94,8 @@ public class IK2Chain : MonoBehaviour
 
 		//제2코사인법칙 : a*a = b*b + c*c - 2bcCosA , //파타고라스의 정리 : z*z + y*y = x*x
 		//float num = Mathf.Pow(z, 2) + Mathf.Pow(y, 2) - Mathf.Pow(d1, 2) - Mathf.Pow(d2, 2); 
-		float num = _joint_1_length*_joint_1_length + _joint_2_Length*_joint_2_Length - (z*z + y*y);
-		float denom = 2 * _joint_1_length * _joint_2_Length;
+		float num = _joint_1_Length*_joint_1_Length + _joint_2_Length*_joint_2_Length - (z*z + y*y);
+		float denom = 2 * _joint_1_Length * _joint_2_Length;
 		float costheta2 = -(num / denom); //cosA = -cos(180-A)
 
 		//삼각형 모양이 깨진 경우
@@ -104,8 +110,8 @@ public class IK2Chain : MonoBehaviour
 		//ycos + -zsin 
 		//ysin  + zcos
 		//ref : http://www.darwin3d.com/gamedev/articles/col1198.pdf
-		float atz = y * (_joint_1_length + _joint_2_Length * Mathf.Cos(theta2)) - z * (_joint_2_Length * Mathf.Sin(theta2));
-		float aty = z * (_joint_1_length + _joint_2_Length * Mathf.Cos(theta2)) + y * (_joint_2_Length * Mathf.Sin(theta2));
+		float atz = y * (_joint_1_Length + _joint_2_Length * Mathf.Cos(theta2)) - z * (_joint_2_Length * Mathf.Sin(theta2));
+		float aty = z * (_joint_1_Length + _joint_2_Length * Mathf.Cos(theta2)) + y * (_joint_2_Length * Mathf.Sin(theta2));
 
 		theta1 = z==0 && y==0? 0 : Mathf.Atan2(atz, aty);
 
@@ -121,12 +127,37 @@ public class IK2Chain : MonoBehaviour
 		dirTo.Normalize ();
 		float cos = Vector3.Dot (dirFrom, dirTo);
 		float theta = Mathf.Acos (cos);
+		theta = theta * Mathf.Rad2Deg;
 
 		Vector3 foward = dirFrom;
 		Vector3 up = Vector3.Cross (dirFrom, dirTo);
 		up.Normalize ();
 
-		_joint_1.transform.Rotate (up,theta * Mathf.Rad2Deg,Space.World);
+		_joint_1.transform.Rotate (up,theta ,Space.World);
+	}
+
+
+	public Vector3 ClampV3(Vector3 value , Vector3 min , Vector3 max)
+	{
+		if (value.x < min.x) {
+			value.x = min.x;
+		} else if (value.x > max.x) {
+			value.x = max.x;
+		}
+
+		if (value.y < min.y) {
+			value.y = min.y;
+		} else if (value.y > max.y) {
+			value.y = max.y;
+		}
+
+		if (value.z < min.z) {
+			value.z = min.z;
+		} else if (value.z > max.z) {
+			value.z = max.z;
+		}
+
+		return value;
 	}
 
 	void compute1_Chain1()
@@ -138,6 +169,21 @@ public class IK2Chain : MonoBehaviour
 		Vector3 up = Vector3.Cross (_joint_2.forward, dirTo);
 
 		_joint_2.transform.Rotate (up, degree, Space.World);
+
+
+//		Vector3 test = _joint_2.transform.localEulerAngles;
+//		if (test.x >= 180f) {
+//			test.x -= 180f; 
+//		}
+		//Matrix4x4 m = Matrix4x4.identity;
+
+
+
+
+		//DebugWide.LogBlue (Quaternion.FromToRotation(_joint_2.forward, dirTo).eulerAngles);
+		DebugWide.LogBlue ("    "+_joint_2.transform.localEulerAngles);
+		//_joint_2.transform.localEulerAngles = this.ClampV3 (_joint_2.transform.localEulerAngles, _DOF_Min, _DOF_Max);
+		//DebugWide.LogBlue ("     "+_joint_2.transform.localEulerAngles);
 	}
 
 	public void Compute1Chain(int chainNum)
@@ -152,35 +198,6 @@ public class IK2Chain : MonoBehaviour
 			this.compute1_Chain1 ();
 		}
 
-//		if (0 == chainNum) 
-//		{
-//			this.Compute1_Chain0 (); return;
-//
-//			Vector3 dirFrom = _joint_2.position - _joint_1.position;
-//			dirFrom.x = 0;
-//			Vector3 dirTo = _targetPos.position - _joint_1.position;
-//			dirTo.x = 0;
-//			float degree = Vector3.Angle (dirFrom, dirTo);
-//			if (0 > Vector3.Cross (dirFrom, dirTo).x)
-//				degree *= -1;
-//
-//			_joint_1.transform.Rotate (degree, 0, 0);
-//	
-//			//DebugWide.LogBlue (chainNum+" "+degree);
-//
-//		} else if (1 == chainNum) 
-//		{
-//			Vector3 dirTo = _targetPos.position - _joint_2.position;
-//			dirTo.x = 0;
-//
-//			float degree = Vector3.Angle (_joint_2.forward, dirTo);
-//			if (0 > Vector3.Cross (_joint_2.forward, dirTo).x)
-//				degree *= -1;
-//			
-//			_joint_2.transform.Rotate (degree, 0, 0);
-//			
-//			//DebugWide.LogBlue (chainNum+" "+degree);
-//		}
 	}
 
     
@@ -216,7 +233,7 @@ public class IK2Chain : MonoBehaviour
 			Gizmos.DrawLine(_joint_1.position, _targetPos.position);
 
 			Gizmos.color =  outOfRange ? Color.red: Color.green;
-			Vector3 foreJointPos = new Vector3(0,_joint_1.position.y + _joint_1_length * Mathf.Sin(-theta1), _joint_1.position.z + _joint_1_length * Mathf.Cos(-theta1)); //-theta1 ???
+			Vector3 foreJointPos = new Vector3(0,_joint_1.position.y + _joint_1_Length * Mathf.Sin(-theta1), _joint_1.position.z + _joint_1_Length * Mathf.Cos(-theta1)); //-theta1 ???
 			Gizmos.DrawLine(_joint_1.position, foreJointPos);
 
         }
