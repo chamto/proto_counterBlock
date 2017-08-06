@@ -333,8 +333,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3319792190304867a8708f4d132ddb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _1pExplanation: {fileID: 1683770112}
-  _2pExplanation: {fileID: 300930751}
+  _1pExplanation1: {fileID: 1683770112}
+  _2pExplanation1: {fileID: 300930751}
+  _1pExplanation2: {fileID: 2022698900}
+  _2pExplanation2: {fileID: 716548136}
+  _1pHpBar: {fileID: 1512569586}
+  _2pHpBar: {fileID: 1227786505}
 --- !u!1 &300930749
 GameObject:
   m_ObjectHideFlags: 0
