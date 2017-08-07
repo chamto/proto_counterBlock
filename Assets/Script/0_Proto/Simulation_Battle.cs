@@ -39,10 +39,12 @@ namespace CounterBlockSting
 		{
 			None 		= 0,
 			Attack,
-			Attack_Before = Attack,
+			Attack_Init = Attack,
+			Attack_Before,
 			Attack_After,
 			Block,
-			Block_Before = Block,
+			Block_Init = Block,
+			Block_Before,
 			Block_After,
 			Idle,
 			Max,
@@ -61,11 +63,12 @@ namespace CounterBlockSting
 		private BehaviorTime _scope_end;
 		private float 		 _timeDelta; 	//시간변화량
 
-		public uint 	_hp;
+		private uint 	_hp;
 
 		private eState 	_state_prev;
 		private eState 	_state_current;
 		private eState 	_state_next;
+		private bool _state_used;
 
 		public CharacterInfo()
 		{
@@ -86,9 +89,9 @@ namespace CounterBlockSting
 			_time_before.idle = 2f;
 			//------------------------------
 			_scope_start.attack = 1.5f;
-			_scope_end.attack = 0.5f;
+			_scope_end.attack = 0.0f;
 				
-			_scope_start.block = 0.5f;
+			_scope_start.block = 0.0f;
 			_scope_end.block = 1f;
 			//------------------------------
 
@@ -96,6 +99,7 @@ namespace CounterBlockSting
 			_state_prev = eState.None;
 			_state_current = eState.None;
 			_state_next = eState.None;
+			_state_used = false;
 		}
 			
 		public bool Valid_Attack()
@@ -133,6 +137,43 @@ namespace CounterBlockSting
 		}
 
 
+		public uint GetHP()
+		{
+			return _hp;
+		}
+		public void SetHP(uint hp)
+		{
+			_hp = hp;
+		}
+
+		public void HP_SubTract(uint amount)
+		{
+			if (0 == _hp)
+				return;
+			
+			_hp -= amount;
+		}
+
+		public void HP_Addition(uint amount)
+		{
+			const uint TEMP_MAXHP = 100; //20170807 chamto fixme - temp value
+			if (TEMP_MAXHP <= _hp)
+				return;
+
+			_hp += amount;
+
+		}
+
+		//동작을 사용 했다고 표시 , 한동작을 한번만 공격충돌 시키기 위해 필요 
+		public void SetUsedState()
+		{
+			_state_used = true;
+		}
+
+		public bool GetUsedState()
+		{
+			return _state_used;
+		}
 
 		public float GetTimeDelta()
 		{
@@ -149,6 +190,7 @@ namespace CounterBlockSting
 			this._timeDelta = 0f;
 			_state_prev = _state_current;
 			_state_current = setState;
+
 		}
 
 		public void NextState(eState nextState)
@@ -162,8 +204,15 @@ namespace CounterBlockSting
 
 			switch (this._state_current) 
 			{
+			case eState.Attack_Init:
+				{
+					_state_used = false; //init
+					this.SetState (eState.Attack_Before);	
+				}
+				break;
 			case eState.Attack_Before:
 				{
+					
 					if (_time_before.attack <= this._timeDelta) 
 					{
 						this.SetState (eState.Attack_After);
@@ -179,8 +228,16 @@ namespace CounterBlockSting
 					}
 				}
 				break;
+			case eState.Block_Init:
+				{
+					_state_used = false; //init
+					this.SetState (eState.Block_Before);	
+				}
+				break;
 			case eState.Block_Before:
 				{
+					
+
 					if (_time_before.block <= this._timeDelta) 
 					{
 						this.SetState (eState.Block_After);
@@ -199,6 +256,8 @@ namespace CounterBlockSting
 			case eState.Idle:
 			case eState.None:
 				{
+					_state_used = false; //init
+
 					//default loop 
 					if (_time_before.idle <= this._timeDelta) 
 					{
@@ -349,9 +408,35 @@ namespace CounterBlockSting
 
 
 
-			private void Judge()
+			public Result Judge()
 			{
-				
+				Result jResult =  Valid_Attack ();
+
+				switch (jResult.state_1p) 
+				{
+				case eState.AttackSucceed:
+					if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
+					{
+						_ref_1pInfo.SetUsedState ();
+						_ref_2pInfo.HP_SubTract (1);
+					}
+						
+					break;
+				}
+
+				switch (jResult.state_2p) 
+				{
+				case eState.AttackSucceed:
+					if (false == _ref_2pInfo.GetUsedState ()) 
+					{
+						_ref_2pInfo.SetUsedState ();
+						_ref_1pInfo.HP_SubTract (1);
+					}
+						
+					break;
+				}
+
+				return jResult;
 			}
 
 
@@ -423,9 +508,9 @@ namespace CounterBlockSting
 
 			void Update_UI()
 			{
-				Judgment.Result jResult =  _judgment.Valid_Attack ();
-				_1pHpBar.value = _1pInfo._hp;
-				_2pHpBar.value = _2pInfo._hp;
+				Judgment.Result jResult =  _judgment.Judge ();
+				_1pHpBar.value = _1pInfo.GetHP();
+				_2pHpBar.value = _2pInfo.GetHP();
 				_1pExplanation1.text = 
 					"  "  + JudgmentToString(jResult.state_1p);
 				_2pExplanation1.text = 
