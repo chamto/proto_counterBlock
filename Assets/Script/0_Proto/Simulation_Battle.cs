@@ -450,6 +450,9 @@ namespace CounterBlockSting
 
 			private Judgment _judgment = null;
 
+
+			//====//====//====//====//====//====
+			//ui connect
 			public Text _1pExplanation1 = null;
 			public Text _2pExplanation1 = null;
 			public Text _1pExplanation2 = null;
@@ -457,6 +460,10 @@ namespace CounterBlockSting
 
 			public Slider _1pHpBar = null;
 			public Slider _2pHpBar = null;
+
+			public Image _1pImage = null;
+			public Image _2pImage = null;
+			//====//====//====//====//====//====
 
 			// Use this for initialization
 			void Start () 
