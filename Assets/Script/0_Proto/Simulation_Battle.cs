@@ -465,10 +465,14 @@ namespace CounterBlockSting
 			public Image _2pImage = null;
 			//====//====//====//====//====//====
 
+
+
 			// Use this for initialization
 			void Start () 
 			{
 				_judgment = new Judgment(ref _1pInfo ,ref _2pInfo);
+				_1pImage.color = Color.white;
+				_2pImage.color = Color.white;
 			}
 
 			public string StateToString (CharacterInfo.eState state)
@@ -522,6 +526,23 @@ namespace CounterBlockSting
 					"  "  + JudgmentToString(jResult.state_1p);
 				_2pExplanation1.text = 
 					"  "  + JudgmentToString(jResult.state_2p);
+
+
+				_1pImage.color = Color.white;
+				_2pImage.color = Color.white;
+				if (true == _1pInfo.Valid_Attack()) {
+					_1pImage.color = Color.red;
+				}
+				if (true == _2pInfo.Valid_Attack()) {
+					_2pImage.color = Color.red;
+				}
+
+				if (true == _1pInfo.Valid_Block()) {
+					_1pImage.color = Color.blue;
+				}
+				if (true == _2pInfo.Valid_Block()) {
+					_2pImage.color = Color.blue;
+				}
 
 				_1pExplanation2.text = 
 					StateToString(_1pInfo.CurrentState()) + "  " +
