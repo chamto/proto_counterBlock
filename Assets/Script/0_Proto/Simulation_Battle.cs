@@ -530,18 +530,24 @@ namespace CounterBlockSting
 
 				_1pImage.color = Color.white;
 				_2pImage.color = Color.white;
+				_1pExplanation2.color = Color.white;
+				_2pExplanation2.color = Color.white;
 				if (true == _1pInfo.Valid_Attack()) {
 					_1pImage.color = Color.red;
+					_1pExplanation2.color = Color.red;
 				}
 				if (true == _2pInfo.Valid_Attack()) {
 					_2pImage.color = Color.red;
+					_2pExplanation2.color = Color.red;
 				}
 
 				if (true == _1pInfo.Valid_Block()) {
 					_1pImage.color = Color.blue;
+					_1pExplanation2.color = Color.blue;
 				}
 				if (true == _2pInfo.Valid_Block()) {
 					_2pImage.color = Color.blue;
+					_2pExplanation2.color = Color.blue;
 				}
 
 				_1pExplanation2.text = 
