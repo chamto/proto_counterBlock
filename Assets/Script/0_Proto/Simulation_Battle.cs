@@ -528,10 +528,10 @@ namespace CounterBlockSting
 					"  "  + JudgmentToString(jResult.state_2p);
 
 
-				_1pImage.color = Color.white;
-				_2pImage.color = Color.white;
-				_1pExplanation2.color = Color.white;
-				_2pExplanation2.color = Color.white;
+				_1pImage.color = Color.black;
+				_2pImage.color = Color.black;
+				_1pExplanation2.color = Color.black;
+				_2pExplanation2.color = Color.black;
 				if (true == _1pInfo.Valid_Attack()) {
 					_1pImage.color = Color.red;
 					_1pExplanation2.color = Color.red;
