@@ -579,7 +579,7 @@ namespace CounterBlockSting
 				_2pImage.color = Color.white;
 
 
-				_1pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_VALID);
+				//_1pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_VALID);
 
 			}
 
@@ -649,6 +649,61 @@ namespace CounterBlockSting
 
 				//====//====//====//====//====//====
 
+				_1pSprite_02.gameObject.SetActive (false);
+				_1pSprite_03.gameObject.SetActive (false);
+				_2pSprite_02.gameObject.SetActive (false);
+				_2pSprite_03.gameObject.SetActive (false);
+
+				_1pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_IDLE);
+				_2pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_IDLE);
+
+				//1p
+				if (CharacterInfo.eState.Attack_Before == _1pInfo.CurrentState ()) 
+				{
+					_1pSprite_02.gameObject.SetActive (true);
+					_1pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_ATTACK_BEFORE);
+				}
+				if (CharacterInfo.eState.Attack_After == _1pInfo.CurrentState ()) 
+				{
+					//_1pSprite_02.gameObject.SetActive (true);
+					_1pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_ATTACK_AFTER);
+				}
+				if (CharacterInfo.eState.Block_Before == _1pInfo.CurrentState ()) 
+				{
+					_1pSprite_02.gameObject.SetActive (true);
+					_1pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_BEFORE);
+				}
+				if (CharacterInfo.eState.Block_After == _1pInfo.CurrentState ()) 
+				{
+					//_1pSprite_02.gameObject.SetActive (true);
+					_1pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_AFTER);
+				}
+
+				//2p
+				if (CharacterInfo.eState.Attack_Before == _2pInfo.CurrentState ()) 
+				{
+					_2pSprite_02.gameObject.SetActive (true);
+					_2pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_ATTACK_BEFORE);
+				}
+				if (CharacterInfo.eState.Attack_After == _2pInfo.CurrentState ()) 
+				{
+					//_2pSprite_02.gameObject.SetActive (true);
+					_2pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_ATTACK_AFTER);
+				}
+				if (CharacterInfo.eState.Block_Before == _2pInfo.CurrentState ()) 
+				{
+					_2pSprite_02.gameObject.SetActive (true);
+					_2pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_BLOCK_BEFORE);
+				}
+				if (CharacterInfo.eState.Block_After == _2pInfo.CurrentState ()) 
+				{
+					//_2pSprite_02.gameObject.SetActive (true);
+					_2pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_BLOCK_AFTER);
+				}
+
+
+				//====//====//====//====//====//====
+
 				_1pImage.color = Color.black;
 				_2pImage.color = Color.black;
 				_1pExplanation2.color = Color.black;
@@ -656,26 +711,35 @@ namespace CounterBlockSting
 				if (true == _1pInfo.Valid_Attack()) {
 					_1pImage.color = Color.red;
 					_1pExplanation2.color = Color.red;
+
+					_1pSprite_03.gameObject.SetActive (true);
+					_1pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_ATTACK_VALID);
 				}
-				if (true == _2pInfo.Valid_Attack()) {
+				if (true == _2pInfo.Valid_Attack()) 
+				{
 					_2pImage.color = Color.red;
 					_2pExplanation2.color = Color.red;
+
+					_2pSprite_03.gameObject.SetActive (true);
+					_2pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_ATTACK_VALID);
 				}
 
-				if (true == _1pInfo.Valid_Block()) {
+				if (true == _1pInfo.Valid_Block()) 
+				{
 					_1pImage.color = Color.blue;
 					_1pExplanation2.color = Color.blue;
+
+					_1pSprite_03.gameObject.SetActive (true);
+					_1pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_VALID);
 				}
-				if (true == _2pInfo.Valid_Block()) {
+				if (true == _2pInfo.Valid_Block()) 
+				{
 					_2pImage.color = Color.blue;
 					_2pExplanation2.color = Color.blue;
+
+					_2pSprite_03.gameObject.SetActive (true);
+					_2pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_BLOCK_VALID);
 				}
-
-				//====//====//====//====//====//====
-
-
-				//_1pSprite_02.sprite =  Resources.Load <Sprite>("p1_block_before");
-				//DebugWide.LogBlue (_1pSprite_02.sprite.name);
 
 				//====//====//====//====//====//====
 
