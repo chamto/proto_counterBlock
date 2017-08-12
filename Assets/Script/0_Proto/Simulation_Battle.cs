@@ -777,7 +777,10 @@ namespace CounterBlockSting
 				}
 
 
-
+				if (0 == _1pInfo.GetHP ())
+					_1pSprite_01.gameObject.SetActive (false);
+				if (0 == _2pInfo.GetHP ())
+					_2pSprite_01.gameObject.SetActive (false);
 				//====//====//====//====//====//====
 
 			}
