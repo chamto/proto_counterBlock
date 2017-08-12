@@ -445,6 +445,12 @@ MonoBehaviour:
   _2pHpBar: {fileID: 1227786505}
   _1pImage: {fileID: 354534551}
   _2pImage: {fileID: 1986280607}
+  _1pSprite_01: {fileID: 2113665322}
+  _1pSprite_02: {fileID: 1155910189}
+  _1pSprite_03: {fileID: 858870830}
+  _2pSprite_01: {fileID: 1170857236}
+  _2pSprite_02: {fileID: 337296073}
+  _2pSprite_03: {fileID: 1437522065}
 --- !u!1 &300930749
 GameObject:
   m_ObjectHideFlags: 0
