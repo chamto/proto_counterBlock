@@ -48,6 +48,7 @@ namespace CounterBlockSting
 			Block_Before,
 			Block_After,
 			Idle,
+			Hit,
 			Max,
 		}
 
@@ -81,22 +82,36 @@ namespace CounterBlockSting
 			_timeDelta = 0f;
 
 			//------------------------------
-			_time_before.attack = 2f;
-			_time_after.attack = 2f;
-
-			_time_before.block = 1f;
-			_time_after.block = 2f;
-
-			_time_before.idle = 2f;
+//			_time_before.attack = 2f;
+//			_time_after.attack = 2f;
+//
+//			_time_before.block = 1f;
+//			_time_after.block = 2f;
+//
+//			_time_before.idle = 2f;
+//			//------------------------------
+//			_scope_start.attack = 1.5f;
+//			_scope_end.attack = 0.0f;
+//				
+//			_scope_start.block = 0.0f;
+//			_scope_end.block = 1f;
 			//------------------------------
-			_scope_start.attack = 1.5f;
+			_time_before.attack = 1f;
+			_time_after.attack = 1f;
+
+			_time_before.block = 0.5f;
+			_time_after.block = 0.5f;
+
+			_time_before.idle = 1f;
+			//------------------------------
+			_scope_start.attack = 0.8f;
 			_scope_end.attack = 0.0f;
 				
-			_scope_start.block = 0.0f;
-			_scope_end.block = 1f;
+			_scope_start.block = 0.2f;
+			_scope_end.block = 0.5f;
 			//------------------------------
 
-			this._hp = 10;
+			this._hp = 30;
 			_state_prev = eState.None;
 			_state_current = eState.None;
 			_state_next = eState.None;
@@ -255,6 +270,7 @@ namespace CounterBlockSting
 				}
 				break;
 			case eState.Idle:
+			case eState.Hit:
 			case eState.None:
 				{
 					_state_used = false; //init
@@ -420,6 +436,7 @@ namespace CounterBlockSting
 					{
 						_ref_1pInfo.SetUsedState ();
 						_ref_2pInfo.HP_SubTract (1);
+						_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
 					}
 						
 					break;
@@ -432,6 +449,7 @@ namespace CounterBlockSting
 					{
 						_ref_2pInfo.SetUsedState ();
 						_ref_1pInfo.HP_SubTract (1);
+						_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
 					}
 						
 					break;
@@ -579,7 +597,10 @@ namespace CounterBlockSting
 				_2pImage.color = Color.white;
 
 
-				//_1pSprite_02.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_VALID);
+				_1pHpBar.maxValue = _1pInfo.GetHP ();
+				_1pHpBar.value = _1pInfo.GetHP ();
+				_2pHpBar.maxValue = _2pInfo.GetHP ();
+				_2pHpBar.value = _2pInfo.GetHP ();
 
 			}
 
@@ -678,6 +699,11 @@ namespace CounterBlockSting
 					//_1pSprite_02.gameObject.SetActive (true);
 					_1pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_AFTER);
 				}
+				if (CharacterInfo.eState.Hit == _1pInfo.CurrentState ()) 
+				{
+					//_1pSprite_02.gameObject.SetActive (true);
+					_1pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.EMPTY_CARD);
+				}
 
 				//2p
 				if (CharacterInfo.eState.Attack_Before == _2pInfo.CurrentState ()) 
@@ -699,6 +725,11 @@ namespace CounterBlockSting
 				{
 					//_2pSprite_02.gameObject.SetActive (true);
 					_2pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_BLOCK_AFTER);
+				}
+				if (CharacterInfo.eState.Hit == _2pInfo.CurrentState ()) 
+				{
+					//_2pSprite_02.gameObject.SetActive (true);
+					_2pSprite_01.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.EMPTY_CARD);
 				}
 
 
