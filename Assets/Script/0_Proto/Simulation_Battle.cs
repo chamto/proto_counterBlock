@@ -708,12 +708,26 @@ namespace CounterBlockSting
 				_2pImage.color = Color.black;
 				_1pExplanation2.color = Color.black;
 				_2pExplanation2.color = Color.black;
+				_1pSprite_01.color = Color.white;
+				_1pSprite_02.color = Color.white;
+				_1pSprite_03.color = Color.white;
+				_2pSprite_01.color = Color.white;
+				_2pSprite_02.color = Color.white;
+				_2pSprite_03.color = Color.white;
 				if (true == _1pInfo.Valid_Attack()) {
 					_1pImage.color = Color.red;
 					_1pExplanation2.color = Color.red;
 
 					_1pSprite_03.gameObject.SetActive (true);
 					_1pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_ATTACK_VALID);
+
+
+					if (Judgment.eState.AttackSucceed == jResult.state_1p) 
+					{
+						_2pSprite_01.color = Color.red;
+						_2pSprite_02.color = Color.red;
+						_2pSprite_03.color = Color.red;
+					}
 				}
 				if (true == _2pInfo.Valid_Attack()) 
 				{
@@ -722,6 +736,13 @@ namespace CounterBlockSting
 
 					_2pSprite_03.gameObject.SetActive (true);
 					_2pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_ATTACK_VALID);
+
+					if (Judgment.eState.AttackSucceed == jResult.state_2p) 
+					{
+						_1pSprite_01.color = Color.red;
+						_1pSprite_02.color = Color.red;
+						_1pSprite_03.color = Color.red;
+					}
 				}
 
 				if (true == _1pInfo.Valid_Block()) 
@@ -731,6 +752,13 @@ namespace CounterBlockSting
 
 					_1pSprite_03.gameObject.SetActive (true);
 					_1pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P1_BLOCK_VALID);
+
+					if (Judgment.eState.BlockSucceed == jResult.state_1p) 
+					{
+						_1pSprite_01.color = Color.blue;
+						_1pSprite_02.color = Color.blue;
+						_1pSprite_03.color = Color.blue;
+					}
 				}
 				if (true == _2pInfo.Valid_Block()) 
 				{
@@ -739,7 +767,16 @@ namespace CounterBlockSting
 
 					_2pSprite_03.gameObject.SetActive (true);
 					_2pSprite_03.sprite = _refResourceMgr.GetSprite(ResourceMgr.eSPRITE_NAME.P2_BLOCK_VALID);
+
+					if (Judgment.eState.BlockSucceed == jResult.state_2p) 
+					{
+						_2pSprite_01.color = Color.blue;
+						_2pSprite_02.color = Color.blue;
+						_2pSprite_03.color = Color.blue;
+					}
 				}
+
+
 
 				//====//====//====//====//====//====
 
