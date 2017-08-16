@@ -96,19 +96,19 @@ namespace CounterBlockSting
 //			_scope_start.block = 0.0f;
 //			_scope_end.block = 1f;
 			//------------------------------
-			_time_before.attack = 1f;
-			_time_after.attack = 1f;
+			_time_before.attack = 0.5f;
+			_time_after.attack = 0.5f;
 
 			_time_before.block = 0.5f;
 			_time_after.block = 0.5f;
 
 			_time_before.idle = 1f;
 			//------------------------------
-			_scope_start.attack = 0.8f;
+			_scope_start.attack = 0.3f;
 			_scope_end.attack = 0.0f;
 				
 			_scope_start.block = 0.2f;
-			_scope_end.block = 0.5f;
+			_scope_end.block = 0.3f;
 			//------------------------------
 
 			this._hp = 30;
@@ -568,6 +568,60 @@ namespace CounterBlockSting
 			}
 		}
 
+		public class SkillMgr
+		{
+
+			public enum eSkillKind
+			{
+				None,
+				Attack_3Combo,
+				Block_3Combo,
+				CounterBlock,
+				Max
+			}
+
+			public enum eGestureKind
+			{
+				None,
+				Attack_Sword,
+				Block_Sword,
+				CounterBlock,
+				Max
+			}
+
+			//키 , 간격 
+			public struct GestureInterval
+			{
+				public eGestureKind kind;
+				public float interval;
+
+				public GestureInterval(eGestureKind k, float inter)
+				{
+					kind = k;
+					interval = inter;
+				}
+			}
+
+			private class ListInterval : List<GestureInterval>
+			{}
+			private class DictInterval : Dictionary<uint, ListInterval>  //캐릭터번호 , 키입력간격
+			{}
+
+			private DictInterval _dictInterval = new DictInterval();
+
+			public void InsertInterval(uint characterNum, GestureInterval gstInterval)
+			{
+				
+			}
+
+			//어떤 입력이 스킬이냐
+
+			//3콤보
+			//2콤보
+			//1타
+
+		}
+
 		public class Simulation_Battle : MonoBehaviour 
 		{
 
@@ -906,7 +960,7 @@ namespace CounterBlockSting
 				//attack
 				if (Input.GetKeyUp ("o")) 
 				{
-					DebugWide.LogBlue ("2p - wield");
+					DebugWide.LogBlue ("2p - wield1");
 					//_2pInfo.NextState (CharacterInfo.eState.Attack);
 					this.Wield_Weapon(2);
 				}
