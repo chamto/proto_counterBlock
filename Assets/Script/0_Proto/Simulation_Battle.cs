@@ -118,6 +118,24 @@ namespace CounterBlockSting
 			_state_used = false;
 		}
 			
+		public bool IsAttacking()
+		{
+			if (eState.Attack_Init == _state_current ||
+				eState.Attack_Before == _state_current ||
+				eState.Attack_After == _state_current )
+				return true;
+			return false;
+		}
+
+		public bool IsBlocking()
+		{
+			if (eState.Block_Init == _state_current ||
+				eState.Block_Before == _state_current ||
+				eState.Block_After == _state_current )
+				return true;
+			return false;
+		}
+
 		public bool Valid_Attack()
 		{
 			if (eState.Attack_Before == _state_current) 
@@ -816,7 +834,31 @@ namespace CounterBlockSting
 
 			}
 
+			//무기 휘두르기 : 키입력을 먼저한 쪽이 공격, 늦게한 쪽이 방어가 된다. 
+			public void Wield_Weapon(int inputPNum)
+			{
+				const int PLAYERNUM_1P = 1;
+				const int PLAYERNUM_2P = 2;
 
+
+				if (inputPNum == PLAYERNUM_1P) 
+				{
+					if(true == _2pInfo.IsAttacking())
+						_1pInfo.NextState (CharacterInfo.eState.Block);
+
+					else
+						_1pInfo.NextState (CharacterInfo.eState.Attack);
+				}
+				if (inputPNum == PLAYERNUM_2P) 
+				{
+					if(true == _1pInfo.IsAttacking())
+						_2pInfo.NextState (CharacterInfo.eState.Block);
+
+					else
+						_2pInfo.NextState (CharacterInfo.eState.Attack);
+				}
+
+			}
 
 			// Update is called once per frame
 			void Update () 
@@ -838,18 +880,18 @@ namespace CounterBlockSting
 				//attack
 				if (Input.GetKeyUp ("q")) 
 				{
-					DebugWide.LogBlue ("1p - attack");
-					_1pInfo.NextState (CharacterInfo.eState.Attack);
-
+					DebugWide.LogBlue ("1p - wield");
+					//_1pInfo.NextState (CharacterInfo.eState.Attack);
+					this.Wield_Weapon(1);
 
 				}
 
 				//block
-				if (Input.GetKeyUp ("w")) 
-				{
-					DebugWide.LogBlue ("1p - block");
-					_1pInfo.NextState (CharacterInfo.eState.Block);
-				}
+//				if (Input.GetKeyUp ("w")) 
+//				{
+//					DebugWide.LogBlue ("1p - block");
+//					_1pInfo.NextState (CharacterInfo.eState.Block);
+//				}
 
 				//auto mode
 				if (Input.GetKeyUp ("a")) 
@@ -864,16 +906,17 @@ namespace CounterBlockSting
 				//attack
 				if (Input.GetKeyUp ("o")) 
 				{
-					DebugWide.LogBlue ("2p - attack");
-					_2pInfo.NextState (CharacterInfo.eState.Attack);
+					DebugWide.LogBlue ("2p - wield");
+					//_2pInfo.NextState (CharacterInfo.eState.Attack);
+					this.Wield_Weapon(2);
 				}
 
 				//block
-				if (Input.GetKeyUp ("p")) 
-				{
-					DebugWide.LogBlue ("2p - block");
-					_2pInfo.NextState (CharacterInfo.eState.Block);
-				}
+//				if (Input.GetKeyUp ("p")) 
+//				{
+//					DebugWide.LogBlue ("2p - block");
+//					_2pInfo.NextState (CharacterInfo.eState.Block);
+//				}
 
 				//auto mode
 				if (Input.GetKeyUp ("l")) 
