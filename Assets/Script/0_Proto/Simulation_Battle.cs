@@ -32,6 +32,22 @@ namespace CounterBlockSting
 		}
 	}
 
+	public struct SkillInfo
+	{
+		float time_before;
+		float time_after;
+		float scope_start;
+		float scope_end;
+
+		public void Init()
+		{
+			time_before = 0f;
+			time_after = 0f;
+			scope_start = 0f;
+			scope_end = 0f;
+		}
+	}
+
 
 	public class CharacterInfo
 	{
