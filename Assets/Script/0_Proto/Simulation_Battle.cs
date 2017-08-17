@@ -16,7 +16,7 @@ using UnityEngine.UI;
 
 namespace CounterBlockSting
 {
-	public struct BehaviorTime
+	public struct BehaviorTime_willberemoved
 	{
 		public float attack;
 		public float block;
@@ -32,12 +32,16 @@ namespace CounterBlockSting
 		}
 	}
 
-	public struct SkillInfo
+	public struct BehaviorTime
 	{
-		float time_before;
-		float time_after;
-		float scope_start;
-		float scope_end;
+		
+		public float time_before;
+		public float time_after;
+		public float scope_start;
+		public float scope_end;
+
+		public float max_openTime; //최대 연결시간 : 최대 시간 안에 동작 해야 함
+		public float min_openTime; //최소 연결시간 : 최소 시간 이후에 동작 해야 함
 
 		public void Init()
 		{
@@ -46,6 +50,11 @@ namespace CounterBlockSting
 			scope_start = 0f;
 			scope_end = 0f;
 		}
+	}
+
+	public class ComboInfo : List<BehaviorTime>
+	{
+		public Battle.eSkillKind skillKind { get; set; }
 	}
 
 
@@ -75,10 +84,10 @@ namespace CounterBlockSting
 
 
 		//Action cooldown 
-		private BehaviorTime _time_before; //A.행동이 완료되기 까지 걸리는 시간
-		private BehaviorTime _time_after;  //B.행동이 완료된 후 대기상태로 돌아오는 시간
-		private BehaviorTime _scope_start; //C.행동 효과 범위
-		private BehaviorTime _scope_end;
+		private BehaviorTime_willberemoved _time_before; //A.행동이 완료되기 까지 걸리는 시간
+		private BehaviorTime_willberemoved _time_after;  //B.행동이 완료된 후 대기상태로 돌아오는 시간
+		private BehaviorTime_willberemoved _scope_start; //C.행동 효과 범위
+		private BehaviorTime_willberemoved _scope_end;
 		private float 		 _timeDelta; 	//시간변화량
 
 		private uint 	_hp;
@@ -584,18 +593,24 @@ namespace CounterBlockSting
 			}
 		}
 
+		public enum eSkillKind
+		{
+			None,
+			Attack_1,
+			Attack_2Combo,
+			Attack_3Combo,
+
+			Block_1,
+			Block_2Combo,
+			Block_3Combo,
+
+			CounterBlock,
+			Max
+		}
+
 		public class SkillMgr
 		{
-
-			public enum eSkillKind
-			{
-				None,
-				Attack_3Combo,
-				Block_3Combo,
-				CounterBlock,
-				Max
-			}
-
+			
 			public enum eGestureKind
 			{
 				None,
