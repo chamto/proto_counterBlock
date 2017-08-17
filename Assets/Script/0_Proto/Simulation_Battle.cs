@@ -603,17 +603,53 @@ namespace CounterBlockSting
 			}
 
 			private class ListInterval : List<GestureInterval>
-			{}
+			{
+				private float _lastInputTime = 0;
+				public float lastInputTime { get; set; }
+			}
 			private class DictInterval : Dictionary<uint, ListInterval>  //캐릭터번호 , 키입력간격
 			{}
 
 			private DictInterval _dictInterval = new DictInterval();
 
+			public void InsertInterval(uint characterNum, eGestureKind eKind)
+			{
+				ListInterval list = null;
+				float lastInputTime = 0;
+				if (true == _dictInterval.TryGetValue (characterNum, out list)) {
+					lastInputTime = list.lastInputTime;
+
+				}
+					
+
+				GestureInterval gi = new GestureInterval ();
+				gi.kind = eKind;
+				gi.interval = Time.time - lastInputTime;
+
+				if (null != list) {
+					list.lastInputTime = Time.time;
+				}
+				DebugWide.LogBlue (gi.interval + "  : interval"); //chamto test
+
+				this.InsertInterval (characterNum, gi);
+			}
 			public void InsertInterval(uint characterNum, GestureInterval gstInterval)
+			{
+				ListInterval list = null;
+				if (false == _dictInterval.TryGetValue (characterNum, out list)) 
+				{
+					list = new ListInterval ();
+					_dictInterval.Add (characterNum, list);
+				}
+
+				list.Add (gstInterval);
+
+			}
+
+			public void Update()
 			{
 				
 			}
-
 			//어떤 입력이 스킬이냐
 
 			//3콤보
@@ -629,7 +665,7 @@ namespace CounterBlockSting
 			private CharacterInfo _2pInfo = new CharacterInfo();
 
 			private Judgment _judgment = null;
-
+			private SkillMgr _skillMgr = null;
 
 			//====//====//====//====//====//====
 			//ui connect
@@ -665,6 +701,8 @@ namespace CounterBlockSting
 
 
 				_judgment = new Judgment(ref _1pInfo ,ref _2pInfo);
+				_skillMgr = new SkillMgr ();
+
 				_1pImage.color = Color.white;
 				_2pImage.color = Color.white;
 
@@ -889,28 +927,37 @@ namespace CounterBlockSting
 			}
 
 			//무기 휘두르기 : 키입력을 먼저한 쪽이 공격, 늦게한 쪽이 방어가 된다. 
-			public void Wield_Weapon(int inputPNum)
+			public void Wield_Weapon(uint inputPNum)
 			{
-				const int PLAYERNUM_1P = 1;
-				const int PLAYERNUM_2P = 2;
+				const uint PLAYERNUM_1P = 1;
+				const uint PLAYERNUM_2P = 2;
+
 
 
 				if (inputPNum == PLAYERNUM_1P) 
 				{
-					if(true == _2pInfo.IsAttacking())
-						_1pInfo.NextState (CharacterInfo.eState.Block);
 
-					else
+					if (true == _2pInfo.IsAttacking ()) {
+						_1pInfo.NextState (CharacterInfo.eState.Block);
+						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+					} else {
 						_1pInfo.NextState (CharacterInfo.eState.Attack);
+						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
+					}
+					
 				}
 				if (inputPNum == PLAYERNUM_2P) 
 				{
-					if(true == _1pInfo.IsAttacking())
+					if (true == _1pInfo.IsAttacking ()) {
 						_2pInfo.NextState (CharacterInfo.eState.Block);
-
-					else
+						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+					} else {
 						_2pInfo.NextState (CharacterInfo.eState.Attack);
+						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
+					}
 				}
+
+
 
 			}
 
