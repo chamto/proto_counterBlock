@@ -614,11 +614,31 @@ namespace CounterBlockSting
 		public class SkillInfo : List<BehaviorTime>
 		{
 			public Battle.eSkillKind skillKind { get; set; }
+
+			//스킬 명세서
+			static public SkillInfo Details_Attack_1()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+				BehaviorTime bTime = new BehaviorTime ();
+				skinfo.Add (bTime);
+
+				skinfo.skillKind = eSkillKind.Attack_1;
+
+				bTime.time_before = 0.5f;
+				bTime.time_after = 0.5f;
+				bTime.scope_start = 0.3f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = 0f;
+				bTime.min_openTime = 0f;
+
+			}
 		}
 
 
 		public class SkillBook : Dictionary<eSkillKind, SkillInfo>
-		{}
+		{
+			
+		}
 
 		public class SkillMgr
 		{
