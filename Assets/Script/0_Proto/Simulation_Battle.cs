@@ -611,10 +611,14 @@ namespace CounterBlockSting
 			Max
 		}
 
-		public class ComboInfo : List<BehaviorTime>
+		public class SkillInfo : List<BehaviorTime>
 		{
 			public Battle.eSkillKind skillKind { get; set; }
 		}
+
+
+		public class SkillBook : Dictionary<eSkillKind, SkillInfo>
+		{}
 
 		public class SkillMgr
 		{
