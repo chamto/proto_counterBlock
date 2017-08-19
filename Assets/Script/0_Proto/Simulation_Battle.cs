@@ -34,7 +34,14 @@ namespace CounterBlockSting
 
 	public struct BehaviorTime
 	{
-		
+		//--------<<============>>----------
+		//    minOpenTime ~ maxOpenTime
+		// 시간범위 안에 있어야 콤보가 된다
+		public const float MAX_OPEN_TIME = 10f;
+		public const float MIN_OPEN_TIME = 0f;
+
+		//===================================
+
 		public float time_before;
 		public float time_after;
 		public float scope_start;
@@ -78,16 +85,21 @@ namespace CounterBlockSting
 		}
 
 
+		//Action cooldown 
 		//(* As : A start , Ae : A end)
 		//|--------------<----------|--------------->--------|
 		//As            Cs        Ae,Bs            Ce        Be
+		//A.행동이 완료되기 까지 걸리는 시간
+		//B.행동이 완료된 후 대기상태로 돌아오는 시간
+		//C.행동 효과 범위
 
+//		private BehaviorTime_willberemoved _time_before; 
+//		private BehaviorTime_willberemoved _time_after;  
+//		private BehaviorTime_willberemoved _scope_start; 
+//		private BehaviorTime_willberemoved _scope_end;
 
-		//Action cooldown 
-		private BehaviorTime_willberemoved _time_before; //A.행동이 완료되기 까지 걸리는 시간
-		private BehaviorTime_willberemoved _time_after;  //B.행동이 완료된 후 대기상태로 돌아오는 시간
-		private BehaviorTime_willberemoved _scope_start; //C.행동 효과 범위
-		private BehaviorTime_willberemoved _scope_end;
+		private BehaviorTime _behavior;
+
 		private float 		 _timeDelta; 	//시간변화량
 
 		private uint 	_hp;
@@ -97,44 +109,13 @@ namespace CounterBlockSting
 		private eState 	_state_next;
 		private bool _state_used;
 
+		private Battle.SkillBook _skillBook = null;
+
 		public CharacterInfo()
 		{
-
-			_time_before.Init ();
-			_time_after.Init ();
-			_scope_start.Init ();
-			_scope_end.Init ();
+			_skillBook = CSingleton<Battle.SkillBook>.Instance;
+			_behavior.Init();
 			_timeDelta = 0f;
-
-			//------------------------------
-//			_time_before.attack = 2f;
-//			_time_after.attack = 2f;
-//
-//			_time_before.block = 1f;
-//			_time_after.block = 2f;
-//
-//			_time_before.idle = 2f;
-//			//------------------------------
-//			_scope_start.attack = 1.5f;
-//			_scope_end.attack = 0.0f;
-//				
-//			_scope_start.block = 0.0f;
-//			_scope_end.block = 1f;
-			//------------------------------
-			_time_before.attack = 0.5f;
-			_time_after.attack = 0.5f;
-
-			_time_before.block = 0.5f;
-			_time_after.block = 0.5f;
-
-			_time_before.idle = 1f;
-			//------------------------------
-			_scope_start.attack = 0.3f;
-			_scope_end.attack = 0.0f;
-				
-			_scope_start.block = 0.2f;
-			_scope_end.block = 0.3f;
-			//------------------------------
 
 			this._hp = 30;
 			_state_prev = eState.None;
@@ -165,13 +146,15 @@ namespace CounterBlockSting
 		{
 			if (eState.Attack_Before == _state_current) 
 			{
-				if (_scope_start.attack <= _timeDelta)
+				//if (_scope_start.attack <= _timeDelta)
+				if (_behavior.scope_start <= _timeDelta)
 					return true;
 			}
 
 			if (eState.Attack_After == _state_current) 
 			{
-				if (_timeDelta <= _scope_end.attack)
+				//if (_timeDelta <= _scope_end.attack)
+				if (_timeDelta <= _behavior.scope_end)
 					return true;
 			}
 
@@ -182,13 +165,15 @@ namespace CounterBlockSting
 		{
 			if (eState.Block_Before == _state_current) 
 			{
-				if (_scope_start.block <= _timeDelta)
+				//if (_scope_start.block <= _timeDelta)
+				if (_behavior.scope_start <= _timeDelta)
 					return true;
 			}
 
 			if (eState.Block_After == _state_current) 
 			{
-				if (_timeDelta <= _scope_end.block)
+				//if (_timeDelta <= _scope_end.block)
+				if (_timeDelta <= _behavior.scope_end)
 					return true;
 			}
 
@@ -267,12 +252,15 @@ namespace CounterBlockSting
 				{
 					_state_used = false; //init
 					this.SetState (eState.Attack_Before);	
+
+					_behavior = _skillBook [CounterBlockSting.Battle.eSkillKind.Attack_1].ElementAt(0);
 				}
 				break;
 			case eState.Attack_Before:
 				{
 					
-					if (_time_before.attack <= this._timeDelta) 
+					//if (_time_before.attack <= this._timeDelta) 
+					if (_behavior.time_before <= this._timeDelta) 
 					{
 						this.SetState (eState.Attack_After);
 					}		
@@ -280,7 +268,8 @@ namespace CounterBlockSting
 				break;
 			case eState.Attack_After:
 				{
-					if (_time_after.attack <= this._timeDelta) 
+					//if (_time_after.attack <= this._timeDelta) 
+					if (_behavior.time_after <= this._timeDelta) 
 					{
 						this.SetState (_state_next);
 						_state_next = eState.Idle;
@@ -290,14 +279,16 @@ namespace CounterBlockSting
 			case eState.Block_Init:
 				{
 					_state_used = false; //init
-					this.SetState (eState.Block_Before);	
+					this.SetState (eState.Block_Before);
+
+					_behavior = _skillBook [CounterBlockSting.Battle.eSkillKind.Block_1].ElementAt(0);
 				}
 				break;
 			case eState.Block_Before:
 				{
 					
-
-					if (_time_before.block <= this._timeDelta) 
+					//if (_time_before.block <= this._timeDelta) 
+					if (_behavior.time_before <= this._timeDelta) 
 					{
 						this.SetState (eState.Block_After);
 					}
@@ -305,7 +296,8 @@ namespace CounterBlockSting
 				break;
 			case eState.Block_After:
 				{
-					if (_time_after.block <= this._timeDelta) 
+					//if (_time_after.block <= this._timeDelta) 
+					if (_behavior.time_after <= this._timeDelta) 
 					{
 						this.SetState (_state_next);
 						_state_next = eState.Idle;
@@ -319,7 +311,8 @@ namespace CounterBlockSting
 					_state_used = false; //init
 
 					//default loop 
-					if (_time_before.idle <= this._timeDelta) 
+					//if (_time_before.idle <= this._timeDelta) 
+					if (_behavior.time_before <= this._timeDelta) 
 					{
 						this.SetState (eState.Idle);
 					}
@@ -599,6 +592,8 @@ namespace CounterBlockSting
 		public enum eSkillKind
 		{
 			None,
+			Idle,
+
 			Attack_1,
 			Attack_2Combo,
 			Attack_3Combo,
@@ -613,30 +608,43 @@ namespace CounterBlockSting
 
 		public class SkillInfo : List<BehaviorTime>
 		{
-			public const float MAX_OPEN_TIME = 10f;
-			public const float MIN_OPEN_TIME = 0f;
-
-			//--------<<============>>----------
-			//    minOpenTime ~ maxOpenTime
-			// 시간범위 안에 있어야 콤보가 된다
-
+			
 			public Battle.eSkillKind skillKind { get; set; }
 
 			//스킬 명세서
+			static public SkillInfo Details_Idle()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+
+				skinfo.skillKind = eSkillKind.Idle;
+
+				BehaviorTime bTime = new BehaviorTime ();
+				bTime.time_before = 1f;
+				bTime.time_after = 0;
+				bTime.scope_start = 0f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
+				skinfo.Add (bTime);
+
+				return skinfo;
+			}
+
+
 			static public SkillInfo Details_Attack_1()
 			{
 				SkillInfo skinfo = new SkillInfo ();
-				BehaviorTime bTime = new BehaviorTime ();
-				skinfo.Add (bTime);
 
 				skinfo.skillKind = eSkillKind.Attack_1;
 
+				BehaviorTime bTime = new BehaviorTime ();
 				bTime.time_before = 0.5f;
-				bTime.time_after = 0.5f;
-				bTime.scope_start = 0.3f;
+				bTime.time_after = 0.8f;
+				bTime.scope_start = 0.5f;
 				bTime.scope_end = 0f;
-				bTime.max_openTime = MAX_OPEN_TIME;
-				bTime.min_openTime = MIN_OPEN_TIME;
+				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
+				skinfo.Add (bTime);
 
 				return skinfo;
 			}
@@ -653,8 +661,8 @@ namespace CounterBlockSting
 				bTime.time_after = 0.1f;
 				bTime.scope_start = 0.3f;
 				bTime.scope_end = 0f;
-				bTime.max_openTime = MAX_OPEN_TIME;
-				bTime.min_openTime = MIN_OPEN_TIME;
+				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
 				skinfo.Add (bTime);
 
 				//2combo
@@ -679,6 +687,24 @@ namespace CounterBlockSting
 
 				return skinfo;
 			}
+
+			static public SkillInfo Details_Block_1()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+
+				skinfo.skillKind = eSkillKind.Block_1;
+
+				BehaviorTime bTime = new BehaviorTime ();
+				bTime.time_before = 0.5f;
+				bTime.time_after = 0.5f;
+				bTime.scope_start = 0.1f;
+				bTime.scope_end = 0.5f;
+				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
+				skinfo.Add (bTime);
+
+				return skinfo;
+			}
 		}
 
 
@@ -686,8 +712,10 @@ namespace CounterBlockSting
 		{
 			public SkillBook()
 			{
+				this.Add (eSkillKind.Idle, SkillInfo.Details_Idle ());
 				this.Add (eSkillKind.Attack_1, SkillInfo.Details_Attack_1 ());
 				this.Add (eSkillKind.Attack_3Combo, SkillInfo.Details_Attack_3Combo ());
+				this.Add (eSkillKind.Block_1, SkillInfo.Details_Block_1 ());
 			}
 		}
 
