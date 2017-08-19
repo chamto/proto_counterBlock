@@ -613,6 +613,13 @@ namespace CounterBlockSting
 
 		public class SkillInfo : List<BehaviorTime>
 		{
+			public const float MAX_OPEN_TIME = 10f;
+			public const float MIN_OPEN_TIME = 0f;
+
+			//--------<<============>>----------
+			//    minOpenTime ~ maxOpenTime
+			// 시간범위 안에 있어야 콤보가 된다
+
 			public Battle.eSkillKind skillKind { get; set; }
 
 			//스킬 명세서
@@ -628,16 +635,60 @@ namespace CounterBlockSting
 				bTime.time_after = 0.5f;
 				bTime.scope_start = 0.3f;
 				bTime.scope_end = 0f;
-				bTime.max_openTime = 0f;
-				bTime.min_openTime = 0f;
+				bTime.max_openTime = MAX_OPEN_TIME;
+				bTime.min_openTime = MIN_OPEN_TIME;
 
+				return skinfo;
+			}
+
+			static public SkillInfo Details_Attack_3Combo()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+
+				skinfo.skillKind = eSkillKind.Attack_3Combo;
+
+				//1combo
+				BehaviorTime bTime = new BehaviorTime ();
+				bTime.time_before = 0.5f;
+				bTime.time_after = 0.1f;
+				bTime.scope_start = 0.3f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = MAX_OPEN_TIME;
+				bTime.min_openTime = MIN_OPEN_TIME;
+				skinfo.Add (bTime);
+
+				//2combo
+				bTime = new BehaviorTime ();
+				bTime.time_before = 0.2f;
+				bTime.time_after = 0.2f;
+				bTime.scope_start = 0.2f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = 0.5f;
+				bTime.min_openTime = 0.2f;
+				skinfo.Add (bTime);
+
+				//3combo
+				bTime = new BehaviorTime ();
+				bTime.time_before = 0.2f;
+				bTime.time_after = 1f;
+				bTime.scope_start = 0.2f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = 0.5f;
+				bTime.min_openTime = 0.2f;
+				skinfo.Add (bTime);
+
+				return skinfo;
 			}
 		}
 
 
 		public class SkillBook : Dictionary<eSkillKind, SkillInfo>
 		{
-			
+			public SkillBook()
+			{
+				this.Add (eSkillKind.Attack_1, SkillInfo.Details_Attack_1 ());
+				this.Add (eSkillKind.Attack_3Combo, SkillInfo.Details_Attack_3Combo ());
+			}
 		}
 
 		public class SkillMgr
