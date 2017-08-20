@@ -16,21 +16,7 @@ using UnityEngine.UI;
 
 namespace CounterBlockSting
 {
-	public struct BehaviorTime_willberemoved
-	{
-		public float attack;
-		public float block;
-		public float idle;
-
-
-		public void Init()
-		{
-			attack = 0f;
-			block = 0f;
-			idle = 0f;
-
-		}
-	}
+	
 
 	public struct BehaviorTime
 	{
@@ -58,11 +44,6 @@ namespace CounterBlockSting
 			scope_end = 0f;
 		}
 	}
-
-//	public class ComboInfo : List<BehaviorTime>
-//	{
-//		public Battle.eSkillKind skillKind { get; set; }
-//	}
 
 
 	public class CharacterInfo
@@ -93,10 +74,6 @@ namespace CounterBlockSting
 		//B.행동이 완료된 후 대기상태로 돌아오는 시간
 		//C.행동 효과 범위
 
-//		private BehaviorTime_willberemoved _time_before; 
-//		private BehaviorTime_willberemoved _time_after;  
-//		private BehaviorTime_willberemoved _scope_start; 
-//		private BehaviorTime_willberemoved _scope_end;
 
 		private BehaviorTime _behavior;
 
