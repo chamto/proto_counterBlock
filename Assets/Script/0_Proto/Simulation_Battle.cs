@@ -219,6 +219,16 @@ namespace CounterBlockSting
 			_state_next = nextState;
 		}
 
+		public void SetBehavior(CounterBlockSting.Battle.eSkillKind kind, int sequence)
+		{
+			_behavior = _skillBook [kind].ElementAt(sequence);
+		}
+
+		public void SetBegavior_CounterBlock()
+		{
+			this.SetBehavior (CounterBlockSting.Battle.eSkillKind.CounterBlock, 0);
+		}
+
 		public void Update_State()
 		{
 			this._timeDelta += Time.deltaTime;
@@ -263,7 +273,6 @@ namespace CounterBlockSting
 				break;
 			case eState.Block_Before:
 				{
-					
 					//if (_time_before.block <= this._timeDelta) 
 					if (_behavior.time_before <= this._timeDelta) 
 					{
@@ -418,6 +427,12 @@ namespace CounterBlockSting
 					state_1p = s1p;
 					state_2p = s2p;
 				}
+
+				public void Init()
+				{
+					state_1p = eState.None;
+					state_2p = eState.None;
+				}
 			}
 
 			public enum eState
@@ -440,10 +455,23 @@ namespace CounterBlockSting
 			private CharacterInfo _ref_1pInfo = null;
 			private CharacterInfo _ref_2pInfo = null;
 
+			private  Result _result; 
+
+
+			//==========================================
+
+			//public Result result { get { return _result; }} 
+			public Result GetResult()
+			{
+				return _result;
+			}
+
 			public Judgment(ref CharacterInfo ref_1p , ref CharacterInfo ref_2p)
 			{
 				_ref_1pInfo = ref_1p;
 				_ref_2pInfo = ref_2p;
+
+				_result.Init ();
 			}
 
 			/// <summary>
@@ -528,11 +556,47 @@ namespace CounterBlockSting
 
 
 
-			public Result Judge()
-			{
-				Result jResult =  Valid_Attack ();
+//			public Result Judge()
+//			{
+//				Result jResult =  Valid_Attack ();
+//
+//				switch (jResult.state_1p) 
+//				{
+//				case eState.AttackSucceed:
+//					if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
+//					{
+//						_ref_1pInfo.SetUsedState ();
+//						_ref_2pInfo.HP_SubTract (1);
+//						_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
+//					}
+//						
+//					break;
+//				}
+//
+//				switch (jResult.state_2p) 
+//				{
+//				case eState.AttackSucceed:
+//					if (false == _ref_2pInfo.GetUsedState ()) 
+//					{
+//						_ref_2pInfo.SetUsedState ();
+//						_ref_1pInfo.HP_SubTract (1);
+//						_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
+//					}
+//						
+//					break;
+//				}
+//
+//				return jResult;
+//			}//end func
 
-				switch (jResult.state_1p) 
+			public void Update()
+			{
+				_result =  Valid_Attack ();
+
+
+				//apply jugement : HP
+				//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				switch (_result.state_1p) 
 				{
 				case eState.AttackSucceed:
 					if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
@@ -541,11 +605,11 @@ namespace CounterBlockSting
 						_ref_2pInfo.HP_SubTract (1);
 						_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
 					}
-						
+
 					break;
 				}
 
-				switch (jResult.state_2p) 
+				switch (_result.state_2p) 
 				{
 				case eState.AttackSucceed:
 					if (false == _ref_2pInfo.GetUsedState ()) 
@@ -554,13 +618,37 @@ namespace CounterBlockSting
 						_ref_1pInfo.HP_SubTract (1);
 						_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
 					}
-						
+
+					break;
+				}
+				//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+				//apply jugement : behaviour state
+				//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				//방어 성공시 반격방어스킬을 적용 한다
+				switch (_result.state_1p) 
+				{
+				case eState.BlockSucceed:
+					{
+						_ref_1pInfo.SetBegavior_CounterBlock ();
+					}
+
 					break;
 				}
 
-				return jResult;
-			}
+				switch (_result.state_2p) 
+				{
+				case eState.BlockSucceed:
+					{
+						_ref_2pInfo.SetBegavior_CounterBlock ();
+					}
 
+					break;
+				}
+
+				//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+			}//end Update
 
 		}	
 
@@ -682,6 +770,24 @@ namespace CounterBlockSting
 
 				return skinfo;
 			}
+
+			static public SkillInfo Details_CounterBlock()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+
+				skinfo.skillKind = eSkillKind.CounterBlock;
+
+				BehaviorTime bTime = new BehaviorTime ();
+				bTime.time_before = 0.5f;
+				bTime.time_after = 0.1f; //후동작이 짧아진다
+				bTime.scope_start = 0f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = 0.5f;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
+				skinfo.Add (bTime);
+
+				return skinfo;
+			}
 		}
 
 
@@ -693,6 +799,7 @@ namespace CounterBlockSting
 				this.Add (eSkillKind.Attack_1, SkillInfo.Details_Attack_1 ());
 				this.Add (eSkillKind.Attack_3Combo, SkillInfo.Details_Attack_3Combo ());
 				this.Add (eSkillKind.Block_1, SkillInfo.Details_Block_1 ());
+				this.Add (eSkillKind.CounterBlock, SkillInfo.Details_CounterBlock ());
 			}
 		}
 
@@ -877,7 +984,7 @@ namespace CounterBlockSting
 
 			void Update_UI()
 			{
-				Judgment.Result jResult =  _judgment.Judge ();
+				Judgment.Result jResult =  _judgment.GetResult();
 				_1pHpBar.value = _1pInfo.GetHP();
 				_2pHpBar.value = _2pInfo.GetHP();
 
@@ -1086,6 +1193,7 @@ namespace CounterBlockSting
 				_1pInfo.Update_State ();
 				_2pInfo.Update_State ();
 
+				_judgment.Update ();
 				this.Update_UI ();
 
 				//restart
