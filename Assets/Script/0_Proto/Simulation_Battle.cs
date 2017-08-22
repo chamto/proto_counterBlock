@@ -76,6 +76,7 @@ namespace CounterBlockSting
 
 
 		private BehaviorTime _behavior;
+		private Battle.eSkillKind _skill_current;
 
 		private float 		 _timeDelta; 	//시간변화량
 
@@ -92,6 +93,8 @@ namespace CounterBlockSting
 		{
 			_skillBook = CSingleton<Battle.SkillBook>.Instance;
 			_behavior.Init();
+			_skill_current = Battle.eSkillKind.None;
+
 			_timeDelta = 0f;
 
 			this._hp = 30;
@@ -555,40 +558,6 @@ namespace CounterBlockSting
 			}
 
 
-
-//			public Result Judge()
-//			{
-//				Result jResult =  Valid_Attack ();
-//
-//				switch (jResult.state_1p) 
-//				{
-//				case eState.AttackSucceed:
-//					if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
-//					{
-//						_ref_1pInfo.SetUsedState ();
-//						_ref_2pInfo.HP_SubTract (1);
-//						_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
-//					}
-//						
-//					break;
-//				}
-//
-//				switch (jResult.state_2p) 
-//				{
-//				case eState.AttackSucceed:
-//					if (false == _ref_2pInfo.GetUsedState ()) 
-//					{
-//						_ref_2pInfo.SetUsedState ();
-//						_ref_1pInfo.HP_SubTract (1);
-//						_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
-//					}
-//						
-//					break;
-//				}
-//
-//				return jResult;
-//			}//end func
-
 			public void Update()
 			{
 				_result =  Valid_Attack ();
@@ -648,6 +617,7 @@ namespace CounterBlockSting
 
 				//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
 			}//end Update
 
 		}	
@@ -658,6 +628,7 @@ namespace CounterBlockSting
 		{
 			None,
 			Idle,
+			Hit,
 
 			Attack_1,
 			Attack_2Combo,
@@ -686,6 +657,24 @@ namespace CounterBlockSting
 				BehaviorTime bTime = new BehaviorTime ();
 				bTime.time_before = 1f;
 				bTime.time_after = 0;
+				bTime.scope_start = 0f;
+				bTime.scope_end = 0f;
+				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
+				bTime.min_openTime = BehaviorTime.MIN_OPEN_TIME;
+				skinfo.Add (bTime);
+
+				return skinfo;
+			}
+
+			static public SkillInfo Details_Hit()
+			{
+				SkillInfo skinfo = new SkillInfo ();
+
+				skinfo.skillKind = eSkillKind.Hit;
+
+				BehaviorTime bTime = new BehaviorTime ();
+				bTime.time_before = 1f;
+				bTime.time_after = 0.5f;
 				bTime.scope_start = 0f;
 				bTime.scope_end = 0f;
 				bTime.max_openTime = BehaviorTime.MAX_OPEN_TIME;
@@ -796,6 +785,7 @@ namespace CounterBlockSting
 			public SkillBook()
 			{
 				this.Add (eSkillKind.Idle, SkillInfo.Details_Idle ());
+				this.Add (eSkillKind.Hit, SkillInfo.Details_Hit ());
 				this.Add (eSkillKind.Attack_1, SkillInfo.Details_Attack_1 ());
 				this.Add (eSkillKind.Attack_3Combo, SkillInfo.Details_Attack_3Combo ());
 				this.Add (eSkillKind.Block_1, SkillInfo.Details_Block_1 ());
@@ -1158,14 +1148,23 @@ namespace CounterBlockSting
 				const uint PLAYERNUM_1P = 1;
 				const uint PLAYERNUM_2P = 2;
 
-
+				Judgment.Result jResult =  _judgment.GetResult();
+				DebugWide.LogGreen (jResult.state_1p + "   " + jResult.state_2p); //chamto test
 
 				if (inputPNum == PLAYERNUM_1P) 
 				{
 
-					if (true == _2pInfo.IsAttacking ()) {
-						_1pInfo.NextState (CharacterInfo.eState.Block);
-						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+					if (true == _2pInfo.IsAttacking ()) 
+					{
+						//방어 성공시 공격행동으로 전환 시킨다
+						if (Judgment.eState.BlockSucceed == jResult.state_1p) {
+							_1pInfo.NextState (CharacterInfo.eState.Attack);
+							_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
+						} else {
+							_1pInfo.NextState (CharacterInfo.eState.Block);
+							_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+						}
+
 					} else {
 						_1pInfo.NextState (CharacterInfo.eState.Attack);
 						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
@@ -1174,9 +1173,16 @@ namespace CounterBlockSting
 				}
 				if (inputPNum == PLAYERNUM_2P) 
 				{
-					if (true == _1pInfo.IsAttacking ()) {
-						_2pInfo.NextState (CharacterInfo.eState.Block);
-						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+					if (true == _1pInfo.IsAttacking ()) 
+					{
+						if (Judgment.eState.BlockSucceed == jResult.state_2p) {
+							_2pInfo.NextState (CharacterInfo.eState.Attack);
+							_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
+						} else {
+							_2pInfo.NextState (CharacterInfo.eState.Block);
+							_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Block_Sword);
+						}
+
 					} else {
 						_2pInfo.NextState (CharacterInfo.eState.Attack);
 						_skillMgr.InsertInterval (inputPNum, SkillMgr.eGestureKind.Attack_Sword);
