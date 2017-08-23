@@ -52,6 +52,11 @@ namespace CounterBlockSting
 		public enum eState
 		{
 			None 		= 0,
+
+			Init,
+			Before,
+			After,
+
 			Attack,
 			Attack_Init = Attack,
 			Attack_Before,
@@ -76,7 +81,7 @@ namespace CounterBlockSting
 
 
 		private BehaviorTime _behavior;
-		private Battle.eSkillKind _skill_current;
+		private eSkillKind _skill_current;
 
 		private float 		 _timeDelta; 	//시간변화량
 
@@ -87,13 +92,13 @@ namespace CounterBlockSting
 		private eState 	_state_next;
 		private bool _state_used;
 
-		private Battle.SkillBook _skillBook = null;
+		private SkillBook _skillBook = null;
 
 		public CharacterInfo()
 		{
-			_skillBook = CSingleton<Battle.SkillBook>.Instance;
+			_skillBook = CSingleton<SkillBook>.Instance;
 			_behavior.Init();
-			_skill_current = Battle.eSkillKind.None;
+			_skill_current = eSkillKind.None;
 
 			_timeDelta = 0f;
 
@@ -222,14 +227,14 @@ namespace CounterBlockSting
 			_state_next = nextState;
 		}
 
-		public void SetBehavior(CounterBlockSting.Battle.eSkillKind kind, int sequence)
+		public void SetBehavior(CounterBlockSting.eSkillKind kind, int sequence)
 		{
 			_behavior = _skillBook [kind].ElementAt(sequence);
 		}
 
 		public void SetBegavior_CounterBlock()
 		{
-			this.SetBehavior (CounterBlockSting.Battle.eSkillKind.CounterBlock, 0);
+			this.SetBehavior (CounterBlockSting.eSkillKind.CounterBlock, 0);
 		}
 
 		public void Update_State()
@@ -238,12 +243,36 @@ namespace CounterBlockSting
 
 			switch (this._state_current) 
 			{
+			case eState.Init:
+				{
+					_state_used = false; //init
+					this.SetState (eState.Before);	
+
+					 //_behavior = _skillBook [CounterBlockSting.Battle.eSkillKind.Attack_1].ElementAt(0);
+				}
+				break;
+			case eState.Before:
+				{
+					if (_behavior.time_before <= this._timeDelta) 
+					{
+						this.SetState (eState.After);
+					}		
+				}
+				break;
+			case eState.After:
+				{
+					if (_behavior.time_after <= this._timeDelta) 
+					{
+						this.SetState (eState.Init);
+					}
+				}
+				break;
 			case eState.Attack_Init:
 				{
 					_state_used = false; //init
 					this.SetState (eState.Attack_Before);	
 
-					_behavior = _skillBook [CounterBlockSting.Battle.eSkillKind.Attack_1].ElementAt(0);
+					_behavior = _skillBook [CounterBlockSting.eSkillKind.Attack_1].ElementAt(0);
 				}
 				break;
 			case eState.Attack_Before:
@@ -271,7 +300,7 @@ namespace CounterBlockSting
 					_state_used = false; //init
 					this.SetState (eState.Block_Before);
 
-					_behavior = _skillBook [CounterBlockSting.Battle.eSkillKind.Block_1].ElementAt(0);
+					_behavior = _skillBook [CounterBlockSting.eSkillKind.Block_1].ElementAt(0);
 				}
 				break;
 			case eState.Block_Before:
@@ -411,8 +440,7 @@ namespace CounterBlockSting
 	}//end class
 
 
-	namespace Battle
-	{
+
 		/// <summary>
 		/// 판정
 		/// Judgment.
@@ -645,7 +673,7 @@ namespace CounterBlockSting
 		public class SkillInfo : List<BehaviorTime>
 		{
 			
-			public Battle.eSkillKind skillKind { get; set; }
+			public eSkillKind skillKind { get; set; }
 
 			//스킬 명세서
 			static public SkillInfo Details_Idle()
@@ -837,7 +865,6 @@ namespace CounterBlockSting
 
 				}
 					
-
 				GestureInterval gi = new GestureInterval ();
 				gi.kind = eKind;
 				gi.interval = Time.time - lastInputTime;
@@ -849,6 +876,7 @@ namespace CounterBlockSting
 
 				this.InsertInterval (characterNum, gi);
 			}
+
 			public void InsertInterval(uint characterNum, GestureInterval gstInterval)
 			{
 				ListInterval list = null;
@@ -1264,7 +1292,7 @@ namespace CounterBlockSting
 			}//end Update
 		}//end class Simulation 
 
-	}//end namespace
+
 
 
 }//end namespace 
