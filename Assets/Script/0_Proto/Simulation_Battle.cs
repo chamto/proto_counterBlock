@@ -237,6 +237,8 @@ namespace CounterBlockSting
 			this.SetBehavior (CounterBlockSting.eSkillKind.CounterBlock, 0);
 		}
 
+
+
 		public void Update_State()
 		{
 			this._timeDelta += Time.deltaTime;
@@ -345,7 +347,9 @@ namespace CounterBlockSting
 				break;
 			}
 
-		}
+		}//end func
+
+
 
 
 	}//end class
@@ -899,6 +903,8 @@ namespace CounterBlockSting
 			//3콤보
 			//2콤보
 			//1타
+
+			
 
 		}
 
