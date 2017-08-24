@@ -216,6 +216,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60ca260d596f44d8f888940758889d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _1pExplanation1: {fileID: 1987994764}
+  _2pExplanation1: {fileID: 1453370409}
+  _1pExplanation2: {fileID: 664399180}
+  _2pExplanation2: {fileID: 1024506646}
+  _1pHpBar: {fileID: 0}
+  _2pHpBar: {fileID: 0}
+  _1pImage: {fileID: 0}
+  _2pImage: {fileID: 0}
+  _1pSprite_01: {fileID: 0}
+  _1pSprite_02: {fileID: 0}
+  _1pSprite_03: {fileID: 0}
+  _2pSprite_01: {fileID: 0}
+  _2pSprite_02: {fileID: 0}
+  _2pSprite_03: {fileID: 0}
 --- !u!1 &90106105
 GameObject:
   m_ObjectHideFlags: 0
