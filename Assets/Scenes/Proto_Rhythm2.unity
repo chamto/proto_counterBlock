@@ -220,16 +220,16 @@ MonoBehaviour:
   _2pExplanation1: {fileID: 1453370409}
   _1pExplanation2: {fileID: 664399180}
   _2pExplanation2: {fileID: 1024506646}
-  _1pHpBar: {fileID: 0}
-  _2pHpBar: {fileID: 0}
+  _1pHpBar: {fileID: 649356579}
+  _2pHpBar: {fileID: 1190308843}
   _1pImage: {fileID: 0}
   _2pImage: {fileID: 0}
-  _1pSprite_01: {fileID: 0}
-  _1pSprite_02: {fileID: 0}
-  _1pSprite_03: {fileID: 0}
-  _2pSprite_01: {fileID: 0}
-  _2pSprite_02: {fileID: 0}
-  _2pSprite_03: {fileID: 0}
+  _1pSprite_01: {fileID: 1003766484}
+  _1pSprite_02: {fileID: 1181612801}
+  _1pSprite_03: {fileID: 881251768}
+  _2pSprite_01: {fileID: 166768468}
+  _2pSprite_02: {fileID: 2145841599}
+  _2pSprite_03: {fileID: 1309511200}
 --- !u!1 &90106105
 GameObject:
   m_ObjectHideFlags: 0

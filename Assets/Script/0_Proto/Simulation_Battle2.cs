@@ -516,12 +516,106 @@ namespace CounterBlock
 		}
 	}
 
+
+	public class ResourceManager
+	{
+		public enum eSPRITE_NAME
+		{
+			NONE,
+			EMPTY_CARD,
+
+			P1_IDLE,
+			P1_ATTACK_BEFORE,
+			P1_ATTACK_VALID,
+			P1_ATTACK_AFTER,
+			P1_BLOCK_BEFORE,
+			P1_BLOCK_VALID,
+			P1_BLOCK_AFTER,
+
+			P2_IDLE,
+			P2_ATTACK_BEFORE,
+			P2_ATTACK_VALID,
+			P2_ATTACK_AFTER,
+			P2_BLOCK_BEFORE,
+			P2_BLOCK_VALID,
+			P2_BLOCK_AFTER,
+			MAX
+		}
+
+
+
+		private Dictionary<eSPRITE_NAME, string> _sprNameDict = null;
+		private Dictionary<eSPRITE_NAME, Sprite> _loadedDict = new Dictionary<eSPRITE_NAME, Sprite> ();
+
+
+		public void Init()
+		{
+			_sprNameDict = new Dictionary<eSPRITE_NAME, string> ()
+			{
+				{eSPRITE_NAME.EMPTY_CARD, "empty_card"},
+				{eSPRITE_NAME.P1_IDLE, "p1_idle"},
+				{eSPRITE_NAME.P1_ATTACK_BEFORE, "p1_attack_before"},
+				{eSPRITE_NAME.P1_ATTACK_VALID, "p1_attack_valid"},
+				{eSPRITE_NAME.P1_ATTACK_AFTER, "p1_attack_after"},
+				{eSPRITE_NAME.P1_BLOCK_BEFORE, "p1_block_before"},
+				{eSPRITE_NAME.P1_BLOCK_VALID, "p1_block_valid"},
+				{eSPRITE_NAME.P1_BLOCK_AFTER, "p1_block_after"},
+
+				{eSPRITE_NAME.P2_IDLE, "p2_idle"},
+				{eSPRITE_NAME.P2_ATTACK_BEFORE, "p2_attack_before"},
+				{eSPRITE_NAME.P2_ATTACK_VALID, "p2_attack_valid"},
+				{eSPRITE_NAME.P2_ATTACK_AFTER, "p2_attack_after"},
+				{eSPRITE_NAME.P2_BLOCK_BEFORE, "p2_block_before"},
+				{eSPRITE_NAME.P2_BLOCK_VALID, "p2_block_valid"},
+				{eSPRITE_NAME.P2_BLOCK_AFTER, "p2_block_after"}
+			};
+
+		}
+
+		public void Load_BattleCard()
+		{
+			Sprite[] sprites = Resources.LoadAll <Sprite>("Texture/battleCard");
+
+			for(int i=0;i<sprites.Length;i++)
+			{
+				//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
+				//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
+				eSPRITE_NAME key = _sprNameDict.FirstOrDefault(x => x.Value == sprites [i].name).Key;
+				_loadedDict.Add (key, sprites [i]);
+			}
+
+
+		}
+
+		public Sprite GetSprite(eSPRITE_NAME eName)
+		{
+			//20170813 chamto fixme - enum 값이 없을 때의 예외 처리가 없음 
+			return _loadedDict [eName];
+		}
+
+		public void TestPrint()
+		{
+			foreach (Sprite s in _loadedDict.Values) 
+			{
+				DebugWide.LogBlue (s.name);
+			}
+			foreach (eSPRITE_NAME s in _loadedDict.Keys) 
+			{
+				DebugWide.LogBlue (s);
+			}
+		}
+	}//end class
+
+
+
+
 	public class Simulation_Battle2 : MonoBehaviour 
 	{
 
 		private CharacterManager _crtMgr = null;
 		private Character _1Player = null;
 		private Character _2Player = null;
+		private ResourceManager _rscMgr = null;
 
 		//====//====//====//====//====//====
 		//ui connect
@@ -555,9 +649,13 @@ namespace CounterBlock
 			_1Player = _crtMgr [1];
 			_2Player = _crtMgr [2];
 
+			_rscMgr = CSingleton<ResourceManager>.Instance;
+			_rscMgr.Init ();
+			_rscMgr.Load_BattleCard ();
+
 		}
 
-		void Update_UI()
+		void Update_UI_Explan()
 		{
 			
 
@@ -579,6 +677,53 @@ namespace CounterBlock
 
 		}
 
+		void Update_UI_Card()
+		{
+			
+			//====//====//====//====//====//====
+
+			_1pSprite_02.gameObject.SetActive (false);
+			_1pSprite_03.gameObject.SetActive (false);
+			_2pSprite_02.gameObject.SetActive (false);
+			_2pSprite_03.gameObject.SetActive (false);
+
+			_1pSprite_01.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_IDLE);
+			_2pSprite_01.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_IDLE);
+
+			//1p
+			if (Skill.eKind.Attack_1 == _1Player.CurrentSkillKind ()) 
+			{
+				_1pSprite_02.gameObject.SetActive (true);
+				_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);
+			}
+			if (Skill.eKind.Block_1 == _1Player.CurrentSkillKind ()) 
+			{
+				_1pSprite_02.gameObject.SetActive (true);
+				_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_BLOCK_BEFORE);
+			}
+
+
+			//2p
+			if (Skill.eKind.Attack_1 == _2Player.CurrentSkillKind ()) 
+			{
+				_2pSprite_02.gameObject.SetActive (true);
+				_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE);
+			}
+			if (Skill.eKind.Block_1 == _2Player.CurrentSkillKind ()) 
+			{
+				_2pSprite_02.gameObject.SetActive (true);
+				_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_BLOCK_BEFORE);
+			}
+
+
+
+			//====//====//====//====//====//====
+
+
+
+
+		}//end func
+
 
 
 		// Update is called once per frame
@@ -587,7 +732,9 @@ namespace CounterBlock
 
 			_crtMgr.Update ();
 
-			this.Update_UI ();
+			this.Update_UI_Explan ();
+			this.Update_UI_Card ();
+
 			//////////////////////////////////////////////////
 			//1p
 
@@ -597,7 +744,7 @@ namespace CounterBlock
 				DebugWide.LogBlue ("1p - keyinput");
 				_1Player.Attack ();
 			}
-
+			//block
 			if (Input.GetKeyUp ("w")) 
 			{
 				DebugWide.LogBlue ("1p - keyinput");
@@ -613,6 +760,12 @@ namespace CounterBlock
 			{
 				DebugWide.LogBlue ("2p - keyinput");
 				_2Player.Attack ();
+			}
+			//block
+			if (Input.GetKeyUp ("p")) 
+			{
+				DebugWide.LogBlue ("2p - keyinput");
+				_2Player.Block ();
 			}
 
 		}//end Update
