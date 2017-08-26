@@ -166,6 +166,11 @@ namespace CounterBlock
 			SetSkill (Skill.eKind.Attack_1);
 		}
 
+		public void Block()
+		{
+			SetSkill (Skill.eKind.Block_1);
+		}
+
 		public void Idle()
 		{
 			SetSkill (Skill.eKind.Idle);
@@ -392,7 +397,6 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.allTime = 1f;
-
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -411,7 +415,39 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.allTime = 1f;
+			bhvo.scopeTime_0 = 0f;
+			bhvo.scopeTime_1 = 0f;
+			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
+			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			skinfo.Add (bhvo);
 
+			return skinfo;
+		}
+
+		static public Skill Details_Attack_3Combo()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Attack_3Combo;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.allTime = 1f;
+			bhvo.scopeTime_0 = 0f;
+			bhvo.scopeTime_1 = 0f;
+			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
+			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			skinfo.Add (bhvo);
+
+			bhvo = new Behavior ();
+			bhvo.allTime = 1f;
+			bhvo.scopeTime_0 = 0f;
+			bhvo.scopeTime_1 = 0f;
+			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
+			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			skinfo.Add (bhvo);
+
+			bhvo = new Behavior ();
+			bhvo.allTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -431,7 +467,6 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.allTime = 1f;
-
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -441,6 +476,25 @@ namespace CounterBlock
 
 			return skinfo;
 		}
+
+		static public Skill Details_CounterBlock()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.CounterBlock;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.allTime = 1f;
+			bhvo.scopeTime_0 = 0f;
+			bhvo.scopeTime_1 = 0f;
+			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
+			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			skinfo.Add (bhvo);
+
+
+			return skinfo;
+		}
+
 
 
 	}
@@ -453,8 +507,11 @@ namespace CounterBlock
 			this.Add (Skill.eKind.Idle, Skill.Details_Idle ());
 			this.Add (Skill.eKind.Hit, Skill.Details_Hit ());
 			this.Add (Skill.eKind.Attack_1, Skill.Details_Attack_1 ());
+			this.Add (Skill.eKind.Attack_3Combo, Skill.Details_Attack_3Combo ());
 
 			this.Add (Skill.eKind.Block_1, Skill.Details_Block_1 ());
+
+			this.Add (Skill.eKind.CounterBlock, Skill.Details_CounterBlock ());
 
 		}
 	}
@@ -540,6 +597,13 @@ namespace CounterBlock
 				DebugWide.LogBlue ("1p - keyinput");
 				_1Player.Attack ();
 			}
+
+			if (Input.GetKeyUp ("w")) 
+			{
+				DebugWide.LogBlue ("1p - keyinput");
+				_1Player.Block ();
+			}
+
 
 			//////////////////////////////////////////////////
 			//2p
