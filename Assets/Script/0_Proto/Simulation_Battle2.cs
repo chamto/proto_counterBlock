@@ -165,8 +165,11 @@ namespace CounterBlock
 
 		public bool Valid_OpenTime()
 		{
-			if (_behavior.openTime_0 <= _timeDelta && _timeDelta <= _behavior.openTime_1)
-				return true;
+			if (eState.Running == _state_current) 
+			{
+				if (_behavior.openTime_0 <= _timeDelta && _timeDelta <= _behavior.openTime_1)
+					return true;
+			}
 
 			return false;
 		}
@@ -182,20 +185,26 @@ namespace CounterBlock
 
 		public void Attack_1 ()
 		{
-			if (Skill.eKind.Idle != _skill_current.kind || false == this.Valid_OpenTime())
-				return;
+			if (Skill.eKind.Idle == _skill_current.kind || true == this.Valid_OpenTime ()) 
+			{
+				//아이들상태거나 연결시간안에 행동이 들어온 경우
+				SetSkill (Skill.eKind.Attack_1);
 
-			//아이들상태거나 연결시간안에 행동이 들어온 경우
-			SetSkill (Skill.eKind.Attack_1);
+				//DebugWide.LogBlue ("succeced!!! "); //chamto test
+			}
 		}
 			
 
 		public void Block()
 		{
-			if (Skill.eKind.Idle != _skill_current.kind || false == this.Valid_OpenTime())
-				return;
-			
-			SetSkill (Skill.eKind.Block_1);
+			if (Skill.eKind.Idle == _skill_current.kind || true == this.Valid_OpenTime ()) 
+			{
+				//아이들상태거나 연결시간안에 행동이 들어온 경우
+				SetSkill (Skill.eKind.Block_1);
+
+				//DebugWide.LogBlue ("succeced!!! "); //chamto test
+			}
+
 		}
 
 		public void Idle()
@@ -454,11 +463,11 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.scopeTime_0 = 0.4f;
+			bhvo.scopeTime_1 = 0.8f;
 			bhvo.rigidTime = 0.3f;
-			bhvo.openTime_0 = 0.5f;
-			bhvo.openTime_1 = 0.8f;
+			bhvo.openTime_0 = 0.7f;
+			bhvo.openTime_1 = 1f;
 			skinfo.Add (bhvo);
 
 			return skinfo;
@@ -734,7 +743,30 @@ namespace CounterBlock
 			if (Skill.eKind.Attack_1 == _1Player.CurrentSkillKind ()) 
 			{
 				_1pSprite_02.gameObject.SetActive (true);
-				_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);
+
+				switch (_1Player.CurrentState ()) 
+				{
+				case Character.eState.Running:
+					{
+						
+						if (false == _1Player.Valid_ScopeTime ()) 
+						{
+							_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);		
+						} else 
+						{
+							_1pSprite_03.gameObject.SetActive (true);
+							_1pSprite_03.sprite = _rscMgr.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_VALID);
+						}
+					}
+
+					break;
+				case Character.eState.Waiting:
+					_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_AFTER);
+					break;
+				
+				}
+					
+
 			}
 			if (Skill.eKind.Block_1 == _1Player.CurrentSkillKind ()) 
 			{
@@ -747,7 +779,28 @@ namespace CounterBlock
 			if (Skill.eKind.Attack_1 == _2Player.CurrentSkillKind ()) 
 			{
 				_2pSprite_02.gameObject.SetActive (true);
-				_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE);
+
+				switch (_2Player.CurrentState ()) 
+				{
+				case Character.eState.Running:
+					{
+
+						if (false == _2Player.Valid_ScopeTime ()) 
+						{
+							_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE);		
+						} else 
+						{
+							_2pSprite_03.gameObject.SetActive (true);
+							_2pSprite_03.sprite = _rscMgr.GetSprite (ResourceManager.eSPRITE_NAME.P2_ATTACK_VALID);
+						}
+					}
+
+					break;
+				case Character.eState.Waiting:
+					_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_AFTER);
+					break;
+
+				}
 			}
 			if (Skill.eKind.Block_1 == _2Player.CurrentSkillKind ()) 
 			{
@@ -755,11 +808,7 @@ namespace CounterBlock
 				_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_BLOCK_BEFORE);
 			}
 
-
-
 			//====//====//====//====//====//====
-
-
 
 
 		}//end func
@@ -781,13 +830,13 @@ namespace CounterBlock
 			//attack
 			if (Input.GetKeyUp ("q")) 
 			{
-				DebugWide.LogBlue ("1p - keyinput");
+				//DebugWide.LogBlue ("1p - keyinput");
 				_1Player.Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("w")) 
 			{
-				DebugWide.LogBlue ("1p - keyinput");
+				//DebugWide.LogBlue ("1p - keyinput");
 				_1Player.Block ();
 			}
 
@@ -798,13 +847,13 @@ namespace CounterBlock
 			//attack
 			if (Input.GetKeyUp ("o")) 
 			{
-				DebugWide.LogBlue ("2p - keyinput");
+				//DebugWide.LogBlue ("2p - keyinput");
 				_2Player.Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("p")) 
 			{
-				DebugWide.LogBlue ("2p - keyinput");
+				//DebugWide.LogBlue ("2p - keyinput");
 				_2Player.Block ();
 			}
 
