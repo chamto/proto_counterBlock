@@ -30,6 +30,7 @@ namespace CounterBlock
 		public float allTime;		//동작 전체 시간 
 		public float scopeTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
 		public float scopeTime_1;
+		public float rigidTime;		//동작 완료후 경직 시간
 		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
 		public float openTime_1; 
 
@@ -39,6 +40,7 @@ namespace CounterBlock
 			allTime = 0f;
 			scopeTime_0 = 0f;
 			scopeTime_1 = 0f;
+			rigidTime = 0f;
 			openTime_0 = 0f;
 			openTime_1 = 0f;
 
@@ -150,6 +152,25 @@ namespace CounterBlock
 			this.Idle ();
 		}
 
+		public bool Valid_ScopeTime()
+		{
+			if (eState.Running == _state_current) 
+			{
+				if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool Valid_OpenTime()
+		{
+			if (_behavior.openTime_0 <= _timeDelta && _timeDelta <= _behavior.openTime_1)
+				return true;
+
+			return false;
+		}
+
 		public void SetSkill(Skill.eKind kind)
 		{
 			_skill_current = ref_skillBook [kind];
@@ -159,12 +180,13 @@ namespace CounterBlock
 		}
 
 
-		public void Attack ()
+		public void Attack_1 ()
 		{
 			//DebugWide.LogBlue (_id + " : Attack"); //chamto test
 
 			SetSkill (Skill.eKind.Attack_1);
 		}
+			
 
 		public void Block()
 		{
@@ -178,6 +200,7 @@ namespace CounterBlock
 
 		public void Update()
 		{
+			this._timeDelta += Time.deltaTime;
 			
 			switch (this._state_current) 
 			{
@@ -189,30 +212,46 @@ namespace CounterBlock
 				break;
 			case eState.Running:
 				{
-					this._timeDelta += Time.deltaTime;
+					
+					if (true == this.Valid_OpenTime()) 
+					{
+						//연결시간안에 행동이 들어온 경우
+					}
 
 					if (_behavior.allTime <= this._timeDelta) 
 					{
+						//동작완료
+						this.SetState (eState.Waiting);
+					}	
+				}
+				break;
+			case eState.Waiting:
+				{
+					//DebugWide.LogBlue (_behavior.rigidTime + "   " + (this._timeDelta - _behavior.allTime));
+					if (_behavior.rigidTime <= (this._timeDelta - _behavior.allTime)) 
+					{
 						this.SetState (eState.End);
 					}	
+
 				}
 				break;
 			case eState.End:
 				{
 					_behavior = _skill_current.NextBehavior ();
 
-					if (null == _behavior)
-						Idle (); //스킬 동작을 모두 꺼냈으면 아이들로 돌아간다. 
-					else
+					if (null == _behavior) 
+					{
+						//스킬 동작을 모두 꺼냈으면 아이들상태로 들어간다
+						Idle ();
+					} else 
+					{
+						//다음 스킬 동작으로 넘어간다
 						SetState (eState.Start);
+					}
 						
 				}
 				break;
-			case eState.Waiting:
-				{
-					//콤보 입력 대기시간 동안 기다린다. 
-				}
-				break;
+			
 			
 			}
 
@@ -417,6 +456,7 @@ namespace CounterBlock
 			bhvo.allTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
+			bhvo.rigidTime = 0.3f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -742,7 +782,7 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("q")) 
 			{
 				DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Attack ();
+				_1Player.Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("w")) 
@@ -759,7 +799,7 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("o")) 
 			{
 				DebugWide.LogBlue ("2p - keyinput");
-				_2Player.Attack ();
+				_2Player.Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("p")) 
