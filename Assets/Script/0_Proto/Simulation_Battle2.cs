@@ -27,7 +27,7 @@ namespace CounterBlock
 
 		//===================================
 
-		public float allTime;		//동작 전체 시간 
+		public float runningTime;	//동작 전체 시간 
 		public float scopeTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
 		public float scopeTime_1;
 		public float rigidTime;		//동작 완료후 경직 시간
@@ -37,7 +37,7 @@ namespace CounterBlock
 		public  Behavior()
 		{
 			
-			allTime = 0f;
+			runningTime = 0f;
 			scopeTime_0 = 0f;
 			scopeTime_1 = 0f;
 			rigidTime = 0f;
@@ -182,14 +182,19 @@ namespace CounterBlock
 
 		public void Attack_1 ()
 		{
-			//DebugWide.LogBlue (_id + " : Attack"); //chamto test
+			if (Skill.eKind.Idle != _skill_current.kind || false == this.Valid_OpenTime())
+				return;
 
+			//아이들상태거나 연결시간안에 행동이 들어온 경우
 			SetSkill (Skill.eKind.Attack_1);
 		}
 			
 
 		public void Block()
 		{
+			if (Skill.eKind.Idle != _skill_current.kind || false == this.Valid_OpenTime())
+				return;
+			
 			SetSkill (Skill.eKind.Block_1);
 		}
 
@@ -213,12 +218,7 @@ namespace CounterBlock
 			case eState.Running:
 				{
 					
-					if (true == this.Valid_OpenTime()) 
-					{
-						//연결시간안에 행동이 들어온 경우
-					}
-
-					if (_behavior.allTime <= this._timeDelta) 
+					if (_behavior.runningTime <= this._timeDelta) 
 					{
 						//동작완료
 						this.SetState (eState.Waiting);
@@ -228,7 +228,7 @@ namespace CounterBlock
 			case eState.Waiting:
 				{
 					//DebugWide.LogBlue (_behavior.rigidTime + "   " + (this._timeDelta - _behavior.allTime));
-					if (_behavior.rigidTime <= (this._timeDelta - _behavior.allTime)) 
+					if (_behavior.rigidTime <= (this._timeDelta - _behavior.runningTime)) 
 					{
 						this.SetState (eState.End);
 					}	
@@ -417,7 +417,7 @@ namespace CounterBlock
 			skinfo.kind = eKind.Idle;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
@@ -435,7 +435,7 @@ namespace CounterBlock
 			skinfo.kind = eKind.Hit;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -453,12 +453,12 @@ namespace CounterBlock
 			skinfo.kind = eKind.Attack_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.rigidTime = 0.3f;
-			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
-			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			bhvo.openTime_0 = 0.5f;
+			bhvo.openTime_1 = 0.8f;
 			skinfo.Add (bhvo);
 
 			return skinfo;
@@ -471,7 +471,7 @@ namespace CounterBlock
 			skinfo.kind = eKind.Attack_3Combo;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -479,7 +479,7 @@ namespace CounterBlock
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -487,7 +487,7 @@ namespace CounterBlock
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -506,7 +506,7 @@ namespace CounterBlock
 			skinfo.kind = eKind.Block_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -524,7 +524,7 @@ namespace CounterBlock
 			skinfo.kind = eKind.CounterBlock;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.allTime = 1f;
+			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
 			bhvo.scopeTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
