@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class HierarchyPreLoader
 {
@@ -9,7 +10,7 @@ public class HierarchyPreLoader
 	protected Dictionary<string, UInt32> 	_pathToKey = new Dictionary<string, UInt32>();
 	protected Dictionary<UInt32, Transform> _keyToData = new Dictionary<UInt32, Transform>();
 	protected Dictionary<Transform, string> _dataToPath = new Dictionary<Transform, string>();
-	
+
 	private UInt32 createKey()
 	{
 		//사용후 반환된 키목록에, 키가 있으면 먼저 반환한다.
@@ -40,7 +41,7 @@ public class HierarchyPreLoader
 		return _keyToData [ this.PathToKey(path) ];
 	}
 	
-	private void PreOrderTraversal(string path , Transform data)
+	public void PreOrderTraversal(string path , Transform data)
 	{
 		//1. visit
 		//DebugWide.LogRed (path +"    "+ data.name); //chamto test
@@ -48,7 +49,11 @@ public class HierarchyPreLoader
 		if (true == _pathToKey.TryGetValue (path, out value)) 
 		{
 			//Debug.Assert (false);
-			UnityEngine.Assertions.Assert.IsFalse (true);
+			//UnityEngine.Assertions.Assert.IsFalse (true);
+
+			//이미 있는 경로일 경우 자식쪽은 탐색을 중지 한다
+			DebugWide.LogRed (path + "  이미 탐색한 경로입니다");
+			return;
 		}
 
 		_pathToKey.Add (path, this.createKey ());
@@ -68,7 +73,38 @@ public class HierarchyPreLoader
 
 		}
 	}
-	
+
+
+	public void PreOrderTraversal( Transform data )
+	{
+		PreOrderTraversal ("/"+HierarchyPreLoader.GetTransformFullPath (data), data);
+	}
+
+	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+	public Transform Find(string fullPath)
+	{
+		return Resources.FindObjectsOfTypeAll<Transform>().Where(tr => HierarchyPreLoader.GetTransformFullPath (tr) == fullPath).First();
+	}
+
+	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+	public Transform FindOnlyActive(string fullPath)
+	{
+		return Resources.FindObjectsOfTypeAll<Transform> ().Where (
+			tr => HierarchyPreLoader.GetTransformFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First (); ;
+	}
+
+	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+	static public string GetTransformFullPath(Transform transform)
+	{
+		string path = transform.name;
+		while (transform.parent != null)
+		{
+			transform = transform.parent;
+			path = transform.name + "/" + path;
+		}
+		return path;
+	}
+
 	public void Init()
 	{
 		_pathToKey.Clear ();
@@ -76,12 +112,14 @@ public class HierarchyPreLoader
 		_dataToPath.Clear ();
 		_keySecquence = 0;
 
-		foreach (Transform root in UnityEngine.Object.FindObjectsOfType<Transform>())
+		//여러 최상위 루트마다 순회
+		foreach (Transform oneOfManyRoots in UnityEngine.Object.FindObjectsOfType<Transform>())
 		{
-			if (root.parent == null)
+			if (oneOfManyRoots.parent == null)
 			{
-				//DebugWide.LogRed(root.name);
-				this.PreOrderTraversal ("/"+root.name, root);
+				
+				//DebugWide.LogRed(oneOfManyRoots.name);
+				this.PreOrderTraversal ("/"+oneOfManyRoots.name, oneOfManyRoots);
 			}
 		}
 

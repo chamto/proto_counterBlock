@@ -597,13 +597,21 @@ namespace CounterBlock
 		}
 
 
+		private HierarchyPreLoader _ref_herch = null;
 
 		private Dictionary<eSPRITE_NAME, string> _sprNameDict = null;
 		private Dictionary<eSPRITE_NAME, Sprite> _loadedDict = new Dictionary<eSPRITE_NAME, Sprite> ();
 
+		public ResourceManager()
+		{
+			_ref_herch = CSingleton<HierarchyPreLoader>.Instance;
+		}
+
 
 		public void Init()
 		{
+			_ref_herch.Init ();
+
 			_sprNameDict = new Dictionary<eSPRITE_NAME, string> ()
 			{
 				{eSPRITE_NAME.EMPTY_CARD, "empty_card"},
@@ -646,6 +654,29 @@ namespace CounterBlock
 			//20170813 chamto fixme - enum 값이 없을 때의 예외 처리가 없음 
 			return _loadedDict [eName];
 		}
+
+		public GameObject CreatePrefab_Character(Transform parent , string name)
+		{
+			GameObject obj = this.CreatePrefab ("character");
+			obj.transform.parent = parent;
+			obj.transform.name = name;
+
+
+
+			_ref_herch.PreOrderTraversal (obj.transform);
+
+			//_ref_herch.TestPrint (); //chamto test
+
+			return obj;
+		}
+
+		public GameObject CreatePrefab(string path)
+		{
+			const string root = "Prefab/";
+			return MonoBehaviour.Instantiate(Resources.Load(root + path)) as GameObject;
+		}
+
+
 
 		public void TestPrint()
 		{
@@ -706,6 +737,8 @@ namespace CounterBlock
 			_rscMgr = CSingleton<ResourceManager>.Instance;
 			_rscMgr.Init ();
 			_rscMgr.Load_BattleCard ();
+
+			//_rscMgr.CreatePrefab_Character (_1pExplanation1.transform, "aaaaaa22"); //chamto test
 
 		}
 
