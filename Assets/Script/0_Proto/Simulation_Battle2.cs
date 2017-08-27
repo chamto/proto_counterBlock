@@ -118,6 +118,11 @@ namespace CounterBlock
 			return _timeDelta;
 		}
 
+		public Behavior GetBehavior()
+		{
+			return _behavior;
+		}
+
 		public eState CurrentState()
 		{
 			return _state_current;
@@ -726,9 +731,73 @@ namespace CounterBlock
 
 		}
 
-		void Update_UI_Card()
+
+
+		class Animation
 		{
 			
+			public enum eState
+			{
+				None,
+				Start,
+				Running,
+				End,
+				Max
+			}
+				
+			private eState _state = eState.None;
+			private float _accumulate = 0f;
+			private float _scaleDelta = 0f;
+			private Vector3 _originalPos;
+
+			public void Card_Move(Transform dst, float start, float end, float maxSecond)
+			{
+
+
+				switch (_state) 
+				{
+				case eState.None:
+				case eState.Start:
+					{
+						_state = eState.Running;
+						_accumulate = 0f;
+						_scaleDelta = 0f;
+						_originalPos = dst.localPosition;
+					}
+					break;
+
+				case eState.Running:
+					{
+						_accumulate += Time.deltaTime;
+						if (maxSecond <= _accumulate) 
+						{
+							_state = eState.End;
+							break;
+						}
+
+						_scaleDelta = Utility.Interpolation.easeOutElastic (start, end, _accumulate/maxSecond);
+
+						//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+						dst.Translate(_scaleDelta,0,0);
+						DebugWide.LogBlue (_scaleDelta); //chamto test
+						//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+					}
+					break;
+				case eState.End:
+					{
+						dst.localPosition = _originalPos;
+					}
+					break;
+				}
+
+			}
+
+
+		}//end class
+
+		float accumulate = 0;
+		void Update_UI_Card()
+		{
 			//====//====//====//====//====//====
 
 			_1pSprite_02.gameObject.SetActive (false);
@@ -751,11 +820,33 @@ namespace CounterBlock
 						
 						if (false == _1Player.Valid_ScopeTime ()) 
 						{
+							accumulate = 0;
+
+
 							_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);		
 						} else 
 						{
+
 							_1pSprite_03.gameObject.SetActive (true);
 							_1pSprite_03.sprite = _rscMgr.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_VALID);
+
+							//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//							float maxSecond = 0.5f; 
+//							float scaleDelta = Utility.Interpolation.easeOutElastic (0f,10f, accumulate/maxSecond);
+//
+//							Vector3 pos = _1pSprite_03.transform.localPosition;
+//							pos.x += scaleDelta;
+//							//pos.x = 50f;
+//							_1pSprite_03.transform.localPosition = pos;
+//							//_1pSprite_03.transform.Translate(scaleDelta,0,0);
+//							DebugWide.LogBlue (scaleDelta);
+//
+//							accumulate += Time.deltaTime;
+							//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+							
+
+
 						}
 					}
 
@@ -830,6 +921,8 @@ namespace CounterBlock
 			//attack
 			if (Input.GetKeyUp ("q")) 
 			{
+				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
+				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
 				//DebugWide.LogBlue ("1p - keyinput");
 				_1Player.Attack_1 ();
 			}
