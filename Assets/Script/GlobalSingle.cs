@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UnityEngine;
 
 /// <summary>
 /// Global Single
@@ -37,6 +38,28 @@ public class Single
 		get
 		{
 			return CSingletonMono<ParticleController>.Instance;
+		}
+	}
+
+	public static CounterBlock.ResourceManager resource
+	{
+		get
+		{
+			return CSingleton<CounterBlock.ResourceManager>.Instance;
+		}
+	}
+
+
+	private static Transform _ui_root = null;
+	public static Transform ui_root
+	{
+		get
+		{
+			if (null == _ui_root) 
+			{
+				_ui_root = Single.hierarchy.FindOnlyActive<Transform> ("Canvas");
+			}
+			return _ui_root;
 		}
 	}
 }

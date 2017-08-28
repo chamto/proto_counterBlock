@@ -655,25 +655,27 @@ namespace CounterBlock
 			return _loadedDict [eName];
 		}
 
-		public GameObject CreatePrefab_Character(Transform parent , string name)
+//		public GameObject CreatePrefab_Character(Transform parent , string name)
+//		{
+//			GameObject obj = this.CreatePrefab ("character");
+//			obj.transform.parent = parent;
+//			obj.transform.name = name;
+//
+//			_ref_herch.PreOrderTraversal (obj.transform);
+//
+//			return obj;
+//		}
+
+		public GameObject CreatePrefab(string prefabPath , Transform parent , string name)
 		{
-			GameObject obj = this.CreatePrefab ("character");
+			const string root = "Prefab/";
+			GameObject obj =  MonoBehaviour.Instantiate(Resources.Load(root + prefabPath)) as GameObject;
 			obj.transform.parent = parent;
 			obj.transform.name = name;
 
-
-
 			_ref_herch.PreOrderTraversal (obj.transform);
 
-			//_ref_herch.TestPrint (); //chamto test
-
 			return obj;
-		}
-
-		public GameObject CreatePrefab(string path)
-		{
-			const string root = "Prefab/";
-			return MonoBehaviour.Instantiate(Resources.Load(root + path)) as GameObject;
 		}
 
 
@@ -692,6 +694,79 @@ namespace CounterBlock
 	}//end class
 
 
+	public class UI_CharacterCard : MonoBehaviour
+	{
+
+		public enum eKind
+		{
+			None,
+			Seonbi,
+			Biking,
+			Max
+		};
+
+		public Text _text_explanation { get; set; }
+		public Text _text_time { get; set; }
+		public Slider _hp_bar { get; set; }
+
+		public Transform _sprites { get; set; }
+		public List<Sprite> _action { get; set; }
+
+
+		void Start()
+		{
+			
+		}
+
+		public void TurnLeft()
+		{
+			
+		}
+
+		public void TurnRight()
+		{
+		}
+
+		public void SetCharacter(eKind kind)
+		{
+			
+		}
+
+		static public UI_CharacterCard Create(string name)
+		{
+			GameObject obj = Single.resource.CreatePrefab ("character_seonbi", Single.ui_root, name);
+
+			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
+
+			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
+
+
+			ui._text_explanation = Single.hierarchy.Find<Text> (parentPath + "/Text_explanation");
+			ui._text_time = Single.hierarchy.Find<Text> (parentPath + "/Text_time");
+			ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Sprites");
+			ui._action = new List<Sprite> ();
+			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_00"));
+			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_01"));
+			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_02"));
+
+			return ui;
+		}
+
+	}
+
+	public class UI_Battle : MonoBehaviour
+	{
+		
+		void Start()
+		{
+
+
+		}
+
+
+
+	}
 
 
 	public class Simulation_Battle2 : MonoBehaviour 

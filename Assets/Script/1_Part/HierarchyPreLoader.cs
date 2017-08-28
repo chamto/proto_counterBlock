@@ -69,32 +69,39 @@ public class HierarchyPreLoader
 			{
 				this.PreOrderTraversal(path+"/"+child.name, child);
 			}
-
-
 		}
 	}
 
 
+
 	public void PreOrderTraversal( Transform data )
 	{
-		PreOrderTraversal ("/"+HierarchyPreLoader.GetTransformFullPath (data), data);
+		PreOrderTraversal ("/"+this.GetTransformFullPath (data), data);
 	}
 
-	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
-	public Transform Find(string fullPath)
+
+
+	public TaaT Find<TaaT>(string fullPath) where TaaT : class
 	{
-		return Resources.FindObjectsOfTypeAll<Transform>().Where(tr => HierarchyPreLoader.GetTransformFullPath (tr) == fullPath).First();
+		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+		Transform f = Resources.FindObjectsOfTypeAll<Transform>().Where(tr => this.GetTransformFullPath (tr) == fullPath).First();
+
+		//return f.GetComponentInChildren (typeof(TaaT), true) as TaaT;
+		return f.GetComponentInChildren <TaaT>(true);
 	}
 
-	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
-	public Transform FindOnlyActive(string fullPath)
+
+	public TaaT FindOnlyActive<TaaT>(string fullPath) where TaaT : class
 	{
-		return Resources.FindObjectsOfTypeAll<Transform> ().Where (
-			tr => HierarchyPreLoader.GetTransformFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First (); ;
+		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+		Transform f =  Resources.FindObjectsOfTypeAll<Transform> ().Where (
+			tr => this.GetTransformFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First ();
+
+		return f.GetComponentInChildren <TaaT>(true);
 	}
 
 	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
-	static public string GetTransformFullPath(Transform transform)
+	public string GetTransformFullPath(Transform transform)
 	{
 		string path = transform.name;
 		while (transform.parent != null)
