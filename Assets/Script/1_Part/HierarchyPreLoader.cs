@@ -87,6 +87,7 @@ public class HierarchyPreLoader
 		Transform f = Resources.FindObjectsOfTypeAll<Transform>().Where(tr => this.GetTransformFullPath (tr) == fullPath).First();
 
 		//return f.GetComponentInChildren (typeof(TaaT), true) as TaaT;
+		//DebugWide.LogBlue(f.name); //chamto test
 		return f.GetComponentInChildren <TaaT>(true);
 	}
 

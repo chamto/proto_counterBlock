@@ -573,6 +573,22 @@ namespace CounterBlock
 
 	public class ResourceManager
 	{
+		public enum eActionKind
+		{
+			None,
+			Idle,
+			AttackBefore,
+			AttackValid,
+			AttackAfter,
+
+			BlockBefore,
+			BlockValid,
+			BlockAfter,
+
+			CounterBlock,
+			Max
+		}
+
 		public enum eSPRITE_NAME
 		{
 			NONE,
@@ -632,6 +648,8 @@ namespace CounterBlock
 				{eSPRITE_NAME.P2_BLOCK_AFTER, "p2_block_after"}
 			};
 
+
+			this.Load_BattleCard ();
 		}
 
 		public void Load_BattleCard()
@@ -655,22 +673,139 @@ namespace CounterBlock
 			return _loadedDict [eName];
 		}
 
-//		public GameObject CreatePrefab_Character(Transform parent , string name)
-//		{
-//			GameObject obj = this.CreatePrefab ("character");
-//			obj.transform.parent = parent;
-//			obj.transform.name = name;
-//
-//			_ref_herch.PreOrderTraversal (obj.transform);
-//
-//			return obj;
-//		}
+		public Sprite GetAction_Seonbi(eActionKind actionKind)
+		{
+			switch (actionKind) 
+			{
+			case eActionKind.None:
+			case eActionKind.Idle:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_IDLE);
+			case eActionKind.AttackBefore:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);
+			case eActionKind.AttackValid:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_VALID);
+			case eActionKind.AttackAfter:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_AFTER);
+			case eActionKind.BlockBefore:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_BLOCK_BEFORE);
+			case eActionKind.BlockValid:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_BLOCK_VALID);
+			case eActionKind.BlockAfter:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P1_BLOCK_AFTER);
+			case eActionKind.CounterBlock:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.EMPTY_CARD); //chamto temp value
+
+			}
+
+			return null;
+		}
+
+		public Sprite GetAction_Biking(eActionKind actionKind)
+		{
+			switch (actionKind) 
+			{
+			case eActionKind.None:
+			case eActionKind.Idle:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_IDLE);
+			case eActionKind.AttackBefore:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE);
+			case eActionKind.AttackValid:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_ATTACK_VALID);
+			case eActionKind.AttackAfter:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_ATTACK_AFTER);
+			case eActionKind.BlockBefore:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_BLOCK_BEFORE);
+			case eActionKind.BlockValid:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_BLOCK_VALID);
+			case eActionKind.BlockAfter:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.P2_BLOCK_AFTER);
+			case eActionKind.CounterBlock:
+				return this.GetSprite (ResourceManager.eSPRITE_NAME.EMPTY_CARD); //chamto temp value
+
+			}
+
+			return null;
+		}
+
+		public ResourceManager.eSPRITE_NAME GetSpriteName_Seonbi(eActionKind actionKind)
+		{
+			ResourceManager.eSPRITE_NAME sprName = ResourceManager.eSPRITE_NAME.NONE;
+
+			switch (actionKind) 
+			{
+			case eActionKind.None:
+			case eActionKind.Idle:
+				sprName = ResourceManager.eSPRITE_NAME.P1_IDLE;
+				break;
+			case eActionKind.AttackBefore:
+				sprName = ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE;
+				break;
+			case eActionKind.AttackValid:
+				sprName = ResourceManager.eSPRITE_NAME.P1_ATTACK_VALID;
+				break;
+			case eActionKind.AttackAfter:
+				sprName = ResourceManager.eSPRITE_NAME.P1_ATTACK_AFTER;
+				break;
+			case eActionKind.BlockBefore:
+				sprName = ResourceManager.eSPRITE_NAME.P1_BLOCK_BEFORE;
+				break;
+			case eActionKind.BlockValid:
+				sprName = ResourceManager.eSPRITE_NAME.P1_BLOCK_VALID;
+				break;
+			case eActionKind.BlockAfter:
+				sprName = ResourceManager.eSPRITE_NAME.P1_BLOCK_AFTER;
+				break;
+			case eActionKind.CounterBlock:
+				sprName = ResourceManager.eSPRITE_NAME.EMPTY_CARD; //chamto temp value
+				break;
+
+			}
+
+			return sprName;
+		}
+
+		public ResourceManager.eSPRITE_NAME GetSpriteName_Biking(eActionKind actionKind)
+		{
+			ResourceManager.eSPRITE_NAME sprName = ResourceManager.eSPRITE_NAME.NONE;
+
+			switch (actionKind) 
+			{
+			case eActionKind.None:
+			case eActionKind.Idle:
+				sprName = ResourceManager.eSPRITE_NAME.P2_IDLE;
+				break;								  
+			case eActionKind.AttackBefore:			  
+				sprName = ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE;
+				break;								  
+			case eActionKind.AttackValid:			   
+				sprName = ResourceManager.eSPRITE_NAME.P2_ATTACK_VALID;
+				break;								  
+			case eActionKind.AttackAfter:			   
+				sprName = ResourceManager.eSPRITE_NAME.P2_ATTACK_AFTER;
+				break;								  
+			case eActionKind.BlockBefore:			   
+				sprName = ResourceManager.eSPRITE_NAME.P2_BLOCK_BEFORE;
+				break;								  
+			case eActionKind.BlockValid:				
+				sprName = ResourceManager.eSPRITE_NAME.P2_BLOCK_VALID;
+				break;								  
+			case eActionKind.BlockAfter:			
+				sprName = ResourceManager.eSPRITE_NAME.P2_BLOCK_AFTER;
+				break;
+			case eActionKind.CounterBlock:
+				sprName = ResourceManager.eSPRITE_NAME.EMPTY_CARD; //chamto temp value
+				break;
+
+			}
+
+			return sprName;
+		}
 
 		public GameObject CreatePrefab(string prefabPath , Transform parent , string name)
 		{
 			const string root = "Prefab/";
 			GameObject obj =  MonoBehaviour.Instantiate(Resources.Load(root + prefabPath)) as GameObject;
-			obj.transform.parent = parent;
+			obj.transform.SetParent (parent,false);
 			obj.transform.name = name;
 
 			_ref_herch.PreOrderTraversal (obj.transform);
@@ -705,12 +840,15 @@ namespace CounterBlock
 			Max
 		};
 
+		public uint _id = 0;
+		public eKind _kind = eKind.None;
+
 		public Text _text_explanation { get; set; }
 		public Text _text_time { get; set; }
 		public Slider _hp_bar { get; set; }
 
 		public Transform _sprites { get; set; }
-		public List<Sprite> _action { get; set; }
+		public List<Image> _action { get; set; }
 
 
 		void Start()
@@ -720,16 +858,21 @@ namespace CounterBlock
 
 		public void TurnLeft()
 		{
-			
+			Vector3 scale = _sprites.localScale;
+			scale.x = -1f;
+			_sprites.localScale = scale;
 		}
 
 		public void TurnRight()
 		{
+			Vector3 scale = _sprites.localScale;
+			scale.x = 1f;
+			_sprites.localScale = scale;
 		}
 
 		public void SetCharacter(eKind kind)
 		{
-			
+			_kind = kind;
 		}
 
 		static public UI_CharacterCard Create(string name)
@@ -739,16 +882,14 @@ namespace CounterBlock
 			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
 
 			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
-
-
 			ui._text_explanation = Single.hierarchy.Find<Text> (parentPath + "/Text_explanation");
 			ui._text_time = Single.hierarchy.Find<Text> (parentPath + "/Text_time");
 			ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
-			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Sprites");
-			ui._action = new List<Sprite> ();
-			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_00"));
-			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_01"));
-			ui._action.Add (Single.hierarchy.Find<Sprite> (parentPath + "/Sprites/Action_02"));
+			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Images");
+			ui._action = new List<Image> ();
+			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_00"));
+			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_01"));
+			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_02"));
 
 			return ui;
 		}
@@ -757,14 +898,152 @@ namespace CounterBlock
 
 	public class UI_Battle : MonoBehaviour
 	{
-		
-		void Start()
-		{
 
+		private Transform _1P_start = null;
+		private Transform _2P_start = null;
+
+		private Dictionary<uint, UI_CharacterCard> _characters = new Dictionary<uint, UI_CharacterCard> ();
+
+		
+		public void Init()
+		{
+			this.transform.SetParent (Single.ui_root, false);
+
+			string parentPath = Single.hierarchy.GetTransformFullPath (Single.ui_root);
+			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
+			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
+		
+		}
+
+		public UI_CharacterCard AddCharacter(UI_CharacterCard.eKind kind, uint id)
+		{
+			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
+			card._kind = kind;
+			card._id = id;
+			_characters.Add (id, card);
+
+			return card;
+		}
+
+
+
+		public void SetStartPoint(uint id, float delta_x , uint pointNumber)
+		{
+			const int START_POINT_LEFT = 1;
+			const int START_POINT_RIGHT = 2;
+
+			UI_CharacterCard card = _characters [id];
+			Vector3 pos = Vector3.zero;
+
+			switch (pointNumber) 
+			{
+			case START_POINT_LEFT:
+				pos = _1P_start.localPosition;
+				card.TurnRight ();
+				break;
+			case START_POINT_RIGHT:
+				pos = _2P_start.localPosition;
+				card.TurnLeft ();
+				break;
+			}
+
+
+			pos.x += delta_x;
+			card.transform.localPosition = pos;
 
 		}
 
 
+		public Sprite GetAction(UI_CharacterCard.eKind charKind ,ResourceManager.eActionKind actionKind)
+		{
+			switch (charKind) 
+			{
+			case UI_CharacterCard.eKind.Seonbi:
+				return Single.resource.GetAction_Seonbi (actionKind);
+			case UI_CharacterCard.eKind.Biking:
+				return Single.resource.GetAction_Biking (actionKind);
+			}
+
+			return null;
+		}
+
+
+
+		private void Update_UI_Explan(Character charData, uint id)
+		{
+			UI_CharacterCard charUI = _characters [id];
+
+			charUI._text_explanation.text = 
+				"  "  + Character.StateToString(charData.CurrentState());
+
+			charUI._text_time.text = 
+				Skill.KindToString(charData.CurrentSkillKind()) + "   " +
+				charData.GetTimeDelta().ToString("0.0");
+		
+
+		}
+
+		private void Update_UI_Card(Character charData, uint id)
+		{
+			UI_CharacterCard charUI = _characters [id];
+
+
+			charUI._action[1].gameObject.SetActive (false);
+			charUI._action[2].gameObject.SetActive (false);
+
+
+			charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
+
+
+			if (Skill.eKind.Attack_1 == charData.CurrentSkillKind ()) 
+			{
+				charUI._action[1].gameObject.SetActive (true);
+
+				switch (charData.CurrentState ()) 
+				{
+				case Character.eState.Running:
+					{
+
+						if (false == charData.Valid_ScopeTime ()) 
+						{
+							
+
+							charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackBefore);
+						} else 
+						{
+
+							charUI._action[2].gameObject.SetActive (true);
+							charUI._action[2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+
+
+						}
+					}
+
+					break;
+				case Character.eState.Waiting:
+					charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
+					break;
+
+				}
+
+
+			}
+			if (Skill.eKind.Block_1 == charData.CurrentSkillKind ()) 
+			{
+				charUI._action[1].gameObject.SetActive (true);
+				charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
+			}
+
+
+		}//end func
+
+
+		public void Update_UI(Character charData, uint idx)
+		{
+			this.Update_UI_Explan (charData, idx);
+			this.Update_UI_Card (charData, idx);
+			
+		}
 
 	}
 
@@ -778,67 +1057,44 @@ namespace CounterBlock
 		private ResourceManager _rscMgr = null;
 
 		//====//====//====//====//====//====
-		//ui connect
-		public Text _1pExplanation1 = null;
-		public Text _2pExplanation1 = null;
-		public Text _1pExplanation2 = null;
-		public Text _2pExplanation2 = null;
-
-		public Slider _1pHpBar = null;
-		public Slider _2pHpBar = null;
-
-		public Image _1pImage = null;
-		public Image _2pImage = null;
-
-		public Image _1pSprite_01 = null;
-		public Image _1pSprite_02 = null;
-		public Image _1pSprite_03 = null;
-
-		public Image _2pSprite_01 = null;
-		public Image _2pSprite_02 = null;
-		public Image _2pSprite_03 = null;
-		//====//====//====//====//====//====
+		private UI_Battle _ui_battle = null;
 
 
 		// Use this for initialization
 		void Start () 
 		{
+			const uint ID_PLAYER_1 = 1;
+			const uint ID_PLAYER_2 = 2;
+
 			_crtMgr = new CharacterManager ();
 			_crtMgr.Init ();
 
-			_1Player = _crtMgr [1];
-			_2Player = _crtMgr [2];
+			_1Player = _crtMgr [ID_PLAYER_1];
+			_2Player = _crtMgr [ID_PLAYER_2];
 
 			_rscMgr = CSingleton<ResourceManager>.Instance;
 			_rscMgr.Init ();
-			_rscMgr.Load_BattleCard ();
 
-			//_rscMgr.CreatePrefab_Character (_1pExplanation1.transform, "aaaaaa22"); //chamto test
+			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
+			_ui_battle.Init ();
+
+			this.CreatePlayer ();
 
 		}
 
-		void Update_UI_Explan()
+		public void CreatePlayer()
 		{
-			
+			foreach (Character chter in _crtMgr.Values) 
+			{
+				UI_CharacterCard card = _ui_battle.AddCharacter (UI_CharacterCard.eKind.Biking, chter.GetID ());
 
-			//====//====//====//====//====//====
+				if((chter.GetID () % 2) == 1) //홀수는 왼쪽 
+					_ui_battle.SetStartPoint (chter.GetID (), 0, 1);					
+				if((chter.GetID () % 2) == 0) //짝수는 오른쪽 
+					_ui_battle.SetStartPoint (chter.GetID (), 0, 2);
 
-			_1pExplanation1.text = 
-				"  "  + Character.StateToString(_1Player.CurrentState());
-			_2pExplanation1.text = 
-				"  "  + Character.StateToString(_2Player.CurrentState());
-
-
-			_1pExplanation2.text = 
-				Skill.KindToString(_1Player.CurrentSkillKind()) + "  " +
-				_1Player.GetTimeDelta().ToString("0.0");
-			_2pExplanation2.text = 
-				Skill.KindToString(_2Player.CurrentSkillKind()) + "   " +
-				_2Player.GetTimeDelta().ToString("0.0");
-			
-
+			}
 		}
-
 
 
 		class Animation
@@ -903,114 +1159,20 @@ namespace CounterBlock
 
 		}//end class
 
-		float accumulate = 0;
-		void Update_UI_Card()
-		{
-			//====//====//====//====//====//====
-
-			_1pSprite_02.gameObject.SetActive (false);
-			_1pSprite_03.gameObject.SetActive (false);
-			_2pSprite_02.gameObject.SetActive (false);
-			_2pSprite_03.gameObject.SetActive (false);
-
-			_1pSprite_01.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_IDLE);
-			_2pSprite_01.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_IDLE);
-
-			//1p
-			if (Skill.eKind.Attack_1 == _1Player.CurrentSkillKind ()) 
-			{
-				_1pSprite_02.gameObject.SetActive (true);
-
-				switch (_1Player.CurrentState ()) 
-				{
-				case Character.eState.Running:
-					{
-						
-						if (false == _1Player.Valid_ScopeTime ()) 
-						{
-							accumulate = 0;
+		//							float maxSecond = 0.5f; 
+		//							float scaleDelta = Utility.Interpolation.easeOutElastic (0f,10f, accumulate/maxSecond);
+		//
+		//							Vector3 pos = _1pSprite_03.transform.localPosition;
+		//							pos.x += scaleDelta;
+		//							//pos.x = 50f;
+		//							_1pSprite_03.transform.localPosition = pos;
+		//							//_1pSprite_03.transform.Translate(scaleDelta,0,0);
+		//							DebugWide.LogBlue (scaleDelta);
+		//
+		//							accumulate += Time.deltaTime;
 
 
-							_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_BEFORE);		
-						} else 
-						{
 
-							_1pSprite_03.gameObject.SetActive (true);
-							_1pSprite_03.sprite = _rscMgr.GetSprite (ResourceManager.eSPRITE_NAME.P1_ATTACK_VALID);
-
-							//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-//							float maxSecond = 0.5f; 
-//							float scaleDelta = Utility.Interpolation.easeOutElastic (0f,10f, accumulate/maxSecond);
-//
-//							Vector3 pos = _1pSprite_03.transform.localPosition;
-//							pos.x += scaleDelta;
-//							//pos.x = 50f;
-//							_1pSprite_03.transform.localPosition = pos;
-//							//_1pSprite_03.transform.Translate(scaleDelta,0,0);
-//							DebugWide.LogBlue (scaleDelta);
-//
-//							accumulate += Time.deltaTime;
-							//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-							
-
-
-						}
-					}
-
-					break;
-				case Character.eState.Waiting:
-					_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_ATTACK_AFTER);
-					break;
-				
-				}
-					
-
-			}
-			if (Skill.eKind.Block_1 == _1Player.CurrentSkillKind ()) 
-			{
-				_1pSprite_02.gameObject.SetActive (true);
-				_1pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P1_BLOCK_BEFORE);
-			}
-
-
-			//2p
-			if (Skill.eKind.Attack_1 == _2Player.CurrentSkillKind ()) 
-			{
-				_2pSprite_02.gameObject.SetActive (true);
-
-				switch (_2Player.CurrentState ()) 
-				{
-				case Character.eState.Running:
-					{
-
-						if (false == _2Player.Valid_ScopeTime ()) 
-						{
-							_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_BEFORE);		
-						} else 
-						{
-							_2pSprite_03.gameObject.SetActive (true);
-							_2pSprite_03.sprite = _rscMgr.GetSprite (ResourceManager.eSPRITE_NAME.P2_ATTACK_VALID);
-						}
-					}
-
-					break;
-				case Character.eState.Waiting:
-					_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_ATTACK_AFTER);
-					break;
-
-				}
-			}
-			if (Skill.eKind.Block_1 == _2Player.CurrentSkillKind ()) 
-			{
-				_2pSprite_02.gameObject.SetActive (true);
-				_2pSprite_02.sprite = _rscMgr.GetSprite(ResourceManager.eSPRITE_NAME.P2_BLOCK_BEFORE);
-			}
-
-			//====//====//====//====//====//====
-
-
-		}//end func
 
 
 
@@ -1020,8 +1182,11 @@ namespace CounterBlock
 
 			_crtMgr.Update ();
 
-			this.Update_UI_Explan ();
-			this.Update_UI_Card ();
+			foreach (Character chter in _crtMgr.Values) 
+			{
+				_ui_battle.Update_UI (chter, chter.GetID());
+			}
+
 
 			//////////////////////////////////////////////////
 			//1p
