@@ -280,8 +280,10 @@ namespace CounterBlock
 
 		public void Init()
 		{
-			this.AddCharacter ();
-			this.AddCharacter ();
+			for (int i = 0; i < 2; i++)  //chamto test : 2 => 8
+			{
+				this.AddCharacter ();
+			}
 
 			this.TestPrint ();
 		}
@@ -840,6 +842,7 @@ namespace CounterBlock
 			Max
 		};
 
+		[SerializeField] 
 		public uint _id = 0;
 		public eKind _kind = eKind.None;
 
@@ -851,9 +854,24 @@ namespace CounterBlock
 		public List<Image> _action { get; set; }
 
 
+		public int _siblingIndex = 0; 
+		public bool _apply = false;
+
 		void Start()
 		{
+			_siblingIndex = this.transform.GetSiblingIndex ();
 			
+		}
+
+		void Update()
+		{
+			if (true == _apply) 
+			{
+				this.transform.SetSiblingIndex (_siblingIndex);
+				_siblingIndex = this.transform.GetSiblingIndex ();
+
+				_apply = false;
+			}
 		}
 
 		public void TurnLeft()
@@ -1084,15 +1102,24 @@ namespace CounterBlock
 
 		public void CreatePlayer()
 		{
+
+			int count = 0;
 			foreach (Character chter in _crtMgr.Values) 
 			{
 				UI_CharacterCard card = _ui_battle.AddCharacter (UI_CharacterCard.eKind.Biking, chter.GetID ());
 
-				if((chter.GetID () % 2) == 1) //홀수는 왼쪽 
-					_ui_battle.SetStartPoint (chter.GetID (), 0, 1);					
-				if((chter.GetID () % 2) == 0) //짝수는 오른쪽 
-					_ui_battle.SetStartPoint (chter.GetID (), 0, 2);
+				if ((chter.GetID () % 2) == 1) 
+				{ //홀수는 왼쪽 
+					_ui_battle.SetStartPoint (chter.GetID (), -10f * count, 1);	
 
+				}
+				if ((chter.GetID () % 2) == 0) 
+				{ //짝수는 오른쪽 
+					_ui_battle.SetStartPoint (chter.GetID (), 10f * count, 2);
+
+				}
+
+				count++;
 			}
 		}
 
