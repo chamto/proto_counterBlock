@@ -55,10 +55,21 @@ namespace CounterBlock
 
 			Start,
 			Running,
-			End,
 			Waiting,
+			End,
 
 			Max,
+		}
+
+		public enum eSubState
+		{
+			None,
+
+			Valid_Start,
+			Valid_Running,
+			Valid_End,
+
+			Max
 		}
 
 		static public string StateToString (Character.eState state)
@@ -71,11 +82,29 @@ namespace CounterBlock
 				return "Start";
 			case Character.eState.Running:
 				return "Running";
-			case Character.eState.End:
-				return "End";
 			case Character.eState.Waiting:
 				return "Waiting";
+			case Character.eState.End:
+				return "End";
 			
+			}
+
+			return "None";
+		}
+
+		static public string SubStateToString (Character.eSubState state)
+		{
+			switch (state) 
+			{
+			case Character.eSubState.None:
+				return "None";
+			case Character.eSubState.Valid_Start:
+				return "Valid_Start";
+			case Character.eSubState.Valid_Running:
+				return "Valid_Running";
+			case Character.eSubState.Valid_End:
+				return "Valid_End";
+
 			}
 
 			return "None";
@@ -93,7 +122,8 @@ namespace CounterBlock
 		private float 	_timeDelta; 	//시간변화량
 
 		//상태정보
-		private eState 	_state_current;
+		private eState 	_state_current = eState.None;
+		private eSubState _subState_current = eSubState.None;
 
 		//====================================
 
@@ -128,9 +158,19 @@ namespace CounterBlock
 			return _state_current;
 		}
 
+		public eSubState CurrentSubState()
+		{
+			return _subState_current;
+		}
+
 		public void SetState(eState setState)
 		{
 			_state_current = setState;
+		}
+
+		public void SetSubState(eSubState setSubState)
+		{
+			_subState_current = setSubState;
 		}
 
 		public Skill.eKind CurrentSkillKind()
@@ -149,7 +189,6 @@ namespace CounterBlock
 
 			_timeDelta = 0f;
 
-			_state_current = eState.None;
 		}
 
 		public void Init()
@@ -185,6 +224,7 @@ namespace CounterBlock
 			_behavior = _skill_current.FirstBehavior ();
 
 			SetState (eState.Start);
+			SetSubState (eSubState.None);
 		}
 
 
@@ -231,6 +271,34 @@ namespace CounterBlock
 				break;
 			case eState.Running:
 				{
+
+					//====================================================
+					// update sub_state 
+					//====================================================
+
+					switch (_subState_current) 
+					{
+					case eSubState.None:
+						if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1) {
+							this.SetSubState (eSubState.Valid_Start);
+						}
+						break;
+					case eSubState.Valid_Start:
+						this.SetSubState (eSubState.Valid_Running);
+						break;
+					case eSubState.Valid_Running:
+						if (!(_behavior.scopeTime_0 <= _timeDelta && _timeDelta < _behavior.scopeTime_1)) {
+							this.SetSubState (eSubState.Valid_End);
+						}
+						break;
+					case eSubState.Valid_End:
+						//DebugWide.LogRed ("Valid_End"); //chamto test
+						this.SetSubState (eSubState.None);
+						break;
+
+					}
+					//====================================================
+
 					
 					if (_behavior.runningTime <= this._timeDelta) 
 					{
@@ -852,7 +920,8 @@ namespace CounterBlock
 
 		public Transform _sprites { get; set; }
 		public List<Image> _action { get; set; }
-
+		public List<Vector3> _action_originalPos { get; set; }
+		public AnimationCard _action_ani = new AnimationCard();
 
 		public int _siblingIndex = 0; 
 		public bool _apply = false;
@@ -863,15 +932,19 @@ namespace CounterBlock
 			
 		}
 
-		void Update()
+		public void GetBackTo_OriginalPosition()
 		{
-			if (true == _apply) 
-			{
-				this.transform.SetSiblingIndex (_siblingIndex);
-				_siblingIndex = this.transform.GetSiblingIndex ();
 
-				_apply = false;
+			for (int i = 0; i < _action.Count; i++) 
+			{
+				_action [i].transform.localPosition = _action_originalPos [i];
 			}
+
+		}
+
+		public void Card_Attack(float maxSecond)
+		{
+			_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
 		}
 
 		public void TurnLeft()
@@ -905,14 +978,120 @@ namespace CounterBlock
 			ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
 			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Images");
 			ui._action = new List<Image> ();
-			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_00"));
-			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_01"));
-			ui._action.Add (Single.hierarchy.Find<Image> (parentPath + "/Images/Action_02"));
+			ui._action_originalPos = new List<Vector3> ();
+
+			const int MAX_ACTION_CARD = 3;
+			Image img = null;
+			for (int i = 0; i < MAX_ACTION_CARD; i++) 
+			{
+				img = Single.hierarchy.Find<Image> (parentPath + "/Images/Action_"+i.ToString("00"));
+				ui._action.Add (img);
+				ui._action_originalPos.Add (img.transform.localPosition);
+			}
+
 
 			return ui;
 		}
 
+		void Update()
+		{
+
+			if (true == _apply) 
+			{
+				this.transform.SetSiblingIndex (_siblingIndex);
+				_siblingIndex = this.transform.GetSiblingIndex ();
+
+				_apply = false;
+			}
+
+			_action_ani.Update ();
+		}
+
+
 	}
+
+	public class AnimationCard
+	{
+
+		public enum eState
+		{
+			None,
+			Start,
+			Running,
+			End,
+			Max
+		}
+
+		private eState _state = eState.None;
+		private float _accumulate = 0f;
+		private float _scaleDelta = 0f;
+
+		private float _start = 0f;
+		private float _end = 0f;
+		private float _maxSecond = 0f;
+		private Transform _dst = null;
+
+		public void Start_Card_Move(Transform dst, float start, float end, float maxSecond)
+		{
+			_dst = dst;
+			_start = start;
+			_end = end;
+			_maxSecond = maxSecond;
+
+			_state = eState.Start;
+		}
+
+		public void Stop()
+		{
+			_state = eState.None;
+		}
+
+		public void Update()
+		{
+
+			switch (_state) 
+			{
+			case eState.None:
+				break;
+			case eState.Start:
+				{
+					_state = eState.Running;
+					_accumulate = 0f;
+					_scaleDelta = 0f;
+
+				}
+				break;
+
+			case eState.Running:
+				{
+					_accumulate += Time.deltaTime;
+					if (_maxSecond <= _accumulate) 
+					{
+						_state = eState.End;
+						break;
+					}
+
+					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+					_scaleDelta = Utility.Interpolation.easeOutElastic (_start, _end, _accumulate/_maxSecond);
+
+
+					_dst.Translate(_scaleDelta,0,0);
+					//DebugWide.LogBlue (_scaleDelta); //chamto test
+					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				}
+				break;
+			case eState.End:
+				{
+					_state = eState.None;
+				}
+				break;
+			}
+
+		}//end func
+
+
+	}//end class
 
 	public class UI_Battle : MonoBehaviour
 	{
@@ -992,7 +1171,8 @@ namespace CounterBlock
 			UI_CharacterCard charUI = _characters [id];
 
 			charUI._text_explanation.text = 
-				"  "  + Character.StateToString(charData.CurrentState());
+				"  "  + Character.StateToString(charData.CurrentState()) +
+				"  sub:"+ Character.SubStateToString(charData.CurrentSubState()) ;
 
 			charUI._text_time.text = 
 				Skill.KindToString(charData.CurrentSkillKind()) + "   " +
@@ -1006,40 +1186,81 @@ namespace CounterBlock
 			UI_CharacterCard charUI = _characters [id];
 
 
-			charUI._action[1].gameObject.SetActive (false);
-			charUI._action[2].gameObject.SetActive (false);
-
-
 			charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
 
 
 			if (Skill.eKind.Attack_1 == charData.CurrentSkillKind ()) 
 			{
-				charUI._action[1].gameObject.SetActive (true);
-
+				
 				switch (charData.CurrentState ()) 
 				{
+				case Character.eState.Start:
+					{
+						charUI._action[1].gameObject.SetActive (true);
+						charUI._action[2].gameObject.SetActive (false);
+						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackBefore);
+
+						iTween.Stop (charUI._action [2].gameObject);
+						charUI.GetBackTo_OriginalPosition ();
+
+					}
+					break;
 				case Character.eState.Running:
 					{
 
-						if (false == charData.Valid_ScopeTime ()) 
+
+						//====================================================
+						//update sub_state
+						//====================================================
+						switch (charData.CurrentSubState ()) 
 						{
-							
+						case Character.eSubState.Valid_Start:
+							{
+								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
-							charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackBefore);
-						} else 
-						{
+								charUI._action [2].gameObject.SetActive (true);
 
-							charUI._action[2].gameObject.SetActive (true);
-							charUI._action[2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+								//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
+								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
+								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
+								iTween.PunchRotation(charUI._action[2].gameObject,new Vector3(0,0,-45f),1f);
+								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",150,"time",0.7f));	
+							}
+							break;
+						case Character.eSubState.Valid_Running:
+							{
+								//DebugWide.LogBlue ("Valid_Running"); //chamto test
 
+								charUI._action [2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);	
+							}
+							break;
+						case Character.eSubState.Valid_End:
+							{
+								//DebugWide.LogBlue ("Valid_End"); //chamto test
 
+								charUI._action[2].gameObject.SetActive (false);
+
+								iTween.Stop (charUI._action [2].gameObject);
+								charUI.GetBackTo_OriginalPosition ();	
+							}
+							break;
 						}
+
+						//====================================================
 					}
 
 					break;
 				case Character.eState.Waiting:
-					charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
+					{
+						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
+
+					}
+
+					break;
+				case Character.eState.End:
+					{
+						charUI._action [1].gameObject.SetActive (false);
+					}
 					break;
 
 				}
@@ -1124,81 +1345,6 @@ namespace CounterBlock
 		}
 
 
-		class Animation
-		{
-			
-			public enum eState
-			{
-				None,
-				Start,
-				Running,
-				End,
-				Max
-			}
-				
-			private eState _state = eState.None;
-			private float _accumulate = 0f;
-			private float _scaleDelta = 0f;
-			private Vector3 _originalPos;
-
-			public void Card_Move(Transform dst, float start, float end, float maxSecond)
-			{
-
-
-				switch (_state) 
-				{
-				case eState.None:
-				case eState.Start:
-					{
-						_state = eState.Running;
-						_accumulate = 0f;
-						_scaleDelta = 0f;
-						_originalPos = dst.localPosition;
-					}
-					break;
-
-				case eState.Running:
-					{
-						_accumulate += Time.deltaTime;
-						if (maxSecond <= _accumulate) 
-						{
-							_state = eState.End;
-							break;
-						}
-
-						_scaleDelta = Utility.Interpolation.easeOutElastic (start, end, _accumulate/maxSecond);
-
-						//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-						dst.Translate(_scaleDelta,0,0);
-						DebugWide.LogBlue (_scaleDelta); //chamto test
-						//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-					}
-					break;
-				case eState.End:
-					{
-						dst.localPosition = _originalPos;
-					}
-					break;
-				}
-
-			}
-
-
-		}//end class
-
-		//							float maxSecond = 0.5f; 
-		//							float scaleDelta = Utility.Interpolation.easeOutElastic (0f,10f, accumulate/maxSecond);
-		//
-		//							Vector3 pos = _1pSprite_03.transform.localPosition;
-		//							pos.x += scaleDelta;
-		//							//pos.x = 50f;
-		//							_1pSprite_03.transform.localPosition = pos;
-		//							//_1pSprite_03.transform.Translate(scaleDelta,0,0);
-		//							DebugWide.LogBlue (scaleDelta);
-		//
-		//							accumulate += Time.deltaTime;
-
-
 
 
 
@@ -1206,13 +1352,8 @@ namespace CounterBlock
 		// Update is called once per frame
 		void Update () 
 		{
+			
 
-			_crtMgr.Update ();
-
-			foreach (Character chter in _crtMgr.Values) 
-			{
-				_ui_battle.Update_UI (chter, chter.GetID());
-			}
 
 
 			//////////////////////////////////////////////////
@@ -1249,6 +1390,16 @@ namespace CounterBlock
 				//DebugWide.LogBlue ("2p - keyinput");
 				_2Player.Block ();
 			}
+
+
+
+
+			foreach (Character chter in _crtMgr.Values) 
+			{
+				_ui_battle.Update_UI (chter, chter.GetID());
+			}
+
+			_crtMgr.Update (); //갱신순서 중요!!!!
 
 		}//end Update
 
