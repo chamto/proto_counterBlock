@@ -7,7 +7,7 @@ public class Main : MonoBehaviour
 
 	void Awake()
 	{
-		Single.hierarchy.Init ();
+		CounterBlock.Single.hierarchy.Init ();
 		//Single.hierarchy.TestPrint ();
 		//DebugWide.LogBlue ("Main awake");
 	}

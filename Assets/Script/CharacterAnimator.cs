@@ -40,7 +40,7 @@ public class CharacterAnimator : MonoBehaviour
 	{
 		_multi.animator.SetInteger ("state", (int)eAniState.Damage);
 
-		Single.particle.PlayDamage(collisionPoint);
+		CounterBlock.Single.particle.PlayDamage(collisionPoint);
 
 		_head.localScale = new Vector3(scaleRate,scaleRate,scaleRate);
 	}

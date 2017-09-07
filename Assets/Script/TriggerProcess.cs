@@ -314,7 +314,7 @@ public class TriggerProcess : MonoBehaviour
 			if (0 != cpList.Length) 
 			{
 				this.ComputeIKTarget (collision,collision.collider, src);
-				Single.particle.PlayDamage (cpList[0].point);
+				CounterBlock.Single.particle.PlayDamage (cpList[0].point);
 			}
 
 		}

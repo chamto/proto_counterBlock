@@ -1185,6 +1185,11 @@ namespace CounterBlock
 		
 		}
 
+		public UI_CharacterCard GetCharacter(uint idx)
+		{
+			return _characters [idx];
+		}
+
 		public UI_CharacterCard AddCharacter(UI_CharacterCard.eKind kind, uint id)
 		{
 			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
@@ -1298,6 +1303,7 @@ namespace CounterBlock
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
 								iTween.PunchRotation(charUI._action[2].gameObject,new Vector3(0,0,-45f),1f);
 								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",150,"time",0.7f));	
+
 							}
 							break;
 						case Character.eSubState.Valid_Running:
@@ -1370,6 +1376,8 @@ namespace CounterBlock
 
 		//====//====//====//====//====//====
 		private UI_Battle _ui_battle = null;
+		private UI_CharacterCard _ui_1Player = null;
+		private UI_CharacterCard _ui_2Player = null;
 
 
 		// Use this for initialization
@@ -1391,6 +1399,9 @@ namespace CounterBlock
 			_ui_battle.Init ();
 
 			this.CreatePlayer ();
+
+			_ui_1Player = _ui_battle.GetCharacter (ID_PLAYER_1);
+			_ui_2Player = _ui_battle.GetCharacter (ID_PLAYER_2);
 
 		}
 
@@ -1419,7 +1430,31 @@ namespace CounterBlock
 
 
 
+		public void FadeOut() 
+		{
+			iTween.ValueTo(_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash(
+				"from", 1.0f, "to", 0.0f,
+				"time", 3f, "easetype", "linear",
+				"onupdate", "setAlpha"));
 
+		}
+
+		public void FadeIn() 
+		{
+			iTween.ValueTo(_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash(
+				"from", 0f, "to", 1f,
+				"time", 3f, "easetype", "linear",
+				"onupdate", "setAlpha"));
+						
+		}
+						
+		public void setAlpha(float newAlpha) 
+		{
+							
+			Color c = _ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color;
+			c.a = newAlpha;
+			_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color = c;
+		}
 
 
 		// Update is called once per frame
@@ -1444,7 +1479,16 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("w")) 
 			{
 				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Block ();
+				//_1Player.Block ();
+
+				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
+				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
+				//iTween.ScaleFrom(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
+
+				//iTween.FadeFrom (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.1f, 0.7f);
+				iTween.FadeTo( _ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject , iTween.Hash( "alpha" , 0.0f , "time" , .3 , "easeType", "easeInSine") );
+				//iTween.ColorTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash("color", new Color(1,1,1,0), "loopType", "pingPong","time", 2));
+				FadeIn();
 			}
 
 

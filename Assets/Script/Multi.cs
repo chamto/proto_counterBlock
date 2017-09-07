@@ -80,7 +80,7 @@ public class Character_HashInfoMap : HashInfoMap
 	{
 		
 		string basePath = "/"+transform.parent.name+"/"+transform.name;
-		DeleMethod GetTForm = p => Single.hierarchy.GetData (basePath + p);
+		DeleMethod GetTForm = p => CounterBlock.Single.hierarchy.GetData (basePath + p);
 
 		//DebugWide.LogBlue (basePath);
 
