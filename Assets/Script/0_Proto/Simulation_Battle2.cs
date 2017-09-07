@@ -679,6 +679,11 @@ namespace CounterBlock
 			P2_BLOCK_BEFORE,
 			P2_BLOCK_VALID,
 			P2_BLOCK_AFTER,
+
+			EFFECT_TEXT,
+			EFFECT_HIT,
+			EFFECT_BLOCK,
+
 			MAX
 		}
 
@@ -693,6 +698,13 @@ namespace CounterBlock
 			_ref_herch = CSingleton<HierarchyPreLoader>.Instance;
 		}
 
+
+		public eSPRITE_NAME StringToEnum(string name)
+		{
+			//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
+			//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
+			return _sprNameDict.FirstOrDefault(x => x.Value == name).Key;
+		}
 
 		public void Init()
 		{
@@ -715,25 +727,42 @@ namespace CounterBlock
 				{eSPRITE_NAME.P2_ATTACK_AFTER, "p2_attack_after"},
 				{eSPRITE_NAME.P2_BLOCK_BEFORE, "p2_block_before"},
 				{eSPRITE_NAME.P2_BLOCK_VALID, "p2_block_valid"},
-				{eSPRITE_NAME.P2_BLOCK_AFTER, "p2_block_after"}
+				{eSPRITE_NAME.P2_BLOCK_AFTER, "p2_block_after"},
+
+				{eSPRITE_NAME.EFFECT_TEXT, "effect_0"},
+				{eSPRITE_NAME.EFFECT_HIT, "effect_1"},
+				{eSPRITE_NAME.EFFECT_BLOCK, "effect_2"},
 			};
 
 
-			this.Load_BattleCard ();
+			this.Load_Sprite ();
 		}
 
-		public void Load_BattleCard()
+		public void Load_Sprite()
 		{
-			Sprite[] sprites = Resources.LoadAll <Sprite>("Texture/battleCard");
 
+			//=============================================
+			//LOAD Texture/battleCard
+			//=============================================
+			Sprite[] sprites = Resources.LoadAll <Sprite>("Texture/battleCard");
 			for(int i=0;i<sprites.Length;i++)
 			{
-				//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
-				//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
-				eSPRITE_NAME key = _sprNameDict.FirstOrDefault(x => x.Value == sprites [i].name).Key;
+				
+				eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
 				_loadedDict.Add (key, sprites [i]);
 			}
 
+
+			//=============================================
+			//LAOD Texture/effect
+			//=============================================
+			sprites = Resources.LoadAll <Sprite>("Texture/effect");
+			for(int i=0;i<sprites.Length;i++)
+			{
+
+				eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
+				_loadedDict.Add (key, sprites [i]);
+			}
 
 		}
 
@@ -910,6 +939,16 @@ namespace CounterBlock
 			Max
 		};
 
+		public enum eEffect
+		{
+			None,
+			Empty,
+			Text,
+			Hit,
+			Block,
+			Max
+		}
+
 		[SerializeField] 
 		public uint _id = 0;
 		public eKind _kind = eKind.None;
@@ -921,7 +960,12 @@ namespace CounterBlock
 		public Transform _sprites { get; set; }
 		public List<Image> _action { get; set; }
 		public List<Vector3> _action_originalPos { get; set; }
-		public AnimationCard _action_ani = new AnimationCard();
+		//public AnimationCard _action_ani = new AnimationCard();
+
+		public Transform _effects { get; set; }
+		public Dictionary<eEffect,Image> _effect { get; set; }
+
+
 
 		public int _siblingIndex = 0; 
 		public bool _apply = false;
@@ -944,7 +988,7 @@ namespace CounterBlock
 
 		public void Card_Attack(float maxSecond)
 		{
-			_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
+			//_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
 		}
 
 		public void TurnLeft()
@@ -952,6 +996,14 @@ namespace CounterBlock
 			Vector3 scale = _sprites.localScale;
 			scale.x = -1f;
 			_sprites.localScale = scale;
+
+			scale = _effects.localScale;
+			scale.x = -1f;
+			_effects.localScale = scale;
+
+			scale = _effect [eEffect.Hit].transform.localScale;
+			scale.x = -1f;
+			_effect [eEffect.Hit].transform.localScale = scale;
 		}
 
 		public void TurnRight()
@@ -959,6 +1011,14 @@ namespace CounterBlock
 			Vector3 scale = _sprites.localScale;
 			scale.x = 1f;
 			_sprites.localScale = scale;
+
+			scale = _effects.localScale;
+			scale.x = 1f;
+			_effects.localScale = scale;
+
+			scale = _effect [eEffect.Hit].transform.localScale;
+			scale.x = 1f;
+			_effect [eEffect.Hit].transform.localScale = scale;
 		}
 
 		public void SetCharacter(eKind kind)
@@ -976,10 +1036,11 @@ namespace CounterBlock
 			ui._text_explanation = Single.hierarchy.Find<Text> (parentPath + "/Text_explanation");
 			ui._text_time = Single.hierarchy.Find<Text> (parentPath + "/Text_time");
 			ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+
+			//action
 			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Images");
 			ui._action = new List<Image> ();
 			ui._action_originalPos = new List<Vector3> ();
-
 			const int MAX_ACTION_CARD = 3;
 			Image img = null;
 			for (int i = 0; i < MAX_ACTION_CARD; i++) 
@@ -988,6 +1049,18 @@ namespace CounterBlock
 				ui._action.Add (img);
 				ui._action_originalPos.Add (img.transform.localPosition);
 			}
+
+			//effect
+			ui._effects = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
+			ui._effect = new Dictionary<eEffect, Image> ();
+			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_empty");
+			ui._effect.Add (eEffect.Empty,img);
+			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_hit");
+			ui._effect.Add (eEffect.Hit,img);
+			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_block");
+			ui._effect.Add (eEffect.Block,img);
+			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_hit/Effect_text");
+			ui._effect.Add (eEffect.Text,img);
 
 
 			return ui;
@@ -1004,7 +1077,7 @@ namespace CounterBlock
 				_apply = false;
 			}
 
-			_action_ani.Update ();
+			//_action_ani.Update ();
 		}
 
 
