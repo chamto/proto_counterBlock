@@ -1432,7 +1432,7 @@ namespace CounterBlock
 
 		public void FadeOut() 
 		{
-			iTween.ValueTo(_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash(
+			iTween.ValueTo(gameObject, iTween.Hash(
 				"from", 1.0f, "to", 0.0f,
 				"time", 3f, "easetype", "linear",
 				"onupdate", "setAlpha"));
@@ -1441,19 +1441,24 @@ namespace CounterBlock
 
 		public void FadeIn() 
 		{
-			iTween.ValueTo(_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash(
+			iTween.ValueTo(gameObject, iTween.Hash(
 				"from", 0f, "to", 1f,
 				"time", 3f, "easetype", "linear",
-				"onupdate", "setAlpha"));
+				"onUpdate", "setAlpha"));
 						
 		}
 						
 		public void setAlpha(float newAlpha) 
 		{
-							
+
 			Color c = _ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color;
+
+			DebugWide.LogBlue (c + "  na:" + newAlpha); //chamto test
+
 			c.a = newAlpha;
 			_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color = c;
+
+
 		}
 
 
@@ -1488,7 +1493,7 @@ namespace CounterBlock
 				//iTween.FadeFrom (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.1f, 0.7f);
 				iTween.FadeTo( _ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject , iTween.Hash( "alpha" , 0.0f , "time" , .3 , "easeType", "easeInSine") );
 				//iTween.ColorTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash("color", new Color(1,1,1,0), "loopType", "pingPong","time", 2));
-				FadeIn();
+				FadeOut();
 			}
 
 
