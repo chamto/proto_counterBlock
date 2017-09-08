@@ -1083,6 +1083,65 @@ namespace CounterBlock
 
 	}
 
+
+
+	public class Effect : MonoBehaviour
+	{
+		//public GameObject _dst = null;
+
+		static public void Add(GameObject dst)
+		{
+			Effect effect = dst.GetComponent<Effect> ();
+			if (null == effect) {
+				effect = dst.AddComponent<Effect> ();
+				//DebugWide.LogRed (effect); //chamto test
+			}
+
+			//effect._dst = dst;
+		}
+
+		static public void FadeOut(GameObject dst , float time) 
+		{
+			Effect.Add (dst);
+
+			iTween.ValueTo(dst, iTween.Hash(
+				"from", 1.0f, "to", 0.0f,
+				"time", time, "easetype", "linear",
+				"onupdate", "SetAlpha"));
+
+		}
+
+		static public void FadeIn(GameObject dst , float time) 
+		{
+			Effect.Add (dst);
+
+			iTween.ValueTo(dst, iTween.Hash(
+				"from", 0f, "to", 1f,
+				"time", time, "easetype", "linear",
+				"onUpdate", "SetAlpha"));
+
+		}
+
+		public void SetAlpha(float newAlpha) 
+		{
+			
+			//DebugWide.LogBlue ("setAlpha"); //chamto test
+
+			Color c;
+			foreach (Image img in gameObject.GetComponentsInChildren<Image>(false)) 
+			{
+				c = img.color;
+				c.a = newAlpha;
+				img.color = c;
+			}
+
+
+
+		}//end setAlpha
+
+	}//end class
+
+
 	public class AnimationCard
 	{
 
@@ -1430,36 +1489,8 @@ namespace CounterBlock
 
 
 
-		public void FadeOut() 
-		{
-			iTween.ValueTo(gameObject, iTween.Hash(
-				"from", 1.0f, "to", 0.0f,
-				"time", 3f, "easetype", "linear",
-				"onupdate", "setAlpha"));
-
-		}
-
-		public void FadeIn() 
-		{
-			iTween.ValueTo(gameObject, iTween.Hash(
-				"from", 0f, "to", 1f,
-				"time", 3f, "easetype", "linear",
-				"onUpdate", "setAlpha"));
-						
-		}
-						
-		public void setAlpha(float newAlpha) 
-		{
-
-			Color c = _ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color;
-
-			DebugWide.LogBlue (c + "  na:" + newAlpha); //chamto test
-
-			c.a = newAlpha;
-			_ui_1Player._effect [UI_CharacterCard.eEffect.Hit].color = c;
 
 
-		}
 
 
 		// Update is called once per frame
@@ -1478,7 +1509,10 @@ namespace CounterBlock
 				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
 				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
 				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Attack_1 ();
+				//_1Player.Attack_1 ();
+
+
+				Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
 			}
 			//block
 			if (Input.GetKeyUp ("w")) 
@@ -1490,10 +1524,7 @@ namespace CounterBlock
 				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
 				//iTween.ScaleFrom(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
 
-				//iTween.FadeFrom (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.1f, 0.7f);
-				iTween.FadeTo( _ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject , iTween.Hash( "alpha" , 0.0f , "time" , .3 , "easeType", "easeInSine") );
-				//iTween.ColorTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, iTween.Hash("color", new Color(1,1,1,0), "loopType", "pingPong","time", 2));
-				FadeOut();
+				Effect.FadeOut (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 1f);
 			}
 
 
