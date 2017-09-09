@@ -114,7 +114,8 @@ namespace CounterBlock
 
 		//고유정보
 		private uint 	_id;
-		private uint 	_hp;
+		private int 	_hp_current;
+		private int 	_hp_max;
 
 		//동작정보
 		private Behavior _behavior = null;
@@ -173,19 +174,41 @@ namespace CounterBlock
 			_subState_current = setSubState;
 		}
 
-		public Skill.eKind CurrentSkillKind()
+		public Skill.eName CurrentSkillKind()
 		{
 			if(null != _skill_current)
-				return _skill_current.kind;
+				return _skill_current.name;
 
-			return Skill.eKind.None;
+			return Skill.eName.None;
+		}
+
+		public int GetHP()
+		{
+			return _hp_current;
+		}
+		public void SetHP(int hp)
+		{
+			_hp_current = hp;
+		}
+
+		public void AddHP(int amount)
+		{
+			_hp_current += amount;
+
+			if (0 > _hp_current)
+				_hp_current = 0;
+
+			if (_hp_max < _hp_current)
+				_hp_current = _hp_max;
+
 		}
 
 		//====================================
 
 		public Character()
 		{
-			_hp = 10;
+			_hp_current = 10;
+			_hp_max = 10;
 
 			_timeDelta = 0f;
 
@@ -218,7 +241,31 @@ namespace CounterBlock
 			return false;
 		}
 
-		public void SetSkill(Skill.eKind kind)
+		public bool IsAttack()
+		{
+			if (Skill.eKind.Attack == _skill_current.kind)
+				return true;
+
+			return false;
+		}
+
+		public bool IsBlock()
+		{
+			if (Skill.eKind.Block == _skill_current.kind)
+				return true;
+
+			return false;
+		}
+
+		public bool IsCounter()
+		{
+			if (Skill.eKind.Counter == _skill_current.kind)
+				return true;
+
+			return false;
+		}
+
+		public void SetSkill(Skill.eName kind)
 		{
 			_skill_current = ref_skillBook [kind];
 			_behavior = _skill_current.FirstBehavior ();
@@ -230,10 +277,10 @@ namespace CounterBlock
 
 		public void Attack_1 ()
 		{
-			if (Skill.eKind.Idle == _skill_current.kind || true == this.Valid_OpenTime ()) 
+			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eKind.Attack_1);
+				SetSkill (Skill.eName.Attack_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -242,20 +289,181 @@ namespace CounterBlock
 
 		public void Block()
 		{
-			if (Skill.eKind.Idle == _skill_current.kind || true == this.Valid_OpenTime ()) 
+			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eKind.Block_1);
+				SetSkill (Skill.eName.Block_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
 
 		}
 
+
 		public void Idle()
 		{
-			SetSkill (Skill.eKind.Idle);
+			SetSkill (Skill.eName.Idle);
 		}
+
+		//상대로 부터 피해입다
+		public void BeDamage(int damage)
+		{
+			this.AddHP (damage);
+
+			SetSkill (Skill.eName.Hit);
+		}
+
+		public void Judge(Character dst)
+		{
+
+
+
+			if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+			{
+			}
+			if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+			{
+			}
+			if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+			{
+			}
+
+		}
+
+		/*
+		public Result Valid()
+		{
+			
+			Result result = new Result (eState.None , eState.None);
+
+			//attack
+			if (true == this.Valid_ScopeTime() && false == _ref_2pInfo.Valid_Block ()) 
+			{
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+				result.state_src = eState.AttackSucceed; 
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+
+				if(CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p)
+					result.state_dst = eState.BlockFail;
+				else
+					result.state_dst = eState.None;
+			}
+
+			if (true == _ref_2pInfo.Valid_Attack () && false == _ref_1pInfo.Valid_Block ()) 
+			{
+				if(CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p)
+					result.state_src = eState.BlockFail;
+				else
+					result.state_src = eState.None;
+
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+				result.state_dst = eState.AttackSucceed;
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+			}
+
+			//block
+			if (CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p) 
+			{
+				if (true == _ref_1pInfo.Valid_Block () )
+				{
+
+					if (true == _ref_2pInfo.Valid_Attack ()) {
+						result.state_src = eState.BlockSucceed;	
+						result.state_dst = eState.AttackFail;
+					} else 
+					{
+						result.state_src = eState.BlockIdle;	
+					}
+
+				}
+			}
+
+			if (CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p) 
+			{
+				if (true == _ref_2pInfo.Valid_Block () )
+				{
+
+					if (true == _ref_1pInfo.Valid_Attack ()) {
+						result.state_dst = eState.BlockSucceed;	
+						result.state_src = eState.AttackFail;
+					} else 
+					{
+						result.state_dst = eState.BlockIdle;	
+					}
+
+				}
+			}
+
+
+
+
+
+			return result;
+		}
+
+
+		public void Update()
+		{
+			_result =  Valid_Attack ();
+
+
+			//apply jugement : HP
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			switch (_result.state_src) 
+			{
+			case eState.AttackSucceed:
+				if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
+				{
+					_ref_1pInfo.SetUsedState ();
+					_ref_2pInfo.HP_SubTract (1);
+					_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
+				}
+
+				break;
+			}
+
+			switch (_result.state_dst) 
+			{
+			case eState.AttackSucceed:
+				if (false == _ref_2pInfo.GetUsedState ()) 
+				{
+					_ref_2pInfo.SetUsedState ();
+					_ref_1pInfo.HP_SubTract (1);
+					_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
+				}
+
+				break;
+			}
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+			//apply jugement : behaviour state
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			//방어 성공시 반격방어스킬을 적용 한다
+			switch (_result.state_src) 
+			{
+			case eState.BlockSucceed:
+				{
+					_ref_1pInfo.SetBegavior_CounterBlock ();
+				}
+
+				break;
+			}
+
+			switch (_result.state_dst) 
+			{
+			case eState.BlockSucceed:
+				{
+					_ref_2pInfo.SetBegavior_CounterBlock ();
+				}
+
+				break;
+			}
+
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+		}//end Update
+		//*/
 
 		public void Update()
 		{
@@ -341,6 +549,8 @@ namespace CounterBlock
 
 	}
 
+
+
 	public class CharacterManager : Dictionary<uint, Character>
 	{
 		private uint id_Sequence = 0;
@@ -348,7 +558,8 @@ namespace CounterBlock
 
 		public void Init()
 		{
-			for (int i = 0; i < 2; i++)  //chamto test : 2 => 8
+			const int CHARACTER_COUNT = 2;
+			for (int i = 0; i < CHARACTER_COUNT; i++)  //chamto test : 2 => 8
 			{
 				this.AddCharacter ();
 			}
@@ -380,6 +591,21 @@ namespace CounterBlock
 			{
 				crt.Update ();
 			}
+
+
+			//캐릭터 전체 리스트 1대1조합 : 중복안됨, 순서없음
+			for (int src = 0 ; src < (this.Values.Count-1) ; src++) 
+			{
+				for (int dst = (src+1) ; dst < this.Values.Count ; dst++) 
+				{
+					//DebugWide.LogBlue (src + "  " + dst); //chamto test
+
+					this.Values.ElementAt (src).Judge (this.Values.ElementAt (dst));
+					this.Values.ElementAt (dst).Judge (this.Values.ElementAt (src));
+				}
+			}
+
+			//DebugWide.LogRed ("====================="); //chamto test
 		}
 
 		public void TestPrint()
@@ -392,6 +618,203 @@ namespace CounterBlock
 
 	}
 
+	public class Judgment
+	{
+
+		public struct Result
+		{
+			public eState state_src;
+			public eState state_dst;
+
+			public Result(eState src, eState dst)
+			{
+				state_src = src;
+				state_dst = dst;
+			}
+
+			public void Init()
+			{
+				state_src = eState.None;
+				state_dst = eState.None;
+			}
+		}
+
+		public enum eState
+		{
+			None = 0,
+
+			AttackSucceed,
+			AttackFail,
+			AttackIdle, //공격 헛 동작 : 멀리서 공격한 경우
+
+			BlockSucceed,
+			BlockFail,
+			BlockIdle, //방어 헛 동작
+
+			Max
+		}
+			
+
+		private  Result _result; 
+
+		public Result GetResult()
+		{
+			return _result;
+		}
+
+		//==========================================
+
+		public void Judge(Character src , Character dst)
+		{
+			if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+			{
+			}
+			if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+			{
+			}
+			if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+			{
+			}
+		}
+
+
+		/*
+		public Result Valid()
+		{
+			
+			Result result = new Result (eState.None , eState.None);
+
+			//attack
+			if (true == this.Valid_ScopeTime() && false == _ref_2pInfo.Valid_Block ()) 
+			{
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+				result.state_src = eState.AttackSucceed; 
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+
+				if(CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p)
+					result.state_dst = eState.BlockFail;
+				else
+					result.state_dst = eState.None;
+			}
+
+			if (true == _ref_2pInfo.Valid_Attack () && false == _ref_1pInfo.Valid_Block ()) 
+			{
+				if(CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p)
+					result.state_src = eState.BlockFail;
+				else
+					result.state_src = eState.None;
+
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+				result.state_dst = eState.AttackSucceed;
+				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+			}
+
+			//block
+			if (CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p) 
+			{
+				if (true == _ref_1pInfo.Valid_Block () )
+				{
+
+					if (true == _ref_2pInfo.Valid_Attack ()) {
+						result.state_src = eState.BlockSucceed;	
+						result.state_dst = eState.AttackFail;
+					} else 
+					{
+						result.state_src = eState.BlockIdle;	
+					}
+
+				}
+			}
+
+			if (CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p) 
+			{
+				if (true == _ref_2pInfo.Valid_Block () )
+				{
+
+					if (true == _ref_1pInfo.Valid_Attack ()) {
+						result.state_dst = eState.BlockSucceed;	
+						result.state_src = eState.AttackFail;
+					} else 
+					{
+						result.state_dst = eState.BlockIdle;	
+					}
+
+				}
+			}
+
+
+
+
+
+			return result;
+		}
+
+
+		public void Update()
+		{
+			_result =  Valid_Attack ();
+
+
+			//apply jugement : HP
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			switch (_result.state_src) 
+			{
+			case eState.AttackSucceed:
+				if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
+				{
+					_ref_1pInfo.SetUsedState ();
+					_ref_2pInfo.HP_SubTract (1);
+					_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
+				}
+
+				break;
+			}
+
+			switch (_result.state_dst) 
+			{
+			case eState.AttackSucceed:
+				if (false == _ref_2pInfo.GetUsedState ()) 
+				{
+					_ref_2pInfo.SetUsedState ();
+					_ref_1pInfo.HP_SubTract (1);
+					_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
+				}
+
+				break;
+			}
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+			//apply jugement : behaviour state
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			//방어 성공시 반격방어스킬을 적용 한다
+			switch (_result.state_src) 
+			{
+			case eState.BlockSucceed:
+				{
+					_ref_1pInfo.SetBegavior_CounterBlock ();
+				}
+
+				break;
+			}
+
+			switch (_result.state_dst) 
+			{
+			case eState.BlockSucceed:
+				{
+					_ref_2pInfo.SetBegavior_CounterBlock ();
+				}
+
+				break;
+			}
+
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+		}//end Update
+		//*/
+
+
+	}//end class	
 
 	public class SkillManager
 	{
@@ -403,6 +826,15 @@ namespace CounterBlock
 	{
 
 		public enum eKind
+		{
+			None,
+			Attack,
+			Block,
+			Counter,
+			Max
+		}
+
+		public enum eName
 		{
 			None,
 			Idle,
@@ -420,32 +852,32 @@ namespace CounterBlock
 			Max
 		}
 
-		static public string KindToString (Skill.eKind kind)
+		static public string NameToString (Skill.eName name)
 		{
-			switch (kind) 
+			switch (name) 
 			{
-			case Skill.eKind.None:
+			case Skill.eName.None:
 				return "None";
-			case Skill.eKind.Idle:
+			case Skill.eName.Idle:
 				return "Idle";
-			case Skill.eKind.Hit:
+			case Skill.eName.Hit:
 				return "Hit";
 
-			case Skill.eKind.Attack_1:
+			case Skill.eName.Attack_1:
 				return "Attack_1";
-			case Skill.eKind.Attack_2Combo:
+			case Skill.eName.Attack_2Combo:
 				return "Attack_2Combo";
-			case Skill.eKind.Attack_3Combo:
+			case Skill.eName.Attack_3Combo:
 				return "Attack_3Combo";
 
-			case Skill.eKind.Block_1:
+			case Skill.eName.Block_1:
 				return "Block_1";
-			case Skill.eKind.Block_2Combo:
+			case Skill.eName.Block_2Combo:
 				return "Block_2Combo";
-			case Skill.eKind.Block_3Combo:
+			case Skill.eName.Block_3Combo:
 				return "Block_3Combo";
 
-			case Skill.eKind.CounterBlock:
+			case Skill.eName.CounterBlock:
 				return "CounterBlock";
 			
 			}
@@ -460,6 +892,7 @@ namespace CounterBlock
 		//========================================
 
 		public eKind kind { get; set; }
+		public eName name { get; set; }
 
 		//========================================
 
@@ -498,7 +931,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Idle;
+			skinfo.kind = eKind.None;
+			skinfo.name = eName.Idle;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -516,7 +950,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Hit;
+			skinfo.kind = eKind.None;
+			skinfo.name = eName.Hit;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -534,7 +969,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Attack_1;
+			skinfo.kind = eKind.Attack;
+			skinfo.name = eName.Attack_1;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -552,7 +988,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Attack_3Combo;
+			skinfo.kind = eKind.Attack;
+			skinfo.name = eName.Attack_3Combo;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -587,7 +1024,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Block_1;
+			skinfo.kind = eKind.Block;
+			skinfo.name = eName.Block_1;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -605,7 +1043,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.CounterBlock;
+			skinfo.kind = eKind.Counter;
+			skinfo.name = eName.CounterBlock;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -624,18 +1063,18 @@ namespace CounterBlock
 	}
 
 
-	public class SkillBook : Dictionary<Skill.eKind, Skill>
+	public class SkillBook : Dictionary<Skill.eName, Skill>
 	{
 		public SkillBook()
 		{
-			this.Add (Skill.eKind.Idle, Skill.Details_Idle ());
-			this.Add (Skill.eKind.Hit, Skill.Details_Hit ());
-			this.Add (Skill.eKind.Attack_1, Skill.Details_Attack_1 ());
-			this.Add (Skill.eKind.Attack_3Combo, Skill.Details_Attack_3Combo ());
+			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
+			this.Add (Skill.eName.Hit, Skill.Details_Hit ());
+			this.Add (Skill.eName.Attack_1, Skill.Details_Attack_1 ());
+			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo ());
 
-			this.Add (Skill.eKind.Block_1, Skill.Details_Block_1 ());
+			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
 
-			this.Add (Skill.eKind.CounterBlock, Skill.Details_CounterBlock ());
+			this.Add (Skill.eName.CounterBlock, Skill.Details_CounterBlock ());
 
 		}
 	}
@@ -1312,7 +1751,7 @@ namespace CounterBlock
 				"  sub:"+ Character.SubStateToString(charData.CurrentSubState()) ;
 
 			charUI._text_time.text = 
-				Skill.KindToString(charData.CurrentSkillKind()) + "   " +
+				Skill.NameToString(charData.CurrentSkillKind()) + "   " +
 				charData.GetTimeDelta().ToString("0.0");
 		
 
@@ -1326,7 +1765,7 @@ namespace CounterBlock
 			charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
 
 
-			if (Skill.eKind.Attack_1 == charData.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_1 == charData.CurrentSkillKind ()) 
 			{
 				
 				switch (charData.CurrentState ()) 
@@ -1405,7 +1844,7 @@ namespace CounterBlock
 
 
 			}
-			if (Skill.eKind.Block_1 == charData.CurrentSkillKind ()) 
+			if (Skill.eName.Block_1 == charData.CurrentSkillKind ()) 
 			{
 				charUI._action[1].gameObject.SetActive (true);
 				charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
@@ -1509,22 +1948,22 @@ namespace CounterBlock
 				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
 				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
 				//DebugWide.LogBlue ("1p - keyinput");
-				//_1Player.Attack_1 ();
+				_1Player.Attack_1 ();
 
 
-				Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
+				//Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
 			}
 			//block
 			if (Input.GetKeyUp ("w")) 
 			{
 				//DebugWide.LogBlue ("1p - keyinput");
-				//_1Player.Block ();
+				_1Player.Block ();
 
 				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
 				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
 				//iTween.ScaleFrom(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
 
-				Effect.FadeOut (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 1f);
+				//Effect.FadeOut (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 1f);
 			}
 
 
