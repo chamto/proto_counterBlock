@@ -126,6 +126,8 @@ namespace CounterBlock
 		private eState 	_state_current = eState.None;
 		private eSubState _subState_current = eSubState.None;
 
+		public Judgment _judgment = new Judgment();
+
 		//====================================
 
 		public CharacterManager ref_parent { get; set;} 
@@ -186,6 +188,11 @@ namespace CounterBlock
 		{
 			return _hp_current;
 		}
+
+		public int GetMaxHP()
+		{
+			return _hp_max;
+		}
 		public void SetHP(int hp)
 		{
 			_hp_current = hp;
@@ -241,7 +248,15 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool IsAttack()
+		public bool IsSkill_None()
+		{
+			if (Skill.eKind.None == _skill_current.kind )
+				return true;
+
+			return false;
+		}
+
+		public bool IsSkill_Attack()
 		{
 			if (Skill.eKind.Attack == _skill_current.kind)
 				return true;
@@ -249,7 +264,7 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool IsBlock()
+		public bool IsSkill_Block()
 		{
 			if (Skill.eKind.Block == _skill_current.kind)
 				return true;
@@ -257,7 +272,8 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool IsCounter()
+
+		public bool IsSkill_Counter()
 		{
 			if (Skill.eKind.Counter == _skill_current.kind)
 				return true;
@@ -316,154 +332,31 @@ namespace CounterBlock
 		public void Judge(Character dst)
 		{
 
-
-
-			if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
-			{
-			}
-			if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
-			{
-			}
-			if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
-			{
-			}
-
-		}
-
-		/*
-		public Result Valid()
-		{
-			
-			Result result = new Result (eState.None , eState.None);
-
-			//attack
-			if (true == this.Valid_ScopeTime() && false == _ref_2pInfo.Valid_Block ()) 
-			{
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-				result.state_src = eState.AttackSucceed; 
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-
-				if(CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p)
-					result.state_dst = eState.BlockFail;
-				else
-					result.state_dst = eState.None;
-			}
-
-			if (true == _ref_2pInfo.Valid_Attack () && false == _ref_1pInfo.Valid_Block ()) 
-			{
-				if(CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p)
-					result.state_src = eState.BlockFail;
-				else
-					result.state_src = eState.None;
-
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-				result.state_dst = eState.AttackSucceed;
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-			}
-
-			//block
-			if (CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p) 
-			{
-				if (true == _ref_1pInfo.Valid_Block () )
-				{
-
-					if (true == _ref_2pInfo.Valid_Attack ()) {
-						result.state_src = eState.BlockSucceed;	
-						result.state_dst = eState.AttackFail;
-					} else 
-					{
-						result.state_src = eState.BlockIdle;	
-					}
-
-				}
-			}
-
-			if (CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p) 
-			{
-				if (true == _ref_2pInfo.Valid_Block () )
-				{
-
-					if (true == _ref_1pInfo.Valid_Attack ()) {
-						result.state_dst = eState.BlockSucceed;	
-						result.state_src = eState.AttackFail;
-					} else 
-					{
-						result.state_dst = eState.BlockIdle;	
-					}
-
-				}
-			}
-
-
-
-
-
-			return result;
-		}
-
-
-		public void Update()
-		{
-			_result =  Valid_Attack ();
+			_judgment.Judge (this, dst);
+			//DebugWide.LogBlue (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
 
 			//apply jugement : HP
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			switch (_result.state_src) 
+			switch (dst._judgment.state) 
 			{
-			case eState.AttackSucceed:
-				if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
+			case Judgment.eState.AttackSucceed:
 				{
-					_ref_1pInfo.SetUsedState ();
-					_ref_2pInfo.HP_SubTract (1);
-					_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
-				}
+					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
+					this.BeDamage (-1);
+
+				}
 				break;
 			}
 
-			switch (_result.state_dst) 
-			{
-			case eState.AttackSucceed:
-				if (false == _ref_2pInfo.GetUsedState ()) 
-				{
-					_ref_2pInfo.SetUsedState ();
-					_ref_1pInfo.HP_SubTract (1);
-					_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
-				}
 
-				break;
-			}
+			//if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-			//apply jugement : behaviour state
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			//방어 성공시 반격방어스킬을 적용 한다
-			switch (_result.state_src) 
-			{
-			case eState.BlockSucceed:
-				{
-					_ref_1pInfo.SetBegavior_CounterBlock ();
-				}
-
-				break;
-			}
-
-			switch (_result.state_dst) 
-			{
-			case eState.BlockSucceed:
-				{
-					_ref_2pInfo.SetBegavior_CounterBlock ();
-				}
-
-				break;
-			}
-
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		}
 
 
-		}//end Update
-		//*/
 
 		public void Update()
 		{
@@ -593,6 +486,7 @@ namespace CounterBlock
 			}
 
 
+			//todo : 거리에 따라 판정대상 객체 거르는 처리가 필요 
 			//캐릭터 전체 리스트 1대1조합 : 중복안됨, 순서없음
 			for (int src = 0 ; src < (this.Values.Count-1) ; src++) 
 			{
@@ -623,19 +517,19 @@ namespace CounterBlock
 
 		public struct Result
 		{
-			public eState state_src;
-			public eState state_dst;
+			public eState src;
+			public eState dst;
 
-			public Result(eState src, eState dst)
+			public Result(eState s, eState d)
 			{
-				state_src = src;
-				state_dst = dst;
+				src = s;
+				dst = d;
 			}
 
 			public void Init()
 			{
-				state_src = eState.None;
-				state_dst = eState.None;
+				src = eState.None;
+				dst = eState.None;
 			}
 		}
 
@@ -643,175 +537,128 @@ namespace CounterBlock
 		{
 			None = 0,
 
-			AttackSucceed,
-			AttackFail,
+			AttackSucceed, //상대를 맞춘 경우
+			AttackFail, //상대의 방어 또는 빠른공격에 막힌 경우
 			AttackIdle, //공격 헛 동작 : 멀리서 공격한 경우
 
 			BlockSucceed,
 			BlockFail,
 			BlockIdle, //방어 헛 동작
 
+			Damaged, //피해입음
+
 			Max
 		}
 			
+		public uint targetID { get; set; }
+		public eState state { get; set; }
 
-		private  Result _result; 
-
-		public Result GetResult()
+		public Judgment()
 		{
-			return _result;
+			targetID = 0;
+			state = eState.None;
 		}
+
+//		private  Result _result; 
+//		public Result GetResult()
+//		{
+//			return _result;
+//		}
 
 		//==========================================
 
+		//fixme : 참조객체의 값을 변경하는 처리가 들어가 있음 : 함수프로그래밍 적으로 수정 방안 찾기
+		private void Attack_Vs_Attack(Character src , Character dst)
+		{
+			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Attack()) 
+			{
+				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackFail;
+					dst._judgment.state = eState.AttackFail;
+					 
+				}
+				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackSucceed;
+					dst._judgment.state = eState.AttackFail;
+				}
+				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackFail;
+					dst._judgment.state = eState.AttackSucceed;
+				}
+			}
+		}
+
+		private void Attack_Vs_Block(Character src , Character dst)
+		{
+			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Block()) 
+			{
+				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackFail;
+					dst._judgment.state = eState.BlockSucceed;
+				}
+				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackSucceed;
+					dst._judgment.state = eState.BlockFail;
+				}
+				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackIdle;
+					dst._judgment.state = eState.BlockIdle;
+				}
+			}
+		}
+
+		private void Attack_Vs_None(Character src , Character dst)
+		{
+			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None()) 
+			{
+				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackSucceed;
+					dst._judgment.state = eState.None;
+				}
+				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackSucceed;
+					dst._judgment.state = eState.None;
+				}
+				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					src._judgment.state = eState.AttackIdle;
+					dst._judgment.state = eState.None;
+				}
+			}
+		}
+
 		public void Judge(Character src , Character dst)
 		{
-			if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
-			{
-			}
-			if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
-			{
-			}
-			if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
-			{
-			}
-		}
+			//_result.Init ();
 
+			//========================================================
 
-		/*
-		public Result Valid()
-		{
-			
-			Result result = new Result (eState.None , eState.None);
+			this.Attack_Vs_Attack (src, dst);
 
-			//attack
-			if (true == this.Valid_ScopeTime() && false == _ref_2pInfo.Valid_Block ()) 
-			{
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-				result.state_src = eState.AttackSucceed; 
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
+			//========================================================
 
-				if(CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p)
-					result.state_dst = eState.BlockFail;
-				else
-					result.state_dst = eState.None;
-			}
+			this.Attack_Vs_Block (src, dst);
+			this.Attack_Vs_Block (dst, src);
 
-			if (true == _ref_2pInfo.Valid_Attack () && false == _ref_1pInfo.Valid_Block ()) 
-			{
-				if(CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p)
-					result.state_src = eState.BlockFail;
-				else
-					result.state_src = eState.None;
+			//========================================================
 
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-				result.state_dst = eState.AttackSucceed;
-				//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!//!!!!!!
-			}
+			this.Attack_Vs_None (src, dst);
+			this.Attack_Vs_None (dst, src);
 
-			//block
-			if (CharacterInfo.eState.Block_Before == state1p || CharacterInfo.eState.Block_After == state1p) 
-			{
-				if (true == _ref_1pInfo.Valid_Block () )
-				{
+			//========================================================
 
-					if (true == _ref_2pInfo.Valid_Attack ()) {
-						result.state_src = eState.BlockSucceed;	
-						result.state_dst = eState.AttackFail;
-					} else 
-					{
-						result.state_src = eState.BlockIdle;	
-					}
+			//return _result;
 
-				}
-			}
+		}//end func
 
-			if (CharacterInfo.eState.Block_Before == state2p || CharacterInfo.eState.Block_After == state2p) 
-			{
-				if (true == _ref_2pInfo.Valid_Block () )
-				{
-
-					if (true == _ref_1pInfo.Valid_Attack ()) {
-						result.state_dst = eState.BlockSucceed;	
-						result.state_src = eState.AttackFail;
-					} else 
-					{
-						result.state_dst = eState.BlockIdle;	
-					}
-
-				}
-			}
-
-
-
-
-
-			return result;
-		}
-
-
-		public void Update()
-		{
-			_result =  Valid_Attack ();
-
-
-			//apply jugement : HP
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			switch (_result.state_src) 
-			{
-			case eState.AttackSucceed:
-				if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
-				{
-					_ref_1pInfo.SetUsedState ();
-					_ref_2pInfo.HP_SubTract (1);
-					_ref_2pInfo.SetState (CharacterInfo.eState.Hit);
-				}
-
-				break;
-			}
-
-			switch (_result.state_dst) 
-			{
-			case eState.AttackSucceed:
-				if (false == _ref_2pInfo.GetUsedState ()) 
-				{
-					_ref_2pInfo.SetUsedState ();
-					_ref_1pInfo.HP_SubTract (1);
-					_ref_1pInfo.SetState (CharacterInfo.eState.Hit);
-				}
-
-				break;
-			}
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-			//apply jugement : behaviour state
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			//방어 성공시 반격방어스킬을 적용 한다
-			switch (_result.state_src) 
-			{
-			case eState.BlockSucceed:
-				{
-					_ref_1pInfo.SetBegavior_CounterBlock ();
-				}
-
-				break;
-			}
-
-			switch (_result.state_dst) 
-			{
-			case eState.BlockSucceed:
-				{
-					_ref_2pInfo.SetBegavior_CounterBlock ();
-				}
-
-				break;
-			}
-
-			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-		}//end Update
-		//*/
 
 
 	}//end class	
@@ -1443,6 +1290,8 @@ namespace CounterBlock
 			scale = _effect [eEffect.Hit].transform.localScale;
 			scale.x = -1f;
 			_effect [eEffect.Hit].transform.localScale = scale;
+
+			_hp_bar.direction = Slider.Direction.RightToLeft;
 		}
 
 		public void TurnRight()
@@ -1458,6 +1307,8 @@ namespace CounterBlock
 			scale = _effect [eEffect.Hit].transform.localScale;
 			scale.x = 1f;
 			_effect [eEffect.Hit].transform.localScale = scale;
+
+			_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
 
 		public void SetCharacter(eKind kind)
@@ -1741,6 +1592,13 @@ namespace CounterBlock
 		}
 
 
+		private void Update_UI_HPBAR(Character charData, uint id)
+		{
+			UI_CharacterCard charUI = _characters [id];
+
+			charUI._hp_bar.maxValue = charData.GetMaxHP ();
+			charUI._hp_bar.value = charData.GetHP ();
+		}
 
 		private void Update_UI_Explan(Character charData, uint id)
 		{
@@ -1858,6 +1716,7 @@ namespace CounterBlock
 		{
 			this.Update_UI_Explan (charData, idx);
 			this.Update_UI_Card (charData, idx);
+			this.Update_UI_HPBAR (charData, idx);
 			
 		}
 
