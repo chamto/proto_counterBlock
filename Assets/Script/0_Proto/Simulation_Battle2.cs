@@ -331,25 +331,23 @@ namespace CounterBlock
 
 		public void Judge(Character dst)
 		{
-
-			_judgment.Judge (this, dst);
+			
 			//DebugWide.LogBlue (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
 
 			//apply jugement : HP
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			switch (dst._judgment.state) 
+			switch (_judgment.state) 
 			{
 			case Judgment.eState.AttackSucceed:
 				{
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
-					this.BeDamage (-1);
+					dst.BeDamage (-1);
 
 				}
 				break;
 			}
-
 
 			//if(false == _ref_1pInfo.GetUsedState()) //한동작에서 처음 공격만 적용
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -478,6 +476,10 @@ namespace CounterBlock
 			return ID;
 		}
 
+
+		Judgment.Result _result_;
+		Character _src_ = null;
+		Character _dst_ = null;
 		public void Update()
 		{
 			foreach (Character crt in this.Values) 
@@ -488,14 +490,22 @@ namespace CounterBlock
 
 			//todo : 거리에 따라 판정대상 객체 거르는 처리가 필요 
 			//캐릭터 전체 리스트 1대1조합 : 중복안됨, 순서없음
-			for (int src = 0 ; src < (this.Values.Count-1) ; src++) 
+			for (int id_src = 0 ; id_src < (this.Values.Count-1) ; id_src++) 
 			{
-				for (int dst = (src+1) ; dst < this.Values.Count ; dst++) 
+				for (int id_dst = (id_src+1) ; id_dst < this.Values.Count ; id_dst++) 
 				{
 					//DebugWide.LogBlue (src + "  " + dst); //chamto test
 
-					this.Values.ElementAt (src).Judge (this.Values.ElementAt (dst));
-					this.Values.ElementAt (dst).Judge (this.Values.ElementAt (src));
+					_src_ = this.Values.ElementAt (id_src);
+					_dst_ = this.Values.ElementAt (id_dst);
+
+
+					_result_ = Judgment.Judge(_src_, _dst_);
+					_src_._judgment.state = _result_.first;
+					_dst_._judgment.state = _result_.second;
+
+					_src_.Judge (_dst_);
+					_dst_.Judge (_src_);
 				}
 			}
 
@@ -517,19 +527,19 @@ namespace CounterBlock
 
 		public struct Result
 		{
-			public eState src;
-			public eState dst;
+			public eState first;
+			public eState second;
 
 			public Result(eState s, eState d)
 			{
-				src = s;
-				dst = d;
+				first = s;
+				second = d;
 			}
 
 			public void Init()
 			{
-				src = eState.None;
-				dst = eState.None;
+				first = eState.None;
+				second = eState.None;
 			}
 		}
 
@@ -550,114 +560,134 @@ namespace CounterBlock
 			Max
 		}
 			
-		public uint targetID { get; set; }
+		//public uint targetID { get; set; }
 		public eState state { get; set; }
 
 		public Judgment()
 		{
-			targetID = 0;
+			//targetID = 0;
 			state = eState.None;
 		}
 
-//		private  Result _result; 
-//		public Result GetResult()
-//		{
-//			return _result;
-//		}
 
 		//==========================================
 
-		//fixme : 참조객체의 값을 변경하는 처리가 들어가 있음 : 함수프로그래밍 적으로 수정 방안 찾기
-		private void Attack_Vs_Attack(Character src , Character dst)
+
+
+		static public Result Judge(Character src , Character dst)
 		{
+			Result result = new Result();
+			result.Init ();
+
+
+			//============================
+			//Attack_Vs_Attack
+			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Attack()) 
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackFail;
-					dst._judgment.state = eState.AttackFail;
-					 
+					
+					result.first = eState.AttackFail;
+					result.second = eState.AttackFail;
+
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackSucceed;
-					dst._judgment.state = eState.AttackFail;
+					result.first = eState.AttackSucceed;
+					result.second = eState.AttackFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackFail;
-					dst._judgment.state = eState.AttackSucceed;
+					result.first = eState.AttackFail;
+					result.second = eState.AttackSucceed;
 				}
 			}
-		}
 
-		private void Attack_Vs_Block(Character src , Character dst)
-		{
+			//============================
+			//Attack_Vs_Block
+			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Block()) 
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackFail;
-					dst._judgment.state = eState.BlockSucceed;
+					result.first = eState.AttackFail;
+					result.second = eState.BlockSucceed;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackSucceed;
-					dst._judgment.state = eState.BlockFail;
+					result.first = eState.AttackSucceed;
+					result.second = eState.BlockFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackIdle;
-					dst._judgment.state = eState.BlockIdle;
+					result.first = eState.AttackIdle;
+					result.second = eState.BlockIdle;
 				}
 			}
-		}
 
-		private void Attack_Vs_None(Character src , Character dst)
-		{
-			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None()) 
+			//============================
+			//Block_Vs_Attack
+			//============================
+			if (true == src.IsSkill_Block () && true == dst.IsSkill_Attack()) 
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackSucceed;
-					dst._judgment.state = eState.None;
+					result.first = eState.BlockSucceed;
+					result.second = eState.AttackFail;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackSucceed;
-					dst._judgment.state = eState.None;
+					result.first = eState.BlockIdle;
+					result.second = eState.AttackIdle;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					src._judgment.state = eState.AttackIdle;
-					dst._judgment.state = eState.None;
+					result.first = eState.BlockFail;
+					result.second = eState.AttackSucceed;
 				}
 			}
+
+			//============================
+			//Attack_Vs_None
+			//============================
+			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
+				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+					result.first = eState.AttackSucceed;
+					result.second = eState.None;
+				}
+				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+					result.first = eState.AttackSucceed;
+					result.second = eState.None;
+				}
+				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+					result.first = eState.AttackIdle;
+					result.second = eState.None;
+				}
+			}
+
+
+			//============================
+			//None_Vs_Attack
+			//============================
+			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
+				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+					result.first = eState.None;
+					result.second = eState.AttackSucceed;
+				}
+				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+					result.first = eState.None;
+					result.second = eState.AttackIdle;
+				}
+				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+					result.first = eState.None;
+					result.second = eState.AttackSucceed;
+				}
+			}
+
+
+			return result;
 		}
-
-		public void Judge(Character src , Character dst)
-		{
-			//_result.Init ();
-
-			//========================================================
-
-			this.Attack_Vs_Attack (src, dst);
-
-			//========================================================
-
-			this.Attack_Vs_Block (src, dst);
-			this.Attack_Vs_Block (dst, src);
-
-			//========================================================
-
-			this.Attack_Vs_None (src, dst);
-			this.Attack_Vs_None (dst, src);
-
-			//========================================================
-
-			//return _result;
-
-		}//end func
 
 
 
