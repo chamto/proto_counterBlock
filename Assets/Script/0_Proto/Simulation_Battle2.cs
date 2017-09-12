@@ -121,12 +121,15 @@ namespace CounterBlock
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
 		private float 	_timeDelta; 	//시간변화량
+		public uint 	_behaviorCount = 0; //동작 재생 횟수
 
 		//상태정보
 		private eState 	_state_current = eState.None;
 		private eSubState _subState_current = eSubState.None;
 
 		public Judgment _judgment = new Judgment();
+
+
 
 		//====================================
 
@@ -329,6 +332,9 @@ namespace CounterBlock
 			SetSkill (Skill.eName.Hit);
 		}
 
+
+
+
 		public void Judge(Character dst)
 		{
 			
@@ -339,11 +345,16 @@ namespace CounterBlock
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 			switch (_judgment.state) 
 			{
-			case Judgment.eState.AttackSucceed:
+			case Judgment.eState.AttackDamage:
 				{
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
-
 					dst.BeDamage (-1);
+
+//					switch()
+//					{
+//
+//					}
+
 
 				}
 				break;
@@ -353,7 +364,6 @@ namespace CounterBlock
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 		}
-
 
 
 		public void Update()
@@ -547,6 +557,9 @@ namespace CounterBlock
 		{
 			None = 0,
 
+			AttackDamage,
+			AttackBlocking,
+
 			AttackSucceed, //상대를 맞춘 경우
 			AttackFail, //상대의 방어 또는 빠른공격에 막힌 경우
 			AttackIdle, //공격 헛 동작 : 멀리서 공격한 경우
@@ -588,19 +601,19 @@ namespace CounterBlock
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					
-					result.first = eState.AttackFail;
-					result.second = eState.AttackFail;
+					result.first = eState.AttackBlocking;
+					result.second = eState.AttackBlocking;
 
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackSucceed;
+					result.first = eState.AttackDamage;
 					result.second = eState.AttackFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackFail;
-					result.second = eState.AttackSucceed;
+					result.second = eState.AttackDamage;
 				}
 			}
 
@@ -611,12 +624,12 @@ namespace CounterBlock
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackFail;
+					result.first = eState.AttackBlocking;
 					result.second = eState.BlockSucceed;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackSucceed;
+					result.first = eState.AttackDamage;
 					result.second = eState.BlockFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
@@ -634,7 +647,7 @@ namespace CounterBlock
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.BlockSucceed;
-					result.second = eState.AttackFail;
+					result.second = eState.AttackBlocking;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
@@ -644,7 +657,7 @@ namespace CounterBlock
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.BlockFail;
-					result.second = eState.AttackSucceed;
+					result.second = eState.AttackDamage;
 				}
 			}
 
@@ -653,11 +666,11 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackSucceed;
+					result.first = eState.AttackDamage;
 					result.second = eState.None;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackSucceed;
+					result.first = eState.AttackDamage;
 					result.second = eState.None;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
@@ -673,7 +686,7 @@ namespace CounterBlock
 			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackSucceed;
+					result.second = eState.AttackDamage;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
@@ -681,7 +694,7 @@ namespace CounterBlock
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackSucceed;
+					result.second = eState.AttackDamage;
 				}
 			}
 
