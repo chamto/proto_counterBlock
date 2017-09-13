@@ -570,15 +570,17 @@ namespace CounterBlock
 			AttackDamage_Active,
 			AttackBlocking,
 
-			AttackSucceed, //상대를 맞춘 경우
-			AttackFail, //상대의 방어 또는 빠른공격에 막힌 경우
+			//AttackSucceed, //상대를 맞춘 경우
+			//AttackFail, //상대의 방어 또는 빠른공격에 막힌 경우
 			AttackIdle, //공격 헛 동작 : 멀리서 공격한 경우
 
-			BlockSucceed,
-			BlockFail,
+			BlockSucceed_Start,
+			BlockSucceed_Active,
+			//BlockFail,
 			BlockIdle, //방어 헛 동작
 
-			Damaged, //피해입음
+			Damaged_Start,
+			Damaged_Active, //피해입음
 
 			Max
 		}
@@ -618,11 +620,11 @@ namespace CounterBlock
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackDamage_Active;
-					result.second = eState.AttackFail;
+					result.second = eState.Damaged_Active;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackFail;
+					result.first = eState.Damaged_Active;
 					result.second = eState.AttackDamage_Active;
 				}
 			}
@@ -635,12 +637,12 @@ namespace CounterBlock
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackBlocking;
-					result.second = eState.BlockSucceed;
+					result.second = eState.BlockSucceed_Active;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackDamage_Active;
-					result.second = eState.BlockFail;
+					result.second = eState.Damaged_Active;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
@@ -656,7 +658,7 @@ namespace CounterBlock
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.BlockSucceed;
+					result.first = eState.BlockSucceed_Active;
 					result.second = eState.AttackBlocking;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
@@ -666,7 +668,7 @@ namespace CounterBlock
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.BlockFail;
+					result.first = eState.Damaged_Active;
 					result.second = eState.AttackDamage_Active;
 				}
 			}
@@ -677,11 +679,11 @@ namespace CounterBlock
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.AttackDamage_Active;
-					result.second = eState.None;
+					result.second = eState.Damaged_Active;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.AttackDamage_Active;
-					result.second = eState.None;
+					result.second = eState.Damaged_Active;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.AttackIdle;
@@ -695,7 +697,7 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.None;
+					result.first = eState.Damaged_Active;
 					result.second = eState.AttackDamage_Active;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
@@ -703,7 +705,7 @@ namespace CounterBlock
 					result.second = eState.AttackIdle;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.None;
+					result.first = eState.Damaged_Active;
 					result.second = eState.AttackDamage_Active;
 				}
 			}
@@ -713,35 +715,52 @@ namespace CounterBlock
 			//============================
 
 			//Start => Active => Active => Active ... 
-			eState prevState = src.GetJudgmentState();
-			if (Judgment.eState.AttackDamage_Active == result.first) 
-			{
-				if (Judgment.eState.AttackDamage_Active != prevState)
-				{
-					if (Judgment.eState.AttackDamage_Start != prevState) 
-					{
-						result.first = Judgment.eState.AttackDamage_Start;
-					}
-
-				}
-			}
-
-			prevState = dst.GetJudgmentState();
-			if (Judgment.eState.AttackDamage_Active == result.second) 
-			{
-				if (Judgment.eState.AttackDamage_Active != prevState)
-				{
-					if (Judgment.eState.AttackDamage_Start != prevState) 
-					{
-						result.second = Judgment.eState.AttackDamage_Start;
-					}
-
-				}
-			}
+			result.first = Exceptions(src, result.first);
+			result.second = Exceptions(dst, result.second);
 
 			return result;
 		}
 
+		static public eState Exceptions(Character chr, eState result)
+		{
+			eState prevState = chr.GetJudgmentState();
+			if (Judgment.eState.AttackDamage_Active == result) 
+			{
+				if (Judgment.eState.AttackDamage_Active != prevState)
+				{
+					if (Judgment.eState.AttackDamage_Start != prevState) 
+					{
+						return Judgment.eState.AttackDamage_Start;
+					}
+
+				}
+			}
+
+			if (Judgment.eState.BlockSucceed_Active == result) 
+			{
+				if (Judgment.eState.BlockSucceed_Active != prevState)
+				{
+					if (Judgment.eState.BlockSucceed_Start != prevState) 
+					{
+						return Judgment.eState.BlockSucceed_Start;
+					}
+
+				}
+			}
+
+			if (Judgment.eState.Damaged_Active == result) 
+			{
+				if (Judgment.eState.Damaged_Active != prevState)
+				{
+					if (Judgment.eState.Damaged_Start != prevState) 
+					{
+						return Judgment.eState.Damaged_Start;
+					}
+
+				}
+			}
+			return result;
+		}
 
 
 	}//end class	
@@ -960,7 +979,8 @@ namespace CounterBlock
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
 			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.scopeTime_1 = 1f;
+			bhvo.rigidTime = 0.1f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -1750,21 +1770,6 @@ namespace CounterBlock
 							{
 								
 
-								//=========================================
-
-								switch (charData.GetJudgmentState ()) 
-								{
-								case Judgment.eState.AttackDamage_Start:
-									{
-										DebugWide.LogBlue ("Valid_Running"); //chamto test
-
-										charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
-									}
-									break;
-								}
-
-								//=========================================
-
 
 							}
 							break;
@@ -1801,6 +1806,7 @@ namespace CounterBlock
 
 
 			}
+
 			if (Skill.eName.Block_1 == charData.CurrentSkillKind ()) 
 			{
 				
@@ -1818,21 +1824,12 @@ namespace CounterBlock
 					{
 						//=========================================
 
-						switch (charData.GetJudgmentState ()) 
-						{
-						case Judgment.eState.BlockSucceed:
-							{
-								
-							}
-							break;
-						}
-
-						//=========================================
-
 						switch (charData.CurrentSubState ()) 
 						{
 						case Character.eSubState.Valid_Start:
-							{}
+							{
+								
+							}
 							break;
 						}
 
@@ -1853,8 +1850,74 @@ namespace CounterBlock
 				}
 			}
 
+			if (Skill.eName.Idle == charData.CurrentSkillKind ()) 
+			{
+				charUI._action[1].gameObject.SetActive (false);
+				charUI._action[2].gameObject.SetActive (false);
+			}
 
 		}//end func
+
+		private void Update_UI_Effect(Character charData, uint id)
+		{
+			UI_CharacterCard charUI = _characters [id];
+
+
+			//charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
+
+
+			switch (charData.GetJudgmentState ()) 
+			{
+			case Judgment.eState.AttackDamage_Start:
+				{
+					//DebugWide.LogBlue ("AttackDamage_Start"); //chamto test
+
+					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+				}
+				break;
+			case Judgment.eState.Damaged_Start:
+				{
+					//charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject.SetActive (true);
+					//Effect.FadeIn (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
+					//Effect.FadeOut (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
+
+					//iTween.ShakeScale(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
+					//iTween.ScaleTo(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(1.2f,1.2f,1.2f), 0.7f);
+					//iTween.ScaleFrom(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
+					StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
+
+				}
+				break;
+			case Judgment.eState.BlockSucceed_Start:
+				{
+					StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
+					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+				}
+				break;
+			}
+
+
+		}//end func
+
+
+		public IEnumerator EffectStart_1(GameObject gobj)
+		{
+			//DebugWide.LogBlue ("start");
+
+			gobj.SetActive (true);
+			iTween.Stop (gobj.gameObject);
+			gobj.transform.localScale = Vector3.one;
+			iTween.ShakeScale(gobj,new Vector3(1f,1f,1f), 0.5f);
+
+			yield return new WaitForSeconds(0.5f);
+
+			iTween.Stop (gobj);
+			gobj.transform.localScale = Vector3.one;
+			gobj.SetActive (false);
+
+			//DebugWide.LogBlue ("end");
+		}
+
 
 
 		public void Update_UI(Character charData, uint idx)
@@ -1862,7 +1925,8 @@ namespace CounterBlock
 			this.Update_UI_Explan (charData, idx);
 			this.Update_UI_Card (charData, idx);
 			this.Update_UI_HPBAR (charData, idx);
-			
+			this.Update_UI_Effect (charData, idx);
+
 		}
 
 	}
@@ -1939,7 +2003,9 @@ namespace CounterBlock
 		// Update is called once per frame
 		void Update () 
 		{
-			
+			//1. key input
+			//2. UI update
+			//3. data update
 
 
 
