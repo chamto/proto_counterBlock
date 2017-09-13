@@ -379,7 +379,8 @@ namespace CounterBlock
 			switch (this._state_current) 
 			{
 			case eState.Start:
-				{
+				{	//키입력에 의해 바로 Start상태에 이르게 된다. 키입력후 바로 Update 함수가 실행되면 Start상태는 바로 Running으로 변경되어 버려 UI에서 검출 할 수 없다.
+					
 					this._timeDelta = 0f;
 					SetState (eState.Running);
 				}
@@ -1735,6 +1736,7 @@ namespace CounterBlock
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
 								charUI._action [2].gameObject.SetActive (true);
+								charUI._action [2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
 
 								//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
@@ -1746,9 +1748,24 @@ namespace CounterBlock
 							break;
 						case Character.eSubState.Valid_Running:
 							{
-								//DebugWide.LogBlue ("Valid_Running"); //chamto test
+								
 
-								charUI._action [2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);	
+								//=========================================
+
+								switch (charData.GetJudgmentState ()) 
+								{
+								case Judgment.eState.AttackDamage_Start:
+									{
+										DebugWide.LogBlue ("Valid_Running"); //chamto test
+
+										charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+									}
+									break;
+								}
+
+								//=========================================
+
+
 							}
 							break;
 						case Character.eSubState.Valid_End:
@@ -1786,8 +1803,54 @@ namespace CounterBlock
 			}
 			if (Skill.eName.Block_1 == charData.CurrentSkillKind ()) 
 			{
-				charUI._action[1].gameObject.SetActive (true);
-				charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
+				
+
+
+				switch (charData.CurrentState ()) 
+				{
+				case Character.eState.Start:
+					{
+						charUI._action[1].gameObject.SetActive (true);	
+						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
+					}
+					break;
+				case Character.eState.Running:
+					{
+						//=========================================
+
+						switch (charData.GetJudgmentState ()) 
+						{
+						case Judgment.eState.BlockSucceed:
+							{
+								
+							}
+							break;
+						}
+
+						//=========================================
+
+						switch (charData.CurrentSubState ()) 
+						{
+						case Character.eSubState.Valid_Start:
+							{}
+							break;
+						}
+
+						//=========================================
+					}
+					break;
+				case Character.eState.Waiting:
+					{
+
+					}
+					break;
+				case Character.eState.End:
+					{
+						charUI._action[1].gameObject.SetActive (false);
+					}
+					break;
+				
+				}
 			}
 
 
@@ -1925,14 +1988,12 @@ namespace CounterBlock
 			}
 
 
-
-
 			foreach (Character chter in _crtMgr.Values) 
 			{
 				_ui_battle.Update_UI (chter, chter.GetID());
 			}
+			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
 
-			_crtMgr.Update (); //갱신순서 중요!!!!
 
 		}//end Update
 
