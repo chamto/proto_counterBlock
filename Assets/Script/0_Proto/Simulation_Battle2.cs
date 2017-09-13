@@ -121,13 +121,13 @@ namespace CounterBlock
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
 		private float 	_timeDelta; 	//시간변화량
-		public uint 	_behaviorCount = 0; //동작 재생 횟수
+		//public uint 	_behaviorCount = 0; //동작 재생 횟수
 
 		//상태정보
 		private eState 	_state_current = eState.None;
 		private eSubState _subState_current = eSubState.None;
 
-		public Judgment _judgment = new Judgment();
+		private Judgment _judgment = new Judgment();
 
 
 
@@ -211,6 +211,17 @@ namespace CounterBlock
 			if (_hp_max < _hp_current)
 				_hp_current = _hp_max;
 
+		}
+
+
+		public Judgment.eState GetJudgmentState()
+		{
+			return _judgment.state;
+		}
+		public void SetJudgmentState(Judgment.eState state)
+		{
+			
+			this._judgment.state = state;
 		}
 
 		//====================================
@@ -338,22 +349,17 @@ namespace CounterBlock
 		public void Judge(Character dst)
 		{
 			
-			//DebugWide.LogBlue (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
+			//DebugWide.LogBlue (this.GetID() + "  !!!  "+_judgment.state); //chamto test
 
 
 			//apply jugement : HP
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 			switch (_judgment.state) 
 			{
-			case Judgment.eState.AttackDamage:
+			case Judgment.eState.AttackDamage_Start:
 				{
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 					dst.BeDamage (-1);
-
-//					switch()
-//					{
-//
-//					}
 
 
 				}
@@ -505,15 +511,17 @@ namespace CounterBlock
 				for (int id_dst = (id_src+1) ; id_dst < this.Values.Count ; id_dst++) 
 				{
 					//DebugWide.LogBlue (src + "  " + dst); //chamto test
-
 					_src_ = this.Values.ElementAt (id_src);
 					_dst_ = this.Values.ElementAt (id_dst);
 
+					//========================================
 
+					//상태갱신
 					_result_ = Judgment.Judge(_src_, _dst_);
-					_src_._judgment.state = _result_.first;
-					_dst_._judgment.state = _result_.second;
+					_src_.SetJudgmentState (_result_.first);
+					_dst_.SetJudgmentState (_result_.second);
 
+					//갱신된 상태에 따른 처리 
 					_src_.Judge (_dst_);
 					_dst_.Judge (_src_);
 				}
@@ -557,7 +565,8 @@ namespace CounterBlock
 		{
 			None = 0,
 
-			AttackDamage,
+			AttackDamage_Start,
+			AttackDamage_Active,
 			AttackBlocking,
 
 			AttackSucceed, //상대를 맞춘 경우
@@ -607,13 +616,13 @@ namespace CounterBlock
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackDamage;
+					result.first = eState.AttackDamage_Active;
 					result.second = eState.AttackFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackFail;
-					result.second = eState.AttackDamage;
+					result.second = eState.AttackDamage_Active;
 				}
 			}
 
@@ -629,7 +638,7 @@ namespace CounterBlock
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackDamage;
+					result.first = eState.AttackDamage_Active;
 					result.second = eState.BlockFail;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
@@ -657,7 +666,7 @@ namespace CounterBlock
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.BlockFail;
-					result.second = eState.AttackDamage;
+					result.second = eState.AttackDamage_Active;
 				}
 			}
 
@@ -666,11 +675,11 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackDamage;
+					result.first = eState.AttackDamage_Active;
 					result.second = eState.None;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackDamage;
+					result.first = eState.AttackDamage_Active;
 					result.second = eState.None;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
@@ -686,7 +695,7 @@ namespace CounterBlock
 			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackDamage;
+					result.second = eState.AttackDamage_Active;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
@@ -694,10 +703,40 @@ namespace CounterBlock
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackDamage;
+					result.second = eState.AttackDamage_Active;
 				}
 			}
 
+			//============================
+			//Exceptions
+			//============================
+
+			//Start => Active => Active => Active ... 
+			eState prevState = src.GetJudgmentState();
+			if (Judgment.eState.AttackDamage_Active == result.first) 
+			{
+				if (Judgment.eState.AttackDamage_Active != prevState)
+				{
+					if (Judgment.eState.AttackDamage_Start != prevState) 
+					{
+						result.first = Judgment.eState.AttackDamage_Start;
+					}
+
+				}
+			}
+
+			prevState = dst.GetJudgmentState();
+			if (Judgment.eState.AttackDamage_Active == result.second) 
+			{
+				if (Judgment.eState.AttackDamage_Active != prevState)
+				{
+					if (Judgment.eState.AttackDamage_Start != prevState) 
+					{
+						result.second = Judgment.eState.AttackDamage_Start;
+					}
+
+				}
+			}
 
 			return result;
 		}
