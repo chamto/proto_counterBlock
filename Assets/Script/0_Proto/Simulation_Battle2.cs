@@ -1478,63 +1478,6 @@ namespace CounterBlock
 
 
 
-	public class Effect : MonoBehaviour
-	{
-		//public GameObject _dst = null;
-
-		static public void Add(GameObject dst)
-		{
-			Effect effect = dst.GetComponent<Effect> ();
-			if (null == effect) {
-				effect = dst.AddComponent<Effect> ();
-				//DebugWide.LogRed (effect); //chamto test
-			}
-
-			//effect._dst = dst;
-		}
-
-		static public void FadeOut(GameObject dst , float time) 
-		{
-			Effect.Add (dst);
-
-			iTween.ValueTo(dst, iTween.Hash(
-				"from", 1.0f, "to", 0.0f,
-				"time", time, "easetype", "linear",
-				"onupdate", "SetAlpha"));
-
-		}
-
-		static public void FadeIn(GameObject dst , float time) 
-		{
-			Effect.Add (dst);
-
-			iTween.ValueTo(dst, iTween.Hash(
-				"from", 0f, "to", 1f,
-				"time", time, "easetype", "linear",
-				"onUpdate", "SetAlpha"));
-
-		}
-
-		public void SetAlpha(float newAlpha) 
-		{
-			
-			//DebugWide.LogBlue ("setAlpha"); //chamto test
-
-			Color c;
-			foreach (Image img in gameObject.GetComponentsInChildren<Image>(false)) 
-			{
-				c = img.color;
-				c.a = newAlpha;
-				img.color = c;
-			}
-
-
-
-		}//end setAlpha
-
-	}//end class
-
-
 	public class AnimationCard
 	{
 
@@ -1763,7 +1706,10 @@ namespace CounterBlock
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
 								iTween.PunchRotation(charUI._action[2].gameObject,new Vector3(0,0,-45f),1f);
 								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",150,"time",0.7f));	
-
+								//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
+								//	"amount", new Vector3(300f,20f,0f),
+								//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
+								//));
 							}
 							break;
 						case Character.eSubState.Valid_Running:
@@ -1890,7 +1836,7 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.BlockSucceed_Start:
 				{
-					StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
+					StartCoroutine("EffectStart_2",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
 					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
 				}
 				break;
@@ -1908,6 +1854,28 @@ namespace CounterBlock
 			iTween.Stop (gobj.gameObject);
 			gobj.transform.localScale = Vector3.one;
 			iTween.ShakeScale(gobj,new Vector3(1f,1f,1f), 0.5f);
+			//iTween.ShakePosition(gobj,new Vector3(10f,10f,10f), 0.5f);
+			//iTween.ShakeRotation(gobj,new Vector3(90f,1f,1f), 0.5f);
+
+			yield return new WaitForSeconds(0.5f);
+
+			iTween.Stop (gobj);
+			gobj.transform.localScale = Vector3.one;
+			gobj.SetActive (false);
+
+			//DebugWide.LogBlue ("end");
+		}
+
+		public IEnumerator EffectStart_2(GameObject gobj)
+		{
+			//DebugWide.LogBlue ("start");
+
+			gobj.SetActive (true);
+			iTween.Stop (gobj.gameObject);
+			gobj.transform.localScale = Vector3.one;
+			iTween.ShakeScale(gobj,new Vector3(1f,1f,1f), 0.5f);
+			//iTween.ShakePosition(gobj,new Vector3(10f,10f,0), 0.5f);
+			//iTween.ShakeRotation(gobj,new Vector3(90f,1f,1f), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
@@ -1931,6 +1899,63 @@ namespace CounterBlock
 
 	}
 
+	public class Effect : MonoBehaviour
+	{
+		//public GameObject _dst = null;
+
+		static public void Add(GameObject dst)
+		{
+			Effect effect = dst.GetComponent<Effect> ();
+			if (null == effect) {
+				effect = dst.AddComponent<Effect> ();
+				//DebugWide.LogRed (effect); //chamto test
+			}
+
+			//effect._dst = dst;
+		}
+
+		static public void FadeOut(GameObject dst , float time) 
+		{
+			Effect.Add (dst);
+
+			iTween.ValueTo(dst, iTween.Hash(
+				"from", 1.0f, "to", 0.0f,
+				"time", time, "easetype", "linear",
+				"onupdate", "SetAlpha"));
+
+		}
+
+		static public void FadeIn(GameObject dst , float time) 
+		{
+			Effect.Add (dst);
+
+			iTween.ValueTo(dst, iTween.Hash(
+				"from", 0f, "to", 1f,
+				"time", time, 
+				//"easetype", "linear",
+				"easetype", "easeInBounce",
+				"onUpdate", "SetAlpha"));
+
+		}
+
+		public void SetAlpha(float newAlpha) 
+		{
+
+			//DebugWide.LogBlue ("setAlpha"); //chamto test
+
+			Color c;
+			foreach (Image img in gameObject.GetComponentsInChildren<Image>(false)) 
+			{
+				c = img.color;
+				c.a = newAlpha;
+				img.color = c;
+			}
+
+
+
+		}//end setAlpha
+
+	}//end class
 
 	public class Simulation_Battle2 : MonoBehaviour 
 	{
