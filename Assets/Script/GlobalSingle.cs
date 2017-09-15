@@ -66,6 +66,19 @@ namespace CounterBlock
 				return _ui_root;
 			}
 		}
+
+		private static Transform _game_root = null;
+		public static Transform game_root
+		{
+			get
+			{
+				if (null == _game_root) 
+				{
+					_game_root = Single.hierarchy.FindOnlyActive<Transform> ("0_Game");
+				}
+				return _game_root;
+			}
+		}
 	}
 }
 

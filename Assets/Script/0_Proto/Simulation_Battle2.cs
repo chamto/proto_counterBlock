@@ -1342,17 +1342,17 @@ namespace CounterBlock
 		public uint _id = 0;
 		public eKind _kind = eKind.None;
 
-		public Text _text_explanation { get; set; }
-		public Text _text_time { get; set; }
-		public Slider _hp_bar { get; set; }
+		public TextMesh _text_explanation { get; set; }
+		public TextMesh _text_time { get; set; }
+		//public Slider _hp_bar { get; set; }
 
 		public Transform _sprites { get; set; }
-		public List<Image> _action { get; set; }
+		public List<SpriteRenderer> _action { get; set; }
 		public List<Vector3> _action_originalPos { get; set; }
 		//public AnimationCard _action_ani = new AnimationCard();
 
 		public Transform _effects { get; set; }
-		public Dictionary<eEffect,Image> _effect { get; set; }
+		public Dictionary<eEffect,SpriteRenderer> _effect { get; set; }
 
 
 
@@ -1375,10 +1375,10 @@ namespace CounterBlock
 
 		}
 
-		public void Card_Attack(float maxSecond)
-		{
-			//_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
-		}
+//		public void Card_Attack(float maxSecond)
+//		{
+//			//_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
+//		}
 
 		public void TurnLeft()
 		{
@@ -1394,7 +1394,7 @@ namespace CounterBlock
 			scale.x = -1f;
 			_effect [eEffect.Hit].transform.localScale = scale;
 
-			_hp_bar.direction = Slider.Direction.RightToLeft;
+			//_hp_bar.direction = Slider.Direction.RightToLeft;
 		}
 
 		public void TurnRight()
@@ -1411,7 +1411,7 @@ namespace CounterBlock
 			scale.x = 1f;
 			_effect [eEffect.Hit].transform.localScale = scale;
 
-			_hp_bar.direction = Slider.Direction.LeftToRight;
+			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
 
 		public void SetCharacter(eKind kind)
@@ -1421,38 +1421,38 @@ namespace CounterBlock
 
 		static public UI_CharacterCard Create(string name)
 		{
-			GameObject obj = Single.resource.CreatePrefab ("character_seonbi", Single.ui_root, name);
+			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
 
 			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
 
 			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
-			ui._text_explanation = Single.hierarchy.Find<Text> (parentPath + "/Text_explanation");
-			ui._text_time = Single.hierarchy.Find<Text> (parentPath + "/Text_time");
-			ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
+			ui._text_time = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_time");
+			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
 
 			//action
 			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Images");
-			ui._action = new List<Image> ();
+			ui._action = new List<SpriteRenderer> ();
 			ui._action_originalPos = new List<Vector3> ();
 			const int MAX_ACTION_CARD = 3;
-			Image img = null;
+			SpriteRenderer img = null;
 			for (int i = 0; i < MAX_ACTION_CARD; i++) 
 			{
-				img = Single.hierarchy.Find<Image> (parentPath + "/Images/Action_"+i.ToString("00"));
+				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
 				ui._action.Add (img);
 				ui._action_originalPos.Add (img.transform.localPosition);
 			}
 
 			//effect
 			ui._effects = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
-			ui._effect = new Dictionary<eEffect, Image> ();
-			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_empty");
+			ui._effect = new Dictionary<eEffect, SpriteRenderer> ();
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
 			ui._effect.Add (eEffect.Empty,img);
-			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_hit");
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/hit");
 			ui._effect.Add (eEffect.Hit,img);
-			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_block");
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
 			ui._effect.Add (eEffect.Block,img);
-			img = Single.hierarchy.Find<Image> (parentPath + "/Effects/Effect_hit/Effect_text");
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/hit/fuck");
 			ui._effect.Add (eEffect.Text,img);
 
 
@@ -1572,9 +1572,9 @@ namespace CounterBlock
 		
 		public void Init()
 		{
-			this.transform.SetParent (Single.ui_root, false);
+			//this.transform.SetParent (Single.game_root, false);
 
-			string parentPath = Single.hierarchy.GetTransformFullPath (Single.ui_root);
+			string parentPath = Single.hierarchy.GetTransformFullPath (Single.game_root);
 			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
 			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
 		
@@ -1642,8 +1642,8 @@ namespace CounterBlock
 		{
 			UI_CharacterCard charUI = _characters [id];
 
-			charUI._hp_bar.maxValue = charData.GetMaxHP ();
-			charUI._hp_bar.value = charData.GetHP ();
+			//charUI._hp_bar.maxValue = charData.GetMaxHP ();
+			//charUI._hp_bar.value = charData.GetHP ();
 		}
 
 		private void Update_UI_Explan(Character charData, uint id)
