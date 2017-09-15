@@ -1352,6 +1352,7 @@ namespace CounterBlock
 		//public AnimationCard _action_ani = new AnimationCard();
 
 		public Transform _effects { get; set; }
+		public Transform _effects_Texts { get; set; }
 		public Dictionary<eEffect,SpriteRenderer> _effect { get; set; }
 
 
@@ -1390,9 +1391,10 @@ namespace CounterBlock
 			scale.x = -1f;
 			_effects.localScale = scale;
 
-			scale = _effect [eEffect.Hit].transform.localScale;
+			scale = _effects_Texts.localScale;
 			scale.x = -1f;
-			_effect [eEffect.Hit].transform.localScale = scale;
+			_effects_Texts.localScale = scale;
+
 
 			//_hp_bar.direction = Slider.Direction.RightToLeft;
 		}
@@ -1407,9 +1409,9 @@ namespace CounterBlock
 			scale.x = 1f;
 			_effects.localScale = scale;
 
-			scale = _effect [eEffect.Hit].transform.localScale;
+			scale = _effects_Texts.localScale;
 			scale.x = 1f;
-			_effect [eEffect.Hit].transform.localScale = scale;
+			_effects_Texts.localScale = scale;
 
 			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
@@ -1445,14 +1447,15 @@ namespace CounterBlock
 
 			//effect
 			ui._effects = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
+			ui._effects_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
 			ui._effect = new Dictionary<eEffect, SpriteRenderer> ();
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
 			ui._effect.Add (eEffect.Empty,img);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/hit");
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit");
 			ui._effect.Add (eEffect.Hit,img);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
 			ui._effect.Add (eEffect.Block,img);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/hit/fuck");
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
 			ui._effect.Add (eEffect.Text,img);
 
 
