@@ -464,10 +464,10 @@ namespace CounterBlock
 		private uint id_Sequence = 0;
 		//todo : 제거된 id를 관리하는 리스트 필요 , 추후 메모리풀 구현
 
-		public void Init()
+		public void Init(int characterCount)
 		{
-			const int CHARACTER_COUNT = 2;
-			for (int i = 0; i < CHARACTER_COUNT; i++)  //chamto test : 2 => 8
+			
+			for (int i = 0; i < characterCount; i++) 
 			{
 				this.AddCharacter ();
 			}
@@ -1391,6 +1391,7 @@ namespace CounterBlock
 			scale.x = -1f;
 			_effects.localScale = scale;
 
+			//반전된 글자를 다시 반전시켜 원상태로 만든다. 
 			scale = _effects_Texts.localScale;
 			scale.x = -1f;
 			_effects_Texts.localScale = scale;
@@ -1572,6 +1573,10 @@ namespace CounterBlock
 
 		private Dictionary<uint, UI_CharacterCard> _characters = new Dictionary<uint, UI_CharacterCard> ();
 
+		public const int START_POINT_LEFT = 1;
+		public const int START_POINT_RIGHT = 2;
+		//=================
+
 		
 		public void Init()
 		{
@@ -1600,10 +1605,9 @@ namespace CounterBlock
 
 
 
-		public void SetStartPoint(uint id, float delta_x , uint pointNumber)
+		public void SetStartPoint(uint id, float delta_x , int pointNumber)
 		{
-			const int START_POINT_LEFT = 1;
-			const int START_POINT_RIGHT = 2;
+			
 
 			UI_CharacterCard card = _characters [id];
 			Vector3 pos = Vector3.zero;
@@ -1979,9 +1983,10 @@ namespace CounterBlock
 		{
 			const uint ID_PLAYER_1 = 1;
 			const uint ID_PLAYER_2 = 2;
+			const int CHARACTER_COUNT = 2;
 
 			_crtMgr = new CharacterManager ();
-			_crtMgr.Init ();
+			_crtMgr.Init (CHARACTER_COUNT);
 
 			_1Player = _crtMgr [ID_PLAYER_1];
 			_2Player = _crtMgr [ID_PLAYER_2];
@@ -2008,13 +2013,15 @@ namespace CounterBlock
 				UI_CharacterCard card = _ui_battle.AddCharacter (UI_CharacterCard.eKind.Biking, chter.GetID ());
 
 				if ((chter.GetID () % 2) == 1) 
-				{ //홀수는 왼쪽 
-					_ui_battle.SetStartPoint (chter.GetID (), -10f * count, 1);	
+				{ //홀수는 왼쪽 1 3 5 ...
+					//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
+					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
 
 				}
 				if ((chter.GetID () % 2) == 0) 
-				{ //짝수는 오른쪽 
-					_ui_battle.SetStartPoint (chter.GetID (), 10f * count, 2);
+				{ //짝수는 오른쪽 2 4 6 ... 
+					//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
+					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
 
 				}
 
