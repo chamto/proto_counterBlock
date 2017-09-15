@@ -1317,6 +1317,90 @@ namespace CounterBlock
 	}//end class
 
 
+	public class AnimationCard
+	{
+
+		public enum eState
+		{
+			None,
+			Start,
+			Running,
+			End,
+			Max
+		}
+
+		private eState _state = eState.None;
+		private float _accumulate = 0f;
+		private float _scaleDelta = 0f;
+
+		private float _start = 0f;
+		private float _end = 0f;
+		private float _maxSecond = 0f;
+		private Transform _dst = null;
+
+		public void Start_Card_Move(Transform dst, float start, float end, float maxSecond)
+		{
+			_dst = dst;
+			_start = start;
+			_end = end;
+			_maxSecond = maxSecond;
+
+			_state = eState.Start;
+		}
+
+		public void Stop()
+		{
+			_state = eState.None;
+		}
+
+		public void Update()
+		{
+
+			switch (_state) 
+			{
+			case eState.None:
+				break;
+			case eState.Start:
+				{
+					_state = eState.Running;
+					_accumulate = 0f;
+					_scaleDelta = 0f;
+
+				}
+				break;
+
+			case eState.Running:
+				{
+					_accumulate += Time.deltaTime;
+					if (_maxSecond <= _accumulate) 
+					{
+						_state = eState.End;
+						break;
+					}
+
+					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+					_scaleDelta = Utility.Interpolation.easeOutElastic (_start, _end, _accumulate/_maxSecond);
+
+
+					_dst.Translate(_scaleDelta,0,0);
+					//DebugWide.LogBlue (_scaleDelta); //chamto test
+					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				}
+				break;
+			case eState.End:
+				{
+					_state = eState.None;
+				}
+				break;
+			}
+
+		}//end func
+
+
+	}//end class
+
+
 	public class UI_CharacterCard : MonoBehaviour
 	{
 
@@ -1481,90 +1565,6 @@ namespace CounterBlock
 	}
 
 
-
-	public class AnimationCard
-	{
-
-		public enum eState
-		{
-			None,
-			Start,
-			Running,
-			End,
-			Max
-		}
-
-		private eState _state = eState.None;
-		private float _accumulate = 0f;
-		private float _scaleDelta = 0f;
-
-		private float _start = 0f;
-		private float _end = 0f;
-		private float _maxSecond = 0f;
-		private Transform _dst = null;
-
-		public void Start_Card_Move(Transform dst, float start, float end, float maxSecond)
-		{
-			_dst = dst;
-			_start = start;
-			_end = end;
-			_maxSecond = maxSecond;
-
-			_state = eState.Start;
-		}
-
-		public void Stop()
-		{
-			_state = eState.None;
-		}
-
-		public void Update()
-		{
-
-			switch (_state) 
-			{
-			case eState.None:
-				break;
-			case eState.Start:
-				{
-					_state = eState.Running;
-					_accumulate = 0f;
-					_scaleDelta = 0f;
-
-				}
-				break;
-
-			case eState.Running:
-				{
-					_accumulate += Time.deltaTime;
-					if (_maxSecond <= _accumulate) 
-					{
-						_state = eState.End;
-						break;
-					}
-
-					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-					_scaleDelta = Utility.Interpolation.easeOutElastic (_start, _end, _accumulate/_maxSecond);
-
-
-					_dst.Translate(_scaleDelta,0,0);
-					//DebugWide.LogBlue (_scaleDelta); //chamto test
-					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-				}
-				break;
-			case eState.End:
-				{
-					_state = eState.None;
-				}
-				break;
-			}
-
-		}//end func
-
-
-	}//end class
-
 	public class UI_Battle : MonoBehaviour
 	{
 
@@ -1712,7 +1712,7 @@ namespace CounterBlock
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
 								iTween.PunchRotation(charUI._action[2].gameObject,new Vector3(0,0,-45f),1f);
-								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",150,"time",0.7f));	
+								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",10,"time",0.7f));	
 								//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
 								//	"amount", new Vector3(300f,20f,0f),
 								//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
