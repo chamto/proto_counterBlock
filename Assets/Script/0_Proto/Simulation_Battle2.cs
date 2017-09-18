@@ -69,9 +69,9 @@ namespace CounterBlock
 			Valid_Running,
 			Valid_End,
 
-			RealEvent_Start,
-			RealEvent_Running,
-			RealEvent_End,
+			Start,
+			Running,
+			End,
 
 			Max
 		}
@@ -125,12 +125,12 @@ namespace CounterBlock
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
 		private float 	_timeDelta; 	//시간변화량
-		//public uint 	_behaviorCount = 0; //동작 재생 횟수
 
 		//상태정보
 		private eState 	_state_current = eState.None;
-		private eSubState _validState_current = eSubState.None;
-		private eSubState _realEventState_current = eSubState.None;
+		private eSubState _validState_current = eSubState.None; 	//유효상태
+		private eSubState _giveState_current = eSubState.None; 		//준상태
+		private eSubState _receiveState_current = eSubState.None; 	//받은상태 
 
 		private Judgment _judgment = new Judgment();
 
@@ -174,9 +174,9 @@ namespace CounterBlock
 			return _validState_current;
 		}
 
-		public eSubState CurrentRealEventState()
+		public eSubState CurrentGiveState()
 		{
-			return _realEventState_current;
+			return _giveState_current;
 		}
 
 		public void SetState(eState setState)
@@ -189,9 +189,14 @@ namespace CounterBlock
 			_validState_current = setSubState;
 		}
 
-		public void SetRealEventState(eSubState setSubState)
+		public void SetGiveState(eSubState setSubState)
 		{
-			_realEventState_current = setSubState;
+			_giveState_current = setSubState;
+		}
+
+		public void SetReceiveState(eSubState setSubState)
+		{
+			_receiveState_current = setSubState;
 		}
 
 		public Skill.eName CurrentSkillKind()
@@ -231,12 +236,12 @@ namespace CounterBlock
 
 		public Judgment.eState GetJudgmentState()
 		{
-			return _judgment.state;
+			return _judgment.state_current;
 		}
 		public void SetJudgmentState(Judgment.eState state)
 		{
 			
-			this._judgment.state = state;
+			this._judgment.state_current = state;
 		}
 
 		//====================================
@@ -317,7 +322,8 @@ namespace CounterBlock
 
 			SetState (eState.Start);
 			SetValidState (eSubState.None);
-			SetRealEventState (eSubState.None);
+			SetGiveState (eSubState.None);
+			SetReceiveState (eSubState.None);
 		}
 
 
@@ -363,7 +369,7 @@ namespace CounterBlock
 		public bool IsStart_AttackDamage()
 		{
 			if (Judgment.eState.AttackDamage == this.GetJudgmentState () &&
-			   eSubState.RealEvent_Start == CurrentRealEventState ())
+			   eSubState.Start == CurrentGiveState ())
 				return true;
 
 			return false;
@@ -372,7 +378,16 @@ namespace CounterBlock
 		public bool IsStart_BlockSucceed()
 		{
 			if (Judgment.eState.BlockSucceed == this.GetJudgmentState () &&
-				eSubState.RealEvent_Start == CurrentRealEventState ())
+				eSubState.Start == CurrentGiveState ())
+				return true;
+
+			return false;
+		}
+
+		public bool IsStart_Damaged()
+		{
+			if (Judgment.eState.Damaged == this.GetJudgmentState () &&
+				eSubState.Start == _receiveState_current )
 				return true;
 
 			return false;
@@ -382,7 +397,7 @@ namespace CounterBlock
 		{
 
 			if(1 == this.GetID())
-				DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state); //chamto test
+				DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
 
 
 			switch (this.GetJudgmentState()) 
@@ -392,7 +407,7 @@ namespace CounterBlock
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
 					//한동작에서 일어난 사건
-					if (eSubState.RealEvent_Start == CurrentRealEventState ()) 
+					if (eSubState.Start == CurrentGiveState ()) 
 					{
 						//apply jugement : HP
 						dst.BeDamage (-1);
@@ -457,35 +472,32 @@ namespace CounterBlock
 					//===========================
 					// 실제 공격/방어 한 범위
 					//===========================
-					switch (_realEventState_current) 
+					switch (_giveState_current) 
 					{
 					case eSubState.None:
 						{
-							//DebugWide.LogBlue ("[2:_realEventState_current : " + "None"); //chamto test
-
 							if (Judgment.eState.AttackDamage == this.GetJudgmentState () ||
 								Judgment.eState.BlockSucceed == this.GetJudgmentState()) 
 							{
-								this.SetRealEventState (eSubState.RealEvent_Start);
+								this.SetGiveState (eSubState.Start);
 							}
 						}
 						break;
-					case eSubState.RealEvent_Start:
+					case eSubState.Start:
 						{
-							//DebugWide.LogBlue ("[2:_realEventState_current : " + "RealEvent_Start"); //chamto test
-
-							this.SetRealEventState (eSubState.RealEvent_Running);
+							this.SetGiveState (eSubState.Running);
 						}
 						break;
-					case eSubState.RealEvent_Running:
+					case eSubState.Running:
 						{
-							//DebugWide.LogBlue ("[2:_realEventState_current : " + "RealEvent_Running"); //chamto test
+							
 						}
 						break;
 					}
 
 					if(1 == this.GetID())
-						DebugWide.LogBlue ("[2:_realEventState_current : " + _realEventState_current);
+						DebugWide.LogBlue ("[2:_giveState_current : " + _giveState_current);
+					
 					//===========================
 
 					
@@ -525,6 +537,38 @@ namespace CounterBlock
 			
 			
 			}
+
+			//============================================================================
+
+			switch (_receiveState_current) 
+			{
+			case eSubState.None:
+				{
+					
+					if (Judgment.eState.Damaged == this.GetJudgmentState ())
+					{
+						this.SetReceiveState (eSubState.Start);
+					}
+				}
+				break;
+			case eSubState.Start:
+				{
+					this.SetReceiveState (eSubState.Running);
+				}
+				break;
+			case eSubState.Running:
+				{
+					if (Judgment.eState.Damaged != this.GetJudgmentState ())
+					{
+						this.SetReceiveState (eSubState.None);
+					}
+				}
+				break;
+			}
+
+			if(1 == this.GetID())
+				DebugWide.LogBlue ("[3:_receiveState_current : " + _receiveState_current);
+			//============================================================================
 
 		}//end func
 
@@ -661,12 +705,14 @@ namespace CounterBlock
 		}
 			
 		//public uint targetID { get; set; }
-		public eState state { get; set; }
+		public eState state_prev { get; set; }
+		public eState state_current { get; set; }
 
 		public Judgment()
 		{
 			//targetID = 0;
-			state = eState.None;
+			state_prev = eState.None;
+			state_current = eState.None;
 		}
 
 
@@ -789,53 +835,12 @@ namespace CounterBlock
 			//Exceptions
 			//============================
 
-			//Start => Active => Active => Active ... 
-			//result.first = Exceptions(src, result.first);
-			//result.second = Exceptions(dst, result.second);
+
 
 			return result;
 		}
 
-//		static public eState Exceptions(Character chr, eState result)
-//		{
-//			eState prevState = chr.GetJudgmentState();
-//			if (Judgment.eState.AttackDamage == result) 
-//			{
-//				if (Judgment.eState.AttackDamage != prevState)
-//				{
-//					if (Judgment.eState.AttackDamage_Start != prevState) 
-//					{
-//						return Judgment.eState.AttackDamage_Start;
-//					}
-//
-//				}
-//			}
-//
-//			if (Judgment.eState.BlockSucceed == result) 
-//			{
-//				if (Judgment.eState.BlockSucceed != prevState)
-//				{
-//					if (Judgment.eState.BlockSucceed_Start != prevState) 
-//					{
-//						return Judgment.eState.BlockSucceed_Start;
-//					}
-//
-//				}
-//			}
-//
-//			if (Judgment.eState.Damaged == result) 
-//			{
-//				if (Judgment.eState.Damaged != prevState)
-//				{
-//					if (Judgment.eState.Damaged_Start != prevState) 
-//					{
-//						return Judgment.eState.Damaged_Start;
-//					}
-//
-//				}
-//			}
-//			return result;
-//		}
+
 
 
 	}//end class	
@@ -1897,6 +1902,11 @@ namespace CounterBlock
 			{
 				StartCoroutine("EffectStart_2",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
 				//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+			}
+
+			if (charData.IsStart_Damaged ()) 
+			{
+				StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
 			}
 
 			switch (charData.GetJudgmentState ()) 
