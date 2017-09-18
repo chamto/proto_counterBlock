@@ -382,7 +382,7 @@ namespace CounterBlock
 		{
 
 			if(1 == this.GetID())
-				DebugWide.LogBlue (this.GetID() + "  !!!  "+_judgment.state); //chamto test
+				DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state); //chamto test
 
 
 			switch (this.GetJudgmentState()) 
@@ -424,6 +424,9 @@ namespace CounterBlock
 					//====================================================
 					// update sub_state 
 					//====================================================
+
+
+
 					switch (_validState_current) 
 					{
 					case eSubState.None:
@@ -439,44 +442,51 @@ namespace CounterBlock
 							this.SetValidState (eSubState.Valid_End);
 						}
 
-						//===========================
-						// 실제 공격/방어 한 범위
-						//===========================
-						switch (_realEventState_current) 
-						{
-						case eSubState.None:
-							{
-								DebugWide.LogBlue ("_realEventState_current : " + "None"); //chamto test
-
-								if (Judgment.eState.AttackDamage == this.GetJudgmentState () ||
-									Judgment.eState.BlockSucceed == this.GetJudgmentState()) 
-								{
-									this.SetRealEventState (eSubState.RealEvent_Start);
-								}
-							}
-							break;
-						case eSubState.RealEvent_Start:
-							{
-								DebugWide.LogBlue ("_realEventState_current : " + "RealEvent_Start"); //chamto test
-								
-								this.SetRealEventState (eSubState.RealEvent_Running);
-							}
-							break;
-						case eSubState.RealEvent_Running:
-							{
-								DebugWide.LogBlue ("_realEventState_current : " + "RealEvent_Running"); //chamto test
-							}
-							break;
-						}
-						//===========================
-
 						break;
 					case eSubState.Valid_End:
 						this.SetValidState (eSubState.None);
 						break;
 
 					}
+
+					if(1 == this.GetID())
+						DebugWide.LogBlue ("[1:_validState_current : "+_validState_current);//chamto test
+
 					//====================================================
+
+					//===========================
+					// 실제 공격/방어 한 범위
+					//===========================
+					switch (_realEventState_current) 
+					{
+					case eSubState.None:
+						{
+							//DebugWide.LogBlue ("[2:_realEventState_current : " + "None"); //chamto test
+
+							if (Judgment.eState.AttackDamage == this.GetJudgmentState () ||
+								Judgment.eState.BlockSucceed == this.GetJudgmentState()) 
+							{
+								this.SetRealEventState (eSubState.RealEvent_Start);
+							}
+						}
+						break;
+					case eSubState.RealEvent_Start:
+						{
+							//DebugWide.LogBlue ("[2:_realEventState_current : " + "RealEvent_Start"); //chamto test
+
+							this.SetRealEventState (eSubState.RealEvent_Running);
+						}
+						break;
+					case eSubState.RealEvent_Running:
+						{
+							//DebugWide.LogBlue ("[2:_realEventState_current : " + "RealEvent_Running"); //chamto test
+						}
+						break;
+					}
+
+					if(1 == this.GetID())
+						DebugWide.LogBlue ("[2:_realEventState_current : " + _realEventState_current);
+					//===========================
 
 					
 					if (_behavior.runningTime <= this._timeDelta) 
@@ -562,10 +572,6 @@ namespace CounterBlock
 		Character _dst_ = null;
 		public void Update()
 		{
-			foreach (Character crt in this.Values) 
-			{
-				crt.Update ();
-			}
 
 
 			//todo : 거리에 따라 판정대상 객체 거르는 처리가 필요 
@@ -590,6 +596,12 @@ namespace CounterBlock
 					_dst_.Judge (_src_);
 				}
 			}
+
+			foreach (Character crt in this.Values) 
+			{
+				crt.Update ();
+			}
+
 
 			//DebugWide.LogRed ("====================="); //chamto test
 		}
