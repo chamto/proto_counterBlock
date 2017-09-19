@@ -1866,6 +1866,7 @@ namespace CounterBlock
 				case Character.eState.End:
 					{
 						charUI._action [1].gameObject.SetActive (false);
+						charUI._action[2].gameObject.SetActive (false);
 					}
 					break;
 
@@ -1884,6 +1885,7 @@ namespace CounterBlock
 				case Character.eState.Start:
 					{
 						charUI._action[1].gameObject.SetActive (true);	
+						charUI._action[2].gameObject.SetActive (false);
 						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
