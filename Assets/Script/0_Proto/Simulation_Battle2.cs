@@ -263,8 +263,7 @@ namespace CounterBlock
 		public bool Valid_ScopeTime()
 		{
 
-			//start 상태에서 검사되지 않아 주석처리 한다.
-			//if (eState.Running == _state_current) 
+			if (eState.Start == _state_current || eState.Running == _state_current) 
 			{
 				if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1)
 					return true;
