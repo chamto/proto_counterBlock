@@ -435,7 +435,7 @@ namespace CounterBlock
 					this._timeDelta = 0f;
 					SetState (eState.Running);
 
-					DebugWide.LogRed ("[0: "+this._state_current);//chamto test
+					//DebugWide.LogRed ("[0: "+this._state_current);//chamto test
 				}
 				break;
 			case eState.Running:
@@ -469,8 +469,8 @@ namespace CounterBlock
 
 					}
 
-					if(1 == this.GetID())
-						DebugWide.LogBlue ("[1:_validState_current : "+_validState_current );//chamto test
+					//if(1 == this.GetID())
+					//	DebugWide.LogBlue ("[1:_validState_current : "+_validState_current );//chamto test
 
 					//====================================================
 					// 실제 공격/방어 한 범위
@@ -638,8 +638,8 @@ namespace CounterBlock
 					_src_.SetJudgmentState (_result_.first);
 					_dst_.SetJudgmentState (_result_.second);
 
-					DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
-					DebugWide.LogGreen (_result_.first + "   " + _src_.GetTimeDelta() + " , " + _result_.second + "  " + _dst_.GetTimeDelta()); //chamto test
+					//DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
+					//DebugWide.LogGreen (_result_.first + "   " + _src_.GetTimeDelta() + " , " + _result_.second + "  " + _dst_.GetTimeDelta()); //chamto test
 
 					//갱신된 상태에 따른 처리 
 					_src_.Judge (_dst_);
@@ -1515,6 +1515,86 @@ namespace CounterBlock
 	}//end class
 
 
+	public class InitialData
+	{
+		public enum eOption : Int32
+		{
+
+			Position 	= 1<<1,
+			Scale 		= 1<<2,
+			Rotation 	= 1<<3,
+			All 		= 0xffff,
+		};
+
+		private SpriteRenderer 	_spriteRender = null;
+		public Sprite sprite 
+		{
+			get 
+			{ 
+				return _spriteRender.sprite;
+			}
+			set
+			{
+				_spriteRender.sprite = value;
+			}
+		}
+		public GameObject gameObject
+		{
+			get
+			{ 
+				return _spriteRender.gameObject;
+			}
+		}
+		public Transform transform
+		{
+			get
+			{
+				return _spriteRender.transform;
+			}
+		}
+
+
+		private Vector3 		_position = Vector3.zero;
+		private Vector3 		_scale = Vector3.one;
+		private Quaternion		_rotation = Quaternion.identity;
+
+		public  InitialData(SpriteRenderer spr)
+		{
+			_spriteRender = spr;
+			_position = spr.transform.localPosition;
+			_scale = spr.transform.localScale;
+			_rotation = spr.transform.localRotation;
+		}
+
+		public void SelectAction(UI_CharacterCard.eKind charKind ,ResourceManager.eActionKind actionKind)
+		{
+			switch (charKind) 
+			{
+			case UI_CharacterCard.eKind.Seonbi:
+				sprite = Single.resource.GetAction_Seonbi (actionKind);
+				break;
+			case UI_CharacterCard.eKind.Biking:
+				sprite = Single.resource.GetAction_Biking (actionKind);
+				break;
+			}
+
+
+		}
+
+		public void  Revert(eOption opt)
+		{
+			if(eOption.Position == (opt & eOption.Position))
+				_spriteRender.transform.localPosition = _position;
+
+			if(eOption.Scale == (opt & eOption.Scale))
+				_spriteRender.transform.localScale = _scale;
+
+			if(eOption.Rotation == (opt & eOption.Rotation))
+				_spriteRender.transform.localRotation = _rotation;
+		}
+
+	}//end class
+
 	public class UI_CharacterCard : MonoBehaviour
 	{
 
@@ -1534,9 +1614,9 @@ namespace CounterBlock
 			Hit,
 			Block,
 			Max
-		}
+		};
 
-		[SerializeField] 
+
 		public uint _id = 0;
 		public eKind _kind = eKind.None;
 
@@ -1544,33 +1624,51 @@ namespace CounterBlock
 		public TextMesh _text_time { get; set; }
 		//public Slider _hp_bar { get; set; }
 
-		public Transform _actions { get; set; }
-		public List<SpriteRenderer> _action { get; set; }
-		public List<Vector3> _action_originalPos { get; set; }
-		//public AnimationCard _action_ani = new AnimationCard();
+		public Transform _actionRoot { get; set; }
+		public List<InitialData> _actions { get; set; }
 
-		public Transform _effects { get; set; }
-		public Transform _effects_Texts { get; set; }
-		public Dictionary<eEffect,SpriteRenderer> _effect { get; set; }
+		public Transform _effectRoot { get; set; }
+		public Transform _effect_Texts { get; set; }
+		public Dictionary<eEffect,InitialData> _effects { get; set; }
 
-
-
+		//[SerializeField] 
 		public int _siblingIndex = 0; 
 		public bool _apply = false;
+
+
+
+		//===============================================================
+
+
+
+
+
+		//===============================================================
 
 		void Start()
 		{
 			_siblingIndex = this.transform.GetSiblingIndex ();
-			
+
+
 		}
 
-		public void GetBackTo_OriginalPosition()
+		public void RevertData_All()
 		{
 
-			for (int i = 0; i < _action.Count; i++) 
+			foreach (InitialData iData in _actions) 
 			{
-				_action [i].transform.localPosition = _action_originalPos [i];
+				iData.Revert (InitialData.eOption.All);
 			}
+
+			foreach (InitialData iData in _effects.Values) 
+			{
+				iData.Revert (InitialData.eOption.All);
+			}
+
+//			for (int i = 0; i < _action.Count; i++) 
+//			{
+//				_action [i].transform.localPosition = _action_originalPos [i];
+//			}
 
 		}
 
@@ -1581,18 +1679,18 @@ namespace CounterBlock
 
 		public void TurnLeft()
 		{
-			Vector3 scale = _actions.localScale;
+			Vector3 scale = _actionRoot.localScale;
 			scale.x = -1f;
-			_actions.localScale = scale;
+			_actionRoot.localScale = scale;
 
-			scale = _effects.localScale;
+			scale = _effectRoot.localScale;
 			scale.x = -1f;
-			_effects.localScale = scale;
+			_effectRoot.localScale = scale;
 
 			//반전된 글자를 다시 반전시켜 원상태로 만든다. 
-			scale = _effects_Texts.localScale;
+			scale = _effect_Texts.localScale;
 			scale.x = -1f;
-			_effects_Texts.localScale = scale;
+			_effect_Texts.localScale = scale;
 
 
 			//_hp_bar.direction = Slider.Direction.RightToLeft;
@@ -1600,17 +1698,17 @@ namespace CounterBlock
 
 		public void TurnRight()
 		{
-			Vector3 scale = _actions.localScale;
+			Vector3 scale = _actionRoot.localScale;
 			scale.x = 1f;
-			_actions.localScale = scale;
+			_actionRoot.localScale = scale;
 
-			scale = _effects.localScale;
+			scale = _effectRoot.localScale;
 			scale.x = 1f;
-			_effects.localScale = scale;
+			_effectRoot.localScale = scale;
 
-			scale = _effects_Texts.localScale;
+			scale = _effect_Texts.localScale;
 			scale.x = 1f;
-			_effects_Texts.localScale = scale;
+			_effect_Texts.localScale = scale;
 
 			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
@@ -1632,30 +1730,36 @@ namespace CounterBlock
 			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
 
 			//action
-			ui._actions = Single.hierarchy.Find<Transform> (parentPath + "/Images");
-			ui._action = new List<SpriteRenderer> ();
-			ui._action_originalPos = new List<Vector3> ();
+			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
+			ui._actions = new List<InitialData> ();
+			//ui._action_originalPos = new List<Vector3> ();
 			const int MAX_ACTION_CARD = 3;
 			SpriteRenderer img = null;
+			InitialData iData = null;
 			for (int i = 0; i < MAX_ACTION_CARD; i++) 
 			{
 				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
-				ui._action.Add (img);
-				ui._action_originalPos.Add (img.transform.localPosition);
+				iData = new InitialData (img);
+				ui._actions.Add (iData);
+				//ui._action_originalPos.Add (img.transform.localPosition);
 			}
 
 			//effect
-			ui._effects = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
-			ui._effects_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
-			ui._effect = new Dictionary<eEffect, SpriteRenderer> ();
+			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
+			ui._effect_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
+			ui._effects = new Dictionary<eEffect, InitialData> ();
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
-			ui._effect.Add (eEffect.Empty,img);
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Empty,iData);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit");
-			ui._effect.Add (eEffect.Hit,img);
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Hit,iData);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
-			ui._effect.Add (eEffect.Block,img);
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Block,iData);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
-			ui._effect.Add (eEffect.Text,img);
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Text,iData);
 
 
 			return ui;
@@ -1787,7 +1891,8 @@ namespace CounterBlock
 			UI_CharacterCard charUI = _characters [id];
 
 
-			charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
+			//charUI._actions [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
+			charUI._actions [0].SelectAction (charUI._kind, ResourceManager.eActionKind.Idle);
 
 
 			if (Skill.eName.Attack_1 == charData.CurrentSkillKind ()) 
@@ -1797,12 +1902,12 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						charUI._action[1].gameObject.SetActive (true);
-						charUI._action[2].gameObject.SetActive (false);
-						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackBefore);
+						charUI._actions[1].gameObject.SetActive (true);
+						charUI._actions[2].gameObject.SetActive (false);
+						charUI._actions[1].SelectAction(charUI._kind, ResourceManager.eActionKind.AttackBefore);
 
-						iTween.Stop (charUI._action [2].gameObject);
-						charUI.GetBackTo_OriginalPosition ();
+						iTween.Stop (charUI._actions [2].gameObject);
+						charUI.RevertData_All ();
 
 					}
 					break;
@@ -1819,14 +1924,14 @@ namespace CounterBlock
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
-								charUI._action [2].gameObject.SetActive (true);
-								charUI._action [2].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+								charUI._actions [2].gameObject.SetActive (true);
+								charUI._actions [2].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
 
 								//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
 								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
-								iTween.PunchRotation(charUI._action[2].gameObject,new Vector3(0,0,-45f),1f);
-								iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",10,"time",0.7f));	
+								iTween.PunchRotation(charUI._actions[2].gameObject,new Vector3(0,0,-45f),1f);
+								iTween.PunchPosition(charUI._actions[2].gameObject, iTween.Hash("x",10,"time",0.7f));	
 								//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
 								//	"amount", new Vector3(300f,20f,0f),
 								//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
@@ -1844,10 +1949,10 @@ namespace CounterBlock
 							{
 								//DebugWide.LogBlue ("Valid_End"); //chamto test
 
-								charUI._action[2].gameObject.SetActive (false);
+								charUI._actions[2].gameObject.SetActive (false);
 
-								iTween.Stop (charUI._action [2].gameObject);
-								charUI.GetBackTo_OriginalPosition ();	
+								iTween.Stop (charUI._actions [2].gameObject);
+								charUI.RevertData_All ();	
 							}
 							break;
 						}
@@ -1858,15 +1963,15 @@ namespace CounterBlock
 					break;
 				case Character.eState.Waiting:
 					{
-						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
+						charUI._actions[1].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
 
 					}
 
 					break;
 				case Character.eState.End:
 					{
-						charUI._action [1].gameObject.SetActive (false);
-						charUI._action[2].gameObject.SetActive (false);
+						charUI._actions [1].gameObject.SetActive (false);
+						charUI._actions[2].gameObject.SetActive (false);
 					}
 					break;
 
@@ -1884,9 +1989,9 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						charUI._action[1].gameObject.SetActive (true);	
-						charUI._action[2].gameObject.SetActive (false);
-						charUI._action[1].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
+						charUI._actions[1].gameObject.SetActive (true);	
+						charUI._actions[2].gameObject.SetActive (false);
+						charUI._actions[1].SelectAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
 				case Character.eState.Running:
@@ -1912,7 +2017,7 @@ namespace CounterBlock
 					break;
 				case Character.eState.End:
 					{
-						charUI._action[1].gameObject.SetActive (false);
+						charUI._actions[1].gameObject.SetActive (false);
 					}
 					break;
 				
@@ -1921,8 +2026,8 @@ namespace CounterBlock
 
 			if (Skill.eName.Idle == charData.CurrentSkillKind ()) 
 			{
-				charUI._action[1].gameObject.SetActive (false);
-				charUI._action[2].gameObject.SetActive (false);
+				charUI._actions[1].gameObject.SetActive (false);
+				charUI._actions[2].gameObject.SetActive (false);
 			}
 
 		}//end func
@@ -1932,29 +2037,27 @@ namespace CounterBlock
 			UI_CharacterCard charUI = _characters [id];
 
 
-			//charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
-
 			if (charData.IsStart_Damaged ()) 
 			{
-				StartCoroutine("EffectStart_Damaged",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
+				StartCoroutine("EffectStart_Damaged",charUI._effects [UI_CharacterCard.eEffect.Hit].gameObject);
 
-				StartCoroutine("EffectStart_Wobble",charUI._actions.gameObject);
+				StartCoroutine("EffectStart_Wobble",charUI._actionRoot.gameObject);
 
 			}
 
 
 			if (charData.IsStart_BlockSucceed ()) 
 			{
-				StartCoroutine("EffectStart_Block",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
+				StartCoroutine("EffectStart_Block",charUI._effects [UI_CharacterCard.eEffect.Block].gameObject);
 				//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
 
-				StartCoroutine("EffectStart_Endure",charUI._actions.gameObject);
+				StartCoroutine("EffectStart_Endure",charUI._actionRoot.gameObject);
 			}
 
 
 
-			switch (charData.GetJudgmentState ()) 
-			{
+//			switch (charData.GetJudgmentState ()) 
+//			{
 //			case Judgment.eState.AttackDamage_Start:
 //				{
 //					//DebugWide.LogBlue ("AttackDamage_Start"); //chamto test
@@ -1981,7 +2084,7 @@ namespace CounterBlock
 //					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
 //				}
 //				break;
-			}
+//			}
 
 
 		}//end func
@@ -2126,6 +2229,7 @@ namespace CounterBlock
 		}//end setAlpha
 
 	}//end class
+
 
 	public class Simulation_Battle2 : MonoBehaviour 
 	{
