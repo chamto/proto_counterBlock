@@ -325,6 +325,8 @@ namespace CounterBlock
 			SetValidState (eSubState.None);
 			SetGiveState (eSubState.None);
 			//SetReceiveState (eSubState.None);
+
+			this._timeDelta = 0f; //판정후 갱신되는 구조로 인해, 갱신되지 않은 상태에서 판정하는 문제 발생. => 스킬요청시 바로 초기화 시켜준다.  
 		}
 
 
@@ -397,8 +399,8 @@ namespace CounterBlock
 		public void Judge(Character dst)
 		{
 
-			if(1 == this.GetID())
-				DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
+			//if(1 == this.GetID())
+			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
 
 
 			switch (this.GetJudgmentState()) 
@@ -432,6 +434,8 @@ namespace CounterBlock
 					
 					this._timeDelta = 0f;
 					SetState (eState.Running);
+
+					DebugWide.LogRed ("[0: "+this._state_current);//chamto test
 				}
 				break;
 			case eState.Running:
@@ -466,7 +470,7 @@ namespace CounterBlock
 					}
 
 					if(1 == this.GetID())
-						DebugWide.LogBlue ("[1:_validState_current : "+_validState_current);//chamto test
+						DebugWide.LogBlue ("[1:_validState_current : "+_validState_current );//chamto test
 
 					//====================================================
 					// 실제 공격/방어 한 범위
@@ -494,8 +498,8 @@ namespace CounterBlock
 						break;
 					}
 
-					if(1 == this.GetID())
-						DebugWide.LogBlue ("[2:_giveState_current : " + _giveState_current);
+					//if(1 == this.GetID())
+					//	DebugWide.LogBlue ("[2:_giveState_current : " + _giveState_current);
 					
 					//====================================================
 
@@ -565,8 +569,8 @@ namespace CounterBlock
 				break;
 			}
 
-			if(1 == this.GetID())
-				DebugWide.LogBlue ("[3:_receiveState_current : " + _receiveState_current);
+			//if(1 == this.GetID())
+			//	DebugWide.LogBlue ("[3:_receiveState_current : " + _receiveState_current);
 			//============================================================================
 
 		}//end func
@@ -635,13 +639,14 @@ namespace CounterBlock
 					_dst_.SetJudgmentState (_result_.second);
 
 					DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
+					DebugWide.LogGreen (_result_.first + "   " + _src_.GetTimeDelta() + " , " + _result_.second + "  " + _dst_.GetTimeDelta()); //chamto test
 
 					//갱신된 상태에 따른 처리 
 					_src_.Judge (_dst_);
 					_dst_.Judge (_src_);
 
-					DebugWide.LogGreen (_result_.first + "  " + _result_.second); //chamto test
-					DebugWide.LogGreen ("b: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
+
+					//DebugWide.LogGreen ("b: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
 				}
 			}
 
@@ -752,6 +757,12 @@ namespace CounterBlock
 					result.first = eState.Damaged;
 					result.second = eState.AttackDamage;
 				}
+				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				{
+					result.first = eState.AttackIdle;
+					result.second = eState.AttackIdle;
+				}
+
 			}
 
 			//============================
@@ -770,6 +781,11 @@ namespace CounterBlock
 					result.second = eState.Damaged;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				{
+					result.first = eState.AttackIdle;
+					result.second = eState.BlockIdle;
+				}
+				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.AttackIdle;
 					result.second = eState.BlockIdle;
@@ -796,6 +812,12 @@ namespace CounterBlock
 					result.first = eState.Damaged;
 					result.second = eState.AttackDamage;
 				}
+				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				{
+					result.first = eState.BlockIdle;
+					result.second = eState.AttackIdle;
+				}
+
 			}
 
 			//============================
@@ -811,6 +833,10 @@ namespace CounterBlock
 					result.second = eState.Damaged;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+					result.first = eState.AttackIdle;
+					result.second = eState.None;
+				}
+				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.AttackIdle;
 					result.second = eState.None;
 				}
@@ -832,6 +858,10 @@ namespace CounterBlock
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.Damaged;
 					result.second = eState.AttackDamage;
+				}
+				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+					result.first = eState.None;
+					result.second = eState.AttackIdle;
 				}
 			}
 
@@ -1006,7 +1036,7 @@ namespace CounterBlock
 			skinfo.name = eName.Attack_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1f;
+			bhvo.runningTime = 1.0f;
 			bhvo.scopeTime_0 = 0.4f;
 			bhvo.scopeTime_1 = 0.8f;
 			bhvo.rigidTime = 0.3f;
