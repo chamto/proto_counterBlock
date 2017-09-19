@@ -323,7 +323,7 @@ namespace CounterBlock
 			SetState (eState.Start);
 			SetValidState (eSubState.None);
 			SetGiveState (eSubState.None);
-			SetReceiveState (eSubState.None);
+			//SetReceiveState (eSubState.None);
 		}
 
 
