@@ -262,7 +262,9 @@ namespace CounterBlock
 
 		public bool Valid_ScopeTime()
 		{
-			if (eState.Running == _state_current) 
+
+			//start 상태에서 검사되지 않아 주석처리 한다.
+			//if (eState.Running == _state_current) 
 			{
 				if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1)
 					return true;
@@ -468,10 +470,8 @@ namespace CounterBlock
 						DebugWide.LogBlue ("[1:_validState_current : "+_validState_current);//chamto test
 
 					//====================================================
-
-					//===========================
 					// 실제 공격/방어 한 범위
-					//===========================
+					//====================================================
 					switch (_giveState_current) 
 					{
 					case eSubState.None:
@@ -498,7 +498,7 @@ namespace CounterBlock
 					if(1 == this.GetID())
 						DebugWide.LogBlue ("[2:_giveState_current : " + _giveState_current);
 					
-					//===========================
+					//====================================================
 
 					
 					if (_behavior.runningTime <= this._timeDelta) 
@@ -624,7 +624,7 @@ namespace CounterBlock
 			{
 				for (int id_dst = (id_src+1) ; id_dst < this.Values.Count ; id_dst++) 
 				{
-					//DebugWide.LogBlue (src + "  " + dst); //chamto test
+					
 					_src_ = this.Values.ElementAt (id_src);
 					_dst_ = this.Values.ElementAt (id_dst);
 
@@ -635,9 +635,14 @@ namespace CounterBlock
 					_src_.SetJudgmentState (_result_.first);
 					_dst_.SetJudgmentState (_result_.second);
 
+					DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
+
 					//갱신된 상태에 따른 처리 
 					_src_.Judge (_dst_);
 					_dst_.Judge (_src_);
+
+					DebugWide.LogGreen (_result_.first + "  " + _result_.second); //chamto test
+					DebugWide.LogGreen ("b: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
 				}
 			}
 
