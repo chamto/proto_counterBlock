@@ -260,6 +260,16 @@ namespace CounterBlock
 			this.Idle ();
 		}
 
+		public float GetScopeTime()
+		{
+			return _behavior.scopeTime_1 - _behavior.scopeTime_0;
+		}
+
+		public float GetOpenTime()
+		{
+			return _behavior.openTime_1 - _behavior.openTime_0;
+		}
+
 		public bool Valid_ScopeTime()
 		{
 
@@ -619,8 +629,14 @@ namespace CounterBlock
 		Character _dst_ = null;
 		public void Update()
 		{
+			//1 =========== 
+			foreach (Character crt in this.Values) 
+			{
+				crt.Update (); //호출순서중요 : judge 함수에 의해 상태시작후 Update 함수가 호출되면 UI에서 시작상태를 검출 할 수 없다.
+			}
 
 
+			//2 ===========
 			//todo : 거리에 따라 판정대상 객체 거르는 처리가 필요 
 			//캐릭터 전체 리스트 1대1조합 : 중복안됨, 순서없음
 			for (int id_src = 0 ; id_src < (this.Values.Count-1) ; id_src++) 
@@ -650,10 +666,7 @@ namespace CounterBlock
 				}
 			}
 
-			foreach (Character crt in this.Values) 
-			{
-				crt.Update ();
-			}
+
 
 
 			//DebugWide.LogRed ("====================="); //chamto test
@@ -1665,11 +1678,6 @@ namespace CounterBlock
 				iData.Revert (InitialData.eOption.All);
 			}
 
-//			for (int i = 0; i < _action.Count; i++) 
-//			{
-//				_action [i].transform.localPosition = _action_originalPos [i];
-//			}
-
 		}
 
 //		public void Card_Attack(float maxSecond)
@@ -1782,6 +1790,12 @@ namespace CounterBlock
 
 	}
 
+	public struct CharDataBundle
+	{
+		public Character 		_data;
+		public UI_CharacterCard _ui;
+		public GameObject 		_gameObject;
+	}
 
 	public class UI_Battle : MonoBehaviour
 	{
@@ -1886,13 +1900,35 @@ namespace CounterBlock
 
 		}
 
+
+
+
 		private void Update_UI_Card(Character charData, uint id)
 		{
 			UI_CharacterCard charUI = _characters [id];
 
 
-			//charUI._actions [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
-			charUI._actions [0].SelectAction (charUI._kind, ResourceManager.eActionKind.Idle);
+			//if(2 == id)
+			//	DebugWide.LogBlue (id+" : "+charData.CurrentState ()); //chamto test
+
+			//if (Skill.eName.Idle == charData.CurrentSkillKind () ||
+			//	Skill.eName.Hit == charData.CurrentSkillKind ()) 
+			{
+				switch (charData.CurrentState ()) 
+				{
+				case Character.eState.Start:
+					{
+						
+
+						charUI._actions [1].gameObject.SetActive (false);
+						charUI._actions [2].gameObject.SetActive (false);
+
+						charUI._actions [0].SelectAction (charUI._kind, ResourceManager.eActionKind.Idle);
+					}
+					break;
+				}
+
+			}
 
 
 			if (Skill.eName.Attack_1 == charData.CurrentSkillKind ()) 
@@ -1904,10 +1940,12 @@ namespace CounterBlock
 					{
 						charUI._actions[1].gameObject.SetActive (true);
 						charUI._actions[2].gameObject.SetActive (false);
-						charUI._actions[1].SelectAction(charUI._kind, ResourceManager.eActionKind.AttackBefore);
 
-						iTween.Stop (charUI._actions [2].gameObject);
-						charUI.RevertData_All ();
+						charUI._actions[1].SelectAction(charUI._kind, ResourceManager.eActionKind.AttackBefore);
+						charUI._actions[2].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+
+						//iTween.Stop (charUI._actions [2].gameObject);
+						//charUI.RevertData_All ();
 
 					}
 					break;
@@ -1924,23 +1962,17 @@ namespace CounterBlock
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
-								charUI._actions [2].gameObject.SetActive (true);
-								charUI._actions [2].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+								CharDataBundle bundle;
+								bundle._data = charData;
+								bundle._ui = charUI;
+								bundle._gameObject = charUI._actions [2].gameObject;
 
-								//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
-								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
-								//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
-								iTween.PunchRotation(charUI._actions[2].gameObject,new Vector3(0,0,-45f),1f);
-								iTween.PunchPosition(charUI._actions[2].gameObject, iTween.Hash("x",10,"time",0.7f));	
-								//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
-								//	"amount", new Vector3(300f,20f,0f),
-								//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
-								//));
+								StartCoroutine("AniStart_Attack_1",bundle);
 							}
 							break;
 						case Character.eSubState.Valid_Running:
 							{
-								
+
 
 
 							}
@@ -1949,10 +1981,9 @@ namespace CounterBlock
 							{
 								//DebugWide.LogBlue ("Valid_End"); //chamto test
 
-								charUI._actions[2].gameObject.SetActive (false);
-
-								iTween.Stop (charUI._actions [2].gameObject);
-								charUI.RevertData_All ();	
+								//charUI._actions[2].gameObject.SetActive (false);
+								//iTween.Stop (charUI._actions [2].gameObject);
+								//charUI.RevertData_All ();	
 							}
 							break;
 						}
@@ -1970,12 +2001,12 @@ namespace CounterBlock
 					break;
 				case Character.eState.End:
 					{
-						charUI._actions [1].gameObject.SetActive (false);
-						charUI._actions[2].gameObject.SetActive (false);
+						//charUI._actions[1].gameObject.SetActive (false);
+						//charUI._actions[2].gameObject.SetActive (false);
 					}
 					break;
 
-				}
+				}//end switch
 
 
 			}
@@ -1991,6 +2022,7 @@ namespace CounterBlock
 					{
 						charUI._actions[1].gameObject.SetActive (true);	
 						charUI._actions[2].gameObject.SetActive (false);
+
 						charUI._actions[1].SelectAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
@@ -2017,18 +2049,14 @@ namespace CounterBlock
 					break;
 				case Character.eState.End:
 					{
-						charUI._actions[1].gameObject.SetActive (false);
+						//charUI._actions[1].gameObject.SetActive (false);
 					}
 					break;
 				
 				}
 			}
 
-			if (Skill.eName.Idle == charData.CurrentSkillKind ()) 
-			{
-				charUI._actions[1].gameObject.SetActive (false);
-				charUI._actions[2].gameObject.SetActive (false);
-			}
+
 
 		}//end func
 
@@ -2039,19 +2067,28 @@ namespace CounterBlock
 
 			if (charData.IsStart_Damaged ()) 
 			{
-				StartCoroutine("EffectStart_Damaged",charUI._effects [UI_CharacterCard.eEffect.Hit].gameObject);
+				CharDataBundle bundle;
+				bundle._data = charData;
+				bundle._ui = charUI;
+				bundle._gameObject = charUI._effects [UI_CharacterCard.eEffect.Hit].gameObject;
+				StartCoroutine("EffectStart_Damaged",bundle);
 
-				StartCoroutine("EffectStart_Wobble",charUI._actionRoot.gameObject);
+				bundle._gameObject = charUI._actionRoot.gameObject;
+				StartCoroutine("EffectStart_Wobble",bundle);
 
 			}
 
 
 			if (charData.IsStart_BlockSucceed ()) 
 			{
-				StartCoroutine("EffectStart_Block",charUI._effects [UI_CharacterCard.eEffect.Block].gameObject);
-				//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+				CharDataBundle bundle;
+				bundle._data = charData;
+				bundle._ui = charUI;
+				bundle._gameObject = charUI._effects [UI_CharacterCard.eEffect.Block].gameObject;
+				StartCoroutine("EffectStart_Block",bundle);
 
-				StartCoroutine("EffectStart_Endure",charUI._actionRoot.gameObject);
+				bundle._gameObject = charUI._actionRoot.gameObject;
+				StartCoroutine("EffectStart_Endure",bundle);
 			}
 
 
@@ -2089,74 +2126,110 @@ namespace CounterBlock
 
 		}//end func
 
+
+		public IEnumerator AniStart_Attack_1(CharDataBundle bundle)
+		{
+			
+			
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
+			iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
+			iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",0.7f));	
+			//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
+			//	"amount", new Vector3(300f,20f,0f),
+			//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
+			//));
+
+
+			yield return new WaitForSeconds(bundle._data.GetScopeTime());
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+
+		
+		}
+
 		//피해입다
-		public IEnumerator EffectStart_Damaged(GameObject gobj)
+		public IEnumerator EffectStart_Damaged(CharDataBundle bundle)
 		{
 			//DebugWide.LogBlue ("start");
 
-			gobj.SetActive (true);
-			iTween.Stop (gobj.gameObject);
-			gobj.transform.localScale = Vector3.one;
-			iTween.ShakeScale(gobj,new Vector3(1f,1f,1f), 0.5f);
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+			//gobj.transform.localScale = Vector3.one;
+			iTween.ShakeScale(bundle._gameObject,new Vector3(1f,1f,1f), 0.5f);
 			//iTween.ShakePosition(gobj,new Vector3(10f,10f,10f), 0.5f);
 			//iTween.ShakeRotation(gobj,new Vector3(90f,1f,1f), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
-			iTween.Stop (gobj);
-			gobj.transform.localScale = Vector3.one;
-			gobj.SetActive (false);
+			iTween.Stop (bundle._gameObject);
+			//gobj.transform.localScale = Vector3.one;
+			bundle._gameObject.SetActive (false);
 
 			//DebugWide.LogBlue ("end");
 		}
 
 		//휘청거리다 
-		public IEnumerator EffectStart_Wobble(GameObject gobj)
+		public IEnumerator EffectStart_Wobble(CharDataBundle bundle)
 		{
 			
-			iTween.Stop (gobj.gameObject);
-			iTween.ShakePosition(gobj,new Vector3(1f,0,0), 0.5f);
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.transform.localPosition = Vector3.zero;
+
+			iTween.ShakePosition(bundle._gameObject,new Vector3(1f,0,0), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
-			iTween.Stop (gobj);
-
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.transform.localPosition = Vector3.zero;
 		}
 
 		//막다
-		public IEnumerator EffectStart_Block(GameObject gobj)
+		public IEnumerator EffectStart_Block(CharDataBundle bundle)
 		{
 			//DebugWide.LogBlue ("start");
 
-			gobj.SetActive (true);
-			iTween.Stop (gobj.gameObject);
-			gobj.transform.localScale = Vector3.one;
-			iTween.ShakeScale(gobj,new Vector3(1f,1f,1f), 0.5f);
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+			//gobj.transform.localScale = Vector3.one;
+
+			iTween.ShakeScale(bundle._gameObject,new Vector3(1f,1f,1f), 0.5f);
 			//iTween.ShakePosition(gobj,new Vector3(10f,10f,0), 0.5f);
 			//iTween.ShakeRotation(gobj,new Vector3(90f,1f,1f), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
-			iTween.Stop (gobj);
-			gobj.transform.localScale = Vector3.one;
-			gobj.SetActive (false);
+			iTween.Stop (bundle._gameObject);
+			//gobj.transform.localScale = Vector3.one;
+			bundle._gameObject.SetActive (false);
 
 			//DebugWide.LogBlue ("end");
 		}
 
 		//견디다
-		public IEnumerator EffectStart_Endure(GameObject gobj)
+		public IEnumerator EffectStart_Endure(CharDataBundle bundle)
 		{
 			
-			iTween.Stop (gobj.gameObject);
-			gobj.transform.localEulerAngles = Vector3.zero;
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
+
 			//iTween.ShakeRotation(gobj,new Vector3(0,45f,0), 0.5f);
-			iTween.PunchRotation(gobj,new Vector3(0,45f,0), 0.5f);
+			iTween.PunchRotation(bundle._gameObject,new Vector3(0,45f,0), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
-			iTween.Stop (gobj);
-			gobj.transform.localEulerAngles = Vector3.zero;
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
 		}
 
 
