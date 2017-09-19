@@ -1510,7 +1510,7 @@ namespace CounterBlock
 		public TextMesh _text_time { get; set; }
 		//public Slider _hp_bar { get; set; }
 
-		public Transform _sprites { get; set; }
+		public Transform _actions { get; set; }
 		public List<SpriteRenderer> _action { get; set; }
 		public List<Vector3> _action_originalPos { get; set; }
 		//public AnimationCard _action_ani = new AnimationCard();
@@ -1547,9 +1547,9 @@ namespace CounterBlock
 
 		public void TurnLeft()
 		{
-			Vector3 scale = _sprites.localScale;
+			Vector3 scale = _actions.localScale;
 			scale.x = -1f;
-			_sprites.localScale = scale;
+			_actions.localScale = scale;
 
 			scale = _effects.localScale;
 			scale.x = -1f;
@@ -1566,9 +1566,9 @@ namespace CounterBlock
 
 		public void TurnRight()
 		{
-			Vector3 scale = _sprites.localScale;
+			Vector3 scale = _actions.localScale;
 			scale.x = 1f;
-			_sprites.localScale = scale;
+			_actions.localScale = scale;
 
 			scale = _effects.localScale;
 			scale.x = 1f;
@@ -1598,7 +1598,7 @@ namespace CounterBlock
 			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
 
 			//action
-			ui._sprites = Single.hierarchy.Find<Transform> (parentPath + "/Images");
+			ui._actions = Single.hierarchy.Find<Transform> (parentPath + "/Images");
 			ui._action = new List<SpriteRenderer> ();
 			ui._action_originalPos = new List<Vector3> ();
 			const int MAX_ACTION_CARD = 3;
@@ -1898,16 +1898,24 @@ namespace CounterBlock
 
 			//charUI._action [0].sprite = this.GetAction (charUI._kind, ResourceManager.eActionKind.Idle);
 
-			if (charData.IsStart_BlockSucceed ()) 
-			{
-				StartCoroutine("EffectStart_2",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
-				//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
-			}
-
 			if (charData.IsStart_Damaged ()) 
 			{
-				StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
+				StartCoroutine("EffectStart_Damaged",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
+
+				StartCoroutine("EffectStart_Wobble",charUI._actions.gameObject);
+
 			}
+
+
+			if (charData.IsStart_BlockSucceed ()) 
+			{
+				StartCoroutine("EffectStart_Block",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
+				//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+
+				StartCoroutine("EffectStart_Endure",charUI._actions.gameObject);
+			}
+
+
 
 			switch (charData.GetJudgmentState ()) 
 			{
@@ -1942,8 +1950,8 @@ namespace CounterBlock
 
 		}//end func
 
-
-		public IEnumerator EffectStart_1(GameObject gobj)
+		//피해입다
+		public IEnumerator EffectStart_Damaged(GameObject gobj)
 		{
 			//DebugWide.LogBlue ("start");
 
@@ -1963,7 +1971,21 @@ namespace CounterBlock
 			//DebugWide.LogBlue ("end");
 		}
 
-		public IEnumerator EffectStart_2(GameObject gobj)
+		//휘청거리다 
+		public IEnumerator EffectStart_Wobble(GameObject gobj)
+		{
+			
+			iTween.Stop (gobj.gameObject);
+			iTween.ShakePosition(gobj,new Vector3(1f,0,0), 0.5f);
+
+			yield return new WaitForSeconds(0.5f);
+
+			iTween.Stop (gobj);
+
+		}
+
+		//막다
+		public IEnumerator EffectStart_Block(GameObject gobj)
 		{
 			//DebugWide.LogBlue ("start");
 
@@ -1981,6 +2003,21 @@ namespace CounterBlock
 			gobj.SetActive (false);
 
 			//DebugWide.LogBlue ("end");
+		}
+
+		//견디다
+		public IEnumerator EffectStart_Endure(GameObject gobj)
+		{
+			
+			iTween.Stop (gobj.gameObject);
+			gobj.transform.localEulerAngles = Vector3.zero;
+			//iTween.ShakeRotation(gobj,new Vector3(0,45f,0), 0.5f);
+			iTween.PunchRotation(gobj,new Vector3(0,45f,0), 0.5f);
+
+			yield return new WaitForSeconds(0.5f);
+
+			iTween.Stop (gobj);
+			gobj.transform.localEulerAngles = Vector3.zero;
 		}
 
 
