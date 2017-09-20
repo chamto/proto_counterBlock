@@ -2172,14 +2172,14 @@ namespace CounterBlock
 
 
 
-		public Vector3[] GetPaths_01()
+		public Vector3[] GetPaths_01(Vector3 start)
 		{
 			
 			Vector3[] list = new Vector3[4];
-			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition ;
-			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition ;
-			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition ;
-			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition ;
+			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition + start;
+			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition + start;
+			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition + start;
+			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition + start;
 
 			return list;
 		}
@@ -2189,13 +2189,13 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
 		{
 			
-			Vector3[] list = GetPaths_01 ();
-
 			float time = bundle._data.GetScopeTime ();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
+			Vector3 start = bundle._ui._actions [2].transform.localPosition;
+			Vector3[] list = GetPaths_01 (start);
 
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
 				"time", time, 
