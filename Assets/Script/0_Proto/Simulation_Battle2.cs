@@ -2184,6 +2184,11 @@ namespace CounterBlock
 			return list;
 		}
 
+		public void AniUpdate_Attack_1_Random()
+		{
+			
+			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random");//chamto test
+		}
 
 		//ref : http://www.pixelplacement.com/itween/documentation.php
 		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
@@ -2198,14 +2203,17 @@ namespace CounterBlock
 			Vector3[] list = GetPaths_01 (start);
 
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
-				"time", time, 
-				//"easetype",  "easeOutBack",
-				"path", list,
-				//"orienttopath",true,
-				//"axis","z",
-				"islocal",true,
-				"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				"time", time
+				,"easetype",  "easeOutBack"
+				,"path", list
+				//,"orienttopath",true
+				//,"axis","z"
+				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
 				//"looktarget",new Vector3(5,-5,7)
+				,"onupdate","AniUpdate_Attack_1_Random"
+				,"onupdatetarget",gameObject
+				//,"onupdateparams",""
 			));
 
 			yield return new WaitForSeconds(time);
