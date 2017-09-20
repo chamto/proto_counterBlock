@@ -2172,14 +2172,32 @@ namespace CounterBlock
 
 
 
-		public Vector3[] GetPaths_01(Vector3 start)
+		public Vector3[] GetPaths(int kind , Vector3 start)
 		{
-			
-			Vector3[] list = new Vector3[4];
-			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition + start;
-			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition + start;
-			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition + start;
-			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition + start;
+			//DebugWide.LogBlue (kind); //chamto test
+
+			//kind = 3;//chamto test
+
+			string pathName = "";
+			const int PATH_01 = 1;
+			const int PATH_02 = 2;
+			const int PATH_03 = 3;
+			const int NODE_COUNT = 6;
+			Vector3[] list = new Vector3[NODE_COUNT];
+
+			if (PATH_01 == kind)
+				pathName = "p01";
+			if (PATH_02 == kind)
+				pathName = "p02";
+			if (PATH_03 == kind)
+				pathName = "p03";
+
+			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
+			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
+			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (2)").localPosition + start;
+			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (3)").localPosition + start;
+			list[4] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (4)").localPosition + start;
+			list[5] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (5)").localPosition + start;
 
 			return list;
 		}
@@ -2205,14 +2223,15 @@ namespace CounterBlock
 		//ref : http://www.pixelplacement.com/itween/documentation.php
 		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
 		{
-			
+
+			int rand = Single.rand.Next (1, 4);
 			float time = bundle._data.GetScopeTime ();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
 			Vector3 start = bundle._ui._actions [2].transform.localPosition;
-			Vector3[] list = GetPaths_01 (start);
+			Vector3[] list = GetPaths (rand, start);
 
 			_prev_position_ = list [0];
 

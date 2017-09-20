@@ -79,6 +79,12 @@ namespace CounterBlock
 				return _game_root;
 			}
 		}
+
+		private static System.Random _rand = new System.Random();
+		static public System.Random rand
+		{
+			get{ return _rand; }
+		}
 	}
 }
 
