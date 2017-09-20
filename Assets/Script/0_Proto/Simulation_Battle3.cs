@@ -88,7 +88,67 @@ namespace CounterBlock
 
 
 
+		public Vector3[] GetPaths(Vector3 start)
+		{
+			
+			Vector3[] list = new Vector3[4];
+			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition + start;
+			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition + start;
+			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition + start;
+			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition + start;
 
+
+			return list;
+		}
+//		void OnDrawGizmos() 
+//		{
+//			Gizmos.color = Color.red;
+//			iTween.DrawLineGizmos (GetPaths ());
+//			iTween.DrawPathGizmos (GetPaths ());
+//
+//		}
+
+
+		//ref : http://www.pixelplacement.com/itween/documentation.php
+		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
+		{
+			Vector3 start = bundle._ui._actions [2].Get_InitialPostition ();
+
+			Vector3[] list = GetPaths (start);
+
+			foreach (Vector3 v in list) 
+			{
+				//DebugWide.LogBlue (v);
+			}
+
+			float time = 3f;
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+
+			//iTween.MoveTo (bundle._gameObject, iTween.Hash ("x", 0 , "islocal", true, "time", 1.5 ,"looptype","none" , "easetype" , "spring"));
+			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("amount",new Vector3(10,5,0),"looptype","none","time",time));	
+			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+				//"position", bundle._ui._actions [2].Get_InitialPostition (),
+				"time", time, 
+				//"easetype",  "easeOutBack",
+				"path", list,
+				//"orienttopath",true,
+				//"axis","z",
+				"islocal",true,
+				"movetopath",false
+				//"looktarget",new Vector3(5,-5,7)
+			));
+
+			yield return new WaitForSeconds(time);
+
+			//iTween.Stop (bundle._gameObject);
+			//bundle._gameObject.SetActive (false);
+
+
+
+		}
 
 		// Update is called once per frame
 		void Update () 
@@ -98,6 +158,18 @@ namespace CounterBlock
 			//3. data update
 
 
+			//test
+			if (Input.GetKeyUp ("z")) 
+			{
+				CharDataBundle bundle;
+				bundle._gameObject = _ui_1Player._actions [2].gameObject;
+				bundle._data = _1Player;
+				bundle._ui = _ui_1Player;
+				StartCoroutine ("AniStart_Attack_1_Random", bundle);
+
+				DebugWide.LogBlue ("===========================");
+			}
+			//DebugWide.LogBlue (_ui_1Player._actions [0].transform.localPosition); //chamto test
 
 			//////////////////////////////////////////////////
 			//1p

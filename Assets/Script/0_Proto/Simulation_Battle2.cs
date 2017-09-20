@@ -1571,6 +1571,19 @@ namespace CounterBlock
 		private Vector3 		_scale = Vector3.one;
 		private Quaternion		_rotation = Quaternion.identity;
 
+		public Vector3 Get_InitialPostition()
+		{
+			return _position;
+		}
+		public Vector3 Get_InitialScale()
+		{
+			return _scale;
+		}
+		public Quaternion Get_InitialRotation()
+		{
+			return _rotation;
+		}
+
 		public  InitialData(SpriteRenderer spr)
 		{
 			_spriteRender = spr;
@@ -1967,7 +1980,9 @@ namespace CounterBlock
 								bundle._ui = charUI;
 								bundle._gameObject = charUI._actions [2].gameObject;
 
-								StartCoroutine("AniStart_Attack_1",bundle);
+								//StartCoroutine("AniStart_Attack_1",bundle); 
+								StartCoroutine("AniStart_Attack_1_Random",bundle); 
+
 							}
 							break;
 						case Character.eSubState.Valid_Running:
@@ -2154,6 +2169,53 @@ namespace CounterBlock
 
 		
 		}
+
+
+
+		public Vector3[] GetPaths_01()
+		{
+			
+			Vector3[] list = new Vector3[4];
+			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition ;
+			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition ;
+			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition ;
+			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition ;
+
+			return list;
+		}
+
+
+		//ref : http://www.pixelplacement.com/itween/documentation.php
+		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
+		{
+			
+			Vector3[] list = GetPaths_01 ();
+
+			float time = bundle._data.GetScopeTime ();
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+
+			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+				"time", time, 
+				//"easetype",  "easeOutBack",
+				"path", list,
+				//"orienttopath",true,
+				//"axis","z",
+				"islocal",true,
+				"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				//"looktarget",new Vector3(5,-5,7)
+			));
+
+			yield return new WaitForSeconds(time);
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+		}
+
+
 
 		//피해입다
 		public IEnumerator EffectStart_Damaged(CharDataBundle bundle)
