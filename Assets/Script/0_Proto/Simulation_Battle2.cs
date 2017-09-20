@@ -2184,10 +2184,22 @@ namespace CounterBlock
 			return list;
 		}
 
-		public void AniUpdate_Attack_1_Random()
+
+		Vector3 _prev_position_ = Vector3.zero;
+		public void AniUpdate_Attack_1_Random(Transform tr)
 		{
-			
-			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random");//chamto test
+			Vector3 dir = tr.localPosition - _prev_position_;
+			if (0 == dir.sqrMagnitude || dir.sqrMagnitude <= float.Epsilon)
+				return; //길이가 아주 작거나 0이면 각도 변화가 없는 상태이다. 
+
+			Vector3 euler = tr.localEulerAngles;
+			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
+			tr.localEulerAngles = euler;
+
+			_prev_position_ = tr.localPosition;
+
+
+			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random : " + tr.localPosition + "  " + _prev_position_ + "  " );//chamto test
 		}
 
 		//ref : http://www.pixelplacement.com/itween/documentation.php
@@ -2202,6 +2214,8 @@ namespace CounterBlock
 			Vector3 start = bundle._ui._actions [2].transform.localPosition;
 			Vector3[] list = GetPaths_01 (start);
 
+			_prev_position_ = list [0];
+
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
 				"time", time
 				,"easetype",  "easeOutBack"
@@ -2213,7 +2227,7 @@ namespace CounterBlock
 				//"looktarget",new Vector3(5,-5,7)
 				,"onupdate","AniUpdate_Attack_1_Random"
 				,"onupdatetarget",gameObject
-				//,"onupdateparams",""
+				,"onupdateparams",bundle._gameObject.transform
 			));
 
 			yield return new WaitForSeconds(time);

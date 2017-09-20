@@ -100,55 +100,65 @@ namespace CounterBlock
 
 			return list;
 		}
-//		void OnDrawGizmos() 
-//		{
-//			Gizmos.color = Color.red;
-//			iTween.DrawLineGizmos (GetPaths ());
-//			iTween.DrawPathGizmos (GetPaths ());
-//
-//		}
+
+		Vector3 _prev_position_ = Vector3.zero;
+		Vector3 _prev_direction_ = Vector3.right;
+		public void AniUpdate_Attack_1_RandomTT(Transform tr)
+		{
+			Vector3 current_dir = tr.localPosition - _prev_position_;
+
+			//tr.localRotation.SetFromToRotation (_prev_direction_ , current_dir);
+			//tr.localRotation.SetLookRotation (current_dir , Vector3.back);
+
+			Vector3 dir = tr.localPosition - _prev_position_;
+			Vector3 euler = tr.localEulerAngles;
+			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
+			tr.localEulerAngles = euler;
+
+			_prev_direction_ = current_dir;
+			_prev_position_ = tr.localPosition;
 
 
-		//ref : http://www.pixelplacement.com/itween/documentation.php
+			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random : " + current_dir + "  " + _prev_direction_ + "  " );//chamto test
+		}
+
+
 		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
 		{
-			Vector3 start = bundle._ui._actions [2].Get_InitialPostition ();
 
-			Vector3[] list = GetPaths (start);
-
-			foreach (Vector3 v in list) 
-			{
-				//DebugWide.LogBlue (v);
-			}
-
-			float time = 3f;
+			float time = 5f;
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
+			Vector3 start = bundle._gameObject.transform.localPosition;
+			Vector3[] list = GetPaths (start);
 
-			//iTween.MoveTo (bundle._gameObject, iTween.Hash ("x", 0 , "islocal", true, "time", 1.5 ,"looptype","none" , "easetype" , "spring"));
-			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("amount",new Vector3(10,5,0),"looptype","none","time",time));	
+			_prev_position_ = list [0];
+
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
-				//"position", bundle._ui._actions [2].Get_InitialPostition (),
-				"time", time, 
-				//"easetype",  "easeOutBack",
-				"path", list,
-				//"orienttopath",true,
-				//"axis","z",
-				"islocal",true,
-				"movetopath",false
+				"time", time
+				,"easetype",  "easeOutBack"
+				,"path", list
+				//,"orienttopath",true
+				//,"axis","z"
+				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
 				//"looktarget",new Vector3(5,-5,7)
+				,"onupdate","AniUpdate_Attack_1_RandomTT"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
 			));
 
 			yield return new WaitForSeconds(time);
 
-			//iTween.Stop (bundle._gameObject);
-			//bundle._gameObject.SetActive (false);
-
-
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
 
 		}
+
+
+
 
 		// Update is called once per frame
 		void Update () 
@@ -162,7 +172,7 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("z")) 
 			{
 				CharDataBundle bundle;
-				bundle._gameObject = _ui_1Player._actions [2].gameObject;
+				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
 				bundle._data = _1Player;
 				bundle._ui = _ui_1Player;
 				StartCoroutine ("AniStart_Attack_1_Random", bundle);
