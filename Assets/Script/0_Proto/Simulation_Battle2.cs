@@ -1196,9 +1196,14 @@ namespace CounterBlock
 			P2_BLOCK_VALID,
 			P2_BLOCK_AFTER,
 
-			EFFECT_TEXT,
+			EFFECT_FUCK,
 			EFFECT_HIT,
 			EFFECT_BLOCK,
+			EFFECT_TING1,
+			EFFECT_TING2,
+			EFFECT_STRIKE_COMB, //빗살
+			EFFECT_STRIKE_X,
+			EFFECT_STRIKE_CROSS,
 
 			MAX
 		}
@@ -1245,9 +1250,14 @@ namespace CounterBlock
 				{eSPRITE_NAME.P2_BLOCK_VALID, "p2_block_valid"},
 				{eSPRITE_NAME.P2_BLOCK_AFTER, "p2_block_after"},
 
-				{eSPRITE_NAME.EFFECT_TEXT, "effect_0"},
+				{eSPRITE_NAME.EFFECT_FUCK, "effect_0"},
 				{eSPRITE_NAME.EFFECT_HIT, "effect_1"},
 				{eSPRITE_NAME.EFFECT_BLOCK, "effect_2"},
+				{eSPRITE_NAME.EFFECT_TING1, "effect_3"},
+				{eSPRITE_NAME.EFFECT_TING2, "effect_4"},
+				{eSPRITE_NAME.EFFECT_STRIKE_COMB, "effect_5"},
+				{eSPRITE_NAME.EFFECT_STRIKE_X, "effect_6"},
+				{eSPRITE_NAME.EFFECT_STRIKE_CROSS, "effect_7"},
 			};
 
 
