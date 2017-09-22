@@ -260,6 +260,11 @@ namespace CounterBlock
 			this.Idle ();
 		}
 
+		public float GetRunningTime()
+		{
+			return _behavior.runningTime;
+		}
+
 		public float GetScopeTime()
 		{
 			return _behavior.scopeTime_1 - _behavior.scopeTime_0;
@@ -2155,7 +2160,7 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_1(CharDataBundle bundle)
 		{
 			
-			
+			float time = bundle._data.GetScopeTime ();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -2164,14 +2169,14 @@ namespace CounterBlock
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
 			iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
-			iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",0.7f));	
+			iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
 			//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
 			//	"amount", new Vector3(300f,20f,0f),
 			//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
 			//));
 
 
-			yield return new WaitForSeconds(bundle._data.GetScopeTime());
+			yield return new WaitForSeconds(time);
 
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.SetActive (false);
@@ -2236,6 +2241,7 @@ namespace CounterBlock
 
 			int rand = Single.rand.Next (1, 4);
 			float time = bundle._data.GetScopeTime ();
+			//float time = bundle._data.GetRunningTime();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
