@@ -440,7 +440,8 @@ namespace CounterBlock
 
 		public void Update()
 		{
-			this._timeDelta += Time.deltaTime;
+			//this._timeDelta += Time.deltaTime;
+			this._timeDelta += FrameControl.DeltaTime();
 			
 			switch (this._state_current) 
 			{
@@ -751,6 +752,14 @@ namespace CounterBlock
 		{
 			Result result = new Result();
 			result.Init ();
+
+
+			//공격범위(무기와 기술에 영향을 받음)  ,  상대와의 거리  ,  공격타점의 이동시간
+			//무기범위 , 신체범위
+			//판정 : 타점이 신체범위에 들어 왔는가? (타점은 무기시작,무기끝, 지나온 무기끝의 자취를 잇는 삼각형으로 변환한다 )
+			//자취를 지나는 삼각형으로 판단하는 이유는 프레임 스킵에 문제때문이다
+
+
 
 
 			//============================
