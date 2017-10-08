@@ -54,7 +54,7 @@ namespace CounterBlock
 			//전프레임이 허용프레임 시간의 최대치를 넘었다면 최소시간을 반환한다.
 			if (Time.deltaTime > _deltaTime_max) 
 			{
-				DebugWide.LogBlue ("FrameControl - frameSkip detected !!! - DeltaTime : "+Time.deltaTime);//chamto test
+				//DebugWide.LogBlue ("FrameControl - frameSkip detected !!! - DeltaTime : "+Time.deltaTime);//chamto test
 				return _deltaTime_mix;
 			}
 

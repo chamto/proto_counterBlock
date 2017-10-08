@@ -16,6 +16,14 @@ using UnityEngine.UI;
 
 namespace CounterBlock
 {
+	//자취의 모양
+	public enum eTraceShape
+	{
+		None,
+		Horizon,  //수평
+		Vertical, //수직
+		Straight, //직선
+	}
 
 	public class Behavior
 	{		
@@ -33,6 +41,13 @@ namespace CounterBlock
 		public float rigidTime;		//동작 완료후 경직 시간
 		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
 		public float openTime_1; 
+		public float cloggedTime_0;		//막히는 시간 : 0(시작) , 1(끝)  
+		public float cloggedTime_1;		
+
+		public float attack_range_0;	//공격 범위 최소 
+		public float attack_range_1;	//공격 범위 최대
+
+		public eTraceShape attack_shape; //공격모양 : 종 , 횡 , 찌르기 , 그외
 
 		public  Behavior()
 		{
@@ -43,7 +58,11 @@ namespace CounterBlock
 			rigidTime = 0f;
 			openTime_0 = 0f;
 			openTime_1 = 0f;
-
+			cloggedTime_0 = 0f;
+			cloggedTime_1 = 0f;
+			attack_range_0 = 0f;
+			attack_range_1 = 0f;
+			attack_shape = eTraceShape.None;
 		}
 	}
 
@@ -754,10 +773,10 @@ namespace CounterBlock
 			result.Init ();
 
 
-			//공격범위(무기와 기술에 영향을 받음)  ,  상대와의 거리  ,  공격타점의 이동시간
+			//공격범위(무기와 기술에 영향을 받음)  ,  상대와의 거리  ,  공격타점의 이동시간(사거리의 이동시간)
 			//무기범위 , 신체범위
-			//판정 : 타점이 신체범위에 들어 왔는가? (타점은 무기시작,무기끝, 지나온 무기끝의 자취를 잇는 삼각형으로 변환한다 )
-			//자취를 지나는 삼각형으로 판단하는 이유는 프레임 스킵에 문제때문이다
+			//판정 : 타점이 신체범위에 들어 왔는가?
+
 
 
 
@@ -1064,11 +1083,16 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1.0f;
-			bhvo.scopeTime_0 = 0.4f;
+			bhvo.scopeTime_0 = 0.6f;
 			bhvo.scopeTime_1 = 0.8f;
 			bhvo.rigidTime = 0.3f;
 			bhvo.openTime_0 = 0.7f;
 			bhvo.openTime_1 = 1f;
+			bhvo.cloggedTime_0 = 0.2f;
+			bhvo.cloggedTime_1 = 0.6f;
+			bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.attack_range_0 = 6f;
+			bhvo.attack_range_1 = 11f;
 			skinfo.Add (bhvo);
 
 			return skinfo;
