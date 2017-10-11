@@ -46,7 +46,6 @@ namespace CounterBlock
 
 		public float attack_range_0;	//공격 범위 최소 
 		public float attack_range_1;	//공격 범위 최대
-
 		public eTraceShape attack_shape; //공격모양 : 종 , 횡 , 찌르기 , 그외
 
 		public  Behavior()
@@ -139,11 +138,12 @@ namespace CounterBlock
 		private uint 	_id;
 		private int 	_hp_current;
 		private int 	_hp_max;
+		private Vector3 _position;
 
 		//동작정보
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
-		private float 	_timeDelta; 	//시간변화량
+		private float 	_timeDelta = 0f; 	//시간변화량
 
 		//상태정보
 		private eState 	_state_current = eState.None;
@@ -151,9 +151,28 @@ namespace CounterBlock
 		private eSubState _giveState_current = eSubState.None; 		//준상태
 		private eSubState _receiveState_current = eSubState.None; 	//받은상태 
 
+		//판정
 		private Judgment _judgment = new Judgment();
 
+		//충돌모형
+		private float _collider_sphere_radius;
 
+		//====================================
+
+		public Character()
+		{
+			_hp_current = 10;
+			_hp_max = 10;
+			_position = Vector3.zero;
+
+			_collider_sphere_radius = 2f;  //임시로 넣어둔값
+
+		}
+
+		public void Init()
+		{
+			this.Idle ();
+		}
 
 		//====================================
 
@@ -171,6 +190,21 @@ namespace CounterBlock
 		public uint GetID()
 		{
 			return this._id;
+		}
+
+		public Vector3 GetPosition()
+		{
+			return _position;
+		}
+
+		public void SetPosition(Vector3 pos)
+		{
+			_position = pos;
+		}
+
+		public float GetCollider_Sphere_Radius()
+		{
+			return _collider_sphere_radius;
 		}
 
 		public float GetTimeDelta()
@@ -263,21 +297,7 @@ namespace CounterBlock
 			this._judgment.state_current = state;
 		}
 
-		//====================================
 
-		public Character()
-		{
-			_hp_current = 10;
-			_hp_max = 10;
-
-			_timeDelta = 0f;
-
-		}
-
-		public void Init()
-		{
-			this.Idle ();
-		}
 
 		public float GetRunningTime()
 		{
@@ -430,12 +450,34 @@ namespace CounterBlock
 			return false;
 		}
 
+		public bool Collision_Sphere(Vector3 des_pos , float des_radius)
+		{
+			//두원의 반지름을 더한후 제곱해 준다. 
+			float sqr_standard_value = (this._collider_sphere_radius + des_radius) * (this._collider_sphere_radius + des_radius);
+
+			//두원의 중점 사이의 거리를 구한다. 피타고라스의 정리를 이용 , 제곱을 벗기지 않는다.
+			float sqr_dis_between = Vector3.SqrMagnitude(this._position - des_pos);
+
+			if (sqr_standard_value > sqr_dis_between)
+				return true; //두원이 겹쳐짐 
+			if (sqr_standard_value == sqr_dis_between)
+				return true; //두원이 겹치지 않게 붙어 있음 
+			if (sqr_standard_value < sqr_dis_between)
+				return false; //두원이 겹쳐 있지 않음
+
+			return false;
+		}
+
 		public void Judge(Character dst)
 		{
 
+
+			//두 원의 충돌
+			//this.Collision_Sphere(dst.GetPosition(), dst.GetCollider_Sphere_Radius());
+
+
 			//if(1 == this.GetID())
 			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
-
 
 			switch (this.GetJudgmentState()) 
 			{
