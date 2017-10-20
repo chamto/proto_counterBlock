@@ -16,6 +16,39 @@ using UnityEngine.UI;
 
 namespace CounterBlock
 {
+	public class Util
+	{
+		static public bool Collision_Sphere(Vector3 src_pos , float src_radius , Vector3 des_pos , float des_radius)
+		{
+			//두원의 반지름을 더한후 제곱해 준다. 
+			float sqr_standard_value = (src_radius + des_radius) * (src_radius + des_radius);
+
+			//두원의 중점 사이의 거리를 구한다. 피타고라스의 정리를 이용 , 제곱을 벗기지 않는다.
+			float sqr_dis_between = Vector3.SqrMagnitude(src_pos - des_pos);
+
+			if (sqr_standard_value > sqr_dis_between)
+				return true; //두원이 겹쳐짐 
+			if (sqr_standard_value == sqr_dis_between)
+				return true; //두원이 겹치지 않게 붙어 있음 
+			if (sqr_standard_value < sqr_dis_between)
+				return false; //두원이 겹쳐 있지 않음
+
+			return false;
+		}	
+
+
+		//value 보다 target 값이 작으면 True 를 반환한다.
+		static public bool Distance_LessThan(float Value , Vector3 target )
+		{
+			if(Mathf.Exp(Value * 0.5f) >=  Vector3.SqrMagnitude( target ))
+			{
+				return true;
+			}
+
+			return false;
+		}
+	}
+
 	//자취의 모양
 	public enum eTraceShape
 	{
@@ -41,12 +74,18 @@ namespace CounterBlock
 		public float rigidTime;		//동작 완료후 경직 시간
 		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
 		public float openTime_1; 
-		public float cloggedTime_0;		//막히는 시간 : 0(시작) , 1(끝)  
+		public float cloggedTime_0;	//막히는 시간 : 0(시작) , 1(끝)  
 		public float cloggedTime_1;		
 
-		public float attack_range_0;	//공격 범위 최소 
-		public float attack_range_1;	//공격 범위 최대
-		public eTraceShape attack_shape; //공격모양 : 종 , 횡 , 찌르기 , 그외
+		//무기 움직임 정보 
+		public eTraceShape 	attack_shape; 		//공격모양 : 종 , 횡 , 찌르기 , 던지기
+		//	=== 범위형 움직임 === : 종,횡,찌르기,던지기 (무기 위치가 기준이 되는 범위이다)
+		public float 		plus_range_0;		//더해지는 범위 최소 
+		public float 		plus_range_1;		//더해지는 범위 최대
+		//  === 이동형 움직임 === : 찌르기,던지기
+		public float 		travel_distance;	//무기 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
+		public float 		velocity;			//무기 속도
+
 
 		public  Behavior()
 		{
@@ -59,9 +98,46 @@ namespace CounterBlock
 			openTime_1 = 0f;
 			cloggedTime_0 = 0f;
 			cloggedTime_1 = 0f;
-			attack_range_0 = 0f;
-			attack_range_1 = 0f;
+			plus_range_0 = 0f;
+			plus_range_1 = 0f;
 			attack_shape = eTraceShape.None;
+			travel_distance = 14f; //임시값
+
+		}
+
+		public void Calc_Velocity()
+		{
+			//t * s = d
+			//s = d/t
+			this.velocity = travel_distance / runningTime;
+
+		}
+
+	}
+
+	public struct Weapon
+	{
+		public enum eKind
+		{
+			None,
+			Sword,	//칼 
+			Lance,	//기사창
+			Max,
+		}
+			
+		public eKind 	kind;				//무기종류 
+		//public Vector3  position;			//무기위치
+		public float 	attack_range_min;	//최소 사거리
+		public float 	attack_range_max; 	//최대 사거리 
+		public float 	collider_sphere_radius;
+
+		public void Default_Sword()
+		{
+			kind = eKind.Sword;
+			//position = Vector3.zero;
+			attack_range_min = 4f;
+			attack_range_max = 14f;
+			collider_sphere_radius = 2f;
 		}
 	}
 
@@ -140,6 +216,9 @@ namespace CounterBlock
 		private int 	_hp_max;
 		private Vector3 _position;
 
+		//무기정보 
+		private Weapon 	_weapon;
+
 		//동작정보
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
@@ -165,7 +244,10 @@ namespace CounterBlock
 			_hp_max = 10;
 			_position = Vector3.zero;
 
+			_weapon.Default_Sword ();
+
 			_collider_sphere_radius = 2f;  //임시로 넣어둔값
+
 
 		}
 
@@ -181,6 +263,19 @@ namespace CounterBlock
 		public SkillBook ref_skillBook { get{ return CSingleton<SkillBook>.Instance; }}
 
 		//====================================
+
+		public Weapon weapon
+		{
+			get{ return _weapon; }
+		}
+
+		public Vector3 GetWeaponPosition()
+		{
+			Vector3 wp = _position;
+			wp.x += _timeDelta * _behavior.velocity;
+			return wp; 
+
+		}
 
 		public void SetID(uint id)
 		{
@@ -252,6 +347,16 @@ namespace CounterBlock
 			_receiveState_current = setSubState;
 		}
 
+		public float GetRangeMin()
+		{
+			return _behavior.plus_range_0 + _weapon.attack_range_min;
+		}
+
+		public float GetRangeMax()
+		{
+			return _behavior.plus_range_1 + _weapon.attack_range_max;
+		}
+
 		public Skill.eName CurrentSkillKind()
 		{
 			if(null != _skill_current)
@@ -320,6 +425,17 @@ namespace CounterBlock
 			if (eState.Start == _state_current || eState.Running == _state_current) 
 			{
 				if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool Valid_CloggedTime()
+		{
+			if (eState.Start == _state_current || eState.Running == _state_current) 
+			{
+				if (_behavior.cloggedTime_0 <= _timeDelta && _timeDelta <= _behavior.cloggedTime_1)
 					return true;
 			}
 
@@ -425,7 +541,7 @@ namespace CounterBlock
 
 		public bool IsStart_AttackDamage()
 		{
-			if (Judgment.eState.AttackDamage == this.GetJudgmentState () &&
+			if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () &&
 			   eSubState.Start == CurrentGiveState ())
 				return true;
 
@@ -434,7 +550,7 @@ namespace CounterBlock
 
 		public bool IsStart_BlockSucceed()
 		{
-			if (Judgment.eState.BlockSucceed == this.GetJudgmentState () &&
+			if (Judgment.eState.Block_Succeed == this.GetJudgmentState () &&
 				eSubState.Start == CurrentGiveState ())
 				return true;
 
@@ -450,38 +566,147 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool Collision_Sphere(Vector3 des_pos , float des_radius)
+
+		//칼죽이기 가능한 거리인가?
+		// * 내무기 범위와 상대방 무기위치로 판단한다.
+		//의도 : 정확한 충돌처리를 위한 것이 아니다. 직선거리로 판정을 하기 위함이다.  
+		public bool IsPossibleRange_Clog_VS(Character dst)
 		{
-			//두원의 반지름을 더한후 제곱해 준다. 
-			float sqr_standard_value = (this._collider_sphere_radius + des_radius) * (this._collider_sphere_radius + des_radius);
+			//작은원 <= 대상 <= 큰원
+			if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+			{	//작은원 보다 크고, 
+				if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+				{	//큰원 보다 작은 크기 
 
-			//두원의 중점 사이의 거리를 구한다. 피타고라스의 정리를 이용 , 제곱을 벗기지 않는다.
-			float sqr_dis_between = Vector3.SqrMagnitude(this._position - des_pos);
-
-			if (sqr_standard_value > sqr_dis_between)
-				return true; //두원이 겹쳐짐 
-			if (sqr_standard_value == sqr_dis_between)
-				return true; //두원이 겹치지 않게 붙어 있음 
-			if (sqr_standard_value < sqr_dis_between)
-				return false; //두원이 겹쳐 있지 않음
+					return true;
+				}
+			}
 
 			return false;
 		}
 
+
+		//* 내무기 범위와 상대방 위치로 판단한다.
+		public bool Collision_Weaphon_Attack_VS(Character dst)
+		{
+			
+			switch (this._behavior.attack_shape) 
+			{
+			case eTraceShape.Horizon: //todo : 추후 필요시 구현
+			case eTraceShape.Vertical:
+				{
+					//작은원 <= 대상 <= 큰원
+					if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
+					{	//작은원 보다 크고, 
+						if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
+						{	//큰원 보다 작은 크기 
+
+							return true;
+						}
+					}
+				}
+				break;
+			case eTraceShape.Straight:
+				{
+					//스킬 시간 진행에 따른 무기 위치값을 구해야 한다
+				}
+				break;
+			}
+
+			return false;
+		}
+
+		public void Test_Judge(Character dst)
+		{
+			//----------------------------------
+			Judgment.eState jState = Judgment.eState.None;
+			if (true == this.IsSkill_Attack () && true == this.Valid_ScopeTime ())
+			{
+
+
+				//if (true == this.Collision_Weaphon_VS (dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
+				{
+					//jState = Judgment.eState.Attack_Succeed;
+					//jState = Judgment.eState.Block_Succeed;
+					//jState = Judgment.eState.Damaged;
+				}
+
+
+			}
+
+
+			const float Max_Attack_Range = 14f; //최대 공격 가능 거리 (임시)
+			//============================
+			//Attack_Vs_Attack
+			//============================
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Attack () ) 
+			{
+
+				//if (Util.Distance_LessThan (this.GetPosition () - dst.GetPosition (), Max_Attack_Range)) 
+				//{
+				//}
+
+
+				if ( eState.Start == this.CurrentState () && true == dst.Valid_CloggedTime ()) 
+				{
+					jState = Judgment.eState.Attack_Weapon;
+				}
+				if ( eState.Start == dst.CurrentState () && true == this.Valid_CloggedTime ()) 
+				{
+					jState = Judgment.eState.Attack_Clogged;
+				}
+				if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
+				{
+					jState = Judgment.eState.Attack_Withstand;
+				}
+				if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime()) 
+				{
+					//if (true == this.Collision_Weaphon_VS (dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
+					{
+						jState = Judgment.eState.Attack_Succeed;
+					}
+
+				}
+
+			}
+
+			//============================
+			//Attack_Vs_Block
+			//============================
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Block ()) 
+			{
+			}
+
+			//============================
+			//Attack_Vs_None
+			//============================
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_None ()) 
+			{
+			}
+
+			//============================
+			//Block_Vs_Attack
+			//============================
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Block ()) 
+			{
+			}
+
+			//============================
+			//None_Vs_Attack
+			//============================
+
+			//----------------------------------
+		}
+
 		public void Judge(Character dst)
 		{
-
-
-			//두 원의 충돌
-			//this.Collision_Sphere(dst.GetPosition(), dst.GetCollider_Sphere_Radius());
-
-
+			
 			//if(1 == this.GetID())
 			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
 
 			switch (this.GetJudgmentState()) 
 			{
-			case Judgment.eState.AttackDamage:
+			case Judgment.eState.Attack_Succeed:
 				{
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
@@ -556,8 +781,8 @@ namespace CounterBlock
 					{
 					case eSubState.None:
 						{
-							if (Judgment.eState.AttackDamage == this.GetJudgmentState () ||
-								Judgment.eState.BlockSucceed == this.GetJudgmentState()) 
+							if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () ||
+								Judgment.eState.Block_Succeed == this.GetJudgmentState()) 
 							{
 								this.SetGiveState (eSubState.Start);
 							}
@@ -774,21 +999,18 @@ namespace CounterBlock
 		{
 			None = 0,
 
-			//AttackDamage_Start,
-			AttackDamage,
-			AttackBlocking,
 
-			//AttackSucceed, //상대를 맞춘 경우
-			//AttackFail, //상대의 방어 또는 빠른공격에 막힌 경우
-			AttackIdle, //공격 헛 동작 : 멀리서 공격한 경우
+			Attack_Succeed, 	//공격 성공 
+			Attack_Weapon,		//상대 무기를 공격 :  상대는 부분막힘 상태가 된다. 
+			Attack_Clogged, 	//공격 부분막힘 : 반격가능  
+			Attack_Withstand,	//공격 버티기  : 칼이 서로 붙어 힘겨루기 하는 경우 , 서로 동시에 같은 공격한 경우 
+			Attack_Blocked, 	//공격 완전막힘 
+			Attack_Idle, 		//공격 헛 동작 : 멀리서 공격한 경우
 
-			//BlockSucceed_Start,
-			BlockSucceed,
-			//BlockFail,
-			BlockIdle, //방어 헛 동작
+			Block_Succeed,
+			Block_Idle, 		//방어 헛 동작
 
-			//Damaged_Start,
-			Damaged, //피해입음
+			Damaged, 			//피해입음
 
 			Max
 		}
@@ -820,9 +1042,6 @@ namespace CounterBlock
 			//판정 : 타점이 신체범위에 들어 왔는가?
 
 
-
-
-
 			//============================
 			//Attack_Vs_Attack
 			//============================
@@ -831,24 +1050,24 @@ namespace CounterBlock
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					
-					result.first = eState.AttackBlocking;
-					result.second = eState.AttackBlocking;
+					result.first = eState.Attack_Blocked;
+					result.second = eState.Attack_Blocked;
 
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackDamage;
+					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.Damaged;
-					result.second = eState.AttackDamage;
+					result.second = eState.Attack_Succeed;
 				}
 				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackIdle;
-					result.second = eState.AttackIdle;
+					result.first = eState.Attack_Idle;
+					result.second = eState.Attack_Idle;
 				}
 
 			}
@@ -860,23 +1079,23 @@ namespace CounterBlock
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackBlocking;
-					result.second = eState.BlockSucceed;
+					result.first = eState.Attack_Blocked;
+					result.second = eState.Block_Succeed;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackDamage;
+					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackIdle;
-					result.second = eState.BlockIdle;
+					result.first = eState.Attack_Idle;
+					result.second = eState.Block_Idle;
 				}
 				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.AttackIdle;
-					result.second = eState.BlockIdle;
+					result.first = eState.Attack_Idle;
+					result.second = eState.Block_Idle;
 				}
 			}
 
@@ -887,23 +1106,23 @@ namespace CounterBlock
 			{
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.BlockSucceed;
-					result.second = eState.AttackBlocking;
+					result.first = eState.Block_Succeed;
+					result.second = eState.Attack_Blocked;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.BlockIdle;
-					result.second = eState.AttackIdle;
+					result.first = eState.Block_Idle;
+					result.second = eState.Attack_Idle;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
 				{
 					result.first = eState.Damaged;
-					result.second = eState.AttackDamage;
+					result.second = eState.Attack_Succeed;
 				}
 				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
 				{
-					result.first = eState.BlockIdle;
-					result.second = eState.AttackIdle;
+					result.first = eState.Block_Idle;
+					result.second = eState.Attack_Idle;
 				}
 
 			}
@@ -913,19 +1132,19 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackDamage;
+					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackDamage;
+					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackIdle;
+					result.first = eState.Attack_Idle;
 					result.second = eState.None;
 				}
 				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
-					result.first = eState.AttackIdle;
+					result.first = eState.Attack_Idle;
 					result.second = eState.None;
 				}
 			}
@@ -937,19 +1156,19 @@ namespace CounterBlock
 			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
 				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.Damaged;
-					result.second = eState.AttackDamage;
+					result.second = eState.Attack_Succeed;
 				}
 				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackIdle;
+					result.second = eState.Attack_Idle;
 				}
 				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
 					result.first = eState.Damaged;
-					result.second = eState.AttackDamage;
+					result.second = eState.Attack_Succeed;
 				}
 				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
 					result.first = eState.None;
-					result.second = eState.AttackIdle;
+					result.second = eState.Attack_Idle;
 				}
 			}
 
@@ -1133,8 +1352,8 @@ namespace CounterBlock
 			bhvo.cloggedTime_0 = 0.2f;
 			bhvo.cloggedTime_1 = 0.6f;
 			bhvo.attack_shape = eTraceShape.Straight;
-			bhvo.attack_range_0 = 6f;
-			bhvo.attack_range_1 = 11f;
+			bhvo.plus_range_0 = 2f;
+			bhvo.plus_range_1 = 2f;
 			skinfo.Add (bhvo);
 
 			return skinfo;
