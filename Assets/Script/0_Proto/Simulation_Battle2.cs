@@ -1354,6 +1354,7 @@ namespace CounterBlock
 			bhvo.attack_shape = eTraceShape.Straight;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
+			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
 			return skinfo;
