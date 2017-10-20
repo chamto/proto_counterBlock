@@ -573,19 +573,20 @@ namespace CounterBlock
 		public bool IsPossibleRange_Clog_VS(Character dst)
 		{
 			//작은원 <= 대상 <= 큰원
-			if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
-			{	//작은원 보다 크고, 
-				if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
-				{	//큰원 보다 작은 크기 
-
+			if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+			{	//큰원 보다 작고,
+				if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+				{	//작은원 보다 크다. 
 					return true;
 				}
+
 			}
+
 
 			return false;
 		}
 
-
+		//공격이 상대방에 맞았나?
 		//* 내무기 범위와 상대방 위치로 판단한다.
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
@@ -596,14 +597,14 @@ namespace CounterBlock
 			case eTraceShape.Vertical:
 				{
 					//작은원 <= 대상 <= 큰원
-					if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
-					{	//작은원 보다 크고, 
-						if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
-						{	//큰원 보다 작은 크기 
-
+					if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
+					{	//큰원 보다 작고,
+						if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
+						{	//작은원 보다 크다. 
 							return true;
 						}
 					}
+
 				}
 				break;
 			case eTraceShape.Straight:
