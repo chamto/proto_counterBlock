@@ -66,6 +66,8 @@ namespace CounterBlock
 		public const float MAX_OPEN_TIME = 10f;
 		public const float MIN_OPEN_TIME = 0f;
 
+		public const float DEFAULT_DISTANCE = 14f;
+
 		//===================================
 
 		public float runningTime;	//동작 전체 시간 
@@ -77,14 +79,17 @@ namespace CounterBlock
 		public float cloggedTime_0;	//막히는 시간 : 0(시작) , 1(끝)  
 		public float cloggedTime_1;		
 
+
 		//무기 움직임 정보 
 		public eTraceShape 	attack_shape; 		//공격모양 : 종 , 횡 , 찌르기 , 던지기
 		//	=== 범위형 움직임 === : 종,횡,찌르기,던지기 (무기 위치가 기준이 되는 범위이다)
 		public float 		plus_range_0;		//더해지는 범위 최소 
 		public float 		plus_range_1;		//더해지는 범위 최대
 		//  === 이동형 움직임 === : 찌르기,던지기
-		public float 		travel_distance;	//무기 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
-		public float 		velocity;			//무기 속도
+		public float 		distance_travel;	//무기 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
+		public float 		distance_maxTime;  //최대거리가 되는 시간 : 삼각형 모형
+		public float 		velocity_up;		//무기 상승 속도
+		public float 		velocity_down;		//무기 하강 속도	
 
 
 		public  Behavior()
@@ -101,7 +106,10 @@ namespace CounterBlock
 			plus_range_0 = 0f;
 			plus_range_1 = 0f;
 			attack_shape = eTraceShape.None;
-			travel_distance = 14f; //임시값
+			distance_travel = DEFAULT_DISTANCE;
+			distance_maxTime = 0f;
+			velocity_up = 0f;
+			velocity_down = 0f;
 
 		}
 
@@ -109,8 +117,23 @@ namespace CounterBlock
 		{
 			//t * s = d
 			//s = d/t
-			this.velocity = travel_distance / runningTime;
+			this.velocity_up = distance_travel / distance_maxTime;
+			this.velocity_down = distance_travel / (runningTime - distance_maxTime);
+		}
 
+		public float CurrentDistance(float currentTime)
+		{
+			//러닝타임 보다 더 큰 값이 들어오면 사용오류임
+			if (runningTime < currentTime)
+				return 0f; 
+			
+			if (currentTime <= distance_maxTime) 
+			{
+				return this.velocity_up * currentTime;
+			}
+
+			//if(distance_maxTime < currentTime)
+			return  distance_travel - (this.velocity_down * currentTime);
 		}
 
 	}
@@ -272,7 +295,7 @@ namespace CounterBlock
 		public Vector3 GetWeaponPosition()
 		{
 			Vector3 wp = _position;
-			wp.x += _timeDelta * _behavior.velocity;
+			wp.x += _behavior.CurrentDistance(_timeDelta);
 			return wp; 
 
 		}
@@ -1355,6 +1378,8 @@ namespace CounterBlock
 			bhvo.attack_shape = eTraceShape.Straight;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
+			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
+			bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
