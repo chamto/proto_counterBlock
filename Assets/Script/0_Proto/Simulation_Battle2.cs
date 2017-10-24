@@ -610,7 +610,7 @@ namespace CounterBlock
 		}
 
 		//공격이 상대방에 맞았나?
-		//* 내무기 범위와 상대방 위치로 판단한다.
+		//* 내무기 범위 또는 위치로 상대방 위치로 판단한다.
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
 			
@@ -618,7 +618,8 @@ namespace CounterBlock
 			{
 			case eTraceShape.Horizon: //todo : 추후 필요시 구현
 			case eTraceShape.Vertical:
-				{
+				{	//***** 내무기 범위 vs 상대방 위치 *****
+					
 					//작은원 <= 대상 <= 큰원
 					if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
 					{	//큰원 보다 작고,
@@ -631,8 +632,13 @@ namespace CounterBlock
 				}
 				break;
 			case eTraceShape.Straight:
-				{
-					//스킬 시간 진행에 따른 무기 위치값을 구해야 한다
+				{	//***** 내무기 위치 vs 상대방 위치 *****
+
+					if (true == Util.Collision_Sphere (this.GetWeaponPosition(), this.weapon.collider_sphere_radius, dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
+					{
+						return true;
+					}
+
 				}
 				break;
 			}
@@ -644,81 +650,123 @@ namespace CounterBlock
 		{
 			//----------------------------------
 			Judgment.eState jState = Judgment.eState.None;
-			if (true == this.IsSkill_Attack () && true == this.Valid_ScopeTime ())
-			{
 
-
-				//if (true == this.Collision_Weaphon_VS (dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
-				{
-					//jState = Judgment.eState.Attack_Succeed;
-					//jState = Judgment.eState.Block_Succeed;
-					//jState = Judgment.eState.Damaged;
-				}
-
-
-			}
-
-
-			const float Max_Attack_Range = 14f; //최대 공격 가능 거리 (임시)
 			//============================
 			//Attack_Vs_Attack
 			//============================
 			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Attack () ) 
 			{
-
-				//if (Util.Distance_LessThan (this.GetPosition () - dst.GetPosition (), Max_Attack_Range)) 
-				//{
-				//}
-
-
-				if ( eState.Start == this.CurrentState () && true == dst.Valid_CloggedTime ()) 
-				{
-					jState = Judgment.eState.Attack_Weapon;
-				}
-				if ( eState.Start == dst.CurrentState () && true == this.Valid_CloggedTime ()) 
-				{
-					jState = Judgment.eState.Attack_Clogged;
-				}
-				if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
-				{
-					jState = Judgment.eState.Attack_Withstand;
-				}
+				
 				if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime()) 
-				{
-					//if (true == this.Collision_Weaphon_VS (dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
+				{	//먼저공격 나
+					if(true == this.Collision_Weaphon_Attack_VS(dst))
 					{
 						jState = Judgment.eState.Attack_Succeed;
 					}
-
+				}
+				if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
+				{	//먼저공격 상대
+					if(true == dst.Collision_Weaphon_Attack_VS(this))
+					{
+						jState = Judgment.eState.Damaged;
+					}
+				}
+				else if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
+				{	//칼겨루기
+					if(this.IsPossibleRange_Clog_VS(dst))
+					{
+						jState = Judgment.eState.Attack_Withstand;		
+					}
+				}
+				else if ( eState.Start == this.CurrentState () && true == dst.Valid_CloggedTime ()) 
+				{	//칼죽이기
+					if(this.IsPossibleRange_Clog_VS(dst))
+					{
+						jState = Judgment.eState.Attack_Weapon;		
+					}
+				}
+				else if ( eState.Start == dst.CurrentState () && true == this.Valid_CloggedTime ()) 
+				{	//칼죽이기 당함  
+					if(dst.IsPossibleRange_Clog_VS(this))
+					{
+						jState = Judgment.eState.Attack_Clogged;		
+					}
 				}
 
 			}
+
+			//!!! 반대상태 연결 !!!
+			//Attack_Succeed <==> Damaged
+			//Attack_Blocked <==> Block_Succeed
+			//Attack_Weapon <==> Attack_Clogged
+			//Attack_Withstand <==> Attack_Withstand
 
 			//============================
 			//Attack_Vs_Block
 			//============================
 			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Block ()) 
 			{
-			}
-
-			//============================
-			//Attack_Vs_None
-			//============================
-			if (true == this.IsSkill_Attack () && true == dst.IsSkill_None ()) 
-			{
+				if (true == this.Collision_Weaphon_Attack_VS (dst)) 
+				{
+					if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					{
+						jState = Judgment.eState.Attack_Blocked;
+					}
+					if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+					{
+						jState = Judgment.eState.Attack_Succeed;
+					}
+				}
 			}
 
 			//============================
 			//Block_Vs_Attack
 			//============================
-			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Block ()) 
+			if (true == this.IsSkill_Block () && true == dst.IsSkill_Attack ()) 
 			{
-			}
+				if (true == dst.Collision_Weaphon_Attack_VS (this)) 
+				{
+					if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					{
+						jState = Judgment.eState.Block_Succeed;
+					}
+					if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					{
+						jState = Judgment.eState.Damaged;
+					}
+				}
 
+			}
+			//============================
+			//Attack_Vs_None
+			//============================
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_None ()) 
+			{
+				if (true == this.Collision_Weaphon_Attack_VS (dst)) 
+				{
+					if (true == this.Valid_ScopeTime () ) 
+					{
+						jState = Judgment.eState.Attack_Succeed;
+					}
+				}
+
+			}
 			//============================
 			//None_Vs_Attack
 			//============================
+			if (true == this.IsSkill_None () && true == dst.IsSkill_Attack ()) 
+			{
+				if (true == dst.Collision_Weaphon_Attack_VS (this)) 
+				{
+					if (true == dst.Valid_ScopeTime () ) 
+					{
+						jState = Judgment.eState.Damaged;
+					}
+				}
 
+			}
+
+			this.SetJudgmentState (jState);
 			//----------------------------------
 		}
 
@@ -966,10 +1014,13 @@ namespace CounterBlock
 					//========================================
 
 					//상태갱신
-					_result_ = Judgment.Judge(_src_, _dst_);
-					_src_.SetJudgmentState (_result_.first);
-					_dst_.SetJudgmentState (_result_.second);
+					//_result_ = Judgment.Judge(_src_, _dst_);
+					//_src_.SetJudgmentState (_result_.first);
+					//_dst_.SetJudgmentState (_result_.second);
+					_src_.Test_Judge(_dst_); //chamto test
+					_dst_.Test_Judge(_src_); 
 
+					DebugWide.LogGreen ("1P: "+_src_.GetJudgmentState() + "  2P: " + _dst_.GetJudgmentState()); //chamto test
 					//DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
 					//DebugWide.LogGreen (_result_.first + "   " + _src_.GetTimeDelta() + " , " + _result_.second + "  " + _dst_.GetTimeDelta()); //chamto test
 
