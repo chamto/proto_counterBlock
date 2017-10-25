@@ -2044,8 +2044,13 @@ namespace CounterBlock
 		public Transform _effect_Texts { get; set; }
 		public Dictionary<eEffect,InitialData> _effects { get; set; }
 
+		public Character data
+		{
+			get;
+			set;
+		}
+
 		//[SerializeField] 
-		public int _siblingIndex = 0; 
 		public bool _apply = false;
 
 
@@ -2058,10 +2063,15 @@ namespace CounterBlock
 
 		//===============================================================
 
+
+		public UI_CharacterCard()
+		{
+			this.data = null;
+		}
+
 		void Start()
 		{
-			_siblingIndex = this.transform.GetSiblingIndex ();
-
+			
 
 		}
 
@@ -2079,11 +2089,6 @@ namespace CounterBlock
 			}
 
 		}
-
-//		public void Card_Attack(float maxSecond)
-//		{
-//			//_action_ani.Start_Card_Move (_action [2].transform, 0, 30f, maxSecond); //chamto test
-//		}
 
 		public void TurnLeft()
 		{
@@ -2178,13 +2183,15 @@ namespace CounterBlock
 
 			if (true == _apply) 
 			{
-				this.transform.SetSiblingIndex (_siblingIndex);
-				_siblingIndex = this.transform.GetSiblingIndex ();
+				//----------------------------------------
 
+
+
+				//----------------------------------------
 				_apply = false;
 			}
 
-			//_action_ani.Update ();
+
 		}
 
 
