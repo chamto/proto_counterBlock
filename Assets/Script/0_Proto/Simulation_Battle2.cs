@@ -193,6 +193,14 @@ namespace CounterBlock
 			Max
 		}
 
+		public enum eKind
+		{
+			None,
+			Seonbi,
+			Biking,
+			Max
+		};
+
 		static public string StateToString (Character.eState state)
 		{
 			switch (state) 
@@ -238,6 +246,7 @@ namespace CounterBlock
 		private int 	_hp_current;
 		private int 	_hp_max;
 		private Vector3 _position;
+		private eKind	_kind;
 
 		//무기정보 
 		private Weapon 	_weapon;
@@ -266,6 +275,7 @@ namespace CounterBlock
 			_hp_current = 10;
 			_hp_max = 10;
 			_position = Vector3.zero;
+			_kind = eKind.Biking;
 
 			_weapon.Default_Sword ();
 
@@ -285,12 +295,19 @@ namespace CounterBlock
 
 		public SkillBook ref_skillBook { get{ return CSingleton<SkillBook>.Instance; }}
 
-		//====================================
+		public eKind kind 
+		{
+			get { return _kind; }
+			set { _kind = value; }
+		}
 
 		public Weapon weapon
 		{
 			get{ return _weapon; }
 		}
+
+		//====================================
+
 
 		public Vector3 GetWeaponPosition()
 		{
@@ -1979,14 +1996,14 @@ namespace CounterBlock
 			_rotation = spr.transform.localRotation;
 		}
 
-		public void SelectAction(UI_CharacterCard.eKind charKind ,ResourceManager.eActionKind actionKind)
+		public void SelectAction(Character.eKind kind ,ResourceManager.eActionKind actionKind)
 		{
-			switch (charKind) 
+			switch (kind) 
 			{
-			case UI_CharacterCard.eKind.Seonbi:
+			case Character.eKind.Seonbi:
 				sprite = Single.resource.GetAction_Seonbi (actionKind);
 				break;
-			case UI_CharacterCard.eKind.Biking:
+			case Character.eKind.Biking:
 				sprite = Single.resource.GetAction_Biking (actionKind);
 				break;
 			}
@@ -2010,15 +2027,7 @@ namespace CounterBlock
 
 	public class UI_CharacterCard : MonoBehaviour
 	{
-
-		public enum eKind
-		{
-			None,
-			Seonbi,
-			Biking,
-			Max
-		};
-
+		
 		public enum eEffect
 		{
 			None,
@@ -2031,7 +2040,6 @@ namespace CounterBlock
 
 
 		public uint _id = 0;
-		public eKind _kind = eKind.None;
 
 		public TextMesh _text_explanation { get; set; }
 		public TextMesh _text_time { get; set; }
@@ -2044,22 +2052,17 @@ namespace CounterBlock
 		public Transform _effect_Texts { get; set; }
 		public Dictionary<eEffect,InitialData> _effects { get; set; }
 
+		//[SerializeField] 
+		public bool _apply = false;
+
+
+		//===============================================================
+
 		public Character data
 		{
 			get;
 			set;
 		}
-
-		//[SerializeField] 
-		public bool _apply = false;
-
-
-
-		//===============================================================
-
-
-
-
 
 		//===============================================================
 
@@ -2074,6 +2077,56 @@ namespace CounterBlock
 			
 
 		}
+
+
+		static public UI_CharacterCard Create(string name)
+		{
+			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
+
+			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
+
+			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
+			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
+			ui._text_time = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_time");
+			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+
+			//action
+			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
+			ui._actions = new List<InitialData> ();
+			//ui._action_originalPos = new List<Vector3> ();
+			const int MAX_ACTION_CARD = 3;
+			SpriteRenderer img = null;
+			InitialData iData = null;
+			for (int i = 0; i < MAX_ACTION_CARD; i++) 
+			{
+				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
+				iData = new InitialData (img);
+				ui._actions.Add (iData);
+				//ui._action_originalPos.Add (img.transform.localPosition);
+			}
+
+			//effect
+			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
+			ui._effect_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
+			ui._effects = new Dictionary<eEffect, InitialData> ();
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Empty,iData);
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit");
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Hit,iData);
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Block,iData);
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Text,iData);
+
+
+			return ui;
+		}
+
+
 
 		public void RevertData_All()
 		{
@@ -2126,61 +2179,38 @@ namespace CounterBlock
 			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
 
-		public void SetCharacter(eKind kind)
+		public void SetCharacter(Character.eKind kind)
 		{
-			_kind = kind;
+			data.kind = kind;
 		}
 
-		static public UI_CharacterCard Create(string name)
+		public void SetPosition(Vector3 pos)
 		{
-			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
 
-			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
+			data.SetPosition (pos);
 
-			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
-			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
-			ui._text_time = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_time");
-			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+			transform.localPosition = pos;
 
-			//action
-			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
-			ui._actions = new List<InitialData> ();
-			//ui._action_originalPos = new List<Vector3> ();
-			const int MAX_ACTION_CARD = 3;
-			SpriteRenderer img = null;
-			InitialData iData = null;
-			for (int i = 0; i < MAX_ACTION_CARD; i++) 
+		}
+
+
+		public Sprite GetAction(Character.eKind ekind ,ResourceManager.eActionKind actionKind)
+		{
+			switch (ekind) 
 			{
-				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
-				iData = new InitialData (img);
-				ui._actions.Add (iData);
-				//ui._action_originalPos.Add (img.transform.localPosition);
+			case Character.eKind.Seonbi:
+				return Single.resource.GetAction_Seonbi (actionKind);
+			case Character.eKind.Biking:
+				return Single.resource.GetAction_Biking (actionKind);
 			}
 
-			//effect
-			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
-			ui._effect_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
-			ui._effects = new Dictionary<eEffect, InitialData> ();
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
-			iData = new InitialData (img);
-			ui._effects.Add (eEffect.Empty,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit");
-			iData = new InitialData (img);
-			ui._effects.Add (eEffect.Hit,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
-			iData = new InitialData (img);
-			ui._effects.Add (eEffect.Block,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
-			iData = new InitialData (img);
-			ui._effects.Add (eEffect.Text,iData);
-
-
-			return ui;
+			return null;
 		}
 
-		void Update()
-		{
+		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
 
+		public void Update_UI()
+		{
 			if (true == _apply) 
 			{
 				//----------------------------------------
@@ -2191,146 +2221,53 @@ namespace CounterBlock
 				_apply = false;
 			}
 
-
+			this.Update_UI_Explan ();
+			this.Update_UI_Card ();
+			this.Update_UI_HPBAR ();
+			this.Update_UI_Effect ();
 		}
 
-
-	}
-
-	public struct CharDataBundle
-	{
-		public Character 		_data;
-		public UI_CharacterCard _ui;
-		public GameObject 		_gameObject;
-	}
-
-	public class UI_Battle : MonoBehaviour
-	{
-
-		private Transform _1P_start = null;
-		private Transform _2P_start = null;
-
-		private Dictionary<uint, UI_CharacterCard> _characters = new Dictionary<uint, UI_CharacterCard> ();
-
-		public const int START_POINT_LEFT = 1;
-		public const int START_POINT_RIGHT = 2;
-		//=================
-
-		
-		public void Init()
+		private void Update_UI_HPBAR()
 		{
-			//this.transform.SetParent (Single.game_root, false);
-
-			string parentPath = Single.hierarchy.GetTransformFullPath (Single.game_root);
-			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
-			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
-		
-		}
-
-		public UI_CharacterCard GetCharacter(uint idx)
-		{
-			return _characters [idx];
-		}
-
-		public UI_CharacterCard AddCharacter(UI_CharacterCard.eKind kind, uint id)
-		{
-			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
-			card._kind = kind;
-			card._id = id;
-			_characters.Add (id, card);
-
-			return card;
-		}
-
-
-
-		public void SetStartPoint(uint id, float delta_x , int pointNumber)
-		{
-			
-
-			UI_CharacterCard card = _characters [id];
-			Vector3 pos = Vector3.zero;
-
-			switch (pointNumber) 
-			{
-			case START_POINT_LEFT:
-				pos = _1P_start.localPosition;
-				card.TurnRight ();
-				break;
-			case START_POINT_RIGHT:
-				pos = _2P_start.localPosition;
-				card.TurnLeft ();
-				break;
-			}
-
-
-			pos.x += delta_x;
-			card.transform.localPosition = pos;
-
-		}
-
-
-		public Sprite GetAction(UI_CharacterCard.eKind charKind ,ResourceManager.eActionKind actionKind)
-		{
-			switch (charKind) 
-			{
-			case UI_CharacterCard.eKind.Seonbi:
-				return Single.resource.GetAction_Seonbi (actionKind);
-			case UI_CharacterCard.eKind.Biking:
-				return Single.resource.GetAction_Biking (actionKind);
-			}
-
-			return null;
-		}
-
-
-		private void Update_UI_HPBAR(Character charData, uint id)
-		{
-			UI_CharacterCard charUI = _characters [id];
-
 			//charUI._hp_bar.maxValue = charData.GetMaxHP ();
 			//charUI._hp_bar.value = charData.GetHP ();
 		}
 
-		private void Update_UI_Explan(Character charData, uint id)
+		private void Update_UI_Explan()
 		{
-			UI_CharacterCard charUI = _characters [id];
+			
+			this._text_explanation.text = 
+				"  "  + Character.StateToString(data.CurrentState()) +
+				"  sub:"+ Character.SubStateToString(data.CurrentValidState()) ;
 
-			charUI._text_explanation.text = 
-				"  "  + Character.StateToString(charData.CurrentState()) +
-				"  sub:"+ Character.SubStateToString(charData.CurrentValidState()) ;
-
-			charUI._text_time.text = 
-				Skill.NameToString(charData.CurrentSkillKind()) + "   " +
-				charData.GetTimeDelta().ToString("0.0");
-		
+			this._text_time.text = 
+				Skill.NameToString(data.CurrentSkillKind()) + "   " +
+				data.GetTimeDelta().ToString("0.0");
 
 		}
 
 
 
 
-		private void Update_UI_Card(Character charData, uint id)
+		private void Update_UI_Card()
 		{
-			UI_CharacterCard charUI = _characters [id];
-
-
+			
 			//if(2 == id)
 			//	DebugWide.LogBlue (id+" : "+charData.CurrentState ()); //chamto test
 
 			//if (Skill.eName.Idle == charData.CurrentSkillKind () ||
 			//	Skill.eName.Hit == charData.CurrentSkillKind ()) 
 			{
-				switch (charData.CurrentState ()) 
+				switch (data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
-						
 
-						charUI._actions [1].gameObject.SetActive (false);
-						charUI._actions [2].gameObject.SetActive (false);
 
-						charUI._actions [0].SelectAction (charUI._kind, ResourceManager.eActionKind.Idle);
+						this._actions [1].gameObject.SetActive (false);
+						this._actions [2].gameObject.SetActive (false);
+
+						this._actions [0].SelectAction (data.kind, ResourceManager.eActionKind.Idle);
 					}
 					break;
 				}
@@ -2338,18 +2275,18 @@ namespace CounterBlock
 			}
 
 
-			if (Skill.eName.Attack_1 == charData.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_1 == data.CurrentSkillKind ()) 
 			{
-				
-				switch (charData.CurrentState ()) 
+
+				switch (data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
-						charUI._actions[1].gameObject.SetActive (true);
-						charUI._actions[2].gameObject.SetActive (false);
+						this._actions[1].gameObject.SetActive (true);
+						this._actions[2].gameObject.SetActive (false);
 
-						charUI._actions[1].SelectAction(charUI._kind, ResourceManager.eActionKind.AttackBefore);
-						charUI._actions[2].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackValid);
+						this._actions[1].SelectAction(data.kind, ResourceManager.eActionKind.AttackBefore);
+						this._actions[2].SelectAction (data.kind, ResourceManager.eActionKind.AttackValid);
 
 						//iTween.Stop (charUI._actions [2].gameObject);
 						//charUI.RevertData_All ();
@@ -2363,16 +2300,16 @@ namespace CounterBlock
 						//====================================================
 						//update sub_state
 						//====================================================
-						switch (charData.CurrentValidState ()) 
+						switch (data.CurrentValidState ()) 
 						{
 						case Character.eSubState.Valid_Start:
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
 								CharDataBundle bundle;
-								bundle._data = charData;
-								bundle._ui = charUI;
-								bundle._gameObject = charUI._actions [2].gameObject;
+								bundle._data = data;
+								bundle._ui = this;
+								bundle._gameObject = this._actions [2].gameObject;
 
 								//StartCoroutine("AniStart_Attack_1",bundle); 
 								StartCoroutine("AniStart_Attack_1_Random",bundle); 
@@ -2403,7 +2340,7 @@ namespace CounterBlock
 					break;
 				case Character.eState.Waiting:
 					{
-						charUI._actions[1].SelectAction (charUI._kind, ResourceManager.eActionKind.AttackAfter);
+						this._actions[1].SelectAction (data.kind, ResourceManager.eActionKind.AttackAfter);
 
 					}
 
@@ -2420,30 +2357,30 @@ namespace CounterBlock
 
 			}
 
-			if (Skill.eName.Block_1 == charData.CurrentSkillKind ()) 
+			if (Skill.eName.Block_1 == data.CurrentSkillKind ()) 
 			{
-				
 
 
-				switch (charData.CurrentState ()) 
+
+				switch (data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
-						charUI._actions[1].gameObject.SetActive (true);	
-						charUI._actions[2].gameObject.SetActive (false);
+						this._actions[1].gameObject.SetActive (true);	
+						this._actions[2].gameObject.SetActive (false);
 
-						charUI._actions[1].SelectAction (charUI._kind, ResourceManager.eActionKind.BlockBefore);
+						this._actions[1].SelectAction (data.kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
 				case Character.eState.Running:
 					{
 						//=========================================
 
-						switch (charData.CurrentValidState ()) 
+						switch (data.CurrentValidState ()) 
 						{
 						case Character.eSubState.Valid_Start:
 							{
-								
+
 							}
 							break;
 						}
@@ -2461,7 +2398,7 @@ namespace CounterBlock
 						//charUI._actions[1].gameObject.SetActive (false);
 					}
 					break;
-				
+
 				}
 			}
 
@@ -2469,68 +2406,66 @@ namespace CounterBlock
 
 		}//end func
 
-		private void Update_UI_Effect(Character charData, uint id)
+		private void Update_UI_Effect()
 		{
-			UI_CharacterCard charUI = _characters [id];
-
-
-			if (charData.IsStart_Damaged ()) 
+			
+			if (data.IsStart_Damaged ()) 
 			{
 				CharDataBundle bundle;
-				bundle._data = charData;
-				bundle._ui = charUI;
-				bundle._gameObject = charUI._effects [UI_CharacterCard.eEffect.Hit].gameObject;
+				bundle._data = data;
+				bundle._ui = this;
+				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Hit].gameObject;
 				StartCoroutine("EffectStart_Damaged",bundle);
 
-				bundle._gameObject = charUI._actionRoot.gameObject;
+				bundle._gameObject = this._actionRoot.gameObject;
 				StartCoroutine("EffectStart_Wobble",bundle);
 
 			}
 
 
-			if (charData.IsStart_BlockSucceed ()) 
+			if (data.IsStart_BlockSucceed ()) 
 			{
 				CharDataBundle bundle;
-				bundle._data = charData;
-				bundle._ui = charUI;
-				bundle._gameObject = charUI._effects [UI_CharacterCard.eEffect.Block].gameObject;
+				bundle._data = data;
+				bundle._ui = this;
+				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Block].gameObject;
 				StartCoroutine("EffectStart_Block",bundle);
 
-				bundle._gameObject = charUI._actionRoot.gameObject;
+				bundle._gameObject = this._actionRoot.gameObject;
 				StartCoroutine("EffectStart_Endure",bundle);
 			}
 
 
 
-//			switch (charData.GetJudgmentState ()) 
-//			{
-//			case Judgment.eState.AttackDamage_Start:
-//				{
-//					//DebugWide.LogBlue ("AttackDamage_Start"); //chamto test
-//
-//					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
-//				}
-//				break;
-//			case Judgment.eState.Damaged_Start:
-//				{
-//					//charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject.SetActive (true);
-//					//Effect.FadeIn (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
-//					//Effect.FadeOut (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
-//
-//					//iTween.ShakeScale(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
-//					//iTween.ScaleTo(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(1.2f,1.2f,1.2f), 0.7f);
-//					//iTween.ScaleFrom(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
-//					StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
-//
-//				}
-//				break;
-//			case Judgment.eState.BlockSucceed_Start:
-//				{
-//					StartCoroutine("EffectStart_2",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
-//					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
-//				}
-//				break;
-//			}
+			//			switch (charData.GetJudgmentState ()) 
+			//			{
+			//			case Judgment.eState.AttackDamage_Start:
+			//				{
+			//					//DebugWide.LogBlue ("AttackDamage_Start"); //chamto test
+			//
+			//					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+			//				}
+			//				break;
+			//			case Judgment.eState.Damaged_Start:
+			//				{
+			//					//charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject.SetActive (true);
+			//					//Effect.FadeIn (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
+			//					//Effect.FadeOut (charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, 0.3f);
+			//
+			//					//iTween.ShakeScale(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
+			//					//iTween.ScaleTo(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(1.2f,1.2f,1.2f), 0.7f);
+			//					//iTween.ScaleFrom(charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
+			//					StartCoroutine("EffectStart_1",charUI._effect [UI_CharacterCard.eEffect.Hit].gameObject);
+			//
+			//				}
+			//				break;
+			//			case Judgment.eState.BlockSucceed_Start:
+			//				{
+			//					StartCoroutine("EffectStart_2",charUI._effect [UI_CharacterCard.eEffect.Block].gameObject);
+			//					//charUI._effect [UI_CharacterCard.eEffect.Block].gameObject.SetActive (true);
+			//				}
+			//				break;
+			//			}
 
 
 		}//end func
@@ -2538,7 +2473,7 @@ namespace CounterBlock
 
 		public IEnumerator AniStart_Attack_1(CharDataBundle bundle)
 		{
-			
+
 			float time = bundle._data.GetScopeTime ();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
@@ -2561,7 +2496,7 @@ namespace CounterBlock
 			bundle._gameObject.SetActive (false);
 
 
-		
+
 		}
 
 
@@ -2679,7 +2614,7 @@ namespace CounterBlock
 		//휘청거리다 
 		public IEnumerator EffectStart_Wobble(CharDataBundle bundle)
 		{
-			
+
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.transform.localPosition = Vector3.zero;
 
@@ -2717,7 +2652,7 @@ namespace CounterBlock
 		//견디다
 		public IEnumerator EffectStart_Endure(CharDataBundle bundle)
 		{
-			
+
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
 
@@ -2730,15 +2665,92 @@ namespace CounterBlock
 			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
 		}
 
+	}
 
 
-		public void Update_UI(Character charData, uint idx)
+
+	public struct CharDataBundle
+	{
+		public Character 		_data;
+		public UI_CharacterCard _ui;
+		public GameObject 		_gameObject;
+	}
+
+	public class UI_Battle : MonoBehaviour
+	{
+
+		private Transform _1P_start = null;
+		private Transform _2P_start = null;
+
+		private Dictionary<uint, UI_CharacterCard> _characters = new Dictionary<uint, UI_CharacterCard> ();
+
+		public const int START_POINT_LEFT = 1;
+		public const int START_POINT_RIGHT = 2;
+		//=================
+
+		
+		public void Init()
 		{
-			this.Update_UI_Explan (charData, idx);
-			this.Update_UI_Card (charData, idx);
-			this.Update_UI_HPBAR (charData, idx);
-			this.Update_UI_Effect (charData, idx);
+			//this.transform.SetParent (Single.game_root, false);
 
+			string parentPath = Single.hierarchy.GetTransformFullPath (Single.game_root);
+			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
+			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
+		
+		}
+
+		public UI_CharacterCard GetCharacter(uint idx)
+		{
+			return _characters [idx];
+		}
+
+		public UI_CharacterCard AddCharacter(Character data)
+		{
+			uint id = data.GetID();
+			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
+			card.data = data;
+			card._id = id;
+			_characters.Add (id, card);
+
+			return card;
+		}
+
+
+
+		public void SetStartPoint(uint id, float delta_x , int pointNumber)
+		{
+			
+
+			UI_CharacterCard card = _characters [id];
+			Vector3 pos = Vector3.zero;
+
+			switch (pointNumber) 
+			{
+			case START_POINT_LEFT:
+				pos = _1P_start.localPosition;
+				card.TurnRight ();
+				break;
+			case START_POINT_RIGHT:
+				pos = _2P_start.localPosition;
+				card.TurnLeft ();
+				break;
+			}
+
+
+			pos.x += delta_x;
+			card.transform.localPosition = pos;
+
+		}
+
+
+		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
+
+		public void Update_UI()
+		{
+			foreach (UI_CharacterCard card in _characters.Values) 
+			{
+				card.Update_UI ();
+			}
 		}
 
 	}
@@ -2800,146 +2812,6 @@ namespace CounterBlock
 		}//end setAlpha
 
 	}//end class
-
-
-	public class Simulation_Battle2 : MonoBehaviour 
-	{
-
-		private CharacterManager _crtMgr = null;
-		private Character _1Player = null;
-		private Character _2Player = null;
-		private ResourceManager _rscMgr = null;
-
-		//====//====//====//====//====//====
-		private UI_Battle _ui_battle = null;
-		private UI_CharacterCard _ui_1Player = null;
-		private UI_CharacterCard _ui_2Player = null;
-
-
-		// Use this for initialization
-		void Start () 
-		{
-			const uint ID_PLAYER_1 = 1;
-			const uint ID_PLAYER_2 = 2;
-			const int CHARACTER_COUNT = 2;
-
-			_crtMgr = new CharacterManager ();
-			_crtMgr.Init (CHARACTER_COUNT);
-
-			_1Player = _crtMgr [ID_PLAYER_1];
-			_2Player = _crtMgr [ID_PLAYER_2];
-
-			_rscMgr = CSingleton<ResourceManager>.Instance;
-			_rscMgr.Init ();
-
-			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
-			_ui_battle.Init ();
-
-			this.CreatePlayer ();
-
-			_ui_1Player = _ui_battle.GetCharacter (ID_PLAYER_1);
-			_ui_2Player = _ui_battle.GetCharacter (ID_PLAYER_2);
-
-		}
-
-		public void CreatePlayer()
-		{
-
-			int count = 0;
-			foreach (Character chter in _crtMgr.Values) 
-			{
-				UI_CharacterCard card = _ui_battle.AddCharacter (UI_CharacterCard.eKind.Biking, chter.GetID ());
-
-				if ((chter.GetID () % 2) == 1) 
-				{ //홀수는 왼쪽 1 3 5 ...
-					//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
-					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
-
-				}
-				if ((chter.GetID () % 2) == 0) 
-				{ //짝수는 오른쪽 2 4 6 ... 
-					//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
-					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
-
-				}
-
-				count++;
-			}
-		}
-
-
-
-
-
-
-
-		// Update is called once per frame
-		void Update () 
-		{
-			//1. key input
-			//2. UI update
-			//3. data update
-
-
-
-			//////////////////////////////////////////////////
-			//1p
-
-			//attack
-			if (Input.GetKeyUp ("q")) 
-			{
-				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
-				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
-				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Attack_1 ();
-
-
-				//Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
-			}
-			//block
-			if (Input.GetKeyUp ("w")) 
-			{
-				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Block ();
-
-				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
-				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
-				//iTween.ScaleFrom(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, Vector3.zero, 0.4f);
-
-				//Effect.FadeOut (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 1f);
-			}
-
-
-			//////////////////////////////////////////////////
-			//2p
-
-			//attack
-			if (Input.GetKeyUp ("o")) 
-			{
-				//DebugWide.LogBlue ("2p - keyinput");
-				_2Player.Attack_1 ();
-			}
-			//block
-			if (Input.GetKeyUp ("p")) 
-			{
-				//DebugWide.LogBlue ("2p - keyinput");
-				_2Player.Block ();
-			}
-
-
-			foreach (Character chter in _crtMgr.Values) 
-			{
-				_ui_battle.Update_UI (chter, chter.GetID());
-			}
-			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
-
-
-		}//end Update
-
-	}//end class Simulation 
-
-
-
 
 }//end namespace 
 

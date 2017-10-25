@@ -114,7 +114,7 @@ namespace CounterBlock
 			int count = 0;
 			foreach (Character chter in _crtMgr.Values) 
 			{
-				UI_CharacterCard card = _ui_battle.AddCharacter (UI_CharacterCard.eKind.Biking, chter.GetID ());
+				UI_CharacterCard card = _ui_battle.AddCharacter (chter);
 
 				if ((chter.GetID () % 2) == 1) 
 				{ //홀수는 왼쪽 1 3 5 ...
@@ -292,10 +292,7 @@ namespace CounterBlock
 			}
 
 
-			foreach (Character chter in _crtMgr.Values) 
-			{
-				_ui_battle.Update_UI (chter, chter.GetID());
-			}
+			_ui_battle.Update_UI ();
 			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
 
 
