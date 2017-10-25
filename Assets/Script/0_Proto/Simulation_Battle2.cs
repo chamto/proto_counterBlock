@@ -2738,7 +2738,7 @@ namespace CounterBlock
 
 
 			pos.x += delta_x;
-			card.transform.localPosition = pos;
+			card.SetPosition (pos);
 
 		}
 
