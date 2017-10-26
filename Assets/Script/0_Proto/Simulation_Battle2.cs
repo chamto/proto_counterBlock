@@ -246,6 +246,7 @@ namespace CounterBlock
 		private int 	_hp_current;
 		private int 	_hp_max;
 		private Vector3 _position;
+		private Vector3 _direction;
 		private eKind	_kind;
 
 		//무기정보 
@@ -275,6 +276,7 @@ namespace CounterBlock
 			_hp_current = 10;
 			_hp_max = 10;
 			_position = Vector3.zero;
+			_direction = Vector3.right;
 			_kind = eKind.Biking;
 
 			_weapon.Default_Sword ();
@@ -311,10 +313,7 @@ namespace CounterBlock
 
 		public Vector3 GetWeaponPosition()
 		{
-			Vector3 wp = _position;
-			wp.x += _behavior.CurrentDistance(_timeDelta);
-			return wp; 
-
+			return _position + (_behavior.CurrentDistance(_timeDelta) * _direction);
 		}
 
 		public void SetID(uint id)
@@ -335,6 +334,16 @@ namespace CounterBlock
 		public void SetPosition(Vector3 pos)
 		{
 			_position = pos;
+		}
+
+		public Vector3 GetDirection()
+		{
+			return _direction;
+		}
+
+		public void SetDirection(Vector3 dir)
+		{
+			_direction = dir;
 		}
 
 		public float GetCollider_Sphere_Radius()
@@ -628,6 +637,7 @@ namespace CounterBlock
 
 		//공격이 상대방에 맞았나?
 		//* 내무기 범위 또는 위치로 상대방 위치로 판단한다.
+		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
 			
@@ -2143,6 +2153,7 @@ namespace CounterBlock
 
 		}
 
+		// <--
 		public void TurnLeft()
 		{
 			Vector3 scale = _actionRoot.localScale;
@@ -2158,10 +2169,11 @@ namespace CounterBlock
 			scale.x = -1f;
 			_effect_Texts.localScale = scale;
 
-
+			data.SetDirection (Vector3.left);
 			//_hp_bar.direction = Slider.Direction.RightToLeft;
 		}
 
+		// -->
 		public void TurnRight()
 		{
 			Vector3 scale = _actionRoot.localScale;
@@ -2176,6 +2188,7 @@ namespace CounterBlock
 			scale.x = 1f;
 			_effect_Texts.localScale = scale;
 
+			data.SetDirection (Vector3.right);
 			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
 
