@@ -70,30 +70,26 @@ namespace CounterBlock
 	{
 
 		private CharacterManager _crtMgr = null;
-		private Character _1Player = null;
-		private Character _2Player = null;
 		private ResourceManager _rscMgr = null;
 
-		//====//====//====//====//====//====
+		//====//====//====//====//====//====//====//====
 		private UI_Battle _ui_battle = null;
 		private UI_CharacterCard _ui_1Player = null;
 		private UI_CharacterCard _ui_2Player = null;
-
+		//====//====//====//====//====//====//====//====
+		private const uint ID_PLAYER_1 = 1;
+		private const uint ID_PLAYER_2 = 2;
+		private const int CHARACTER_COUNT = 2;
+		//====//====//====//====//====//====//====//====
 
 		// Use this for initialization
 		void Start () 
 		{
-			const uint ID_PLAYER_1 = 1;
-			const uint ID_PLAYER_2 = 2;
-			const int CHARACTER_COUNT = 2;
-
+			
 			FrameControl.SetDeltaTime_30FPS (); //30Fps 기준으로 설정한다.  30Fps 고정프레임으로 사용하겠다는 것이 아님.
 
 			_crtMgr = new CharacterManager ();
 			_crtMgr.Init (CHARACTER_COUNT);
-
-			_1Player = _crtMgr [ID_PLAYER_1];
-			_2Player = _crtMgr [ID_PLAYER_2];
 
 			_rscMgr = CSingleton<ResourceManager>.Instance;
 			_rscMgr.Init ();
@@ -239,7 +235,7 @@ namespace CounterBlock
 				
 				CharDataBundle bundle;
 				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
-				bundle._data = _1Player;
+				bundle._data = _ui_1Player.data;
 				bundle._ui = _ui_1Player;
 				StartCoroutine ("AniStart_Attack_1_Random", bundle);
 
@@ -256,8 +252,7 @@ namespace CounterBlock
 				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
 				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
 				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Attack_1 ();
-
+				_ui_1Player.data.Attack_1 ();
 
 				//Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
 			}
@@ -265,7 +260,7 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("w")) 
 			{
 				//DebugWide.LogBlue ("1p - keyinput");
-				_1Player.Block ();
+				_ui_1Player.data.Block ();
 
 				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
 				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
@@ -282,13 +277,13 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("o")) 
 			{
 				//DebugWide.LogBlue ("2p - keyinput");
-				_2Player.Attack_1 ();
+				_ui_2Player.data.Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("p")) 
 			{
 				//DebugWide.LogBlue ("2p - keyinput");
-				_2Player.Block ();
+				_ui_2Player.data.Block ();
 			}
 
 

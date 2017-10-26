@@ -1037,7 +1037,7 @@ namespace CounterBlock
 					_src_.Test_Judge(_dst_); //chamto test
 					_dst_.Test_Judge(_src_); 
 
-					DebugWide.LogGreen ("1P: "+_src_.GetJudgmentState() + "  2P: " + _dst_.GetJudgmentState()); //chamto test
+					//DebugWide.LogGreen ("1P: "+_src_.GetJudgmentState() + "  2P: " + _dst_.GetJudgmentState()); //chamto test
 					//DebugWide.LogGreen ("a: "+_src_.CurrentSkillKind() + "  " + _dst_.CurrentSkillKind()); //chamto test
 					//DebugWide.LogGreen (_result_.first + "   " + _src_.GetTimeDelta() + " , " + _result_.second + "  " + _dst_.GetTimeDelta()); //chamto test
 
