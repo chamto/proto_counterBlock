@@ -621,6 +621,19 @@ namespace CounterBlock
 		//의도 : 정확한 충돌처리를 위한 것이 아니다. 직선거리로 판정을 하기 위함이다.  
 		public bool IsPossibleRange_Clog_VS(Character dst)
 		{
+
+			//1.들어온 무기 방향 검사 : 내앞에서 들어왔는가? 내뒤에서 들어왔는가?
+			//2.내무기 범위 각도 검사 : 부채꼴 - 나중에 구현 
+
+			//원을 반으로 나눠 앞쪽은 "같은 방향" , 뒤쪽은 "반대 방향" 으로 판단한다.
+			float cos = Vector3.Dot (this.GetDirection(), dst.GetDirection ()); //두백터가 정규화 되었다면 cos삼각비가 나온다
+			if (cos >= 0) 
+			{	//같은 벡터 방향 
+				return false;
+			}
+			//else if(angle < 0) {} //반대 벡터 방향
+
+
 			//작은원 <= 대상 <= 큰원
 			if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
 			{	//큰원 보다 작고,
@@ -640,6 +653,15 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
+			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
+			const float ANGLE_SCOPE = 18f;
+			float rate = 1f - ((ANGLE_SCOPE * 0.5f) / 90f); //1(단위원 최대값) - ((원하는각도 * 0.5) / 90도 )  ,  각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
+			float cos = Vector3.Dot (this.GetDirection(), dst.GetPosition() - this.GetPosition());
+			if(cos < rate) 
+			{  //지정 각도보다 작으면 충돌검사 못함
+				return false;
+			} 
+
 			
 			switch (this._behavior.attack_shape) 
 			{
