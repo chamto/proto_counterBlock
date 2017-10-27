@@ -116,12 +116,14 @@ namespace CounterBlock
 				{ //홀수는 왼쪽 1 3 5 ...
 					//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
 					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
+					card.data.kind = Character.eKind.Biking;
 
 				}
 				if ((chter.GetID () % 2) == 0) 
 				{ //짝수는 오른쪽 2 4 6 ... 
 					//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
 					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
+					card.data.kind = Character.eKind.Seonbi;
 
 				}
 
