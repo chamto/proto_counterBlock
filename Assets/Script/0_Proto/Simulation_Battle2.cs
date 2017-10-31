@@ -16,15 +16,147 @@ using UnityEngine.UI;
 
 namespace CounterBlock
 {
+	namespace Figure
+	{
+		public struct Arc
+		{
+			public Vector3 pos;
+			public Vector3 dir; //정규화 되어야 한다
+			public float degree; //각도 
+			public float radius;
+			public float f
+			{
+				get
+				{	//f = radius / sin
+					return radius / Mathf.Sin( Mathf.Deg2Rad * degree );
+				}
+			}
+
+
+
+			//ratio : [-1 ~ 1]
+			//호에 원이 완전히 포함 [1]
+			//호에 원의 중점까지 포함 [0]
+			//호에 원의 경계까지 포함 [-1 : 포함 범위 가장 넒음] 
+			public const float Fully_Included = 1f;
+			public const float Focus_Included = 0f;
+			public const float Boundary_Included = -1f;
+			public Vector3 GetPosition(float ratio = Focus_Included)
+			{
+				if (0 == ratio)
+					return pos; 
+				
+				return pos + dir * (f * ratio);
+			}
+
+			public Sphere sphere
+			{
+				get
+				{ 
+					Sphere sph;
+					sph.pos = this.pos;
+					sph.radius = this.radius;
+					return sph;
+				}
+
+			}
+		}
+		public struct Sphere
+		{
+			public Vector3 pos;
+			public float radius;
+		}
+	}
 	public class Util
 	{
-		static public bool Collision_Sphere(Vector3 src_pos , float src_radius , Vector3 des_pos , float des_radius)
+		//사분면
+		const int QUADRANT_1 = 1;
+		const int QUADRANT_2 = 2;
+		const int QUADRANT_3 = 3;
+		const int QUADRANT_4 = 4;
+
+		//acos 랑 뭐가 다른거지?
+		static public float DegreeToCos(float degree) 
+		{
+			//(2,3 사분면 : 음수 )  (1,4 사분면 : 양수 )  
+			//90': 1f = 9' : 0.1f  (비율값만 구할려는 것임. 왼쪽 비례식은 sin에 해당함)
+			//A : B = a : b   (a값을 알때, b값을 구하려 한다 : Ba = Ab , b = Ba/A)
+			//b = Ba/A  ,  b = 1f * Degree / 90'
+
+			//45'  / 90 = 0  -> 1  ->  +1    
+			//90'  / 90 = 1  -> 2  ->  -1   
+			//180' / 90 = 2  -> 3  ->  -1   
+			//270' / 90 = 3  -> 4  ->  +1   
+			//360' / 90 = 4  -> 1  ->  +1   
+			//450' / 90 = 5  -> 2  ->  -1   
+			//...
+
+			int quadrant = (int)degree / 90;
+			quadrant = (quadrant % 4) + 1;
+			if(QUADRANT_2 == quadrant && QUADRANT_3 == quadrant) 
+				return (1f - (degree / 90f)) * -1f;
+			
+			//cos값으로 반전 시킨다.
+			return 1f - (degree / 90f);
+		}
+
+		//1/2 = 0.5 , 1/90 = 0.1111...
+
+		//만들다 보니 asin 
+		static public float DegreeToSin(float degree)
+		{
+			//(3,4 사분면 : 음수 )  (1,2 사분면 : 양수 )  
+
+			//45'  / 90 = 0  -> 1  ->  +1
+			//90'  / 90 = 1  -> 2  ->  +1
+			//180' / 90 = 2  -> 3  ->  -1
+			//270' / 90 = 3  -> 4  ->  -1
+			//360' / 90 = 4  -> 1  ->  +1
+			//450' / 90 = 5  -> 2  ->  +1
+			//...
+
+			int quadrant = (int)degree / 90;
+			quadrant = (quadrant % 4) + 1;
+			if(QUADRANT_3 == quadrant && QUADRANT_4 == quadrant) 
+				return (degree / 90f) * -1f;
+
+			return (degree / 90f);
+		}
+
+		//호와 원의 충돌 검사 (2D 한정)
+		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph , float ratio)
+		{
+			const float HALF_RADIUS_SUM = 0.5f;
+
+			if (true == Util.Collision_Sphere (arc.sphere, sph, HALF_RADIUS_SUM)) 
+			{
+				float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
+
+				Vector3 arc_sph_dir = sph.pos - arc.GetPosition (Figure.Arc.Focus_Included);
+				arc_sph_dir.Normalize (); //노멀값 구하지 않는 계산식을 찾지 못했다. 
+
+				float rate_cos = Vector3.Dot (arc.dir, arc_sph_dir);
+				if(rate_cos > angle_arc) 
+				{  
+					return true;
+				}	
+			}
+			 
+			return false;
+		}
+
+		//ratio : 충돌 반지름합 비율 , 일정 비율이 넘었을 때만 충돌처리 되게 한다.
+		public const float Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
+		public const float Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
+		public const float Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
+		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Boundary_Included)
 		{
 			//두원의 반지름을 더한후 제곱해 준다. 
-			float sqr_standard_value = (src_radius + des_radius) * (src_radius + des_radius);
+			float sum_radius = (src.radius + dst.radius) * ratio;
+			float sqr_standard_value = sum_radius * sum_radius;
 
 			//두원의 중점 사이의 거리를 구한다. 피타고라스의 정리를 이용 , 제곱을 벗기지 않는다.
-			float sqr_dis_between = Vector3.SqrMagnitude(src_pos - des_pos);
+			float sqr_dis_between = Vector3.SqrMagnitude(src.pos - dst.pos);
 
 			if (sqr_standard_value > sqr_dis_between)
 				return true; //두원이 겹쳐짐 
@@ -34,6 +166,14 @@ namespace CounterBlock
 				return false; //두원이 겹쳐 있지 않음
 
 			return false;
+		}
+
+		static public bool Collision_Sphere(Vector3 src_pos , float src_radius , Vector3 des_pos , float des_radius)
+		{
+			Figure.Sphere src, dst;
+			src.pos = src_pos; src.radius = src_radius;
+			dst.pos = des_pos; dst.radius = des_radius;
+			return Util.Collision_Sphere (src, dst, 1f);
 		}	
 
 
@@ -616,6 +756,9 @@ namespace CounterBlock
 		}
 
 
+
+
+
 		//칼죽이기 가능한 거리인가?
 		// * 내무기 범위와 상대방 무기위치로 판단한다.
 		//의도 : 정확한 충돌처리를 위한 것이 아니다. 직선거리로 판정을 하기 위함이다.  
@@ -653,6 +796,7 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
+			//=======================================================================
 			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
 			const float ANGLE_SCOPE = 18f;
 			float rate = 1f - ((ANGLE_SCOPE * 0.5f) / 90f); //1(단위원 최대값) - ((원하는각도 * 0.5) / 90도 )  ,  각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
@@ -661,6 +805,7 @@ namespace CounterBlock
 			{  //지정 각도보다 작으면 충돌검사 못함
 				return false;
 			} 
+			//=======================================================================
 
 			
 			switch (this._behavior.attack_shape) 
