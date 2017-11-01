@@ -796,11 +796,15 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
+
+			//정면에서 상대가 좌우 18도 안에 있을 때만 충돌처리 한다. (상하 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
 			//=======================================================================
 			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
 			const float ANGLE_SCOPE = 18f;
 			float rate = 1f - ((ANGLE_SCOPE * 0.5f) / 90f); //1(단위원 최대값) - ((원하는각도 * 0.5) / 90도 )  ,  각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
-			float cos = Vector3.Dot (this.GetDirection(), dst.GetPosition() - this.GetPosition());
+			Vector3 toDst = dst.GetPosition() - this.GetPosition();
+			toDst.Normalize ();
+			float cos = Vector3.Dot (this.GetDirection(), toDst);
 			if(cos < rate) 
 			{  //지정 각도보다 작으면 충돌검사 못함
 				return false;
