@@ -18,21 +18,27 @@ namespace CounterBlock
 {
 	namespace Figure
 	{
+
+		//기준원
 		public struct Arc
 		{
-			public Vector3 pos;
-			public Vector3 dir; //정규화 되어야 한다
-			public float degree; //각도 
-			public float radius;
-			public float f
+			public Vector3 pos;				//호의 시작점  
+			public Vector3 dir; 			//정규화 되어야 한다
+			public float degree; 			//각도 
+			public float radius_near;		//시작점에서 가까운 원의 반지름 
+			public float radius_far;		//시작점에서 먼 원의 반지름
+			//public float radius;
+
+			public const float STANDARD_COLLIDER_RADIUS = 4f;
+			public float radius_collider_standard;	//기준이 되는 충돌원의 반지름 
+
+			public float factor
 			{
 				get
 				{	//f = radius / sin
-					return radius / Mathf.Sin( Mathf.Deg2Rad * degree );
+					return radius_collider_standard / Mathf.Sin( Mathf.Deg2Rad * degree );
 				}
 			}
-
-
 
 			//ratio : [-1 ~ 1]
 			//호에 원이 완전히 포함 [1]
@@ -41,21 +47,33 @@ namespace CounterBlock
 			public const float Fully_Included = 1f;
 			public const float Focus_Included = 0f;
 			public const float Boundary_Included = -1f;
-			public Vector3 GetPosition(float ratio = Focus_Included)
+			public Vector3 GetPosition_Factor(float ratio = Focus_Included)
 			{
 				if (0 == ratio)
 					return pos; 
 				
-				return pos + dir * (f * ratio);
+				return pos + dir * (factor * ratio);
 			}
 
-			public Sphere sphere
+			public Sphere sphere_near
 			{
 				get
 				{ 
 					Sphere sph;
 					sph.pos = this.pos;
-					sph.radius = this.radius;
+					sph.radius = this.radius_near;
+					return sph;
+				}
+
+			}
+
+			public Sphere sphere_far
+			{
+				get
+				{ 
+					Sphere sph;
+					sph.pos = this.pos;
+					sph.radius = this.radius_far;
 					return sph;
 				}
 
@@ -126,20 +144,23 @@ namespace CounterBlock
 		//호와 원의 충돌 검사 (2D 한정)
 		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph , float ratio)
 		{
-			const float HALF_RADIUS_SUM = 0.5f;
-
-			if (true == Util.Collision_Sphere (arc.sphere, sph, HALF_RADIUS_SUM)) 
+			
+			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Focus_Included)) 
 			{
-				float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
+				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Fully_Included)) 
+				{
+					float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
 
-				Vector3 arc_sph_dir = sph.pos - arc.GetPosition (Figure.Arc.Focus_Included);
-				arc_sph_dir.Normalize (); //노멀값 구하지 않는 계산식을 찾지 못했다. 
+					Vector3 arc_sph_dir = sph.pos - arc.GetPosition_Factor (Figure.Arc.Focus_Included);
+					arc_sph_dir.Normalize (); //노멀값 구하지 않는 계산식을 찾지 못했다. 
 
-				float rate_cos = Vector3.Dot (arc.dir, arc_sph_dir);
-				if(rate_cos > angle_arc) 
-				{  
-					return true;
-				}	
+					float rate_cos = Vector3.Dot (arc.dir, arc_sph_dir);
+					if(rate_cos > angle_arc) 
+					{  
+						return true;
+					}
+				}
+					
 			}
 			 
 			return false;
@@ -388,6 +409,9 @@ namespace CounterBlock
 		private Vector3 _position;
 		private Vector3 _direction;
 		private eKind	_kind;
+
+		//숙련정보 
+		// - 정확도 : 정확도가 낮으면 맞지 않는 공격비율이 올라간다 (마구 휘두르기 구현시 필요)
 
 		//무기정보 
 		private Weapon 	_weapon;
