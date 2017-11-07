@@ -145,9 +145,9 @@ namespace CounterBlock
 		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph , float ratio)
 		{
 			
-			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Focus_Included)) 
+			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Sphere_Focus_Included)) 
 			{
-				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Fully_Included)) 
+				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Sphere_Focus_Included)) 
 				{
 					float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
 
@@ -167,10 +167,10 @@ namespace CounterBlock
 		}
 
 		//ratio : 충돌 반지름합 비율 , 일정 비율이 넘었을 때만 충돌처리 되게 한다.
-		public const float Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
-		public const float Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
-		public const float Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
-		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Boundary_Included)
+		public const float Sphere_Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
+		public const float Sphere_Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
+		public const float Sphere_Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
+		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Sphere_Boundary_Included)
 		{
 			//두원의 반지름을 더한후 제곱해 준다. 
 			float sum_radius = (src.radius + dst.radius) * ratio;
