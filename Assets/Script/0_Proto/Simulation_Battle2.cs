@@ -145,9 +145,9 @@ namespace CounterBlock
 		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph)
 		{
 			
-			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Focus_Included)) 
+			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Sphere_Focus_Included)) 
 			{
-				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Fully_Included)) 
+				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Sphere_Focus_Included)) 
 				{
 					float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
 
@@ -167,10 +167,10 @@ namespace CounterBlock
 		}
 
 		//ratio : 충돌 반지름합 비율 , 일정 비율이 넘었을 때만 충돌처리 되게 한다.
-		public const float Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
-		public const float Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
-		public const float Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
-		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Boundary_Included)
+		public const float Sphere_Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
+		public const float Sphere_Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
+		public const float Sphere_Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
+		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Sphere_Boundary_Included)
 		{
 			//두원의 반지름을 더한후 제곱해 준다. 
 			float sum_radius = (src.radius + dst.radius) * ratio;
@@ -197,7 +197,7 @@ namespace CounterBlock
 			return Util.Collision_Sphere (src, dst, 1f);
 		}	
 
-
+		//!!test 필요
 		//value 보다 target 값이 작으면 True 를 반환한다.
 		static public bool Distance_LessThan(float Value , Vector3 target )
 		{
@@ -208,6 +208,85 @@ namespace CounterBlock
 
 			return false;
 		}
+
+
+
+		//ref : https://stackoverflow.com/questions/27237776/convert-int-bits-to-float-bits
+		//int i = ...;
+		//float f = BitConverter.ToSingle(BitConverter.GetBytes(i), 0);
+		public static unsafe int SingleToInt32Bits(float value) {
+			return *(int*)(&value);
+		}
+		public static unsafe float Int32BitsToSingle(int value) {
+			return *(float*)(&value);
+		}
+
+		//ref : https://ko.wikipedia.org/wiki/%EA%B3%A0%EC%86%8D_%EC%97%AD_%EC%A0%9C%EA%B3%B1%EA%B7%BC
+		//함수해석 : https://zariski.wordpress.com/2014/10/29/%EC%A0%9C%EA%B3%B1%EA%B7%BC-%EC%97%AD%EC%88%98%EC%99%80-%EB%A7%88%EB%B2%95%EC%9D%98-%EC%88%98-0x5f3759df/
+		//함수해석 : http://eastroot1590.tistory.com/entry/%EC%A0%9C%EA%B3%B1%EA%B7%BC%EC%9D%98-%EC%97%AD%EC%88%98-%EA%B3%84%EC%82%B0%EB%B2%95
+		//뉴턴-랩슨법  : http://darkpgmr.tistory.com/58
+		//sse 명령어 rsqrtss 보다 빠를수가 없다.
+		//[ reciprocal square root ]
+		// 제곱근의 역수이다. a 일때  역수는 1/a 이다.
+		static public unsafe float RSqrt_Quick_2( float x )
+		{
+
+			const int SQRT_MAGIC_F  = 0x5f3759df;
+			const float threehalfs = 1.5F;
+			float xhalf = 0.5f * x;
+
+			float ux;
+			int ui;
+
+			ui = * ( int * ) &x;
+			ui = SQRT_MAGIC_F - (ui >> 1);  // gives initial guess y0
+			ux  = * ( float * ) &ui;
+			ux = ux * (threehalfs - xhalf * ux * ux);// Newton step, repeating increases accuracy 
+
+			return ux;
+		}
+
+
+		//Algorithm: The Magic Number (Quake 3)
+		static public unsafe float  Sqrt_Quick_2(float x)
+		{
+			const int SQRT_MAGIC_F  = 0x5f3759df;
+			const float threehalfs = 1.5F;
+			float xhalf = 0.5f * x;
+
+			float ux;
+			int ui;
+
+			ui = * ( int * ) &x;
+			ui = SQRT_MAGIC_F - (ui >> 1);  // gives initial guess y0
+			ux  = * ( float * ) &ui;
+			ux = x * ux * (threehalfs - xhalf * ux * ux);// Newton step, repeating increases accuracy 
+
+			return ux;
+		}
+
+		//어셈코드 다음으로 속도가 가장 빠름. 매직넘버 "0x5f3759df" 코드보다 빠르지만 정확도는 더 떨어진다
+		//ref : https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi
+		//Algorithm: Dependant on IEEE representation and only works for 32 bits 
+		static public unsafe float Sqrt_Quick_7(float x)
+		{
+			
+			uint i = *(uint*) &x; 
+			// adjust bias
+			i  += 127 << 23;
+			// approximation of square root
+			i >>= 1; 
+			return *(float*) &i;
+		}   
+
+	
+		static public Vector3 Norm_Quick(Vector3 v3)
+		{
+			//float r_length = Util.RSqrt_Quick_2 (v3.sqrMagnitude);
+			float r_length = 1f / Util.Sqrt_Quick_7 (v3.sqrMagnitude);
+			return v3 * r_length;
+		}
+
 	}
 
 	//자취의 모양
@@ -844,7 +923,7 @@ namespace CounterBlock
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
 
-			//정면에서 상대가 좌우 18도 안에 있을 때만 충돌처리 한다. (상하 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
+			//정면에서 상대가 좌우합 18도 안에 있을 때만 충돌처리 한다. (상하합 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
 			//=======================================================================
 			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
 			const float ANGLE_SCOPE = 18f;
