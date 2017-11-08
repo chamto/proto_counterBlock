@@ -208,6 +208,33 @@ namespace CounterBlock
 
 			return false;
 		}
+
+
+		//ref : http://vallista.tistory.com/entry/Sqrt-C
+		static public float Sqrt_Fast(float value)
+		{
+			float prev = 0f;
+			float curculating = 1f;
+
+			const int MAX_LOOP_COUNT = 3;
+			for(int i=0 ; i<MAX_LOOP_COUNT ; i++)
+			{
+				
+				curculating = (curculating + (value / curculating)) * 0.5f;
+
+				prev = curculating;
+			}
+
+			return curculating;
+		}
+
+		//!!test 필요
+		static public Vector3 Norm_Fast(Vector3 v3)
+		{
+			float length = Util.Sqrt_Fast (v3.sqrMagnitude);
+			return v3 / length;
+		}
+
 	}
 
 	//자취의 모양
@@ -821,7 +848,7 @@ namespace CounterBlock
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
 
-			//정면에서 상대가 좌우 18도 안에 있을 때만 충돌처리 한다. (상하 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
+			//정면에서 상대가 좌우합 18도 안에 있을 때만 충돌처리 한다. (상하합 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
 			//=======================================================================
 			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
 			const float ANGLE_SCOPE = 18f;
