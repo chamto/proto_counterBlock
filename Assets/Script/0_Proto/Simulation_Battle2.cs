@@ -197,7 +197,7 @@ namespace CounterBlock
 			return Util.Collision_Sphere (src, dst, 1f);
 		}	
 
-
+		//!!test 필요
 		//value 보다 target 값이 작으면 True 를 반환한다.
 		static public bool Distance_LessThan(float Value , Vector3 target )
 		{
@@ -210,29 +210,81 @@ namespace CounterBlock
 		}
 
 
-		//ref : http://vallista.tistory.com/entry/Sqrt-C
-		static public float Sqrt_Fast(float value)
-		{
-			float prev = 0f;
-			float curculating = 1f;
 
-			const int MAX_LOOP_COUNT = 3;
-			for(int i=0 ; i<MAX_LOOP_COUNT ; i++)
-			{
-				
-				curculating = (curculating + (value / curculating)) * 0.5f;
-
-				prev = curculating;
-			}
-
-			return curculating;
+		//ref : https://stackoverflow.com/questions/27237776/convert-int-bits-to-float-bits
+		//int i = ...;
+		//float f = BitConverter.ToSingle(BitConverter.GetBytes(i), 0);
+		public static unsafe int SingleToInt32Bits(float value) {
+			return *(int*)(&value);
+		}
+		public static unsafe float Int32BitsToSingle(int value) {
+			return *(float*)(&value);
 		}
 
-		//!!test 필요
-		static public Vector3 Norm_Fast(Vector3 v3)
+		//ref : https://ko.wikipedia.org/wiki/%EA%B3%A0%EC%86%8D_%EC%97%AD_%EC%A0%9C%EA%B3%B1%EA%B7%BC
+		//함수해석 : https://zariski.wordpress.com/2014/10/29/%EC%A0%9C%EA%B3%B1%EA%B7%BC-%EC%97%AD%EC%88%98%EC%99%80-%EB%A7%88%EB%B2%95%EC%9D%98-%EC%88%98-0x5f3759df/
+		//함수해석 : http://eastroot1590.tistory.com/entry/%EC%A0%9C%EA%B3%B1%EA%B7%BC%EC%9D%98-%EC%97%AD%EC%88%98-%EA%B3%84%EC%82%B0%EB%B2%95
+		//뉴턴-랩슨법  : http://darkpgmr.tistory.com/58
+		//sse 명령어 rsqrtss 보다 빠를수가 없다.
+		//[ reciprocal square root ]
+		// 제곱근의 역수이다. a 일때  역수는 1/a 이다.
+		static public unsafe float RSqrt_Quick_2( float x )
 		{
-			float length = Util.Sqrt_Fast (v3.sqrMagnitude);
-			return v3 / length;
+
+			const int SQRT_MAGIC_F  = 0x5f3759df;
+			const float threehalfs = 1.5F;
+			float xhalf = 0.5f * x;
+
+			float ux;
+			int ui;
+
+			ui = * ( int * ) &x;
+			ui = SQRT_MAGIC_F - (ui >> 1);  // gives initial guess y0
+			ux  = * ( float * ) &ui;
+			ux = ux * (threehalfs - xhalf * ux * ux);// Newton step, repeating increases accuracy 
+
+			return ux;
+		}
+
+
+		//Algorithm: The Magic Number (Quake 3)
+		static public unsafe float  Sqrt_Quick_2(float x)
+		{
+			const int SQRT_MAGIC_F  = 0x5f3759df;
+			const float threehalfs = 1.5F;
+			float xhalf = 0.5f * x;
+
+			float ux;
+			int ui;
+
+			ui = * ( int * ) &x;
+			ui = SQRT_MAGIC_F - (ui >> 1);  // gives initial guess y0
+			ux  = * ( float * ) &ui;
+			ux = x * ux * (threehalfs - xhalf * ux * ux);// Newton step, repeating increases accuracy 
+
+			return ux;
+		}
+
+		//어셈코드 다음으로 속도가 가장 빠름. 매직넘버 "0x5f3759df" 코드보다 빠르지만 정확도는 더 떨어진다
+		//ref : https://www.codeproject.com/Articles/69941/Best-Square-Root-Method-Algorithm-Function-Precisi
+		//Algorithm: Dependant on IEEE representation and only works for 32 bits 
+		static public unsafe float Sqrt_Quick_7(float x)
+		{
+			
+			uint i = *(uint*) &x; 
+			// adjust bias
+			i  += 127 << 23;
+			// approximation of square root
+			i >>= 1; 
+			return *(float*) &i;
+		}   
+
+	
+		static public Vector3 Norm_Quick(Vector3 v3)
+		{
+			//float r_length = Util.RSqrt_Quick_2 (v3.sqrMagnitude);
+			float r_length = 1f / Util.Sqrt_Quick_7 (v3.sqrMagnitude);
+			return v3 * r_length;
 		}
 
 	}
