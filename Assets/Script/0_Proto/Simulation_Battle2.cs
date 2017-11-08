@@ -29,7 +29,7 @@ namespace CounterBlock
 			public float radius_far;		//시작점에서 먼 원의 반지름
 			//public float radius;
 
-			public const float STANDARD_COLLIDER_RADIUS = 4f;
+			public const float STANDARD_COLLIDER_RADIUS = 2f;
 			public float radius_collider_standard;	//기준이 되는 충돌원의 반지름 
 
 			public float factor
@@ -142,7 +142,7 @@ namespace CounterBlock
 		}
 
 		//호와 원의 충돌 검사 (2D 한정)
-		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph , float ratio)
+		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph)
 		{
 			
 			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Focus_Included)) 
@@ -246,6 +246,7 @@ namespace CounterBlock
 		//	=== 범위형 움직임 === : 종,횡,찌르기,던지기 (무기 위치가 기준이 되는 범위이다)
 		public float 		plus_range_0;		//더해지는 범위 최소 
 		public float 		plus_range_1;		//더해지는 범위 최대
+		public float		angle;				//범위 각도
 		//  === 이동형 움직임 === : 찌르기,던지기
 		public float 		distance_travel;	//무기 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
 		public float 		distance_maxTime;  //최대거리가 되는 시간 : 삼각형 모형
@@ -266,6 +267,7 @@ namespace CounterBlock
 			cloggedTime_1 = 0f;
 			plus_range_0 = 0f;
 			plus_range_1 = 0f;
+			angle = 45f;
 			attack_shape = eTraceShape.None;
 			distance_travel = DEFAULT_DISTANCE;
 			distance_maxTime = 0f;
@@ -313,7 +315,7 @@ namespace CounterBlock
 		//public Vector3  position;			//무기위치
 		public float 	attack_range_min;	//최소 사거리
 		public float 	attack_range_max; 	//최대 사거리 
-		public float 	collider_sphere_radius;
+		public float 	collider_sphere_radius; //무기의 반지름
 
 		public void Default_Sword()
 		{
@@ -323,6 +325,7 @@ namespace CounterBlock
 			attack_range_max = 14f;
 			collider_sphere_radius = 2f;
 		}
+
 	}
 
 	public class Character
@@ -409,9 +412,12 @@ namespace CounterBlock
 		private Vector3 _position;
 		private Vector3 _direction;
 		private eKind	_kind;
+		private Figure.Sphere _collider;
 
 		//숙련정보 
 		// - 정확도 : 정확도가 낮으면 맞지 않는 공격비율이 올라간다 (마구 휘두르기 구현시 필요)
+		//뒤에서 공격 당할시 피해가 커진다
+		//시야정보
 
 		//무기정보 
 		private Weapon 	_weapon;
@@ -431,7 +437,7 @@ namespace CounterBlock
 		private Judgment _judgment = new Judgment();
 
 		//충돌모형
-		private float _collider_sphere_radius;
+		//private float _collider_sphere_radius;
 
 		//====================================
 
@@ -442,10 +448,12 @@ namespace CounterBlock
 			_position = Vector3.zero;
 			_direction = Vector3.right;
 			_kind = eKind.Biking;
+			_collider.pos = Vector3.zero;
+			_collider.radius = 2f;
 
 			_weapon.Default_Sword ();
 
-			_collider_sphere_radius = 2f;  //임시로 넣어둔값
+			//_collider_sphere_radius = 2f;  //임시로 넣어둔값
 
 
 		}
@@ -474,6 +482,22 @@ namespace CounterBlock
 
 		//====================================
 
+		public Figure.Arc GetArc_Weapon()
+		{
+			Figure.Arc arc = new Figure.Arc();
+			arc.radius_near = this.GetRangeMin();
+			arc.radius_far = this.GetRangeMax ();
+			arc.pos = _position;
+			arc.dir = _direction;
+			arc.degree = _behavior.angle;
+
+			return arc;
+		}
+
+		public Figure.Sphere GetSphere_Collider()
+		{
+			return _collider;
+		}
 
 		public Vector3 GetWeaponPosition()
 		{
@@ -498,6 +522,7 @@ namespace CounterBlock
 		public void SetPosition(Vector3 pos)
 		{
 			_position = pos;
+			_collider.pos = pos;
 		}
 
 		public Vector3 GetDirection()
@@ -512,7 +537,7 @@ namespace CounterBlock
 
 		public float GetCollider_Sphere_Radius()
 		{
-			return _collider_sphere_radius;
+			return _collider.radius;
 		}
 
 		public float GetTimeDelta()
@@ -781,8 +806,6 @@ namespace CounterBlock
 
 
 
-
-
 		//칼죽이기 가능한 거리인가?
 		// * 내무기 범위와 상대방 무기위치로 판단한다.
 		//의도 : 정확한 충돌처리를 위한 것이 아니다. 직선거리로 판정을 하기 위함이다.  
@@ -827,7 +850,7 @@ namespace CounterBlock
 			const float ANGLE_SCOPE = 18f;
 			float rate = 1f - ((ANGLE_SCOPE * 0.5f) / 90f); //1(단위원 최대값) - ((원하는각도 * 0.5) / 90도 )  ,  각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
 			Vector3 toDst = dst.GetPosition() - this.GetPosition();
-			toDst.Normalize ();
+			toDst.Normalize (); //fixme : 빠른 노멀 구하는 함수로 변경하기 
 			float cos = Vector3.Dot (this.GetDirection(), toDst);
 			if(cos < rate) 
 			{  //지정 각도보다 작으면 충돌검사 못함
@@ -841,15 +864,8 @@ namespace CounterBlock
 			case eTraceShape.Horizon: //todo : 추후 필요시 구현
 			case eTraceShape.Vertical:
 				{	//***** 내무기 범위 vs 상대방 위치 *****
-					
-					//작은원 <= 대상 <= 큰원
-					if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
-					{	//큰원 보다 작고,
-						if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetPosition(), dst.GetCollider_Sphere_Radius())) 
-						{	//작은원 보다 크다. 
-							return true;
-						}
-					}
+
+					return Util.Collision_Arc_VS_Sphere (this.GetArc_Weapon (), dst.GetSphere_Collider());
 
 				}
 				break;
