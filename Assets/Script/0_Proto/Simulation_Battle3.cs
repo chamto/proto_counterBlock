@@ -116,14 +116,16 @@ namespace CounterBlock
 				{ //홀수는 왼쪽 1 3 5 ...
 					//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
 					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
-					card.data.kind = Character.eKind.Biking;
+					//card.data.kind = Character.eKind.Biking;
+					card.SetKind(Character.eKind.Biking);
 
 				}
 				if ((chter.GetID () % 2) == 0) 
 				{ //짝수는 오른쪽 2 4 6 ... 
 					//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
 					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
-					card.data.kind = Character.eKind.Seonbi;
+					//card.data.kind = Character.eKind.Seonbi;
+					card.SetKind(Character.eKind.Seonbi);
 
 				}
 
@@ -237,7 +239,7 @@ namespace CounterBlock
 				
 				CharDataBundle bundle;
 				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
-				bundle._data = _ui_1Player.data;
+				bundle._data = _ui_1Player.GetData();
 				bundle._ui = _ui_1Player;
 				StartCoroutine ("AniStart_Attack_1_Random", bundle);
 
@@ -254,7 +256,7 @@ namespace CounterBlock
 				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
 				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
 				//DebugWide.LogBlue ("1p - keyinput");
-				_ui_1Player.data.Attack_1 ();
+				_ui_1Player.GetData().Attack_1 ();
 
 				//Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
 			}
@@ -262,7 +264,7 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("w")) 
 			{
 				//DebugWide.LogBlue ("1p - keyinput");
-				_ui_1Player.data.Block ();
+				_ui_1Player.GetData().Block ();
 
 				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
 				//iTween.ScaleTo(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, new Vector3(0.2f,0.2f,0.2f), 0.7f);
@@ -279,13 +281,13 @@ namespace CounterBlock
 			if (Input.GetKeyUp ("o")) 
 			{
 				//DebugWide.LogBlue ("2p - keyinput");
-				_ui_2Player.data.Attack_1 ();
+				_ui_2Player.GetData().Attack_1 ();
 			}
 			//block
 			if (Input.GetKeyUp ("p")) 
 			{
 				//DebugWide.LogBlue ("2p - keyinput");
-				_ui_2Player.data.Block ();
+				_ui_2Player.GetData().Block ();
 			}
 
 

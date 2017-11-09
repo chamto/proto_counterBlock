@@ -947,7 +947,7 @@ namespace CounterBlock
 					return Util.Collision_Arc_VS_Sphere (this.GetArc_Weapon (), dst.GetSphere_Collider());
 
 				}
-				break;
+				//break;
 			case eTraceShape.Straight:
 				{	//***** 내무기 위치 vs 상대방 위치 *****
 
@@ -2340,6 +2340,7 @@ namespace CounterBlock
 
 
 		public uint _id = 0;
+		public Character _data = null;
 
 		public TextMesh _text_explanation { get; set; }
 		public TextMesh _text_time { get; set; }
@@ -2358,18 +2359,18 @@ namespace CounterBlock
 
 		//===============================================================
 
-		public Character data
-		{
-			get;
-			set;
-		}
+//		public Character data
+//		{
+//			get;
+//			set;
+//		}
 
 		//===============================================================
 
 
 		public UI_CharacterCard()
 		{
-			this.data = null;
+			//this.data = null;
 		}
 
 		void Start()
@@ -2377,6 +2378,7 @@ namespace CounterBlock
 			
 
 		}
+
 
 
 		static public UI_CharacterCard Create(string name)
@@ -2459,7 +2461,7 @@ namespace CounterBlock
 			scale.x = -1f;
 			_effect_Texts.localScale = scale;
 
-			data.SetDirection (Vector3.left);
+			_data.SetDirection (Vector3.left);
 			//_hp_bar.direction = Slider.Direction.RightToLeft;
 		}
 
@@ -2478,19 +2480,29 @@ namespace CounterBlock
 			scale.x = 1f;
 			_effect_Texts.localScale = scale;
 
-			data.SetDirection (Vector3.right);
+			_data.SetDirection (Vector3.right);
 			//_hp_bar.direction = Slider.Direction.LeftToRight;
 		}
 
-		public void SetCharacter(Character.eKind kind)
+		public void SetData(Character data)
 		{
-			data.kind = kind;
+			_data = data;
+		}
+
+		public Character GetData()
+		{
+			return _data;
+		}
+
+		public void SetKind(Character.eKind kind)
+		{
+			_data.kind = kind;
 		}
 
 		public void SetPosition(Vector3 pos)
 		{
 
-			data.SetPosition (pos);
+			_data.SetPosition (pos);
 
 			transform.localPosition = pos;
 
@@ -2528,6 +2540,11 @@ namespace CounterBlock
 			this.Update_UI_Card ();
 			this.Update_UI_HPBAR ();
 			this.Update_UI_Effect ();
+
+
+			////!!!!!!!!!
+			//Debug.DrawRay(, transform.TransformDirection(Vector3.forward) * 10, Color.red); //chamto test
+
 		}
 
 		private void Update_UI_HPBAR()
@@ -2540,12 +2557,12 @@ namespace CounterBlock
 		{
 			
 			this._text_explanation.text = 
-				"  "  + Character.StateToString(data.CurrentState()) +
-				"  sub:"+ Character.SubStateToString(data.CurrentValidState()) ;
+				"  "  + Character.StateToString(_data.CurrentState()) +
+				"  sub:"+ Character.SubStateToString(_data.CurrentValidState()) ;
 
 			this._text_time.text = 
-				Skill.NameToString(data.CurrentSkillKind()) + "   " +
-				data.GetTimeDelta().ToString("0.0");
+				Skill.NameToString(_data.CurrentSkillKind()) + "   " +
+				_data.GetTimeDelta().ToString("0.0");
 
 		}
 
@@ -2561,7 +2578,7 @@ namespace CounterBlock
 			//if (Skill.eName.Idle == charData.CurrentSkillKind () ||
 			//	Skill.eName.Hit == charData.CurrentSkillKind ()) 
 			{
-				switch (data.CurrentState ()) 
+				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
@@ -2570,7 +2587,7 @@ namespace CounterBlock
 						this._actions [1].gameObject.SetActive (false);
 						this._actions [2].gameObject.SetActive (false);
 
-						this._actions [0].SelectAction (data.kind, ResourceManager.eActionKind.Idle);
+						this._actions [0].SelectAction (_data.kind, ResourceManager.eActionKind.Idle);
 					}
 					break;
 				}
@@ -2578,18 +2595,18 @@ namespace CounterBlock
 			}
 
 
-			if (Skill.eName.Attack_1 == data.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_1 == _data.CurrentSkillKind ()) 
 			{
 
-				switch (data.CurrentState ()) 
+				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
 						this._actions[1].gameObject.SetActive (true);
 						this._actions[2].gameObject.SetActive (false);
 
-						this._actions[1].SelectAction(data.kind, ResourceManager.eActionKind.AttackBefore);
-						this._actions[2].SelectAction (data.kind, ResourceManager.eActionKind.AttackValid);
+						this._actions[1].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
+						this._actions[2].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
 
 						//iTween.Stop (charUI._actions [2].gameObject);
 						//charUI.RevertData_All ();
@@ -2603,14 +2620,14 @@ namespace CounterBlock
 						//====================================================
 						//update sub_state
 						//====================================================
-						switch (data.CurrentValidState ()) 
+						switch (_data.CurrentValidState ()) 
 						{
 						case Character.eSubState.Valid_Start:
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
 								CharDataBundle bundle;
-								bundle._data = data;
+								bundle._data = _data;
 								bundle._ui = this;
 								bundle._gameObject = this._actions [2].gameObject;
 
@@ -2643,7 +2660,7 @@ namespace CounterBlock
 					break;
 				case Character.eState.Waiting:
 					{
-						this._actions[1].SelectAction (data.kind, ResourceManager.eActionKind.AttackAfter);
+						this._actions[1].SelectAction (_data.kind, ResourceManager.eActionKind.AttackAfter);
 
 					}
 
@@ -2660,26 +2677,26 @@ namespace CounterBlock
 
 			}
 
-			if (Skill.eName.Block_1 == data.CurrentSkillKind ()) 
+			if (Skill.eName.Block_1 == _data.CurrentSkillKind ()) 
 			{
 
 
 
-				switch (data.CurrentState ()) 
+				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
 						this._actions[1].gameObject.SetActive (true);	
 						this._actions[2].gameObject.SetActive (false);
 
-						this._actions[1].SelectAction (data.kind, ResourceManager.eActionKind.BlockBefore);
+						this._actions[1].SelectAction (_data.kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
 				case Character.eState.Running:
 					{
 						//=========================================
 
-						switch (data.CurrentValidState ()) 
+						switch (_data.CurrentValidState ()) 
 						{
 						case Character.eSubState.Valid_Start:
 							{
@@ -2712,10 +2729,10 @@ namespace CounterBlock
 		private void Update_UI_Effect()
 		{
 			
-			if (data.IsStart_Damaged ()) 
+			if (_data.IsStart_Damaged ()) 
 			{
 				CharDataBundle bundle;
-				bundle._data = data;
+				bundle._data = _data;
 				bundle._ui = this;
 				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Hit].gameObject;
 				StartCoroutine("EffectStart_Damaged",bundle);
@@ -2726,10 +2743,10 @@ namespace CounterBlock
 			}
 
 
-			if (data.IsStart_BlockSucceed ()) 
+			if (_data.IsStart_BlockSucceed ()) 
 			{
 				CharDataBundle bundle;
-				bundle._data = data;
+				bundle._data = _data;
 				bundle._ui = this;
 				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Block].gameObject;
 				StartCoroutine("EffectStart_Block",bundle);
@@ -3011,7 +3028,8 @@ namespace CounterBlock
 		{
 			uint id = data.GetID();
 			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
-			card.data = data;
+			//card.data = data;
+			card.SetData(data);
 			card._id = id;
 			_characters.Add (id, card);
 
