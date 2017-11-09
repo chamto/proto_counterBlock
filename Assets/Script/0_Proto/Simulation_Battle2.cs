@@ -2508,6 +2508,11 @@ namespace CounterBlock
 
 		}
 
+		public Vector3 GetPosition()
+		{
+			return _data.GetPosition ();
+		}
+
 
 		public Sprite GetAction(Character.eKind ekind ,ResourceManager.eActionKind actionKind)
 		{
@@ -2541,9 +2546,56 @@ namespace CounterBlock
 			this.Update_UI_HPBAR ();
 			this.Update_UI_Effect ();
 
+			this.Update_UI_Debug ();
 
-			////!!!!!!!!!
-			//Debug.DrawRay(, transform.TransformDirection(Vector3.forward) * 10, Color.red); //chamto test
+
+		}
+
+		Vector3 _debug_dir = Vector3.zero;
+		Quaternion _debug_q = Quaternion.identity;
+		void OnDrawGizmos()
+		{
+			
+			//공격 범위 - 안쪽원/바깥원
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetRangeMin());
+			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetRangeMax());
+
+			//공격 범위 - 호/수직 : Vector3.forward
+			//eTraceShape tr = eTraceShape.None;
+			//_data.GetBehavior().attack_shape
+			_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * 0.5f, Vector3.forward);
+			_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
+			Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
+			_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * -0.5f, Vector3.forward);
+			_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
+			Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
+
+			//공격 범위 - 호/수평 : Vector3.up
+
+
+			//캐릭터카드 충돌원
+			Gizmos.color = Color.black;
+			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetCollider_Sphere_Radius());
+
+
+			//캐릭터 방향 
+			Gizmos.color = Color.black;
+			Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _data.GetDirection () * 4);
+			Gizmos.DrawSphere (_data.GetPosition () + _data.GetDirection () * 4, 0.4f);
+
+
+			//공격이동 경로
+			Gizmos.color = Color.yellow;
+			Gizmos.DrawLine (_data.GetPosition (), _data.GetWeaponPosition());
+			Gizmos.DrawSphere (_data.GetWeaponPosition(), 0.5f);
+
+		}
+
+		private void Update_UI_Debug()
+		{
+			////!!!!!!!!! debug !!!!!!!!!!
+			//Debug.DrawRay(_data.GetPosition(), _data.GetDirection() * 4, Color.black); //chamto test
 
 		}
 
