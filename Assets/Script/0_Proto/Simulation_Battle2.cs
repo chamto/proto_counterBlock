@@ -36,7 +36,7 @@ namespace CounterBlock
 			{
 				get
 				{	//f = radius / sin
-					return radius_collider_standard / Mathf.Sin( Mathf.Deg2Rad * degree );
+					return radius_collider_standard / Mathf.Sin( Mathf.Deg2Rad * degree * 0.5f );
 				}
 			}
 
@@ -99,59 +99,6 @@ namespace CounterBlock
 	}
 	public class Util
 	{
-		//사분면
-//		const int QUADRANT_1 = 1;
-//		const int QUADRANT_2 = 2;
-//		const int QUADRANT_3 = 3;
-//		const int QUADRANT_4 = 4;
-
-		//cos을 만듬 , 정상작동 안함 , 테스트필요 , 선형보간 한것이 문제인것 같음 , 구면보간?
-//		static public float DegreeToCos(float degree) 
-//		{
-//			//(2,3 사분면 : 음수 )  (1,4 사분면 : 양수 )  
-//			//90': 1f = 9' : 0.1f  (비율값만 구할려는 것임. 왼쪽 비례식은 sin에 해당함)
-//			//A : B = a : b   (a값을 알때, b값을 구하려 한다 : Ba = Ab , b = Ba/A)
-//			//b = Ba/A  ,  b = 1f * Degree / 90'
-//
-//			//45'  / 90 = 0  -> 1  ->  +1    
-//			//90'  / 90 = 1  -> 2  ->  -1   
-//			//180' / 90 = 2  -> 3  ->  -1   
-//			//270' / 90 = 3  -> 4  ->  +1   
-//			//360' / 90 = 4  -> 1  ->  +1   
-//			//450' / 90 = 5  -> 2  ->  -1   
-//			//...
-//
-//			int quadrant = (int)degree / 90;
-//			quadrant = (quadrant % 4) + 1;
-//			if(QUADRANT_2 == quadrant && QUADRANT_3 == quadrant) 
-//				return (1f - (degree / 90f)) * -1f;
-//			
-//			//cos값으로 반전 시킨다. - 이런식으로 cos값으로 못 바꾼다. 완전엉터리 식이다
-//			return 1f - (degree / 90f);
-//		}
-//
-//		//1/2 = 0.5 , 1/90 = 0.1111...
-//
-//		//만들다 보니 sin 
-//		static public float DegreeToSin(float degree)
-//		{
-//			//(3,4 사분면 : 음수 )  (1,2 사분면 : 양수 )  
-//
-//			//45'  / 90 = 0  -> 1  ->  +1
-//			//90'  / 90 = 1  -> 2  ->  +1
-//			//180' / 90 = 2  -> 3  ->  -1
-//			//270' / 90 = 3  -> 4  ->  -1
-//			//360' / 90 = 4  -> 1  ->  +1
-//			//450' / 90 = 5  -> 2  ->  +1
-//			//...
-//
-//			int quadrant = (int)degree / 90;
-//			quadrant = (quadrant % 4) + 1;
-//			if(QUADRANT_3 == quadrant && QUADRANT_4 == quadrant) 
-//				return (degree / 90f) * -1f;
-//
-//			return (degree / 90f);
-//		}
 
 		//코사인의 각도값을 비교 한다.
 		//0 ~ 180도 사이만 비교 할수있다. (1,4사분면과 2,3사분면의 cos값이 같기 때문임)  
@@ -1820,8 +1767,8 @@ namespace CounterBlock
 			bhvo.openTime_1 = 1f;
 			bhvo.cloggedTime_0 = 0.2f;
 			bhvo.cloggedTime_1 = 0.6f;
-			bhvo.attack_shape = eTraceShape.Straight;
-			//bhvo.attack_shape = eTraceShape.Vertical;
+			//bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.attack_shape = eTraceShape.Vertical;
 			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
