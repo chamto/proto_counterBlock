@@ -129,9 +129,9 @@ namespace CounterBlock
 					//각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
 					float angle_arc = Mathf.Cos(arc.degree * 0.5f * Mathf.Deg2Rad);
 
-					DebugWide.LogBlue ( Mathf.Acos(angle_arc) * Mathf.Rad2Deg + " [arc] " + arc.ToString() + "   [sph] " + sph.ToString());//chamto test
+					//DebugWide.LogBlue ( Mathf.Acos(angle_arc) * Mathf.Rad2Deg + " [arc] " + arc.ToString() + "   [sph] " + sph.ToString());//chamto test
 
-					Vector3 arc_sph_dir = sph.pos - arc.GetPosition_Factor (Figure.Arc.Fully_Included);
+					Vector3 arc_sph_dir = sph.pos - arc.GetPosition_Factor (Figure.Arc.Focus_Included);
 					arc_sph_dir.Normalize (); //노멀값 구하지 않는 계산식을 찾지 못했다. 
 
 					float rate_cos = Vector3.Dot (arc.dir, arc_sph_dir);
