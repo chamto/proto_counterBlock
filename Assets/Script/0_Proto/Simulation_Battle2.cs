@@ -78,68 +78,97 @@ namespace CounterBlock
 				}
 
 			}
+
+			public string ToString()
+			{
+
+				return "pos: " + pos + "  dir: " + dir + "  degree: " + degree
+				+ "  radius_near: " + radius_near + "  radius_far: " + radius_far + "  radius_collider_standard: " + radius_collider_standard + "  factor: " + factor;
+			}
 		}
 		public struct Sphere
 		{
 			public Vector3 pos;
 			public float radius;
+
+			public string ToString()
+			{
+				return "pos: " + pos + "  radius: " + radius ;
+			}
 		}
 	}
 	public class Util
 	{
 		//사분면
-		const int QUADRANT_1 = 1;
-		const int QUADRANT_2 = 2;
-		const int QUADRANT_3 = 3;
-		const int QUADRANT_4 = 4;
+//		const int QUADRANT_1 = 1;
+//		const int QUADRANT_2 = 2;
+//		const int QUADRANT_3 = 3;
+//		const int QUADRANT_4 = 4;
 
-		//acos 랑 뭐가 다른거지?
-		static public float DegreeToCos(float degree) 
+		//cos을 만듬 , 정상작동 안함 , 테스트필요 , 선형보간 한것이 문제인것 같음 , 구면보간?
+//		static public float DegreeToCos(float degree) 
+//		{
+//			//(2,3 사분면 : 음수 )  (1,4 사분면 : 양수 )  
+//			//90': 1f = 9' : 0.1f  (비율값만 구할려는 것임. 왼쪽 비례식은 sin에 해당함)
+//			//A : B = a : b   (a값을 알때, b값을 구하려 한다 : Ba = Ab , b = Ba/A)
+//			//b = Ba/A  ,  b = 1f * Degree / 90'
+//
+//			//45'  / 90 = 0  -> 1  ->  +1    
+//			//90'  / 90 = 1  -> 2  ->  -1   
+//			//180' / 90 = 2  -> 3  ->  -1   
+//			//270' / 90 = 3  -> 4  ->  +1   
+//			//360' / 90 = 4  -> 1  ->  +1   
+//			//450' / 90 = 5  -> 2  ->  -1   
+//			//...
+//
+//			int quadrant = (int)degree / 90;
+//			quadrant = (quadrant % 4) + 1;
+//			if(QUADRANT_2 == quadrant && QUADRANT_3 == quadrant) 
+//				return (1f - (degree / 90f)) * -1f;
+//			
+//			//cos값으로 반전 시킨다. - 이런식으로 cos값으로 못 바꾼다. 완전엉터리 식이다
+//			return 1f - (degree / 90f);
+//		}
+//
+//		//1/2 = 0.5 , 1/90 = 0.1111...
+//
+//		//만들다 보니 sin 
+//		static public float DegreeToSin(float degree)
+//		{
+//			//(3,4 사분면 : 음수 )  (1,2 사분면 : 양수 )  
+//
+//			//45'  / 90 = 0  -> 1  ->  +1
+//			//90'  / 90 = 1  -> 2  ->  +1
+//			//180' / 90 = 2  -> 3  ->  -1
+//			//270' / 90 = 3  -> 4  ->  -1
+//			//360' / 90 = 4  -> 1  ->  +1
+//			//450' / 90 = 5  -> 2  ->  +1
+//			//...
+//
+//			int quadrant = (int)degree / 90;
+//			quadrant = (quadrant % 4) + 1;
+//			if(QUADRANT_3 == quadrant && QUADRANT_4 == quadrant) 
+//				return (degree / 90f) * -1f;
+//
+//			return (degree / 90f);
+//		}
+
+		//코사인의 각도값을 비교 한다.
+		//0 ~ 180도 사이만 비교 할수있다. (1,4사분면과 2,3사분면의 cos값이 같기 때문임)  
+		//cosA > cosB : 1
+		//cosA < cosB : 2
+		//cosA == cosB : 0
+		static public int Compare_CosAngle(float cos_1 , float cos_2)
 		{
-			//(2,3 사분면 : 음수 )  (1,4 사분면 : 양수 )  
-			//90': 1f = 9' : 0.1f  (비율값만 구할려는 것임. 왼쪽 비례식은 sin에 해당함)
-			//A : B = a : b   (a값을 알때, b값을 구하려 한다 : Ba = Ab , b = Ba/A)
-			//b = Ba/A  ,  b = 1f * Degree / 90'
-
-			//45'  / 90 = 0  -> 1  ->  +1    
-			//90'  / 90 = 1  -> 2  ->  -1   
-			//180' / 90 = 2  -> 3  ->  -1   
-			//270' / 90 = 3  -> 4  ->  +1   
-			//360' / 90 = 4  -> 1  ->  +1   
-			//450' / 90 = 5  -> 2  ->  -1   
-			//...
-
-			int quadrant = (int)degree / 90;
-			quadrant = (quadrant % 4) + 1;
-			if(QUADRANT_2 == quadrant && QUADRANT_3 == quadrant) 
-				return (1f - (degree / 90f)) * -1f;
+			//각도가 클수록 cos값은 작아진다 (0~180도 에서만 해당)
+			if(cos_1 < cos_2)
+				return 1;
+			if (cos_1 > cos_2)
+				return 2;
 			
-			//cos값으로 반전 시킨다.
-			return 1f - (degree / 90f);
+			return 0;
 		}
 
-		//1/2 = 0.5 , 1/90 = 0.1111...
-
-		//만들다 보니 asin 
-		static public float DegreeToSin(float degree)
-		{
-			//(3,4 사분면 : 음수 )  (1,2 사분면 : 양수 )  
-
-			//45'  / 90 = 0  -> 1  ->  +1
-			//90'  / 90 = 1  -> 2  ->  +1
-			//180' / 90 = 2  -> 3  ->  -1
-			//270' / 90 = 3  -> 4  ->  -1
-			//360' / 90 = 4  -> 1  ->  +1
-			//450' / 90 = 5  -> 2  ->  +1
-			//...
-
-			int quadrant = (int)degree / 90;
-			quadrant = (quadrant % 4) + 1;
-			if(QUADRANT_3 == quadrant && QUADRANT_4 == quadrant) 
-				return (degree / 90f) * -1f;
-
-			return (degree / 90f);
-		}
 
 		//호와 원의 충돌 검사 (2D 한정)
 		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph)
@@ -150,9 +179,12 @@ namespace CounterBlock
 				
 				if (false == Util.Collision_Sphere (arc.sphere_near, sph, eSphere_Include_Status.Focus)) 
 				{
-					float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
+					//각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
+					float angle_arc = Mathf.Cos(arc.degree * 0.5f * Mathf.Deg2Rad);
 
-					Vector3 arc_sph_dir = sph.pos - arc.GetPosition_Factor (Figure.Arc.Focus_Included);
+					DebugWide.LogBlue ( Mathf.Acos(angle_arc) * Mathf.Rad2Deg + " [arc] " + arc.ToString() + "   [sph] " + sph.ToString());//chamto test
+
+					Vector3 arc_sph_dir = sph.pos - arc.GetPosition_Factor (Figure.Arc.Fully_Included);
 					arc_sph_dir.Normalize (); //노멀값 구하지 않는 계산식을 찾지 못했다. 
 
 					float rate_cos = Vector3.Dot (arc.dir, arc_sph_dir);
@@ -608,6 +640,7 @@ namespace CounterBlock
 			arc.pos = _position;
 			arc.dir = _direction;
 			arc.degree = _behavior.angle;
+			arc.radius_collider_standard = Figure.Arc.STANDARD_COLLIDER_RADIUS; //임시처리임
 
 			return arc;
 		}
@@ -935,13 +968,15 @@ namespace CounterBlock
 			//1.들어온 무기 방향 검사 : 내앞에서 들어왔는가? 내뒤에서 들어왔는가?
 			//2.내무기 범위 각도 검사 : 부채꼴 - 나중에 구현 
 
-			//원을 반으로 나눠 앞쪽은 "같은 방향" , 뒤쪽은 "반대 방향" 으로 판단한다.
-			float cos = Vector3.Dot (this.GetDirection(), dst.GetDirection ()); //두백터가 정규화 되었다면 cos삼각비가 나온다
-			if (cos >= 0) 
-			{	//같은 벡터 방향 
+			//정면 180안에 상대가 있을 경우만 공격가능
+			//=======================================================================
+			Vector3 toDst = dst.GetPosition() - this.GetPosition();
+			float cos = Vector3.Dot (this.GetDirection(), toDst);
+			if(cos < 0) 
+			{  
 				return false;
-			}
-			//else if(angle < 0) {} //반대 벡터 방향
+			} 
+			//=======================================================================
 
 
 			//작은원 <= 대상 <= 큰원
@@ -963,23 +998,7 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
-			//return false;
-
-			//정면에서 상대가 좌우합 18도 안에 있을 때만 충돌처리 한다. (상하합 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
-			//=======================================================================
-			//0.1(1사분면) + 0.1(4사분면) = 0.2f  ,  90': 1f = 9' : 0.1f  ,  대략 9' * 2 안에 적이 있어야 공격이 가능하다. 
-			const float ANGLE_SCOPE = 18f;
-			float rate = 1f - ((ANGLE_SCOPE * 0.5f) / 90f); //1(단위원 최대값) - ((원하는각도 * 0.5) / 90도 )  ,  각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
-			Vector3 toDst = dst.GetPosition() - this.GetPosition();
-			toDst.Normalize (); //fixme : 빠른 노멀 구하는 함수로 변경하기 
-			float cos = Vector3.Dot (this.GetDirection(), toDst);
-			if(cos < rate) 
-			{  //지정 각도보다 작으면 충돌검사 못함
-				return false;
-			} 
-			//=======================================================================
-
-
+			
 			switch (this._behavior.attack_shape) 
 			{
 			case eTraceShape.Horizon: //todo : 추후 필요시 구현
@@ -992,6 +1011,22 @@ namespace CounterBlock
 				//break;
 			case eTraceShape.Straight:
 				{	//***** 내무기 위치 vs 상대방 위치 *****
+
+
+					//fixme : 원과 반직선 충돌 처리로 변경하는게 더 낫다. 현재 처리로는 부족하다.
+					//정면 6도안에 상대가 있을 경우만 공격가능
+					//=======================================================================
+					const float ANGLE_SCOPE = 10f;
+					//각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
+					float angle = Mathf.Cos(ANGLE_SCOPE * 0.5f * Mathf.Deg2Rad);
+					Vector3 toDst = dst.GetPosition() - this.GetPosition();
+					toDst.Normalize (); 
+					float cos = Vector3.Dot (this.GetDirection(), toDst);
+					if(2 == Util.Compare_CosAngle(angle, cos)) //angle 보다 cos이 작아야 함
+					{  
+						return false;	
+					} 
+					//=======================================================================
 
 					if (true == Util.Collision_Sphere (this.GetWeaponPosition(), this.weapon.collider_sphere_radius, dst.GetPosition (), dst.GetCollider_Sphere ().radius)) 
 					{
@@ -1785,8 +1820,8 @@ namespace CounterBlock
 			bhvo.openTime_1 = 1f;
 			bhvo.cloggedTime_0 = 0.2f;
 			bhvo.cloggedTime_1 = 0.6f;
-			//bhvo.attack_shape = eTraceShape.Straight;
-			bhvo.attack_shape = eTraceShape.Vertical;
+			bhvo.attack_shape = eTraceShape.Straight;
+			//bhvo.attack_shape = eTraceShape.Vertical;
 			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
