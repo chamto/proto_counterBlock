@@ -144,10 +144,11 @@ namespace CounterBlock
 		//호와 원의 충돌 검사 (2D 한정)
 		static public bool Collision_Arc_VS_Sphere(Figure.Arc arc , Figure.Sphere sph)
 		{
-			
-			if (true == Util.Collision_Sphere (arc.sphere_far, sph, Sphere_Focus_Included)) 
+			//DebugWide.LogBlue ("1  srcPos" + arc.sphere_far.pos + " r:" + arc.sphere_far.radius + " dstPos:" + sph.pos + " r:" + sph.radius); //chamto test
+			if (true == Util.Collision_Sphere (arc.sphere_far, sph, eSphere_Include_Status.Focus)) 
 			{
-				if (false == Util.Collision_Sphere (arc.sphere_near, sph, Sphere_Focus_Included)) 
+				
+				if (false == Util.Collision_Sphere (arc.sphere_near, sph, eSphere_Include_Status.Focus)) 
 				{
 					float angle_arc = Util.DegreeToCos ( arc.degree * 0.5f); //각도를 반으로 줄여 넣는다. 1과 4분면을 구별 못하기 때문에 1사분면에서 검사하면 4사분면도 검사 결과에 포함된다. 즉 실제 검사 범위가 2배가 된다.
 
@@ -166,23 +167,57 @@ namespace CounterBlock
 			return false;
 		}
 
-		//ratio : 충돌 반지름합 비율 , 일정 비율이 넘었을 때만 충돌처리 되게 한다.
-		public const float Sphere_Fully_Included = 0.01f;	//완전겹침 처리가 필요할 경우
-		public const float Sphere_Focus_Included = 0.5f; 	//반지름합 1/2만 사용 ,  어느정도 겹쳤을 때 충돌처리 해야 할 경우
-		public const float Sphere_Boundary_Included = 1f; 	//반지름합 최대치 , 일반경우  
-		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , float ratio = Sphere_Boundary_Included)
+
+		public enum eSphere_Include_Status
 		{
-			//두원의 반지름을 더한후 제곱해 준다. 
-			float sum_radius = (src.radius + dst.radius) * ratio;
-			float sqr_standard_value = sum_radius * sum_radius;
+			Boundary = 1,	//두원의 닿는 경계까지 포함 
+			Focus,			//작은원이 중점까지 포함
+			Fully			//작은원이 완전포함 
+		}
+		//ratio : 충돌민감도 설정 , 기본 1f , 민감도올리기 1f 보다작은값 , 민감도낮추기 1f 보다큰값  
+		static public bool Collision_Sphere(Figure.Sphere src , Figure.Sphere dst , eSphere_Include_Status eInclude ,float ratio = 1f)
+		{
+			
+			float min_radius , max_radius , sum_radius , sqr_standard_value;
+			if (src.radius > dst.radius) 
+			{
+				min_radius = dst.radius;
+				max_radius = src.radius;
+			} else 
+			{
+				min_radius = src.radius;
+				max_radius = dst.radius;
+			}
+
+			//(src.r - dst.r) < src.r  < (src.r + dst.r)
+			//완전포함 		  < 중점포함  < 경계포함
+			//Fully           < Focus   < Boundary
+			switch (eInclude) 
+			{
+			case eSphere_Include_Status.Fully:
+				sum_radius = max_radius - min_radius;
+				break;
+			case eSphere_Include_Status.Focus:
+				sum_radius = max_radius;
+				break;
+			case eSphere_Include_Status.Boundary:
+			default:
+				//두원의 반지름을 더한후 제곱해 준다. 
+				sum_radius = max_radius + min_radius;
+				break;
+			}
+				
+			sqr_standard_value = (sum_radius * sum_radius) * ratio;
 
 			//두원의 중점 사이의 거리를 구한다. 피타고라스의 정리를 이용 , 제곱을 벗기지 않는다.
 			float sqr_dis_between = Vector3.SqrMagnitude(src.pos - dst.pos);
 
+			//DebugWide.LogBlue (" r+r: "+Mathf.Sqrt(sqr_standard_value) + " p-p: " + Mathf.Sqrt(sqr_dis_between));
+
 			if (sqr_standard_value > sqr_dis_between)
 				return true; //두원이 겹쳐짐 
 			if (sqr_standard_value == sqr_dis_between)
-				return true; //두원이 겹치지 않게 붙어 있음 
+				return true; //포함조건과 똑같음
 			if (sqr_standard_value < sqr_dis_between)
 				return false; //두원이 겹쳐 있지 않음
 
@@ -194,7 +229,7 @@ namespace CounterBlock
 			Figure.Sphere src, dst;
 			src.pos = src_pos; src.radius = src_radius;
 			dst.pos = des_pos; dst.radius = des_radius;
-			return Util.Collision_Sphere (src, dst, 1f);
+			return Util.Collision_Sphere (src, dst, eSphere_Include_Status.Boundary);
 		}	
 
 		//!!test 필요
@@ -346,8 +381,8 @@ namespace CounterBlock
 			cloggedTime_1 = 0f;
 			plus_range_0 = 0f;
 			plus_range_1 = 0f;
-			//angle = 45f;
-			angle = 0f;
+			angle = 45f; //chamto test
+			//angle = 0f;
 			attack_shape = eTraceShape.None;
 			//distance_travel = DEFAULT_DISTANCE;
 			distance_travel = 0f;
@@ -944,13 +979,13 @@ namespace CounterBlock
 			} 
 			//=======================================================================
 
-			
+
 			switch (this._behavior.attack_shape) 
 			{
 			case eTraceShape.Horizon: //todo : 추후 필요시 구현
 			case eTraceShape.Vertical:
 				{	//***** 내무기 범위 vs 상대방 위치 *****
-
+					
 					return Util.Collision_Arc_VS_Sphere (this.GetArc_Weapon (), dst.GetCollider_Sphere());
 
 				}
@@ -2541,6 +2576,10 @@ namespace CounterBlock
 
 		public void Update_UI()
 		{
+			//update position
+			this.SetPosition(transform.position);
+
+
 			if (true == _apply) 
 			{
 				//----------------------------------------
@@ -2555,7 +2594,6 @@ namespace CounterBlock
 			this.Update_UI_Card ();
 			this.Update_UI_HPBAR ();
 			this.Update_UI_Effect ();
-
 			this.Update_UI_Debug ();
 
 
