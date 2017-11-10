@@ -364,7 +364,7 @@ namespace CounterBlock
 			this.velocity_before = distance_travel / distance_maxTime;
 			this.velocity_after = distance_travel / (runningTime - distance_maxTime);
 
-			DebugWide.LogBlue ("velocity_up:"+this.velocity_before + "   ~   velocity_down:" +this.velocity_after ); //chamto test
+			DebugWide.LogBlue ("velocity_before : "+this.velocity_before + "   <-- 충돌점 -->   velocity_after : " +this.velocity_after ); //chamto test
 		}
 
 		public float CurrentDistance(float currentTime)
@@ -582,11 +582,16 @@ namespace CounterBlock
 			return _collider;
 		}
 
+
+		public Vector3 GetWeaponPosition(float time)
+		{
+			return _position + (_behavior.CurrentDistance(time) * _direction);
+		}
+
 		public Vector3 GetWeaponPosition()
 		{
-			//DebugWide.LogBlue (_behavior.CurrentDistance(_timeDelta));//chamto test
+			return this.GetWeaponPosition (_timeDelta);
 
-			return _position + (_behavior.CurrentDistance(_timeDelta) * _direction);
 		}
 
 		public void SetID(uint id)
@@ -2558,23 +2563,30 @@ namespace CounterBlock
 
 		Vector3 _debug_dir = Vector3.zero;
 		Quaternion _debug_q = Quaternion.identity;
+		Vector3 _debug_line = Vector3.zero;
 		void OnDrawGizmos()
 		{
-			
+			//*
 			//공격 범위 - 안쪽원/바깥원
-			Gizmos.color = Color.red;
+			Gizmos.color = Color.gray;
 			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetRangeMin());
 			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetRangeMax());
 
 			//공격 범위 - 호/수직 : Vector3.forward
 			//eTraceShape tr = eTraceShape.None;
 			//_data.GetBehavior().attack_shape
-			_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * 0.5f, Vector3.forward);
-			_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
-			Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
-			_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * -0.5f, Vector3.forward);
-			_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
-			Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
+
+			if (0 != _data.GetArc_Weapon ().degree) 
+			{
+				Gizmos.color = Color.yellow;
+				_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * 0.5f, Vector3.forward);
+				_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
+				Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
+				_debug_q = Quaternion.AngleAxis (_data.GetArc_Weapon ().degree * -0.5f, Vector3.forward);
+				_debug_dir = _debug_q * _data.GetArc_Weapon ().dir;
+				Gizmos.DrawLine (_data.GetPosition (), _data.GetPosition () + _debug_dir * _data.GetArc_Weapon().radius_far);
+			}
+
 
 			//공격 범위 - 호/수평 : Vector3.up
 
@@ -2591,10 +2603,22 @@ namespace CounterBlock
 
 
 			//공격이동 경로
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawLine (_data.GetPosition (), _data.GetWeaponPosition());
-			Gizmos.DrawSphere (_data.GetWeaponPosition(), 0.5f);
+			_debug_line.y = -0.5f;
+			Gizmos.color = Color.red;
+			Gizmos.DrawLine (_data.GetPosition () + _debug_line, _data.GetWeaponPosition() +_debug_line);
+			Gizmos.DrawSphere (_data.GetWeaponPosition() + _debug_line, 0.5f);
+			//*/
 
+			//칼죽이기 가능 범위
+			_debug_line.y = -1f;
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine (_data.GetWeaponPosition (_data.GetBehavior ().cloggedTime_0)+_debug_line, _data.GetWeaponPosition (_data.GetBehavior ().cloggedTime_1)+_debug_line);
+
+
+			//공격점 범위 
+			_debug_line.y = -1.5f;
+			Gizmos.color = Color.red;
+			Gizmos.DrawLine (_data.GetWeaponPosition (_data.GetBehavior().scopeTime_0)+_debug_line, _data.GetWeaponPosition (_data.GetBehavior ().scopeTime_1)+_debug_line);
 		}
 
 		private void Update_UI_Debug()
