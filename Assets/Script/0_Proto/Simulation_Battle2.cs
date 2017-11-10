@@ -327,10 +327,10 @@ namespace CounterBlock
 		public float 		plus_range_1;		//더해지는 범위 최대
 		public float		angle;				//범위 각도
 		//  === 이동형 움직임 === : 찌르기,던지기
-		public float 		distance_travel;	//무기 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
-		public float 		distance_maxTime;  //최대거리가 되는 시간 : 삼각형 모형
-		public float 		velocity_up;		//무기 상승 속도
-		public float 		velocity_down;		//무기 하강 속도	
+		public float 		distance_travel;	//공격점까지 이동 거리 : 상대방까지의 직선거리 , 근사치 , 판단을 위한 값임 , 정확한 충돌검사용 값이 아님.
+		public float 		distance_maxTime;  	//최대거리가 되는 시간 : 공격점에 도달하는 시간
+		public float 		velocity_before;	//공격점 전 속도 
+		public float 		velocity_after;		//공격점 후 속도 	
 
 
 		public  Behavior()
@@ -352,8 +352,8 @@ namespace CounterBlock
 			//distance_travel = DEFAULT_DISTANCE;
 			distance_travel = 0f;
 			distance_maxTime = 0f;
-			velocity_up = 0f;
-			velocity_down = 0f;
+			velocity_before = 0f;
+			velocity_after = 0f;
 
 		}
 
@@ -361,10 +361,10 @@ namespace CounterBlock
 		{
 			//t * s = d
 			//s = d/t
-			this.velocity_up = distance_travel / distance_maxTime;
-			this.velocity_down = distance_travel / (runningTime - distance_maxTime);
+			this.velocity_before = distance_travel / distance_maxTime;
+			this.velocity_after = distance_travel / (runningTime - distance_maxTime);
 
-			DebugWide.LogBlue ("velocity_up:"+this.velocity_up + "   ~   velocity_down:" +this.velocity_down ); //chamto test
+			DebugWide.LogBlue ("velocity_up:"+this.velocity_before + "   ~   velocity_down:" +this.velocity_after ); //chamto test
 		}
 
 		public float CurrentDistance(float currentTime)
@@ -375,11 +375,11 @@ namespace CounterBlock
 			
 			if (currentTime <= distance_maxTime) 
 			{
-				return this.velocity_up * currentTime;
+				return this.velocity_before * currentTime;
 			}
 
 			//if(distance_maxTime < currentTime)
-			return  this.velocity_down * (runningTime - currentTime);
+			return  this.velocity_after * (runningTime - currentTime);
 		}
 
 	}
@@ -1751,8 +1751,8 @@ namespace CounterBlock
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-			//bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
-			bhvo.distance_maxTime = 0.6f; //chamto test
+			bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
+			//bhvo.distance_maxTime = 0.6f; //chamto test
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
