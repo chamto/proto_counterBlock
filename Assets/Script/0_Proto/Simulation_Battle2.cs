@@ -346,9 +346,11 @@ namespace CounterBlock
 			cloggedTime_1 = 0f;
 			plus_range_0 = 0f;
 			plus_range_1 = 0f;
-			angle = 45f;
+			//angle = 45f;
+			angle = 0f;
 			attack_shape = eTraceShape.None;
-			distance_travel = DEFAULT_DISTANCE;
+			//distance_travel = DEFAULT_DISTANCE;
+			distance_travel = 0f;
 			distance_maxTime = 0f;
 			velocity_up = 0f;
 			velocity_down = 0f;
@@ -361,6 +363,8 @@ namespace CounterBlock
 			//s = d/t
 			this.velocity_up = distance_travel / distance_maxTime;
 			this.velocity_down = distance_travel / (runningTime - distance_maxTime);
+
+			DebugWide.LogBlue ("velocity_up:"+this.velocity_up + "   ~   velocity_down:" +this.velocity_down ); //chamto test
 		}
 
 		public float CurrentDistance(float currentTime)
@@ -375,7 +379,7 @@ namespace CounterBlock
 			}
 
 			//if(distance_maxTime < currentTime)
-			return  distance_travel - (this.velocity_down * currentTime);
+			return  this.velocity_down * (runningTime - currentTime);
 		}
 
 	}
@@ -573,13 +577,15 @@ namespace CounterBlock
 			return arc;
 		}
 
-		public Figure.Sphere GetSphere_Collider()
+		public Figure.Sphere GetCollider_Sphere()
 		{
 			return _collider;
 		}
 
 		public Vector3 GetWeaponPosition()
 		{
+			//DebugWide.LogBlue (_behavior.CurrentDistance(_timeDelta));//chamto test
+
 			return _position + (_behavior.CurrentDistance(_timeDelta) * _direction);
 		}
 
@@ -612,11 +618,6 @@ namespace CounterBlock
 		public void SetDirection(Vector3 dir)
 		{
 			_direction = dir;
-		}
-
-		public float GetCollider_Sphere_Radius()
-		{
-			return _collider.radius;
 		}
 
 		public float GetTimeDelta()
@@ -922,6 +923,7 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
+			//return false;
 
 			//정면에서 상대가 좌우합 18도 안에 있을 때만 충돌처리 한다. (상하합 18도 도 검사 된다. 추가 제한을 걸어 놓지 않았다. ) 
 			//=======================================================================
@@ -944,14 +946,14 @@ namespace CounterBlock
 			case eTraceShape.Vertical:
 				{	//***** 내무기 범위 vs 상대방 위치 *****
 
-					return Util.Collision_Arc_VS_Sphere (this.GetArc_Weapon (), dst.GetSphere_Collider());
+					return Util.Collision_Arc_VS_Sphere (this.GetArc_Weapon (), dst.GetCollider_Sphere());
 
 				}
 				//break;
 			case eTraceShape.Straight:
 				{	//***** 내무기 위치 vs 상대방 위치 *****
 
-					if (true == Util.Collision_Sphere (this.GetWeaponPosition(), this.weapon.collider_sphere_radius, dst.GetPosition (), dst.GetCollider_Sphere_Radius ())) 
+					if (true == Util.Collision_Sphere (this.GetWeaponPosition(), this.weapon.collider_sphere_radius, dst.GetPosition (), dst.GetCollider_Sphere ().radius)) 
 					{
 						return true;
 					}
@@ -1743,11 +1745,14 @@ namespace CounterBlock
 			bhvo.openTime_1 = 1f;
 			bhvo.cloggedTime_0 = 0.2f;
 			bhvo.cloggedTime_1 = 0.6f;
-			bhvo.attack_shape = eTraceShape.Straight;
+			//bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.attack_shape = eTraceShape.Vertical;
+			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-			bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
+			//bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
+			bhvo.distance_maxTime = 0.6f; //chamto test
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
@@ -2576,7 +2581,7 @@ namespace CounterBlock
 
 			//캐릭터카드 충돌원
 			Gizmos.color = Color.black;
-			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetCollider_Sphere_Radius());
+			Gizmos.DrawWireSphere(_data.GetPosition(), _data.GetCollider_Sphere().radius);
 
 
 			//캐릭터 방향 
