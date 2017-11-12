@@ -325,8 +325,8 @@ namespace CounterBlock
 		//===================================
 
 		public float runningTime;	//동작 전체 시간 
-		public float scopeTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
-		public float scopeTime_1;
+		public float eventTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
+		public float eventTime_1;
 		public float rigidTime;		//동작 완료후 경직 시간
 		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
 		public float openTime_1; 
@@ -351,8 +351,8 @@ namespace CounterBlock
 		{
 			
 			runningTime = 0f;
-			scopeTime_0 = 0f;
-			scopeTime_1 = 0f;
+			eventTime_0 = 0f;
+			eventTime_1 = 0f;
 			rigidTime = 0f;
 			openTime_0 = 0f;
 			openTime_1 = 0f;
@@ -747,22 +747,22 @@ namespace CounterBlock
 			return _behavior.runningTime;
 		}
 
-		public float GetScopeTime()
+		public float GetEventTime_Interval()
 		{
-			return _behavior.scopeTime_1 - _behavior.scopeTime_0;
+			return _behavior.eventTime_1 - _behavior.eventTime_0;
 		}
 
-		public float GetOpenTime()
+		public float GetOpenTime_Interval()
 		{
 			return _behavior.openTime_1 - _behavior.openTime_0;
 		}
 
-		public bool Valid_ScopeTime()
+		public bool Valid_EventTime()
 		{
 
 			if (eState.Start == _state_current || eState.Running == _state_current) 
 			{
-				if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1)
+				if (_behavior.eventTime_0 <= _timeDelta && _timeDelta <= _behavior.eventTime_1)
 					return true;
 			}
 
@@ -998,21 +998,21 @@ namespace CounterBlock
 			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Attack () ) 
 			{
 				
-				if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime()) 
+				if (true == this.Valid_EventTime () && false == dst.Valid_EventTime()) 
 				{	//먼저공격 나
 					if(true == this.Collision_Weaphon_Attack_VS(dst))
 					{
 						jState = Judgment.eState.Attack_Succeed;
 					}
 				}
-				if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
+				if (false == this.Valid_EventTime () && true == dst.Valid_EventTime()) 
 				{	//먼저공격 상대
 					if(true == dst.Collision_Weaphon_Attack_VS(this))
 					{
 						jState = Judgment.eState.Damaged;
 					}
 				}
-				else if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime()) 
+				else if (true == this.Valid_EventTime () && true == dst.Valid_EventTime()) 
 				{	//칼겨루기
 					if(this.IsPossibleRange_Clog_VS(dst))
 					{
@@ -1049,11 +1049,11 @@ namespace CounterBlock
 			{
 				if (true == this.Collision_Weaphon_Attack_VS (dst)) 
 				{
-					if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					if (true == this.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 					{
 						jState = Judgment.eState.Attack_Blocked;
 					}
-					if (true == this.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+					if (true == this.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 					{
 						jState = Judgment.eState.Attack_Succeed;
 					}
@@ -1067,11 +1067,11 @@ namespace CounterBlock
 			{
 				if (true == dst.Collision_Weaphon_Attack_VS (this)) 
 				{
-					if (true == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					if (true == this.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 					{
 						jState = Judgment.eState.Block_Succeed;
 					}
-					if (false == this.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+					if (false == this.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 					{
 						jState = Judgment.eState.Damaged;
 					}
@@ -1085,7 +1085,7 @@ namespace CounterBlock
 			{
 				if (true == this.Collision_Weaphon_Attack_VS (dst)) 
 				{
-					if (true == this.Valid_ScopeTime () ) 
+					if (true == this.Valid_EventTime () ) 
 					{
 						jState = Judgment.eState.Attack_Succeed;
 					}
@@ -1099,7 +1099,7 @@ namespace CounterBlock
 			{
 				if (true == dst.Collision_Weaphon_Attack_VS (this)) 
 				{
-					if (true == dst.Valid_ScopeTime () ) 
+					if (true == dst.Valid_EventTime () ) 
 					{
 						jState = Judgment.eState.Damaged;
 					}
@@ -1165,7 +1165,7 @@ namespace CounterBlock
 					switch (_validState_current) 
 					{
 					case eSubState.None:
-						if (_behavior.scopeTime_0 <= _timeDelta && _timeDelta <= _behavior.scopeTime_1) {
+						if (_behavior.eventTime_0 <= _timeDelta && _timeDelta <= _behavior.eventTime_1) {
 							this.SetValidState (eSubState.Valid_Start);
 						}
 						break;
@@ -1173,7 +1173,7 @@ namespace CounterBlock
 						this.SetValidState (eSubState.Valid_Running);
 						break;
 					case eSubState.Valid_Running:
-						if (!(_behavior.scopeTime_0 <= _timeDelta && _timeDelta < _behavior.scopeTime_1)) {
+						if (!(_behavior.eventTime_0 <= _timeDelta && _timeDelta < _behavior.eventTime_1)) {
 							this.SetValidState (eSubState.Valid_End);
 						}
 
@@ -1463,24 +1463,24 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Attack()) 
 			{
-				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					
 					result.first = eState.Attack_Blocked;
 					result.second = eState.Attack_Blocked;
 
 				}
-				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
-				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Damaged;
 					result.second = eState.Attack_Succeed;
 				}
-				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Idle;
 					result.second = eState.Attack_Idle;
@@ -1493,22 +1493,22 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Block()) 
 			{
-				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Blocked;
 					result.second = eState.Block_Succeed;
 				}
-				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
-				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Idle;
 					result.second = eState.Block_Idle;
 				}
-				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Attack_Idle;
 					result.second = eState.Block_Idle;
@@ -1520,22 +1520,22 @@ namespace CounterBlock
 			//============================
 			if (true == src.IsSkill_Block () && true == dst.IsSkill_Attack()) 
 			{
-				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Block_Succeed;
 					result.second = eState.Attack_Blocked;
 				}
-				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (true == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Block_Idle;
 					result.second = eState.Attack_Idle;
 				}
-				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && true == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Damaged;
 					result.second = eState.Attack_Succeed;
 				}
-				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) 
+				if (false == src.Valid_EventTime () && false == dst.Valid_EventTime ()) 
 				{
 					result.first = eState.Block_Idle;
 					result.second = eState.Attack_Idle;
@@ -1547,19 +1547,19 @@ namespace CounterBlock
 			//Attack_Vs_None
 			//============================
 			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
-				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
-				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+				if (true == src.Valid_EventTime () && false == dst.Valid_EventTime ()) {
 					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
 				}
-				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+				if (false == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Attack_Idle;
 					result.second = eState.None;
 				}
-				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+				if (false == src.Valid_EventTime () && false == dst.Valid_EventTime ()) {
 					result.first = eState.Attack_Idle;
 					result.second = eState.None;
 				}
@@ -1570,19 +1570,19 @@ namespace CounterBlock
 			//None_Vs_Attack
 			//============================
 			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
-				if (true == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Damaged;
 					result.second = eState.Attack_Succeed;
 				}
-				if (true == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+				if (true == src.Valid_EventTime () && false == dst.Valid_EventTime ()) {
 					result.first = eState.None;
 					result.second = eState.Attack_Idle;
 				}
-				if (false == src.Valid_ScopeTime () && true == dst.Valid_ScopeTime ()) {
+				if (false == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Damaged;
 					result.second = eState.Attack_Succeed;
 				}
-				if (false == src.Valid_ScopeTime () && false == dst.Valid_ScopeTime ()) {
+				if (false == src.Valid_EventTime () && false == dst.Valid_EventTime ()) {
 					result.first = eState.None;
 					result.second = eState.Attack_Idle;
 				}
@@ -1723,8 +1723,8 @@ namespace CounterBlock
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
 
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -1741,8 +1741,8 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -1760,8 +1760,8 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1.0f;
-			bhvo.scopeTime_0 = 0.6f;
-			bhvo.scopeTime_1 = 0.8f;
+			bhvo.eventTime_0 = 0.6f;
+			bhvo.eventTime_1 = 0.8f;
 			bhvo.rigidTime = 0.3f;
 			bhvo.openTime_0 = 0.7f;
 			bhvo.openTime_1 = 1f;
@@ -1773,7 +1773,7 @@ namespace CounterBlock
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-			bhvo.distance_maxTime = bhvo.scopeTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
+			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
 			//bhvo.distance_maxTime = 0.6f; //chamto test
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
@@ -1790,24 +1790,24 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -1826,8 +1826,8 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 1f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 1f;
 			bhvo.rigidTime = 0.1f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
@@ -1846,8 +1846,8 @@ namespace CounterBlock
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
-			bhvo.scopeTime_0 = 0f;
-			bhvo.scopeTime_1 = 0f;
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
 			skinfo.Add (bhvo);
@@ -2638,7 +2638,7 @@ namespace CounterBlock
 			//공격점 범위 
 			_debug_line.y = -1.5f;
 			Gizmos.color = Color.red;
-			Gizmos.DrawLine (_data.GetWeaponPosition (_data.GetBehavior().scopeTime_0)+_debug_line, _data.GetWeaponPosition (_data.GetBehavior ().scopeTime_1)+_debug_line);
+			Gizmos.DrawLine (_data.GetWeaponPosition (_data.GetBehavior().eventTime_0)+_debug_line, _data.GetWeaponPosition (_data.GetBehavior ().eventTime_1)+_debug_line);
 		}
 
 		private void Update_UI_Debug()
@@ -2733,7 +2733,8 @@ namespace CounterBlock
 								bundle._gameObject = this._actions [2].gameObject;
 
 								//StartCoroutine("AniStart_Attack_1",bundle); 
-								StartCoroutine("AniStart_Attack_1_Random",bundle); 
+								//StartCoroutine("AniStart_Attack_1_Random",bundle); 
+								StartCoroutine("AniStart_Attack_2",bundle); 
 
 							}
 							break;
@@ -2892,10 +2893,38 @@ namespace CounterBlock
 		}//end func
 
 
+		public IEnumerator AniStart_Attack_2(CharDataBundle bundle)
+		{
+
+			float time = bundle._data.GetRunningTime ();
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
+			iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
+			iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
+			//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
+			//	"amount", new Vector3(300f,20f,0f),
+			//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
+			//));
+
+
+			yield return new WaitForSeconds(time);
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+
+
+		}
+
 		public IEnumerator AniStart_Attack_1(CharDataBundle bundle)
 		{
 
-			float time = bundle._data.GetScopeTime ();
+			float time = bundle._data.GetEventTime_Interval ();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -2975,7 +3004,7 @@ namespace CounterBlock
 		{
 
 			int rand = Single.rand.Next (1, 4);
-			float time = bundle._data.GetScopeTime ();
+			float time = bundle._data.GetEventTime_Interval ();
 			//float time = bundle._data.GetRunningTime();
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
