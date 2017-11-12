@@ -443,9 +443,9 @@ namespace CounterBlock
 		{
 			None,
 
-			Valid_Start,
-			Valid_Running,
-			Valid_End,
+			Event_Start,
+			Event_Running,
+			Event_End,
 
 			Start,
 			Running,
@@ -488,11 +488,11 @@ namespace CounterBlock
 			{
 			case Character.eSubState.None:
 				return "None";
-			case Character.eSubState.Valid_Start:
+			case Character.eSubState.Event_Start:
 				return "Valid_Start";
-			case Character.eSubState.Valid_Running:
+			case Character.eSubState.Event_Running:
 				return "Valid_Running";
-			case Character.eSubState.Valid_End:
+			case Character.eSubState.Event_End:
 				return "Valid_End";
 
 			}
@@ -526,7 +526,7 @@ namespace CounterBlock
 
 		//상태정보
 		private eState 	_state_current = eState.None;
-		private eSubState _validState_current = eSubState.None; 	//유효상태
+		private eSubState _eventState_current = eSubState.None; 	//유효상태
 		private eSubState _giveState_current = eSubState.None; 		//준상태
 		private eSubState _receiveState_current = eSubState.None; 	//받은상태 
 
@@ -655,9 +655,9 @@ namespace CounterBlock
 			return _state_current;
 		}
 
-		public eSubState CurrentValidState()
+		public eSubState CurrentEventState()
 		{
-			return _validState_current;
+			return _eventState_current;
 		}
 
 		public eSubState CurrentGiveState()
@@ -670,9 +670,9 @@ namespace CounterBlock
 			_state_current = setState;
 		}
 
-		public void SetValidState(eSubState setSubState)
+		public void SetEventState(eSubState setSubState)
 		{
-			_validState_current = setSubState;
+			_eventState_current = setSubState;
 		}
 
 		public void SetGiveState(eSubState setSubState)
@@ -830,7 +830,7 @@ namespace CounterBlock
 			_behavior = _skill_current.FirstBehavior ();
 
 			SetState (eState.Start);
-			SetValidState (eSubState.None);
+			SetEventState (eSubState.None);
 			SetGiveState (eSubState.None);
 			//SetReceiveState (eSubState.None);
 
@@ -1162,24 +1162,24 @@ namespace CounterBlock
 
 
 
-					switch (_validState_current) 
+					switch (_eventState_current) 
 					{
 					case eSubState.None:
 						if (_behavior.eventTime_0 <= _timeDelta && _timeDelta <= _behavior.eventTime_1) {
-							this.SetValidState (eSubState.Valid_Start);
+							this.SetEventState (eSubState.Event_Start);
 						}
 						break;
-					case eSubState.Valid_Start:
-						this.SetValidState (eSubState.Valid_Running);
+					case eSubState.Event_Start:
+						this.SetEventState (eSubState.Event_Running);
 						break;
-					case eSubState.Valid_Running:
+					case eSubState.Event_Running:
 						if (!(_behavior.eventTime_0 <= _timeDelta && _timeDelta < _behavior.eventTime_1)) {
-							this.SetValidState (eSubState.Valid_End);
+							this.SetEventState (eSubState.Event_End);
 						}
 
 						break;
-					case eSubState.Valid_End:
-						this.SetValidState (eSubState.None);
+					case eSubState.Event_End:
+						this.SetEventState (eSubState.None);
 						break;
 
 					}
@@ -2659,7 +2659,7 @@ namespace CounterBlock
 			
 			this._text_explanation.text = 
 				"  "  + Character.StateToString(_data.CurrentState()) +
-				"  sub:"+ Character.SubStateToString(_data.CurrentValidState()) ;
+				"  sub:"+ Character.SubStateToString(_data.CurrentEventState()) ;
 
 			this._text_time.text = 
 				Skill.NameToString(_data.CurrentSkillKind()) + "   " +
@@ -2721,9 +2721,9 @@ namespace CounterBlock
 						//====================================================
 						//update sub_state
 						//====================================================
-						switch (_data.CurrentValidState ()) 
+						switch (_data.CurrentEventState ()) 
 						{
-						case Character.eSubState.Valid_Start:
+						case Character.eSubState.Event_Start:
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
@@ -2738,14 +2738,14 @@ namespace CounterBlock
 
 							}
 							break;
-						case Character.eSubState.Valid_Running:
+						case Character.eSubState.Event_Running:
 							{
 
 
 
 							}
 							break;
-						case Character.eSubState.Valid_End:
+						case Character.eSubState.Event_End:
 							{
 								//DebugWide.LogBlue ("Valid_End"); //chamto test
 
@@ -2798,9 +2798,9 @@ namespace CounterBlock
 					{
 						//=========================================
 
-						switch (_data.CurrentValidState ()) 
+						switch (_data.CurrentEventState ()) 
 						{
-						case Character.eSubState.Valid_Start:
+						case Character.eSubState.Event_Start:
 							{
 
 							}
