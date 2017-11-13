@@ -2303,18 +2303,24 @@ namespace CounterBlock
 		private Vector3 		_scale = Vector3.one;
 		private Quaternion		_rotation = Quaternion.identity;
 
-		public Vector3 Get_InitialPostition()
+		public Vector3 Get_InitialLocalPostition()
 		{
 			return _position;
 		}
-		public Vector3 Get_InitialScale()
+		public Vector3 Get_InitialLocalScale()
 		{
 			return _scale;
 		}
-		public Quaternion Get_InitialRotation()
+		public Quaternion Get_InitialLocalRotation()
 		{
 			return _rotation;
 		}
+
+		public Vector3 Get_InitialPostition()
+		{
+			return _position + transform.parent.position;
+		}
+
 
 		public  InitialData(SpriteRenderer spr)
 		{
@@ -2915,8 +2921,14 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
 		{
 
+			float time_pause = 0.3f;
+			float time_before = bundle._data.GetBehavior().distance_maxTime - time_pause;
+			float time_after = bundle._data.GetRunningTime () - time_before;
 			int rand = Single.rand.Next (1, 4);
-			float time = bundle._data.GetBehavior().distance_maxTime;
+			rand = 1;
+			//======================================
+			yield return new WaitForSeconds(time_pause);
+
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -2927,23 +2939,39 @@ namespace CounterBlock
 			_prev_position_ = list [0];
 
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
-				"time", time
+				"time", time_before
 				,"easetype",  "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
 				,"path", list
 				//,"orienttopath",true
 				//,"axis","z"
+				//,"looktarget",bundle._ui._actions [2].Get_InitialPostition ()
 				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
 				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
-				//"looktarget",new Vector3(5,-5,7)
-				,"onupdate","AniUpdate_Attack_1_Random"
+				,"onupdate","Rotate_Towards_FrontGap"
 				,"onupdatetarget",gameObject
 				,"onupdateparams",bundle._gameObject.transform
 			));
 
-			yield return new WaitForSeconds(time);
+			//======================================
+			yield return new WaitForSeconds(time_before);
+			//iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
+			iTween.MoveTo (bundle._gameObject, iTween.Hash (
+				"time", time_after
+				, "easetype", "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+				, "position", bundle._ui._actions [2].Get_InitialPostition ()
+				, "onupdate", "Rotate_Towards_BehindGap"
+				, "onupdatetarget", gameObject
+				, "onupdateparams", bundle._gameObject.transform
+			));
+
+			//======================================
+			yield return new WaitForSeconds(time_after);
 
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.SetActive (false);
+			//======================================
+
+			//DebugWide.LogBlue ("end");
 
 		}
 
@@ -3039,7 +3067,7 @@ namespace CounterBlock
 
 
 		Vector3 _prev_position_ = Vector3.zero;
-		public void AniUpdate_Attack_1_Random(Transform tr)
+		public void Rotate_Towards_FrontGap(Transform tr)
 		{
 			Vector3 dir = tr.localPosition - _prev_position_;
 			if (0 == dir.sqrMagnitude || dir.sqrMagnitude <= float.Epsilon)
@@ -3051,8 +3079,20 @@ namespace CounterBlock
 
 			_prev_position_ = tr.localPosition;
 
-
 			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random : " + tr.localPosition + "  " + _prev_position_ + "  " );//chamto test
+		}
+
+		public void Rotate_Towards_BehindGap(Transform tr)
+		{
+			Vector3 dir = _prev_position_ - tr.localPosition;
+			if (0 == dir.sqrMagnitude || dir.sqrMagnitude <= float.Epsilon)
+				return; //길이가 아주 작거나 0이면 각도 변화가 없는 상태이다. 
+
+			Vector3 euler = tr.localEulerAngles;
+			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
+			tr.localEulerAngles = euler;
+
+			_prev_position_ = tr.localPosition;
 		}
 
 		//ref : http://www.pixelplacement.com/itween/documentation.php
@@ -3080,7 +3120,7 @@ namespace CounterBlock
 				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
 				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
 				//"looktarget",new Vector3(5,-5,7)
-				,"onupdate","AniUpdate_Attack_1_Random"
+				,"onupdate","Rotate_Towards_FrontGap"
 				,"onupdatetarget",gameObject
 				,"onupdateparams",bundle._gameObject.transform
 			));
