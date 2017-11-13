@@ -2718,6 +2718,7 @@ namespace CounterBlock
 						//iTween.Stop (charUI._actions [2].gameObject);
 						//charUI.RevertData_All ();
 
+						//================================================
 						CharDataBundle bundle;
 						bundle._data = _data;
 						bundle._ui = this;
@@ -2725,7 +2726,8 @@ namespace CounterBlock
 
 						//StartCoroutine("AniStart_Attack_1",bundle); 
 						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
-						StartCoroutine("AniStart_Attack_2",bundle); 
+						StartCoroutine("AniStart_Attack_Test_3",bundle); 
+						//================================================
 
 					}
 					break;
@@ -2742,6 +2744,7 @@ namespace CounterBlock
 							{
 								//DebugWide.LogBlue ("Valid_Start"); //chamto test
 
+								//================================================
 								CharDataBundle bundle;
 								bundle._data = _data;
 								bundle._ui = this;
@@ -2750,6 +2753,7 @@ namespace CounterBlock
 								//StartCoroutine("AniStart_Attack_1",bundle); 
 								//StartCoroutine("AniStart_Attack_1_Random",bundle); 
 								//StartCoroutine("AniStart_Attack_2",bundle); 
+								//================================================
 
 							}
 							break;
@@ -2908,7 +2912,42 @@ namespace CounterBlock
 		}//end func
 
 
-		public IEnumerator AniStart_Attack_2(CharDataBundle bundle)
+		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
+		{
+
+			int rand = Single.rand.Next (1, 4);
+			float time = bundle._data.GetBehavior().distance_maxTime;
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+			Vector3 start = bundle._ui._actions [2].transform.localPosition;
+			Vector3[] list = GetPaths (rand, start);
+
+			_prev_position_ = list [0];
+
+			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+				"time", time
+				,"easetype",  "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+				,"path", list
+				//,"orienttopath",true
+				//,"axis","z"
+				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				//"looktarget",new Vector3(5,-5,7)
+				,"onupdate","AniUpdate_Attack_1_Random"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
+			));
+
+			yield return new WaitForSeconds(time);
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+		}
+
+		public IEnumerator AniStart_Attack_Test_2(CharDataBundle bundle)
 		{
 
 			//float time = bundle._data.GetRunningTime () - bundle._data.GetBehavior().distance_maxTime; //after
@@ -2925,7 +2964,7 @@ namespace CounterBlock
 			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
 			iTween.MoveBy(bundle._gameObject, iTween.Hash(
 				"amount", bundle._data.GetDirection() * (bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard()),
-				"time", time, "easetype",  "linear"//"easeOutCubic"//"easeInOutBounce"//
+				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
 			));
 
 
