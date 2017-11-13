@@ -2299,35 +2299,50 @@ namespace CounterBlock
 		}
 
 
-		private Vector3 		_position = Vector3.zero;
+		//private Vector3 		_position = Vector3.zero;
 		private Vector3 		_scale = Vector3.one;
 		private Quaternion		_rotation = Quaternion.identity;
 
+		private Vector3 		_localPosition = Vector3.zero;
+		private Vector3 		_localScale = Vector3.one;
+		private Quaternion		_localRotation = Quaternion.identity;
+
 		public Vector3 Get_InitialLocalPostition()
 		{
-			return _position;
+			return _localPosition;
 		}
 		public Vector3 Get_InitialLocalScale()
 		{
-			return _scale;
+			return _localScale;
 		}
 		public Quaternion Get_InitialLocalRotation()
 		{
-			return _rotation;
+			return _localRotation;
 		}
 
 		public Vector3 Get_InitialPostition()
 		{
-			return _position + transform.parent.position;
+			//return transform.parent.position + _localPosition;
+
+			//플립효과를 주기위해 x_scale 에 -1 을 하기 때문에 생기는 문제이다. 
+			//플립한 객체의 자식 객체에 직접 위치를 갱신하는데는 문제가 없는데, 월드 위치값을 가져와서 다시 적용하려 하면 scale값이 적용 안되 문제가 생긴다. 
+			//!!임시로 부모의 x_scale을 곱해준다. 부모의 scale값이 1 또는 -1 이라고 가정한다.
+			Vector3 temp = _localPosition; temp.x *= transform.parent.localScale.x;
+			return  transform.parent.position + temp;
 		}
 
 
 		public  InitialData(SpriteRenderer spr)
 		{
 			_spriteRender = spr;
-			_position = spr.transform.localPosition;
-			_scale = spr.transform.localScale;
-			_rotation = spr.transform.localRotation;
+
+			_localPosition = spr.transform.localPosition;
+			_localScale = spr.transform.localScale;
+			_localRotation = spr.transform.localRotation;
+
+			//_position = spr.transform.position;
+			_scale = spr.transform.lossyScale;
+			_rotation = spr.transform.rotation;
 		}
 
 		public void SelectAction(Character.eKind kind ,ResourceManager.eActionKind actionKind)
@@ -2348,13 +2363,13 @@ namespace CounterBlock
 		public void  Revert(eOption opt)
 		{
 			if(eOption.Position == (opt & eOption.Position))
-				_spriteRender.transform.localPosition = _position;
+				_spriteRender.transform.localPosition = _localPosition;
 
 			if(eOption.Scale == (opt & eOption.Scale))
-				_spriteRender.transform.localScale = _scale;
+				_spriteRender.transform.localScale = _localScale;
 
 			if(eOption.Rotation == (opt & eOption.Rotation))
-				_spriteRender.transform.localRotation = _rotation;
+				_spriteRender.transform.localRotation = _localRotation;
 		}
 
 	}//end class
@@ -2688,8 +2703,28 @@ namespace CounterBlock
 			//if(2 == id)
 			//	DebugWide.LogBlue (id+" : "+charData.CurrentState ()); //chamto test
 
-			//if (Skill.eName.Idle == charData.CurrentSkillKind () ||
-			//	Skill.eName.Hit == charData.CurrentSkillKind ()) 
+			//=====----=====----=====----=====----=====----=====----=====----=====----
+			switch (_data.GetJudgmentState ()) 
+			{
+			case Judgment.eState.Attack_Clogged:
+				{
+					DebugWide.LogBlue ("Attack_Clogged - 칼죽음"); //chamto test
+				}
+				break;
+			case Judgment.eState.Attack_Weapon:
+				{
+					DebugWide.LogBlue ("Attack_Weapon - 칼죽이기 성공"); //chamto test
+				}
+				break;
+			case Judgment.eState.Attack_Withstand:
+				{
+					DebugWide.LogBlue ("Attack_Withstand - 칼맞부딪침"); //chamto test
+				}
+				break;
+			}
+			//=====----=====----=====----=====----=====----=====----=====----=====----
+
+			//idle UI 출력
 			{
 				switch (_data.CurrentState ()) 
 				{
@@ -2707,7 +2742,7 @@ namespace CounterBlock
 
 			}
 
-
+			//공격 UI 출력 
 			if (Skill.eName.Attack_1 == _data.CurrentSkillKind ()) 
 			{
 
@@ -2881,8 +2916,7 @@ namespace CounterBlock
 				bundle._gameObject = this._actionRoot.gameObject;
 				StartCoroutine("EffectStart_Endure",bundle);
 			}
-
-
+				
 
 			//			switch (charData.GetJudgmentState ()) 
 			//			{
@@ -2925,7 +2959,7 @@ namespace CounterBlock
 			float time_before = bundle._data.GetBehavior().distance_maxTime - time_pause;
 			float time_after = bundle._data.GetRunningTime () - time_before;
 			int rand = Single.rand.Next (1, 4);
-			rand = 1;
+			//rand = 1;
 			//======================================
 			yield return new WaitForSeconds(time_pause);
 
@@ -2939,7 +2973,7 @@ namespace CounterBlock
 			_prev_position_ = list [0];
 
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
-				"time", time_before
+				"time", time_before - 0.1f //애니와 충돌순간이 맞지 않아서 애니를 0.1초 짧게 준다
 				,"easetype",  "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
 				,"path", list
 				//,"orienttopath",true
@@ -2954,15 +2988,15 @@ namespace CounterBlock
 
 			//======================================
 			yield return new WaitForSeconds(time_before);
-			//iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
-			iTween.MoveTo (bundle._gameObject, iTween.Hash (
-				"time", time_after
-				, "easetype", "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
-				, "position", bundle._ui._actions [2].Get_InitialPostition ()
-				, "onupdate", "Rotate_Towards_BehindGap"
-				, "onupdatetarget", gameObject
-				, "onupdateparams", bundle._gameObject.transform
-			));
+			iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
+//			iTween.MoveTo (bundle._gameObject, iTween.Hash (
+//				"time", time_after
+//				, "easetype", "easeOutExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+//				, "position", bundle._ui._actions [2].Get_InitialPostition ()
+//				, "onupdate", "Rotate_Towards_BehindGap"
+//				, "onupdatetarget", gameObject
+//				, "onupdateparams", bundle._gameObject.transform
+//			));
 
 			//======================================
 			yield return new WaitForSeconds(time_after);
