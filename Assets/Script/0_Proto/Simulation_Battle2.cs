@@ -378,7 +378,7 @@ namespace CounterBlock
 			this.velocity_before = distance_travel / distance_maxTime;
 			this.velocity_after = distance_travel / (runningTime - distance_maxTime);
 
-			DebugWide.LogBlue ("velocity_before : "+this.velocity_before + "   <-- 충돌점 -->   velocity_after : " +this.velocity_after ); //chamto test
+			DebugWide.LogBlue ("velocity_before : "+this.velocity_before + "   <-- 충돌점 -->   velocity_after : " +this.velocity_after + "  [distance_travel:" + distance_travel+"]"); //chamto test
 		}
 
 		public float CurrentDistance(float currentTime)
@@ -600,6 +600,7 @@ namespace CounterBlock
 
 		public Vector3 GetWeaponPosition(float time)
 		{
+			//DebugWide.LogBlue (_behavior.CurrentDistance (time) * _direction); //chamto test
 			return _position + (_behavior.CurrentDistance(time) * _direction);
 		}
 
@@ -2554,6 +2555,11 @@ namespace CounterBlock
 			return null;
 		}
 
+
+		public float GetLength_Between_WeaponeCard()
+		{
+			return Mathf.Abs (_actions [2].transform.localPosition.x);
+		}
 		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
 
 		public void Update_UI()
@@ -2712,6 +2718,15 @@ namespace CounterBlock
 						//iTween.Stop (charUI._actions [2].gameObject);
 						//charUI.RevertData_All ();
 
+						CharDataBundle bundle;
+						bundle._data = _data;
+						bundle._ui = this;
+						bundle._gameObject = this._actions [2].gameObject;
+
+						//StartCoroutine("AniStart_Attack_1",bundle); 
+						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
+						StartCoroutine("AniStart_Attack_2",bundle); 
+
 					}
 					break;
 				case Character.eState.Running:
@@ -2734,7 +2749,7 @@ namespace CounterBlock
 
 								//StartCoroutine("AniStart_Attack_1",bundle); 
 								//StartCoroutine("AniStart_Attack_1_Random",bundle); 
-								StartCoroutine("AniStart_Attack_2",bundle); 
+								//StartCoroutine("AniStart_Attack_2",bundle); 
 
 							}
 							break;
@@ -2896,7 +2911,9 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_2(CharDataBundle bundle)
 		{
 
-			float time = bundle._data.GetRunningTime ();
+			//float time = bundle._data.GetRunningTime () - bundle._data.GetBehavior().distance_maxTime; //after
+			float time = bundle._data.GetBehavior().distance_maxTime; //before
+
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -2904,12 +2921,12 @@ namespace CounterBlock
 			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
-			iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
-			iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
-			//iTween.MoveBy(charUI._action[2].gameObject, iTween.Hash(
-			//	"amount", new Vector3(300f,20f,0f),
-			//	"time", 1f, "easetype",  "easeInOutBounce"//"linear"
-			//));
+			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
+			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
+			iTween.MoveBy(bundle._gameObject, iTween.Hash(
+				"amount", bundle._data.GetDirection() * (bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard()),
+				"time", time, "easetype",  "linear"//"easeOutCubic"//"easeInOutBounce"//
+			));
 
 
 			yield return new WaitForSeconds(time);
