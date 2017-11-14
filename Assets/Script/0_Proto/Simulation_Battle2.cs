@@ -2903,7 +2903,8 @@ namespace CounterBlock
 				StartCoroutine("EffectStart_Damaged",bundle);
 
 				bundle._gameObject = this._actionRoot.gameObject;
-				StartCoroutine("EffectStart_Wobble",bundle);
+				StartCoroutine("EffectStart_Endure",bundle);
+
 
 			}
 
@@ -2917,7 +2918,7 @@ namespace CounterBlock
 				StartCoroutine("EffectStart_Block",bundle);
 
 				bundle._gameObject = this._actionRoot.gameObject;
-				StartCoroutine("EffectStart_Endure",bundle);
+				StartCoroutine("EffectStart_Wobble",bundle);
 			}
 				
 
@@ -2961,8 +2962,8 @@ namespace CounterBlock
 			float time_pause = 0.3f;
 			float time_before = bundle._data.GetBehavior().distance_maxTime - time_pause;
 			float time_after = bundle._data.GetRunningTime () - time_before;
-			int rand = Single.rand.Next (1, 4);
-			//rand = 1;
+			int rand = Single.rand.Next (1, 5);
+			rand = 4;
 			//======================================
 			yield return new WaitForSeconds(time_pause);
 
@@ -3082,6 +3083,7 @@ namespace CounterBlock
 			const int PATH_01 = 1;
 			const int PATH_02 = 2;
 			const int PATH_03 = 3;
+			const int PATH_04 = 4;
 			const int NODE_COUNT = 6;
 			Vector3[] list = new Vector3[NODE_COUNT];
 
@@ -3091,6 +3093,8 @@ namespace CounterBlock
 				pathName = "p02";
 			if (PATH_03 == kind)
 				pathName = "p03";
+			if (PATH_04 == kind)
+				pathName = "p04";
 
 			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
 			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
@@ -3235,14 +3239,21 @@ namespace CounterBlock
 		//견디다
 		public IEnumerator EffectStart_Endure(CharDataBundle bundle)
 		{
-
+			float time = 1.0f;
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
 
-			//iTween.ShakeRotation(gobj,new Vector3(0,45f,0), 0.5f);
-			iTween.PunchRotation(bundle._gameObject,new Vector3(0,45f,0), 0.5f);
+			iTween.ShakeRotation(bundle._gameObject,new Vector3(0,100f,0), time);
+			iTween.ShakePosition(bundle._gameObject,new Vector3(1f,0,0), time);
+			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,300f,0f), time);
+//			iTween.RotateTo (bundle._gameObject, iTween.Hash (
+//				"time", time
+//				, "easetype", "easeInOutBounce"//"easeOutBack"
+//				, "rotation", new Vector3(0,45f,0)
+//				//,"looptype","pingPong"
+//			));
 
-			yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(time);
 
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
