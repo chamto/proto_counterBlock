@@ -927,15 +927,17 @@ namespace CounterBlock
 			//=======================================================================
 
 
-			//작은원 <= 대상 <= 큰원
-			if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
-			{	//큰원 보다 작고,
-				if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
-				{	//작은원 보다 크다. 
-					return true;
-				}
+			DebugWide.LogBlue ("Judgment.eState.Attack_Withstand"); //chamto test
 
-			}
+			//작은원 <= 대상 <= 큰원
+//			if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+//			{	//큰원 보다 작고,
+//				if (false == Util.Collision_Sphere (this._position, this.GetRangeMin(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius)) 
+//				{	//작은원 보다 크다
+				
+//					return true;
+//				}
+//			}
 
 
 			return false;
@@ -1019,6 +1021,7 @@ namespace CounterBlock
 					{
 						jState = Judgment.eState.Attack_Withstand;		
 					}
+
 				}
 				else if ( eState.Start == this.CurrentState () && true == dst.Valid_CloggedTime ()) 
 				{	//칼죽이기
@@ -2988,15 +2991,15 @@ namespace CounterBlock
 
 			//======================================
 			yield return new WaitForSeconds(time_before);
-			iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
-//			iTween.MoveTo (bundle._gameObject, iTween.Hash (
-//				"time", time_after
-//				, "easetype", "easeOutExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
-//				, "position", bundle._ui._actions [2].Get_InitialPostition ()
-//				, "onupdate", "Rotate_Towards_BehindGap"
-//				, "onupdatetarget", gameObject
-//				, "onupdateparams", bundle._gameObject.transform
-//			));
+			//iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
+			iTween.MoveTo (bundle._gameObject, iTween.Hash (
+				"time", time_after
+				, "easetype", "easeOutExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+				, "position", bundle._ui._actions [2].Get_InitialPostition ()
+				, "onupdate", "Rotate_Towards_BehindGap"
+				, "onupdatetarget", gameObject
+				, "onupdateparams", bundle._gameObject.transform
+			));
 
 			//======================================
 			yield return new WaitForSeconds(time_after);
