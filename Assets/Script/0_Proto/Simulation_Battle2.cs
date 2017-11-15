@@ -2658,6 +2658,23 @@ namespace CounterBlock
 		{
 			return Mathf.Abs (_actions [2].transform.localPosition.x);
 		}
+
+		public void Init_ActionRoot()
+		{
+			_actionRoot.localEulerAngles = Vector3.zero;
+			_actionRoot.localPosition = Vector3.zero;
+
+			if (_data.GetDirection ().x > 0) 
+			{  	//오른쪽을 보고 있음
+				_actionRoot.localScale = new Vector3(1,1,1);
+			} 
+			else 
+			{	//왼쪽을 보고 있음
+				_actionRoot.localScale = new Vector3(-1,1,1);
+			}
+
+		}
+
 		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
 
 		public void Update_UI()
@@ -2845,7 +2862,15 @@ namespace CounterBlock
 
 						//StartCoroutine("AniStart_Attack_1",bundle); 
 						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
-						StartCoroutine("AniStart_Attack_Test_3",bundle); 
+						if (Skill.eName.Attack_Weak == _data.CurrentSkillKind ()) 
+						{
+							StartCoroutine("AniStart_Attack_Test_2",bundle); 
+						}
+						if (Skill.eName.Attack_Strong == _data.CurrentSkillKind ()) 
+						{
+							StartCoroutine("AniStart_Attack_Test_3",bundle); 
+						}	
+
 						//================================================
 
 					}
@@ -3257,7 +3282,8 @@ namespace CounterBlock
 
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
-			bundle._ui.RevertData_All ();
+			this.Init_ActionRoot();
+
 
 			//gobj.transform.localScale = Vector3.one;
 			iTween.ShakeScale(bundle._gameObject,new Vector3(1f,1f,1f), 0.5f);
@@ -3278,14 +3304,16 @@ namespace CounterBlock
 		{
 
 			iTween.Stop (bundle._gameObject);
-			bundle._gameObject.transform.localPosition = Vector3.zero;
+			this.Init_ActionRoot();
+			//bundle._ui.RevertData_All ();
+			//bundle._gameObject.transform.localPosition = Vector3.zero;
 
 			iTween.ShakePosition(bundle._gameObject,new Vector3(1f,0,0), 0.5f);
 
 			yield return new WaitForSeconds(0.5f);
 
 			iTween.Stop (bundle._gameObject);
-			bundle._gameObject.transform.localPosition = Vector3.zero;
+			//bundle._gameObject.transform.localPosition = Vector3.zero;
 		}
 
 		//막다
@@ -3295,7 +3323,7 @@ namespace CounterBlock
 
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
-			bundle._ui.RevertData_All ();
+			this.Init_ActionRoot();
 			//gobj.transform.localScale = Vector3.one;
 
 			iTween.ShakeScale(bundle._gameObject,new Vector3(1f,1f,1f), 0.5f);
@@ -3311,12 +3339,16 @@ namespace CounterBlock
 			//DebugWide.LogBlue ("end");
 		}
 
+
+
 		//견디다
 		public IEnumerator EffectStart_Endure(CharDataBundle bundle)
 		{
 			float time = 1.0f;
 			iTween.Stop (bundle._gameObject);
-			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
+			//bundle._gameObject.transform.localEulerAngles = Vector3.zero;
+			this.Init_ActionRoot();
+
 
 			iTween.ShakeRotation(bundle._gameObject,new Vector3(0,100f,0), time);
 			iTween.ShakePosition(bundle._gameObject,new Vector3(1f,0,0), time);
@@ -3331,7 +3363,7 @@ namespace CounterBlock
 			yield return new WaitForSeconds(time);
 
 			iTween.Stop (bundle._gameObject);
-			bundle._gameObject.transform.localEulerAngles = Vector3.zero;
+			//bundle._gameObject.transform.localEulerAngles = Vector3.zero;
 		}
 
 	}
