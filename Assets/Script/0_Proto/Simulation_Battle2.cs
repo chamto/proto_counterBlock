@@ -91,6 +91,12 @@ namespace CounterBlock
 			public Vector3 pos;
 			public float radius;
 
+			public Sphere(Vector3 p, float r)
+			{
+				pos = p;
+				radius = r;
+			}
+
 			public string ToString()
 			{
 				return "pos: " + pos + "  radius: " + radius ;
@@ -171,10 +177,13 @@ namespace CounterBlock
 			//(src.r - dst.r) < src.r  < (src.r + dst.r)
 			//완전포함 		  < 중점포함  < 경계포함
 			//Fully           < Focus   < Boundary
+			const float Minimum_Error_Value  = 1.0f; //최소오차값
 			switch (eInclude) 
 			{
 			case eSphere_Include_Status.Fully:
 				sum_radius = max_radius - min_radius;
+				if (Minimum_Error_Value > sum_radius) //반지름 합값이 너무 작으면 판정을 못하므로 임의의 "최소오차값"을 할당해 준다.
+					sum_radius = Minimum_Error_Value;
 				break;
 			case eSphere_Include_Status.Focus:
 				sum_radius = max_radius;
@@ -325,13 +334,18 @@ namespace CounterBlock
 		//===================================
 
 		public float runningTime;	//동작 전체 시간 
-		public float eventTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
-		public float eventTime_1;
-		public float rigidTime;		//동작 완료후 경직 시간
-		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
-		public float openTime_1; 
+		//1
 		public float cloggedTime_0;	//막히는 시간 : 0(시작) , 1(끝)  
 		public float cloggedTime_1;		
+		//2
+		public float eventTime_0;	//동작 유효 범위 : 0(시작) , 1(끝)  
+		public float eventTime_1;
+		//3
+		public float openTime_0; 	//다음 동작 연결시간 : 0(시작) , 1(끝)  
+		public float openTime_1; 
+		//4
+		public float rigidTime;		//동작 완료후 경직 시간
+
 
 
 		//무기 움직임 정보 
@@ -978,7 +992,9 @@ namespace CounterBlock
 					} 
 					//=======================================================================
 
-					if (true == Util.Collision_Sphere (this.GetWeaponPosition(), this.weapon.collider_sphere_radius, dst.GetPosition (), dst.GetCollider_Sphere ().radius)) 
+					if (true == Util.Collision_Sphere (new Figure.Sphere(this.GetWeaponPosition(), this.weapon.collider_sphere_radius), 
+						dst.GetCollider_Sphere(),
+						Util.eSphere_Include_Status.Fully)) 
 					{
 						return true;
 					}
@@ -1754,6 +1770,42 @@ namespace CounterBlock
 			return skinfo;
 		}
 
+		static public Skill Details_Attack_Weak()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Attack;
+			skinfo.name = eName.Attack_1;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.runningTime = 1.5f;
+			//1
+			bhvo.cloggedTime_0 = 0.2f;
+			bhvo.cloggedTime_1 = 0.6f;
+			//2
+			bhvo.eventTime_0 = 0.4f;
+			bhvo.eventTime_1 = 0.5f;
+			//3
+			bhvo.openTime_0 = 0.7f;
+			bhvo.openTime_1 = 1f;
+			//4
+			bhvo.rigidTime = 0.3f;
+
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			//bhvo.attack_shape = eTraceShape.Vertical;
+			bhvo.angle = 45f;
+			bhvo.plus_range_0 = 2f;
+			bhvo.plus_range_1 = 2f;
+			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
+			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
+			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
+			//bhvo.distance_maxTime = 0.6f; //chamto test
+			bhvo.Calc_Velocity ();
+			skinfo.Add (bhvo);
+
+			return skinfo;
+		}
 
 		static public Skill Details_Attack_1()
 		{
@@ -1763,22 +1815,28 @@ namespace CounterBlock
 			skinfo.name = eName.Attack_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.0f;
-			bhvo.eventTime_0 = 0.6f;
-			bhvo.eventTime_1 = 0.8f;
-			bhvo.rigidTime = 0.3f;
-			bhvo.openTime_0 = 0.7f;
-			bhvo.openTime_1 = 1f;
+			bhvo.runningTime = 2.0f;
+			//1
 			bhvo.cloggedTime_0 = 0.2f;
-			bhvo.cloggedTime_1 = 0.6f;
-			//bhvo.attack_shape = eTraceShape.Straight;
-			bhvo.attack_shape = eTraceShape.Vertical;
+			bhvo.cloggedTime_1 = 0.7f;
+			//2
+			bhvo.eventTime_0 = 0.8f;
+			bhvo.eventTime_1 = 1.2f;
+			//3
+			bhvo.openTime_0 = 1.5f;
+			bhvo.openTime_1 = 1.8f;
+			//4
+			bhvo.rigidTime = 0.5f;
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			//bhvo.attack_shape = eTraceShape.Vertical;
 			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 2f;
 			bhvo.plus_range_1 = 2f;
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다.
-			//bhvo.distance_maxTime = 0.6f; //chamto test
+			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
+			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
+
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
@@ -2652,11 +2710,11 @@ namespace CounterBlock
 			Gizmos.DrawSphere (_data.GetPosition () + _data.GetDirection () * 4, 0.4f);
 
 
-			//공격이동 경로
+			//공격 무기이동 경로
 			_debug_line.y = -0.5f;
 			Gizmos.color = Color.red;
-			Gizmos.DrawLine (_data.GetPosition () + _debug_line, _data.GetWeaponPosition() +_debug_line);
-			Gizmos.DrawSphere (_data.GetWeaponPosition() + _debug_line, 0.5f);
+			Gizmos.DrawLine (_data.GetPosition (), _data.GetWeaponPosition());
+			Gizmos.DrawWireSphere (_data.GetWeaponPosition(), _data.weapon.collider_sphere_radius);
 			//*/
 
 			//칼죽이기 가능 범위
@@ -2978,7 +3036,7 @@ namespace CounterBlock
 
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
 				"time", time_before - 0.1f //애니와 충돌순간이 맞지 않아서 애니를 0.1초 짧게 준다
-				,"easetype",  "easeInExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+				,"easetype",  "linear"//"easeInExpo"//"easeInOutBounce"//"easeOutCubic"
 				,"path", list
 				//,"orienttopath",true
 				//,"axis","z"
