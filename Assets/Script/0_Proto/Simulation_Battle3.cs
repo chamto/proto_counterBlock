@@ -253,17 +253,16 @@ namespace CounterBlock
 			//attack
 			if (Input.GetKeyUp ("q")) 
 			{
-				//iTween.PunchPosition(_1pSprite_01.gameObject, iTween.Hash("x",20,"loopType","loop","time",0.5f));
-				//iTween.MoveBy(_1pSprite_01.gameObject, iTween.Hash("x", 30, "easeType", "easeInOutExpo", "loopType", "pingPong", "delay", .1));
-				//DebugWide.LogBlue ("1p - keyinput");
-				_ui_1Player.GetData().Attack_1 ();
-
+				_ui_1Player.GetData().Attack_Weak ();
 				//Effect.FadeIn (_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject, 0.7f);
 			}
-			//block
 			if (Input.GetKeyUp ("w")) 
 			{
-				//DebugWide.LogBlue ("1p - keyinput");
+				_ui_1Player.GetData().Attack_Strong ();
+			}
+			//block
+			if (Input.GetKeyUp ("e")) 
+			{
 				_ui_1Player.GetData().Block ();
 
 				//iTween.ShakeScale(_ui_1Player._effect[UI_CharacterCard.eEffect.Hit].gameObject,new Vector3(0.2f,0.8f,0.2f), 1f); //!!!!
@@ -278,10 +277,15 @@ namespace CounterBlock
 			//2p
 
 			//attack
+			if (Input.GetKeyUp ("i")) 
+			{
+				//DebugWide.LogBlue ("2p - keyinput");
+				_ui_2Player.GetData().Attack_Weak ();
+			}
 			if (Input.GetKeyUp ("o")) 
 			{
 				//DebugWide.LogBlue ("2p - keyinput");
-				_ui_2Player.GetData().Attack_1 ();
+				_ui_2Player.GetData().Attack_Strong ();
 			}
 			//block
 			if (Input.GetKeyUp ("p")) 

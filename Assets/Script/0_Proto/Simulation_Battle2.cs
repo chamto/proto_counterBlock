@@ -853,12 +853,23 @@ namespace CounterBlock
 		}
 
 
-		public void Attack_1 ()
+		public void Attack_Strong ()
 		{
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
 				SetSkill (Skill.eName.Attack_Strong);
+
+				//DebugWide.LogBlue ("succeced!!! "); //chamto test
+			}
+		}
+
+		public void Attack_Weak ()
+		{
+			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
+			{
+				//아이들상태거나 연결시간안에 행동이 들어온 경우
+				SetSkill (Skill.eName.Attack_Weak);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -1780,18 +1791,18 @@ namespace CounterBlock
 			skinfo.name = eName.Attack_Strong;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.5f;
+			bhvo.runningTime = 1.0f;
 			//1
 			bhvo.cloggedTime_0 = 0.2f;
-			bhvo.cloggedTime_1 = 0.6f;
+			bhvo.cloggedTime_1 = 0.4f;
 			//2
-			bhvo.eventTime_0 = 0.4f;
+			bhvo.eventTime_0 = 0.3f;
 			bhvo.eventTime_1 = 0.5f;
 			//3
 			bhvo.openTime_0 = 0.7f;
 			bhvo.openTime_1 = 1f;
 			//4
-			bhvo.rigidTime = 0.3f;
+			bhvo.rigidTime = 0.2f;
 
 
 			bhvo.attack_shape = eTraceShape.Straight;
@@ -2809,7 +2820,8 @@ namespace CounterBlock
 			}
 
 			//공격 UI 출력 
-			if (Skill.eName.Attack_Strong == _data.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_Strong == _data.CurrentSkillKind () || 
+				Skill.eName.Attack_Weak == _data.CurrentSkillKind ()) 
 			{
 
 				switch (_data.CurrentState ()) 
