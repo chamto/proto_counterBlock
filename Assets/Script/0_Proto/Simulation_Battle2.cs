@@ -858,7 +858,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Attack_1);
+				SetSkill (Skill.eName.Attack_Strong);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -1646,7 +1646,9 @@ namespace CounterBlock
 			Idle,
 			Hit,
 
-			Attack_1,
+			Attack_Strong,
+			Attack_Weak,
+
 			Attack_2Combo,
 			Attack_3Combo,
 
@@ -1669,7 +1671,7 @@ namespace CounterBlock
 			case Skill.eName.Hit:
 				return "Hit";
 
-			case Skill.eName.Attack_1:
+			case Skill.eName.Attack_Strong:
 				return "Attack_1";
 			case Skill.eName.Attack_2Combo:
 				return "Attack_2Combo";
@@ -1775,7 +1777,7 @@ namespace CounterBlock
 			Skill skinfo = new Skill ();
 
 			skinfo.kind = eKind.Attack;
-			skinfo.name = eName.Attack_1;
+			skinfo.name = eName.Attack_Strong;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1.5f;
@@ -1807,12 +1809,12 @@ namespace CounterBlock
 			return skinfo;
 		}
 
-		static public Skill Details_Attack_1()
+		static public Skill Details_Attack_Strong()
 		{
 			Skill skinfo = new Skill ();
 
 			skinfo.kind = eKind.Attack;
-			skinfo.name = eName.Attack_1;
+			skinfo.name = eName.Attack_Strong;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 2.0f;
@@ -1929,7 +1931,10 @@ namespace CounterBlock
 		{
 			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
 			this.Add (Skill.eName.Hit, Skill.Details_Hit ());
-			this.Add (Skill.eName.Attack_1, Skill.Details_Attack_1 ());
+
+			this.Add (Skill.eName.Attack_Strong, Skill.Details_Attack_Strong ());
+			this.Add (Skill.eName.Attack_Weak, Skill.Details_Attack_Weak ());
+
 			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo ());
 
 			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
@@ -2804,7 +2809,7 @@ namespace CounterBlock
 			}
 
 			//공격 UI 출력 
-			if (Skill.eName.Attack_1 == _data.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_Strong == _data.CurrentSkillKind ()) 
 			{
 
 				switch (_data.CurrentState ()) 
