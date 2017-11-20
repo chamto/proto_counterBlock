@@ -849,7 +849,8 @@ namespace CounterBlock
 			_skill_current = ref_skillBook [kind];
 			_behavior = _skill_current.FirstBehavior ();
 
-			SetState (eState.Start);
+			//SetState (eState.Start);
+			SetState (eState.None);
 			SetEventState (eSubState.None);
 			SetGiveState (eSubState.None);
 			//SetReceiveState (eSubState.None);
@@ -1048,27 +1049,29 @@ namespace CounterBlock
 				{	//먼저공격 상대
 					jState = Judgment.eState.Damaged;
 				}
-				else if ( true == dst.Valid_CloggedTime ()
-					&& this.IsPossibleRange_Clog_VS(dst)) 
+				else if (eState.Start == this.CurrentState() && true == dst.Valid_CloggedTime ())
+					//&& this.IsPossibleRange_Clog_VS(dst)) 
 				{	//칼죽이기
 					jState = Judgment.eState.Attack_Weapon;	
 				}
-				else if ( true == this.Valid_CloggedTime ()
-					&& dst.IsPossibleRange_Clog_VS(this)) 
+				else if (eState.Start == dst.CurrentState() && true == this.Valid_CloggedTime ())
+					//&& dst.IsPossibleRange_Clog_VS(this)) 
 				{	//칼죽이기 당함  
 					jState = Judgment.eState.Attack_Clogged;
 				}
-				else if (true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime()
-					&& this.IsAttack_Withstand(dst)) 
-				{	//칼맞부딪힘 
-					jState = Judgment.eState.Attack_Withstand;
-				}
+//				else if (true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime()
+//					&& this.IsAttack_Withstand(dst)) 
+//				{	//칼맞부딪힘 
+//					jState = Judgment.eState.Attack_Withstand;
+//				}
 
 
 			}
 
 //			if(eState.Start == this.CurrentState())
-//				DebugWide.LogBlue (this.CurrentEventState ().ToString()+ "  " + jState.ToString());
+//				DebugWide.LogBlue (this.IsSkill_Attack ()+ "  " + jState.ToString());
+
+
 
 			//!!! 반대상태 연결 !!!
 			//Attack_Succeed <==> Damaged
@@ -1153,17 +1156,32 @@ namespace CounterBlock
 
 			switch (this.GetJudgmentState()) 
 			{
-			case Judgment.eState.Attack_Succeed:
+			case Judgment.eState.Attack_Succeed: //1 vs n
 				{
 					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
 
 					//한동작에서 일어난 사건
 					if (eSubState.Start == CurrentGiveState ()) 
 					{
+						//여러명에게 공격받았을 때의 처리 문제로, 상대의 피해함수를 호출해 준다
 						//apply jugement : HP
 						dst.BeDamage (-1);
 					}
 						
+				}
+				break;
+			case Judgment.eState.Attack_Withstand: //1 vs 1
+				{
+					//무기 위치값을 정지시킴
+					//해당 3초간 공격키 연타 - 칼밀기 행동함
+					//칼밀기를 많이 하여 칼이 상대몸에 도달하면 공격성공이 됨 
+				}
+				break;
+			case Judgment.eState.Attack_Weapon: //1 vs 1
+				{
+					//상대 무기 위치값을 정지시킴
+					//1초 동안 상대무기 정지
+					//상대 무기로의 내무기 이동
 				}
 				break;
 			}//end switch
@@ -1178,9 +1196,17 @@ namespace CounterBlock
 			
 			switch (this._state_current) 
 			{
+			case eState.None:
+				{
+					//===== 처리철차 ===== 
+					//입력 -> ui갱신 -> (갱신 -> 판정)
+					//공격키입력 -> 행동상태none 에서 start 로 변경 -> start 상태 검출
+					this._timeDelta = 0f;
+					SetState (eState.Start);
+				}
+				break;
 			case eState.Start:
-				{	//키입력에 의해 바로 Start상태에 이르게 된다. 키입력후 바로 Update 함수가 실행되면 Start상태는 바로 Running으로 변경되어 버려 UI에서 검출 할 수 없다.
-					
+				{	
 					this._timeDelta = 0f;
 					SetState (eState.Running);
 
@@ -1368,6 +1394,8 @@ namespace CounterBlock
 		Character _dst_ = null;
 		public void Update()
 		{
+			//처리철차 : 입력 -> ui갱신 -> (갱신 -> 판정)
+
 			//1 =========== 
 			foreach (Character crt in this.Values) 
 			{
