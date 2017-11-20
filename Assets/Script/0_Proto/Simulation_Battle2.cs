@@ -715,12 +715,17 @@ namespace CounterBlock
 			return _behavior.plus_range_1 + _weapon.attack_range_max;
 		}
 
-		public Skill.eName CurrentSkillKind()
-		{
-			if(null != _skill_current)
-				return _skill_current.name;
+//		public Skill.eName CurrentSkillKind()
+//		{
+//			if(null != _skill_current)
+//				return _skill_current.name;
+//
+//			return Skill.eName.None;
+//		}
 
-			return Skill.eName.None;
+		public Skill CurrentSkill()
+		{
+			return _skill_current;
 		}
 
 		public int GetHP()
@@ -821,7 +826,7 @@ namespace CounterBlock
 
 		public bool IsSkill_Attack()
 		{
-			if (Skill.eKind.Attack == _skill_current.kind)
+			if (Skill.eKind.Attack_Strong == _skill_current.kind)
 				return true;
 
 			return false;
@@ -864,7 +869,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Attack_Strong);
+				SetSkill (Skill.eName.Attack_Strong_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -875,7 +880,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Attack_Weak);
+				SetSkill (Skill.eName.Attack_Weak_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -1049,21 +1054,24 @@ namespace CounterBlock
 				{	//먼저공격 상대
 					jState = Judgment.eState.Damaged;
 				}
-				else if (eState.Start == this.CurrentState() && true == dst.Valid_CloggedTime ())
-					//&& this.IsPossibleRange_Clog_VS(dst)) 
+				else if (Skill.eKind.Attack_Strong ==  this.CurrentSkill().kind  && Skill.eKind.Attack_Strong ==  dst.CurrentSkill().kind  
+					&& eState.Start == this.CurrentState() && true == dst.Valid_CloggedTime ()
+					&& this.IsPossibleRange_Clog_VS(dst)) 
 				{	//칼죽이기
 					jState = Judgment.eState.Attack_Weapon;	
 				}
-				else if (eState.Start == dst.CurrentState() && true == this.Valid_CloggedTime ())
-					//&& dst.IsPossibleRange_Clog_VS(this)) 
+				else if (Skill.eKind.Attack_Weak ==  dst.CurrentSkill().kind 
+					&& eState.Start == dst.CurrentState() && true == this.Valid_CloggedTime ()
+					&& dst.IsPossibleRange_Clog_VS(this)) 
 				{	//칼죽이기 당함  
 					jState = Judgment.eState.Attack_Clogged;
 				}
-//				else if (true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime()
-//					&& this.IsAttack_Withstand(dst)) 
-//				{	//칼맞부딪힘 
-//					jState = Judgment.eState.Attack_Withstand;
-//				}
+				else if (Skill.eKind.Attack_Weak ==  this.CurrentSkill().kind  
+					&& true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime()
+					&& this.IsAttack_Withstand(dst)) 
+				{	//칼맞부딪힘 
+					jState = Judgment.eState.Attack_Withstand;
+				}
 
 
 			}
@@ -1676,7 +1684,8 @@ namespace CounterBlock
 		public enum eKind
 		{
 			None,
-			Attack,
+			Attack_Strong,
+			Attack_Weak,
 			Block,
 			Counter,
 			Max
@@ -1688,8 +1697,8 @@ namespace CounterBlock
 			Idle,
 			Hit,
 
-			Attack_Strong,
-			Attack_Weak,
+			Attack_Strong_1,
+			Attack_Weak_1,
 
 			Attack_2Combo,
 			Attack_3Combo,
@@ -1713,7 +1722,7 @@ namespace CounterBlock
 			case Skill.eName.Hit:
 				return "Hit";
 
-			case Skill.eName.Attack_Strong:
+			case Skill.eName.Attack_Strong_1:
 				return "Attack_1";
 			case Skill.eName.Attack_2Combo:
 				return "Attack_2Combo";
@@ -1818,8 +1827,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Attack;
-			skinfo.name = eName.Attack_Strong;
+			skinfo.kind = eKind.Attack_Weak;
+			skinfo.name = eName.Attack_Weak_1;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1.0f;
@@ -1836,12 +1845,12 @@ namespace CounterBlock
 			bhvo.rigidTime = 0.2f;
 
 
-			bhvo.attack_shape = eTraceShape.Straight;
-			//bhvo.attack_shape = eTraceShape.Vertical;
+			//bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.attack_shape = eTraceShape.Vertical;
 			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 0f;
-			bhvo.plus_range_1 = 0f;
-			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
+			bhvo.plus_range_1 = -4f;
+			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE - 4f;
 			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
 			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
 			//bhvo.distance_maxTime = 0.6f; //chamto test
@@ -1855,8 +1864,8 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Attack;
-			skinfo.name = eName.Attack_Strong;
+			skinfo.kind = eKind.Attack_Strong;
+			skinfo.name = eName.Attack_Strong_1;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 2.0f;
@@ -1891,7 +1900,7 @@ namespace CounterBlock
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.Attack;
+			skinfo.kind = eKind.Attack_Strong;
 			skinfo.name = eName.Attack_3Combo;
 
 			Behavior bhvo = new Behavior ();
@@ -1974,8 +1983,8 @@ namespace CounterBlock
 			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
 			this.Add (Skill.eName.Hit, Skill.Details_Hit ());
 
-			this.Add (Skill.eName.Attack_Strong, Skill.Details_Attack_Strong ());
-			this.Add (Skill.eName.Attack_Weak, Skill.Details_Attack_Weak ());
+			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong ());
+			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak ());
 
 			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo ());
 
@@ -2814,7 +2823,7 @@ namespace CounterBlock
 				"  sub:"+ Character.SubStateToString(_data.CurrentEventState()) ;
 
 			this._text_time.text = 
-				Skill.NameToString(_data.CurrentSkillKind()) + "   " +
+				Skill.NameToString(_data.CurrentSkill().name) + "   " +
 				_data.GetTimeDelta().ToString("0.0");
 
 		}
@@ -2868,8 +2877,8 @@ namespace CounterBlock
 			}
 
 			//공격 UI 출력 
-			if (Skill.eName.Attack_Strong == _data.CurrentSkillKind () || 
-				Skill.eName.Attack_Weak == _data.CurrentSkillKind ()) 
+			if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name  || 
+				Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name ) 
 			{
 
 				switch (_data.CurrentState ()) 
@@ -2893,11 +2902,11 @@ namespace CounterBlock
 
 						//StartCoroutine("AniStart_Attack_1",bundle); 
 						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
-						if (Skill.eName.Attack_Weak == _data.CurrentSkillKind ()) 
+						if (Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name) 
 						{
-							StartCoroutine("AniStart_Attack_Test_2",bundle); 
+							StartCoroutine("AniStart_Attack_Test_3",bundle); 
 						}
-						if (Skill.eName.Attack_Strong == _data.CurrentSkillKind ()) 
+						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
 							StartCoroutine("AniStart_Attack_Test_3",bundle); 
 						}	
@@ -2973,7 +2982,7 @@ namespace CounterBlock
 
 			}
 
-			if (Skill.eName.Block_1 == _data.CurrentSkillKind ()) 
+			if (Skill.eName.Block_1 == _data.CurrentSkill().name) 
 			{
 
 
