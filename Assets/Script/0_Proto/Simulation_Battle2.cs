@@ -826,7 +826,7 @@ namespace CounterBlock
 
 		public bool IsSkill_Attack()
 		{
-			if (Skill.eKind.Attack_Strong == _skill_current.kind)
+			if (Skill.eKind.Attack_Strong == _skill_current.kind || Skill.eKind.Attack_Weak == _skill_current.kind )
 				return true;
 
 			return false;
@@ -1054,30 +1054,32 @@ namespace CounterBlock
 				{	//먼저공격 상대
 					jState = Judgment.eState.Damaged;
 				}
-				else if (Skill.eKind.Attack_Strong ==  this.CurrentSkill().kind  && Skill.eKind.Attack_Strong ==  dst.CurrentSkill().kind  
-					&& eState.Start == this.CurrentState() && true == dst.Valid_CloggedTime ()
-					&& this.IsPossibleRange_Clog_VS(dst)) 
+				else if ( Skill.eKind.Attack_Weak ==  this.CurrentSkill().kind &&
+					eState.Start == this.CurrentState() &&
+					true == dst.Valid_CloggedTime () &&
+					this.IsPossibleRange_Clog_VS(dst)) 
 				{	//칼죽이기
 					jState = Judgment.eState.Attack_Weapon;	
 				}
-				else if (Skill.eKind.Attack_Weak ==  dst.CurrentSkill().kind 
-					&& eState.Start == dst.CurrentState() && true == this.Valid_CloggedTime ()
-					&& dst.IsPossibleRange_Clog_VS(this)) 
+				else if (Skill.eKind.Attack_Weak ==  dst.CurrentSkill().kind &&
+					eState.Start == dst.CurrentState() && 
+					true == this.Valid_CloggedTime () &&
+					dst.IsPossibleRange_Clog_VS(this)) 
 				{	//칼죽이기 당함  
 					jState = Judgment.eState.Attack_Clogged;
 				}
-				else if (Skill.eKind.Attack_Weak ==  this.CurrentSkill().kind  
-					&& true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime()
-					&& this.IsAttack_Withstand(dst)) 
+				else if (Skill.eKind.Attack_Strong ==  this.CurrentSkill().kind  && Skill.eKind.Attack_Strong ==  dst.CurrentSkill().kind &&
+					true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime() &&
+					this.IsAttack_Withstand(dst)) 
 				{	//칼맞부딪힘 
 					jState = Judgment.eState.Attack_Withstand;
 				}
 
+//				if(eState.Start == this.CurrentState())
+//					DebugWide.LogBlue (this.IsSkill_Attack ()+ "  " + jState.ToString());
 
 			}
 
-//			if(eState.Start == this.CurrentState())
-//				DebugWide.LogBlue (this.IsSkill_Attack ()+ "  " + jState.ToString());
 
 
 
@@ -1845,8 +1847,8 @@ namespace CounterBlock
 			bhvo.rigidTime = 0.2f;
 
 
-			//bhvo.attack_shape = eTraceShape.Straight;
-			bhvo.attack_shape = eTraceShape.Vertical;
+			bhvo.attack_shape = eTraceShape.Straight;
+			//bhvo.attack_shape = eTraceShape.Vertical;
 			bhvo.angle = 45f;
 			bhvo.plus_range_0 = 0f;
 			bhvo.plus_range_1 = -4f;
@@ -2904,7 +2906,7 @@ namespace CounterBlock
 						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
 						if (Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name) 
 						{
-							StartCoroutine("AniStart_Attack_Test_3",bundle); 
+							StartCoroutine("AniStart_Attack_Test_2",bundle); 
 						}
 						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
@@ -3155,13 +3157,16 @@ namespace CounterBlock
 
 		public IEnumerator AniStart_Attack_Test_2(CharDataBundle bundle)
 		{
-
-			//float time = bundle._data.GetRunningTime () - bundle._data.GetBehavior().distance_maxTime; //after
-			float time = bundle._data.GetBehavior().distance_maxTime; //before
-
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
+
+			//float time = bundle._data.GetRunningTime () - bundle._data.GetBehavior().distance_maxTime; //after
+			float time = bundle._data.GetBehavior().distance_maxTime; //before
+			float distance = bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard();
+			distance = distance * bundle._gameObject.transform.lossyScale.x; //반전시킨 것을 다시 곱하여 적용
+
+			//DebugWide.LogBlue ("AniStart_Attack_Test_2 : "+distance);
 
 			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
@@ -3169,10 +3174,10 @@ namespace CounterBlock
 			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
 			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
 			iTween.MoveBy(bundle._gameObject, iTween.Hash(
-				"amount", bundle._data.GetDirection() * (bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard()),
+				"amount", bundle._data.GetDirection() * distance,
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
 			));
-
+				
 
 			yield return new WaitForSeconds(time);
 
