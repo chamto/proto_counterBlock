@@ -389,7 +389,11 @@ namespace CounterBlock
 		{
 			//t * s = d
 			//s = d/t
-			this.velocity_before = distance_travel / distance_maxTime;
+			if (0f == distance_maxTime)
+				this.velocity_before = 0f;
+			else
+				this.velocity_before = distance_travel / distance_maxTime;
+			
 			this.velocity_after = distance_travel / (runningTime - distance_maxTime);
 
 			DebugWide.LogBlue ("velocity_before : "+this.velocity_before + "   <-- 충돌점 -->   velocity_after : " +this.velocity_after + "  [distance_travel:" + distance_travel+"]"); //chamto test
@@ -400,7 +404,13 @@ namespace CounterBlock
 			//러닝타임 보다 더 큰 값이 들어오면 사용오류임
 			if (runningTime < currentTime)
 				return 0f; 
-			
+
+			//최대거리에 도달하는 시간이 0이면 최대거리를 반환한다.
+			if (0f == distance_maxTime) 
+			{
+				return distance_travel;
+			}
+
 			if (currentTime <= distance_maxTime) 
 			{
 				return this.velocity_before * currentTime;
@@ -616,6 +626,11 @@ namespace CounterBlock
 
 		}
 
+
+		public float GetWeaponDistance()
+		{
+			return _behavior.CurrentDistance (_timeDelta);
+		}
 
 		public Vector3 GetWeaponPosition(float time)
 		{
@@ -974,7 +989,7 @@ namespace CounterBlock
 
 			//*B방식*
 			if(true == Util.Collision_Sphere (this._position, this.GetRangeMax(), dst.GetWeaponPosition(), dst.weapon.collider_sphere_radius, 
-				Util.eSphere_Include_Status.Fully)) 
+				Util.eSphere_Include_Status.Focus)) 
 			{
 				//DebugWide.LogBlue ("Judgment.eState.Attack_Withstand !!!!"); //chamto test
 				return true;
@@ -1189,6 +1204,9 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
+					float prev_distance = dst.GetWeaponDistance ();
+					dst.SetSkill (Skill.eName.Counter);
+					dst.GetBehavior ().distance_travel = prev_distance;
 					//상대 무기 위치값을 정지시킴
 					//1초 동안 상대무기 정지
 					//상대 무기로의 내무기 이동
@@ -1702,14 +1720,11 @@ namespace CounterBlock
 			Attack_Strong_1,
 			Attack_Weak_1,
 
-			Attack_2Combo,
 			Attack_3Combo,
 
 			Block_1,
-			Block_2Combo,
-			Block_3Combo,
 
-			CounterBlock,
+			Counter,
 			Max
 		}
 
@@ -1725,21 +1740,17 @@ namespace CounterBlock
 				return "Hit";
 
 			case Skill.eName.Attack_Strong_1:
-				return "Attack_1";
-			case Skill.eName.Attack_2Combo:
-				return "Attack_2Combo";
+				return "Attack_Strong_1";
+			case Skill.eName.Attack_Weak_1:
+				return "Attack_Weak_1";
 			case Skill.eName.Attack_3Combo:
 				return "Attack_3Combo";
 
 			case Skill.eName.Block_1:
 				return "Block_1";
-			case Skill.eName.Block_2Combo:
-				return "Block_2Combo";
-			case Skill.eName.Block_3Combo:
-				return "Block_3Combo";
-
-			case Skill.eName.CounterBlock:
-				return "CounterBlock";
+			
+			case Skill.eName.Counter:
+				return "Counter";
 			
 			}
 
@@ -1835,11 +1846,11 @@ namespace CounterBlock
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1.0f;
 			//1
-			bhvo.cloggedTime_0 = 0.2f;
-			bhvo.cloggedTime_1 = 0.4f;
+			bhvo.cloggedTime_0 = 0.0f;
+			bhvo.cloggedTime_1 = 0.6f;
 			//2
-			bhvo.eventTime_0 = 0.3f;
-			bhvo.eventTime_1 = 0.5f;
+			bhvo.eventTime_0 = 0.7f;
+			bhvo.eventTime_1 = 0.8f;
 			//3
 			bhvo.openTime_0 = 0.7f;
 			bhvo.openTime_1 = 1f;
@@ -1872,10 +1883,10 @@ namespace CounterBlock
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 2.0f;
 			//1
-			bhvo.cloggedTime_0 = 0.2f;
-			bhvo.cloggedTime_1 = 0.7f;
+			bhvo.cloggedTime_0 = 0.1f;
+			bhvo.cloggedTime_1 = 1.0f;
 			//2
-			bhvo.eventTime_0 = 0.8f;
+			bhvo.eventTime_0 = 1.0f;
 			bhvo.eventTime_1 = 1.2f;
 			//3
 			bhvo.openTime_0 = 1.5f;
@@ -1959,7 +1970,7 @@ namespace CounterBlock
 			Skill skinfo = new Skill ();
 
 			skinfo.kind = eKind.Counter;
-			skinfo.name = eName.CounterBlock;
+			skinfo.name = eName.Counter;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -1973,6 +1984,39 @@ namespace CounterBlock
 			return skinfo;
 		}
 
+		static public Skill Details_Counter()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Counter;
+			skinfo.name = eName.Counter;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.runningTime = 1.0f;
+			//1
+			bhvo.cloggedTime_0 = 0f;
+			bhvo.cloggedTime_1 = 0f;
+			//2
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
+			//3
+			bhvo.openTime_0 = 0.8f;
+			bhvo.openTime_1 = 1f;
+			//4
+			bhvo.rigidTime = 0f;
+
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.angle = 0f;
+			bhvo.plus_range_0 = 0f;
+			bhvo.plus_range_1 = 0f;
+			bhvo.distance_travel = 0f;
+			bhvo.distance_maxTime = 0f;
+			bhvo.Calc_Velocity ();
+			skinfo.Add (bhvo);
+
+			return skinfo;
+		}
 
 
 	}
@@ -1992,7 +2036,8 @@ namespace CounterBlock
 
 			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
 
-			this.Add (Skill.eName.CounterBlock, Skill.Details_CounterBlock ());
+			//this.Add (Skill.eName.Counter, Skill.Details_CounterBlock ());
+			this.Add (Skill.eName.Counter, Skill.Details_Counter ());
 
 		}
 	}
@@ -2416,6 +2461,17 @@ namespace CounterBlock
 				return _spriteRender.transform;
 			}
 		}
+		public Color color
+		{
+			get
+			{
+				return _spriteRender.color;
+			}
+			set
+			{
+				_spriteRender.color = value;
+			}
+		}
 
 
 		//private Vector3 		_position = Vector3.zero;
@@ -2449,7 +2505,7 @@ namespace CounterBlock
 			Vector3 temp = _localPosition; temp.x *= transform.parent.localScale.x;
 			return  transform.parent.position + temp;
 		}
-
+			
 
 		public  InitialData(SpriteRenderer spr)
 		{
@@ -2832,6 +2888,13 @@ namespace CounterBlock
 
 
 
+		Coroutine _prev_coroutine_weaponCard_ = null;
+		public void StopCoroutine_WeaponCard()
+		{
+			if (null != _prev_coroutine_weaponCard_)
+				StopCoroutine (_prev_coroutine_weaponCard_);
+		}
+
 
 		private void Update_UI_Card()
 		{
@@ -2878,6 +2941,79 @@ namespace CounterBlock
 
 			}
 
+			//칼죽이기 UI 출력
+			if (Skill.eName.Counter == _data.CurrentSkill().name ) 
+			{
+
+				switch (_data.CurrentState ()) 
+				{
+				case Character.eState.Start:
+					{
+						this._actions[1].gameObject.SetActive (false);
+						this._actions[2].gameObject.SetActive (true);
+
+						this._actions[1].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
+						this._actions[2].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
+
+
+						//================================================
+						CharDataBundle bundle;
+						bundle._data = _data;
+						bundle._ui = this;
+						bundle._gameObject = this._actions [2].gameObject;
+
+						StopCoroutine_WeaponCard ();
+						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Counter",bundle); 
+
+						//================================================
+
+					}
+					break;
+				case Character.eState.Running:
+					{
+
+
+						//====================================================
+						//update sub_state
+						//====================================================
+						switch (_data.CurrentEventState ()) 
+						{
+						case Character.eSubState.Start:
+							{
+								
+							}
+							break;
+						case Character.eSubState.Running:
+							{
+								
+							}
+							break;
+						case Character.eSubState.End:
+							{
+								
+							}
+							break;
+						}
+
+						//====================================================
+					}
+
+					break;
+				case Character.eState.Waiting:
+					{
+					}
+
+					break;
+				case Character.eState.End:
+					{
+					}
+					break;
+
+				}//end switch
+
+
+			}
+
 			//공격 UI 출력 
 			if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name  || 
 				Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name ) 
@@ -2902,15 +3038,14 @@ namespace CounterBlock
 						bundle._ui = this;
 						bundle._gameObject = this._actions [2].gameObject;
 
-						//StartCoroutine("AniStart_Attack_1",bundle); 
-						//StartCoroutine("AniStart_Attack_1_Random",bundle); 
+						StopCoroutine_WeaponCard ();
 						if (Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name) 
 						{
-							StartCoroutine("AniStart_Attack_Test_2",bundle); 
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Test_2",bundle); 
 						}
 						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
-							StartCoroutine("AniStart_Attack_Test_3",bundle); 
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Test_3",bundle); 
 						}	
 
 						//================================================
@@ -3035,6 +3170,14 @@ namespace CounterBlock
 
 		private void Update_UI_Effect()
 		{
+
+			if (_data.Valid_CloggedTime ()) 
+			{
+				this._actions [1].color = Color.red;
+			} else 
+			{
+				this._actions [1].color = Color.white;
+			}
 			
 			if (_data.IsStart_Damaged ()) 
 			{
@@ -3163,6 +3306,7 @@ namespace CounterBlock
 
 			//float time = bundle._data.GetRunningTime () - bundle._data.GetBehavior().distance_maxTime; //after
 			float time = bundle._data.GetBehavior().distance_maxTime; //before
+			//float time = 3f; //chamto test
 			float distance = bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard();
 			distance = distance * bundle._gameObject.transform.lossyScale.x; //반전시킨 것을 다시 곱하여 적용
 
@@ -3178,6 +3322,40 @@ namespace CounterBlock
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
 			));
 				
+
+			yield return new WaitForSeconds(time);
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+		}
+
+		public IEnumerator AniStart_Attack_Counter(CharDataBundle bundle)
+		{
+
+			float time = bundle._data.GetRunningTime ();
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+
+			//bundle._ui.RevertData_All ();
+			//bundle._gameObject.transform.position = bundle._data.GetWeaponPosition (); //위치로 이동
+
+
+
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
+			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
+			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,300f),time);
+			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("z",-200f,"time",time));	
+//			iTween.MoveBy(bundle._gameObject, iTween.Hash(
+//				"amount", new Vector3(0,0,30f),
+//				"time", time, "easetype",  "easeInOutBounce"//"linear"
+//			));
+//			iTween.RotateBy(bundle._gameObject, iTween.Hash(
+//				"amount", new Vector3(0,30f,0),
+//				"time", time, "easetype",  "easeInOutBounce"//"linear"
+//			));
+			iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0.5f), time);
+
 
 			yield return new WaitForSeconds(time);
 

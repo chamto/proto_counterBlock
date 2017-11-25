@@ -139,12 +139,15 @@ namespace CounterBlock
 
 		public Vector3[] GetPaths(Vector3 start)
 		{
-			
-			Vector3[] list = new Vector3[4];
-			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/p (0)").localPosition + start;
-			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/p (1)").localPosition + start;
-			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/p (2)").localPosition + start;
-			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/p (3)").localPosition + start;
+
+			string pathName = "p01";
+			Vector3[] list = new Vector3[6];
+			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
+			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
+			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (2)").localPosition + start;
+			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (3)").localPosition + start;
+			list[4] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (4)").localPosition + start;
+			list[5] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (5)").localPosition + start;
 
 
 			return list;
@@ -175,10 +178,12 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_1_Random(CharDataBundle bundle)
 		{
 
-			float time = 5f;
+			float time = 3f;
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
+			DebugWide.LogBlue ("start----- " + Time.time);
+
 
 			Vector3 start = bundle._gameObject.transform.localPosition;
 			Vector3[] list = GetPaths (start);
@@ -203,6 +208,7 @@ namespace CounterBlock
 
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.SetActive (false);
+			DebugWide.LogBlue ("end----- " + Time.time);
 
 		}
 
@@ -213,6 +219,7 @@ namespace CounterBlock
 		}
 
 
+		Coroutine _prev_coroutine_ = null;
 		// Update is called once per frame
 		void Update () 
 		{
@@ -241,9 +248,12 @@ namespace CounterBlock
 				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
 				bundle._data = _ui_1Player.GetData();
 				bundle._ui = _ui_1Player;
-				StartCoroutine ("AniStart_Attack_1_Random", bundle);
+				//StopCoroutine ("AniStart_Attack_1_Random");
+				if(null != _prev_coroutine_)
+					StopCoroutine(_prev_coroutine_);
+				_prev_coroutine_ = StartCoroutine ("AniStart_Attack_1_Random", bundle);
 
-				DebugWide.LogBlue ("===========================");
+
 			}
 			//DebugWide.LogBlue (_ui_1Player._actions [0].transform.localPosition); //chamto test
 
