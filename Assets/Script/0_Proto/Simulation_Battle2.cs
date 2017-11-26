@@ -3309,6 +3309,7 @@ namespace CounterBlock
 
 			_prev_position_ = list [0];
 
+			//iTween.RotateBy (bundle._gameObject,new Vector3(0,0,60f),time_before); //표창느낌
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
 				"time", time_before - 0.1f //애니와 충돌순간이 맞지 않아서 애니를 0.1초 짧게 준다
 				,"easetype",  "linear"//"easeInExpo"//"easeInOutBounce"//"easeOutCubic"
@@ -3350,7 +3351,9 @@ namespace CounterBlock
 		{
 			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
 			Vector3 pos_targetWeapon = target._actions [eAction.Hilt].transform.position;
+			GameObject obj_blade = bundle._ui._actions [eAction.Blade].gameObject;
 			bundle._gameObject.SetActive (true);
+			iTween.Stop (obj_blade);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
@@ -3365,22 +3368,25 @@ namespace CounterBlock
 			pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
 			pos_targetWeapon.x = pos_targetWeapon.x * bundle._gameObject.transform.lossyScale.x; //반전적용
 
+			_prev_position_ = bundle._gameObject.transform.localPosition;
 
-			DebugWide.LogBlue ("AniStart_Attack_Test_2 : "+pos_targetWeapon);
-
-			iTween.RotateTo (bundle._gameObject,new Vector3(0,0,500f),time);
-			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
-			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
-			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
-			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
+			//iTween.PunchRotation(obj_blade,new Vector3(0,0,800),time);
+			//iTween.PunchPosition(bundle._gameObject,pos_targetWeapon, time);
+			//iTween.RotateBy (obj_blade,new Vector3(0,0,60f),time);
 			iTween.MoveBy(bundle._gameObject, iTween.Hash(
 				"amount", pos_targetWeapon,//bundle._data.GetDirection() * distance,
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
+				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				,"onupdate","Rotate_Towards_FrontGap"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
 			));
 				
 
 			yield return new WaitForSeconds(time);
 
+			iTween.Stop (obj_blade);
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.SetActive (false);
 
@@ -3490,22 +3496,22 @@ namespace CounterBlock
 		public void Rotate_Towards_FrontGap(Transform tr)
 		{
 			Vector3 dir = tr.localPosition - _prev_position_;
-			if (0 == dir.sqrMagnitude || dir.sqrMagnitude <= float.Epsilon)
+			if (dir.sqrMagnitude <= 0.5f)
 				return; //길이가 아주 작거나 0이면 각도 변화가 없는 상태이다. 
 
 			Vector3 euler = tr.localEulerAngles;
 			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
 			tr.localEulerAngles = euler;
 
-			_prev_position_ = tr.localPosition;
+			DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
 
-			//DebugWide.LogBlue ("AniUpdate_Attack_1_Random : " + tr.localPosition + "  " + _prev_position_ + "  " );//chamto test
+			_prev_position_ = tr.localPosition;
 		}
 
 		public void Rotate_Towards_BehindGap(Transform tr)
 		{
 			Vector3 dir = _prev_position_ - tr.localPosition;
-			if (0 == dir.sqrMagnitude || dir.sqrMagnitude <= float.Epsilon)
+			if (dir.sqrMagnitude <= 0.01f)
 				return; //길이가 아주 작거나 0이면 각도 변화가 없는 상태이다. 
 
 			Vector3 euler = tr.localEulerAngles;
