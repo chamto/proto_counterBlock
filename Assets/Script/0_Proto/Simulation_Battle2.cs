@@ -2445,14 +2445,19 @@ namespace CounterBlock
 		};
 
 		private SpriteRenderer 	_spriteRender = null;
+		private Transform 		_transform = null;
 		public Sprite sprite 
 		{
 			get 
 			{ 
+				if (null == _spriteRender)
+					return null;
 				return _spriteRender.sprite;
 			}
 			set
 			{
+				if (null == _spriteRender)
+					return;
 				_spriteRender.sprite = value;
 			}
 		}
@@ -2460,30 +2465,33 @@ namespace CounterBlock
 		{
 			get
 			{ 
-				return _spriteRender.gameObject;
+				return _transform.gameObject;
 			}
 		}
 		public Transform transform
 		{
 			get
 			{
-				return _spriteRender.transform;
+				return _transform;
 			}
 		}
 		public Color color
 		{
 			get
 			{
+				if (null == _spriteRender)
+					return Color.white;
 				return _spriteRender.color;
 			}
 			set
 			{
+				if (null == _spriteRender)
+					return;
 				_spriteRender.color = value;
 			}
 		}
 
 
-		//private Vector3 		_position = Vector3.zero;
 		private Vector3 		_scale = Vector3.one;
 		private Quaternion		_rotation = Quaternion.identity;
 
@@ -2515,10 +2523,24 @@ namespace CounterBlock
 			return  transform.parent.position + temp;
 		}
 			
+		public InitialData(Transform trs)
+		{
+			_spriteRender = null;
+			_transform = trs;
+
+			_localPosition = _transform.localPosition;
+			_localScale = _transform.localScale;
+			_localRotation = _transform.localRotation;
+
+			//_position = spr.transform.position;
+			_scale = _transform.lossyScale;
+			_rotation = _transform.rotation;
+		}
 
 		public  InitialData(SpriteRenderer spr)
 		{
 			_spriteRender = spr;
+			_transform = _spriteRender.transform;
 
 			_localPosition = spr.transform.localPosition;
 			_localScale = spr.transform.localScale;
@@ -2547,20 +2569,30 @@ namespace CounterBlock
 		public void  Revert(eOption opt)
 		{
 			if(eOption.Position == (opt & eOption.Position))
-				_spriteRender.transform.localPosition = _localPosition;
+				_transform.localPosition = _localPosition;
 
 			if(eOption.Scale == (opt & eOption.Scale))
-				_spriteRender.transform.localScale = _localScale;
+				_transform.localScale = _localScale;
 
 			if(eOption.Rotation == (opt & eOption.Rotation))
-				_spriteRender.transform.localRotation = _localRotation;
+				_transform.localRotation = _localRotation;
 		}
 
 	}//end class
 
 	public class UI_CharacterCard : MonoBehaviour
 	{
-		
+
+		public enum eAction
+		{
+			None,
+			Idle,
+			Action,
+			Hilt,
+			Blade,
+			Max
+		}
+
 		public enum eEffect
 		{
 			None,
@@ -2631,7 +2663,7 @@ namespace CounterBlock
 			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
 			ui._actions = new List<InitialData> ();
 			//ui._action_originalPos = new List<Vector3> ();
-			const int MAX_ACTION_CARD = 3;
+			const int MAX_ACTION_CARD = 2;
 			SpriteRenderer img = null;
 			InitialData iData = null;
 			for (int i = 0; i < MAX_ACTION_CARD; i++) 
@@ -2639,8 +2671,14 @@ namespace CounterBlock
 				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
 				iData = new InitialData (img);
 				ui._actions.Add (iData);
-				//ui._action_originalPos.Add (img.transform.localPosition);
 			}
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Hilt/Blade");
+			iData = new InitialData (img);
+			ui._actions.Add (iData);
+			ui._actions.Add (
+				new InitialData(
+					Single.hierarchy.Find<Transform> (parentPath + "/Images/Hilt")
+				));
 
 			//effect
 			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
@@ -2934,13 +2972,12 @@ namespace CounterBlock
 			}
 			//=====----=====----=====----=====----=====----=====----=====----=====----
 
-			//idle UI 출력
+			//공통 UI 출력 - idle
 			{
 				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
-
 
 						this._actions [1].gameObject.SetActive (false);
 						this._actions [2].gameObject.SetActive (false);
@@ -3326,11 +3363,12 @@ namespace CounterBlock
 			//<문제>itween 에서 객체의 로컬위치값으로만 적용됨 (조정 할수있는 해쉬값이 없음)
 			//목표로의 순수벡터값만 구해 로컬위치값으로 사용되게 한다. 
 			pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
+			pos_targetWeapon.x = pos_targetWeapon.x * bundle._gameObject.transform.lossyScale.x; //반전적용
 
 
 			DebugWide.LogBlue ("AniStart_Attack_Test_2 : "+pos_targetWeapon);
 
-			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
+			iTween.RotateTo (bundle._gameObject,new Vector3(0,0,500f),time);
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
 			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
