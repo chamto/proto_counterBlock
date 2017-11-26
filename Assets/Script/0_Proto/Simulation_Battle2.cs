@@ -2588,8 +2588,8 @@ namespace CounterBlock
 			None,
 			Idle,
 			Action,
-			Hilt,
-			Blade,
+			Hilt,		//칼자루
+			Blade,		//칼날
 			Max
 		}
 
@@ -2614,7 +2614,7 @@ namespace CounterBlock
 		//public Slider _hp_bar { get; set; }
 
 		public Transform _actionRoot { get; set; }
-		public List<InitialData> _actions { get; set; }
+		public Dictionary<eAction,InitialData> _actions { get; set; }
 
 		public Transform _effectRoot { get; set; }
 		public Transform _effect_Texts { get; set; }
@@ -2661,24 +2661,24 @@ namespace CounterBlock
 
 			//action
 			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
-			ui._actions = new List<InitialData> ();
+			ui._actions = new Dictionary<eAction, InitialData> ();
 			//ui._action_originalPos = new List<Vector3> ();
-			const int MAX_ACTION_CARD = 2;
+
 			SpriteRenderer img = null;
+			Transform trs = null;
 			InitialData iData = null;
-			for (int i = 0; i < MAX_ACTION_CARD; i++) 
-			{
-				img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_"+i.ToString("00"));
-				iData = new InitialData (img);
-				ui._actions.Add (iData);
-			}
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_00");
+			iData = new InitialData (img);
+			ui._actions.Add (eAction.Idle, iData);
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_01");
+			iData = new InitialData (img);
+			ui._actions.Add (eAction.Action, iData);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Hilt/Blade");
 			iData = new InitialData (img);
-			ui._actions.Add (iData);
-			ui._actions.Add (
-				new InitialData(
-					Single.hierarchy.Find<Transform> (parentPath + "/Images/Hilt")
-				));
+			ui._actions.Add (eAction.Blade, iData);
+			trs = Single.hierarchy.Find<Transform> (parentPath + "/Images/Hilt");
+			iData = new InitialData (trs);
+			ui._actions.Add (eAction.Hilt, iData);
 
 			//effect
 			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
@@ -2706,7 +2706,7 @@ namespace CounterBlock
 		public void RevertData_All()
 		{
 
-			foreach (InitialData iData in _actions) 
+			foreach (InitialData iData in _actions.Values) 
 			{
 				iData.Revert (InitialData.eOption.All);
 			}
@@ -2803,7 +2803,7 @@ namespace CounterBlock
 
 		public float GetLength_Between_WeaponeCard()
 		{
-			return Mathf.Abs (_actions [2].transform.localPosition.x);
+			return Mathf.Abs (_actions [eAction.Hilt].transform.localPosition.x);
 		}
 
 		public void Init_ActionRoot()
@@ -2979,10 +2979,10 @@ namespace CounterBlock
 				case Character.eState.Start:
 					{
 
-						this._actions [1].gameObject.SetActive (false);
-						this._actions [2].gameObject.SetActive (false);
+						this._actions [eAction.Action].gameObject.SetActive (false);
+						this._actions [eAction.Hilt].gameObject.SetActive (false);
 
-						this._actions [0].SelectAction (_data.kind, ResourceManager.eActionKind.Idle);
+						this._actions [eAction.Idle].SelectAction (_data.kind, ResourceManager.eActionKind.Idle);
 					}
 					break;
 				}
@@ -2997,18 +2997,18 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						this._actions[1].gameObject.SetActive (false);
-						this._actions[2].gameObject.SetActive (true);
+						this._actions[eAction.Action].gameObject.SetActive (false);
+						this._actions[eAction.Hilt].gameObject.SetActive (true);
 
-						this._actions[1].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
-						this._actions[2].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
+						this._actions[eAction.Action].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
+						this._actions[eAction.Hilt].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
 
 
 						//================================================
 						CharDataBundle bundle;
 						bundle._data = _data;
 						bundle._ui = this;
-						bundle._gameObject = this._actions [2].gameObject;
+						bundle._gameObject = this._actions [eAction.Hilt].gameObject;
 
 						StopCoroutine_WeaponCard ();
 						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Counter",bundle); 
@@ -3071,11 +3071,11 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						this._actions[1].gameObject.SetActive (true);
-						this._actions[2].gameObject.SetActive (false);
+						this._actions[eAction.Action].gameObject.SetActive (true);
+						this._actions[eAction.Hilt].gameObject.SetActive (false);
 
-						this._actions[1].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
-						this._actions[2].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
+						this._actions[eAction.Action].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
+						this._actions[eAction.Hilt].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
 
 						//iTween.Stop (charUI._actions [2].gameObject);
 						//charUI.RevertData_All ();
@@ -3084,7 +3084,7 @@ namespace CounterBlock
 						CharDataBundle bundle;
 						bundle._data = _data;
 						bundle._ui = this;
-						bundle._gameObject = this._actions [2].gameObject;
+						bundle._gameObject = this._actions [eAction.Hilt].gameObject;
 
 						StopCoroutine_WeaponCard ();
 						if (Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name) 
@@ -3117,7 +3117,7 @@ namespace CounterBlock
 								CharDataBundle bundle;
 								bundle._data = _data;
 								bundle._ui = this;
-								bundle._gameObject = this._actions [2].gameObject;
+								bundle._gameObject = this._actions [eAction.Hilt].gameObject;
 
 								//StartCoroutine("AniStart_Attack_1",bundle); 
 								//StartCoroutine("AniStart_Attack_1_Random",bundle); 
@@ -3150,7 +3150,7 @@ namespace CounterBlock
 					break;
 				case Character.eState.Waiting:
 					{
-						this._actions[1].SelectAction (_data.kind, ResourceManager.eActionKind.AttackAfter);
+						this._actions[eAction.Action].SelectAction (_data.kind, ResourceManager.eActionKind.AttackAfter);
 
 					}
 
@@ -3176,10 +3176,10 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						this._actions[1].gameObject.SetActive (true);	
-						this._actions[2].gameObject.SetActive (false);
+						this._actions[eAction.Action].gameObject.SetActive (true);	
+						this._actions[eAction.Hilt].gameObject.SetActive (false);
 
-						this._actions[1].SelectAction (_data.kind, ResourceManager.eActionKind.BlockBefore);
+						this._actions[eAction.Action].SelectAction (_data.kind, ResourceManager.eActionKind.BlockBefore);
 					}
 					break;
 				case Character.eState.Running:
@@ -3221,10 +3221,10 @@ namespace CounterBlock
 
 			if (_data.Valid_CloggedTime ()) 
 			{
-				this._actions [1].color = Color.red;
+				this._actions [eAction.Action].color = Color.red;
 			} else 
 			{
-				this._actions [1].color = Color.white;
+				this._actions [eAction.Action].color = Color.white;
 			}
 			
 			if (_data.IsStart_Damaged ()) 
@@ -3304,7 +3304,7 @@ namespace CounterBlock
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
-			Vector3 start = bundle._ui._actions [2].transform.localPosition;
+			Vector3 start = bundle._ui._actions [eAction.Hilt].transform.localPosition;
 			Vector3[] list = GetPaths (rand, start);
 
 			_prev_position_ = list [0];
@@ -3329,7 +3329,7 @@ namespace CounterBlock
 			iTween.MoveTo (bundle._gameObject, iTween.Hash (
 				"time", time_after
 				, "easetype", "easeOutExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
-				, "position", bundle._ui._actions [2].Get_InitialPostition ()
+				, "position", bundle._ui._actions [eAction.Hilt].Get_InitialPostition ()
 				, "onupdate", "Rotate_Towards_BehindGap"
 				, "onupdatetarget", gameObject
 				, "onupdateparams", bundle._gameObject.transform
@@ -3349,7 +3349,7 @@ namespace CounterBlock
 		public IEnumerator AniStart_Attack_Test_2(CharDataBundle bundle)
 		{
 			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
-			Vector3 pos_targetWeapon = target._actions [2].transform.position;
+			Vector3 pos_targetWeapon = target._actions [eAction.Hilt].transform.position;
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -3526,7 +3526,7 @@ namespace CounterBlock
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
 
-			Vector3 start = bundle._ui._actions [2].transform.localPosition;
+			Vector3 start = bundle._ui._actions [eAction.Hilt].transform.localPosition;
 			Vector3[] list = GetPaths (rand, start);
 
 			_prev_position_ = list [0];
