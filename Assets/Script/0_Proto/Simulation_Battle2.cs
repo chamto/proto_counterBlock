@@ -553,8 +553,8 @@ namespace CounterBlock
 		//판정
 		private Judgment _judgment = new Judgment();
 
-		//충돌모형
-		//private float _collider_sphere_radius;
+		//공격대상
+		private Character _target = null;
 
 		//====================================
 
@@ -598,6 +598,11 @@ namespace CounterBlock
 		}
 
 		//====================================
+
+		public Character CurrentTarget()
+		{
+			return _target;
+		}
 
 		public Figure.Arc GetArc_Weapon()
 		{
@@ -1175,7 +1180,11 @@ namespace CounterBlock
 
 		public void Judge(Character dst)
 		{
-			
+			//============================
+			//!! 판정에서 대상객체 정보를 넣는다
+			this._target = dst;
+			//============================
+
 			//if(1 == this.GetID())
 			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
 
@@ -2563,6 +2572,8 @@ namespace CounterBlock
 		};
 
 
+		public UI_Battle _UI_Battle = null;
+
 		public uint _id = 0;
 		public Character _data = null;
 
@@ -3300,6 +3311,8 @@ namespace CounterBlock
 
 		public IEnumerator AniStart_Attack_Test_2(CharDataBundle bundle)
 		{
+			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
+			Vector3 pos_targetWeapon = target._actions [2].transform.position;
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			bundle._ui.RevertData_All ();
@@ -3310,7 +3323,12 @@ namespace CounterBlock
 			float distance = bundle._data.GetBehavior().distance_travel - this.GetLength_Between_WeaponeCard();
 			distance = distance * bundle._gameObject.transform.lossyScale.x; //반전시킨 것을 다시 곱하여 적용
 
-			//DebugWide.LogBlue ("AniStart_Attack_Test_2 : "+distance);
+			//<문제>itween 에서 객체의 로컬위치값으로만 적용됨 (조정 할수있는 해쉬값이 없음)
+			//목표로의 순수벡터값만 구해 로컬위치값으로 사용되게 한다. 
+			pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
+
+
+			DebugWide.LogBlue ("AniStart_Attack_Test_2 : "+pos_targetWeapon);
 
 			//iTween.RotateBy (charUI._action[2].gameObject,new Vector3(0,0,-20f),0.5f);
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
@@ -3318,7 +3336,7 @@ namespace CounterBlock
 			//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,-45f),1f);
 			//iTween.PunchPosition(bundle._gameObject, iTween.Hash("x",10,"time",time));	
 			iTween.MoveBy(bundle._gameObject, iTween.Hash(
-				"amount", bundle._data.GetDirection() * distance,
+				"amount", pos_targetWeapon,//bundle._data.GetDirection() * distance,
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
 			));
 				
@@ -3623,6 +3641,11 @@ namespace CounterBlock
 		
 		}
 
+		public UI_CharacterCard GetCharacter(Character data)
+		{
+			return _characters [data.GetID ()];
+		}
+
 		public UI_CharacterCard GetCharacter(uint idx)
 		{
 			return _characters [idx];
@@ -3635,6 +3658,7 @@ namespace CounterBlock
 			//card.data = data;
 			card.SetData(data);
 			card._id = id;
+			card._UI_Battle = this;
 			_characters.Add (id, card);
 
 			return card;
