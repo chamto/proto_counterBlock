@@ -3447,17 +3447,40 @@ namespace CounterBlock
 			_prev_position_ = bundle._gameObject.transform.localPosition;
 
 			//iTween.PunchRotation(obj_blade,new Vector3(0,0,800),time);
-			//iTween.PunchPosition(bundle._gameObject,pos_targetWeapon, time);
 			//iTween.RotateBy (obj_blade,new Vector3(0,0,60f),time);
-			iTween.MoveTo(bundle._gameObject, iTween.Hash(
-				"position", pos_targetWeapon,//bundle._data.GetDirection() * distance,
-				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
-				//,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
-				//,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+			//iTween.PunchPosition(bundle._gameObject,pos_targetWeapon, time);
+
+			iTween.PunchPosition(bundle._gameObject, iTween.Hash(
+				"amount", pos_targetWeapon - bundle._gameObject.transform.position,
+				"time", time
+				,"space",Space.World
 				,"onupdate","Rotate_Towards_FrontGap"
 				,"onupdatetarget",gameObject
 				,"onupdateparams",bundle._gameObject.transform
 			));
+
+			//지정크기 만큼 객체를 이동 
+			//내부에서 Translate 함수를 사용하여 이동함. 현재위치값 기준으로 동작함. 이동방향이 회전에 영향을 받음
+			//월드좌표로 해야 이동방향이 회전에 영향을 안받음
+//			iTween.MoveBy (bundle._gameObject, iTween.Hash (
+//				"amount", pos_targetWeapon - bundle._gameObject.transform.position,
+//				"time", time, "easetype", "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
+//				,"space",Space.World
+//				, "onupdate", "Rotate_Towards_FrontGap"
+//				, "onupdatetarget", gameObject
+//				, "onupdateparams", bundle._gameObject.transform
+//			));
+
+			//목표위치까지 객체를 이동
+//			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+//				"position", pos_targetWeapon,//bundle._data.GetDirection() * distance,
+//				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
+//				//,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+//				//,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+//				,"onupdate","Rotate_Towards_FrontGap"
+//				,"onupdatetarget",gameObject
+//				,"onupdateparams",bundle._gameObject.transform
+//			));
 				
 
 			yield return new WaitForSeconds(time);
@@ -3467,6 +3490,8 @@ namespace CounterBlock
 			bundle._gameObject.SetActive (false);
 
 		}
+
+
 
 		public IEnumerator AniStart_Attack_Counter(CharDataBundle bundle)
 		{
@@ -3576,8 +3601,11 @@ namespace CounterBlock
 				return; //길이가 아주 작거나 0이면 각도 변화가 없는 상태이다. 
 
 			Vector3 euler = tr.localEulerAngles;
-			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
-			//euler.z += 10f;
+			float angle = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
+			//90도 보다 작은 변화량만 적용한다. ITween 펀치에서 180도가 나와 적용한 코드이다
+			if (90f > angle)
+				euler.z = angle;
+			
 			tr.localEulerAngles = euler;
 
 			//DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
