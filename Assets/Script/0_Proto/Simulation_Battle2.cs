@@ -542,6 +542,7 @@ namespace CounterBlock
 		//동작정보
 		private Behavior _behavior = null;
 		private Skill 	_skill_current = null;
+		private Skill 	_skill_next = null;
 		private float 	_timeDelta = 0f; 	//시간변화량
 
 		//상태정보
@@ -869,8 +870,26 @@ namespace CounterBlock
 			return false;
 		}
 
-		public void SetSkill(Skill.eName kind)
+		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
+		public void SetSkill_AfterInterruption(Skill.eName kind)
 		{
+			//현재 스킬이 지정되어 있지 않으면 바로 요청 스킬로 지정한다
+			//현재 상태가 end라면 스킬을 바로 지정한다
+			if (null == _skill_current || eState.End == this._state_current) 
+			{
+				this.setSkill (kind);
+				return;
+			}
+
+			_skill_next = ref_skillBook [kind];
+
+			SetState (eState.End);
+		}
+
+		//입력되는 스킬로 바로 적용한다  - (End 상태를 거치지 않는다)
+		private void setSkill(Skill.eName kind)
+		{
+			//_skill_next = null;
 			_skill_current = ref_skillBook [kind];
 			_behavior = _skill_current.FirstBehavior ();
 
@@ -889,7 +908,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Attack_Strong_1);
+				SetSkill_AfterInterruption (Skill.eName.Attack_Strong_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -900,7 +919,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Attack_Weak_1);
+				SetSkill_AfterInterruption (Skill.eName.Attack_Weak_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -912,7 +931,7 @@ namespace CounterBlock
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill (Skill.eName.Block_1);
+				SetSkill_AfterInterruption (Skill.eName.Block_1);
 
 				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
@@ -922,7 +941,7 @@ namespace CounterBlock
 
 		public void Idle()
 		{
-			SetSkill (Skill.eName.Idle);
+			SetSkill_AfterInterruption (Skill.eName.Idle);
 		}
 
 		//상대로 부터 피해입다
@@ -930,7 +949,7 @@ namespace CounterBlock
 		{
 			this.AddHP (damage);
 
-			SetSkill (Skill.eName.Hit);
+			SetSkill_AfterInterruption (Skill.eName.Hit);
 		}
 
 
@@ -1214,7 +1233,7 @@ namespace CounterBlock
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
 					float prev_distance = dst.GetWeaponDistance ();
-					dst.SetSkill (Skill.eName.Counter);
+					dst.SetSkill_AfterInterruption (Skill.eName.Counter);
 					dst.GetBehavior ().distance_travel = prev_distance;
 					//상대 무기 위치값을 정지시킴
 					//1초 동안 상대무기 정지
@@ -1238,6 +1257,8 @@ namespace CounterBlock
 					//===== 처리철차 ===== 
 					//입력 -> ui갱신 -> (갱신 -> 판정)
 					//공격키입력 -> 행동상태none 에서 start 로 변경 -> start 상태 검출
+					//* 공격키입력으로 시작되는 상태는 None 이 되어야 한다. (바로 Start 상태가 되면 판정에서 Start상태인지 모른다)
+					//* 상태변이에 의해 시작되는 상태는 Start 여야 한다. (None 으로 시작되면 한프레임을 더 수행하는게 되므로 Start로 시작하게 한다)
 					this._timeDelta = 0f;
 					SetState (eState.Start);
 				}
@@ -1246,6 +1267,9 @@ namespace CounterBlock
 				{	
 					this._timeDelta = 0f;
 					SetState (eState.Running);
+					SetEventState (eSubState.None);
+					SetGiveState (eSubState.None);
+
 
 					//DebugWide.LogRed ("[0: "+this._state_current);//chamto test
 				}
@@ -1335,18 +1359,28 @@ namespace CounterBlock
 				break;
 			case eState.End:
 				{
-					_behavior = _skill_current.NextBehavior ();
-
-					if (null == _behavior) 
+					//* 다음 스킬입력 처리  
+					if (null != _skill_next) 
 					{
-						//스킬 동작을 모두 꺼냈으면 아이들상태로 들어간다
-						Idle ();
+						_skill_current = _skill_next;
+						_skill_next = null;
+						_behavior = _skill_current.FirstBehavior ();
+						SetState (eState.Start);
 					} else 
 					{
-						//다음 스킬 동작으로 넘어간다
-						SetState (eState.Start);
+						//** 콤보 스킬 처리
+						_behavior = _skill_current.NextBehavior ();
+						if (null == _behavior) 
+						{
+							//스킬 동작을 모두 꺼냈으면 아이들상태로 들어간다
+							Idle ();
+						} else 
+						{
+							//다음 스킬 동작으로 넘어간다
+							SetState (eState.Start);
+						}
 					}
-						
+
 				}
 				break;
 			
@@ -1802,6 +1836,21 @@ namespace CounterBlock
 			return null;
 		}
 
+		//다음 행동이 있나 질의한다
+		public bool IsNextBehavior()
+		{
+			if (this.Count > _index_current) 
+			{
+				//마지막 인덱스임
+				if (this.Count == _index_current + 1)
+					return false;
+
+
+				return true;
+			}
+
+			return false;
+		}
 
 
 
@@ -2985,6 +3034,14 @@ namespace CounterBlock
 						this._actions [eAction.Idle].SelectAction (_data.kind, ResourceManager.eActionKind.Idle);
 					}
 					break;
+				case Character.eState.End:
+					{
+//						if(1 == this._id)
+//							DebugWide.LogBlue ("State.End  " + _data.IsSkill_Attack());
+						
+						this.RevertData_All ();
+					}
+					break;
 				}
 
 			}
@@ -3378,7 +3435,7 @@ namespace CounterBlock
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
 				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
 				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
-				,"onupdate","Rotate_Towards_FrontGap"
+				//,"onupdate","Rotate_Towards_FrontGap"
 				,"onupdatetarget",gameObject
 				,"onupdateparams",bundle._gameObject.transform
 			));
@@ -3503,7 +3560,7 @@ namespace CounterBlock
 			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
 			tr.localEulerAngles = euler;
 
-			DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
+			//DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
 
 			_prev_position_ = tr.localPosition;
 		}
