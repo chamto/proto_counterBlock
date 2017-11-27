@@ -877,7 +877,10 @@ namespace CounterBlock
 			//현재 상태가 end라면 스킬을 바로 지정한다
 			if (null == _skill_current || eState.End == this._state_current) 
 			{
-				this.setSkill (kind);
+				_skill_current = ref_skillBook [kind];
+				_behavior = _skill_current.FirstBehavior ();
+				SetState (eState.Start);
+				this._timeDelta = 0f;
 				return;
 			}
 
@@ -886,7 +889,7 @@ namespace CounterBlock
 			SetState (eState.End);
 		}
 
-		//입력되는 스킬로 바로 적용한다  - (End 상태를 거치지 않는다)
+		//[사용제한] 입력되는 스킬로 바로 적용한다  - (End 상태를 거치지 않는다)
 		private void setSkill(Skill.eName kind)
 		{
 			//_skill_next = null;
@@ -902,6 +905,11 @@ namespace CounterBlock
 			this._timeDelta = 0f; //판정후 갱신되는 구조로 인해, 갱신되지 않은 상태에서 판정하는 문제 발생. => 스킬요청시 바로 초기화 시켜준다.  
 		}
 
+		private void NextSkill()
+		{
+			SetSkill_AfterInterruption (_skill_next.name);
+			_skill_next = null;
+		}
 
 		public void Attack_Strong ()
 		{
@@ -1362,10 +1370,7 @@ namespace CounterBlock
 					//* 다음 스킬입력 처리  
 					if (null != _skill_next) 
 					{
-						_skill_current = _skill_next;
-						_skill_next = null;
-						_behavior = _skill_current.FirstBehavior ();
-						SetState (eState.Start);
+						NextSkill ();
 					} else 
 					{
 						//** 콤보 스킬 처리
@@ -1378,6 +1383,7 @@ namespace CounterBlock
 						{
 							//다음 스킬 동작으로 넘어간다
 							SetState (eState.Start);
+							_timeDelta = 0f;
 						}
 					}
 
@@ -3279,9 +3285,16 @@ namespace CounterBlock
 			if (_data.Valid_CloggedTime ()) 
 			{
 				this._actions [eAction.Action].color = Color.red;
+
+//				if(1 == _id)
+//					DebugWide.LogBlue (_data.CurrentState() + "  "  + _data.GetBehavior().cloggedTime_0 + "   "  + _data.GetBehavior().cloggedTime_1 + "  "+ _data.GetTimeDelta() + "  ");
+
 			} else 
 			{
 				this._actions [eAction.Action].color = Color.white;
+
+//				if(1 == _id)
+//					DebugWide.LogBlue (_data.CurrentState() + " - --- - - - - - " + _data.GetTimeDelta() + "  " );
 			}
 			
 			if (_data.IsStart_Damaged ()) 
