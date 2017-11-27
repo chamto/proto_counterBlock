@@ -3011,17 +3011,17 @@ namespace CounterBlock
 			{
 			case Judgment.eState.Attack_Clogged:
 				{
-					DebugWide.LogBlue ("Attack_Clogged - 칼죽음"); //chamto test
+					//DebugWide.LogBlue ("Attack_Clogged - 칼죽음"); //chamto test
 				}
 				break;
 			case Judgment.eState.Attack_Weapon:
 				{
-					DebugWide.LogBlue ("Attack_Weapon - 칼죽이기 성공"); //chamto test
+					//DebugWide.LogBlue ("Attack_Weapon - 칼죽이기 성공"); //chamto test
 				}
 				break;
 			case Judgment.eState.Attack_Withstand:
 				{
-					DebugWide.LogBlue ("Attack_Withstand - 칼맞부딪침"); //chamto test
+					//DebugWide.LogBlue ("Attack_Withstand - 칼맞부딪침"); //chamto test
 				}
 				break;
 			}
@@ -3042,10 +3042,14 @@ namespace CounterBlock
 					break;
 				case Character.eState.End:
 					{
-//						if(1 == this._id)
-//							DebugWide.LogBlue ("State.End  " + _data.IsSkill_Attack());
 						
-						this.RevertData_All ();
+//						if(0 != this._id && _data.CurrentSkill().name != Skill.eName.Idle)
+//							DebugWide.LogBlue ("["+this._id + "]  " + "State.End  " + _data.CurrentSkill().name + 
+//								"  " + _data.GetTimeDelta() + "  " + _data.GetBehavior().runningTime + "  " + _data.GetBehavior().rigidTime);
+
+						//공격이 "막히지 않았을때" 
+						if(_data.GetJudgmentState () != Judgment.eState.Attack_Clogged)
+							this.RevertData_All ();
 					}
 					break;
 				}
@@ -3438,6 +3442,8 @@ namespace CounterBlock
 			pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
 			pos_targetWeapon.x = pos_targetWeapon.x * bundle._gameObject.transform.lossyScale.x; //반전적용
 
+			//DebugWide.LogBlue ("["+_id + "]  pos_targetWeapon  "+pos_targetWeapon);
+
 			_prev_position_ = bundle._gameObject.transform.localPosition;
 
 			//iTween.PunchRotation(obj_blade,new Vector3(0,0,800),time);
@@ -3446,11 +3452,11 @@ namespace CounterBlock
 			iTween.MoveBy(bundle._gameObject, iTween.Hash(
 				"amount", pos_targetWeapon,//bundle._data.GetDirection() * distance,
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
-				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
-				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
-				//,"onupdate","Rotate_Towards_FrontGap"
-				,"onupdatetarget",gameObject
-				,"onupdateparams",bundle._gameObject.transform
+//				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+//				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+//				,"onupdate","Rotate_Towards_FrontGap"
+//				,"onupdatetarget",gameObject
+//				,"onupdateparams",bundle._gameObject.transform
 			));
 				
 
