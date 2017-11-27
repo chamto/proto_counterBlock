@@ -3439,8 +3439,8 @@ namespace CounterBlock
 
 			//<문제>itween 에서 객체의 로컬위치값으로만 적용됨 (조정 할수있는 해쉬값이 없음)
 			//목표로의 순수벡터값만 구해 로컬위치값으로 사용되게 한다. 
-			pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
-			pos_targetWeapon.x = pos_targetWeapon.x * bundle._gameObject.transform.lossyScale.x; //반전적용
+			//pos_targetWeapon = pos_targetWeapon - bundle._gameObject.transform.position ; 
+			//pos_targetWeapon.x = pos_targetWeapon.x * bundle._gameObject.transform.lossyScale.x; //반전적용
 
 			//DebugWide.LogBlue ("["+_id + "]  pos_targetWeapon  "+pos_targetWeapon);
 
@@ -3449,14 +3449,14 @@ namespace CounterBlock
 			//iTween.PunchRotation(obj_blade,new Vector3(0,0,800),time);
 			//iTween.PunchPosition(bundle._gameObject,pos_targetWeapon, time);
 			//iTween.RotateBy (obj_blade,new Vector3(0,0,60f),time);
-			iTween.MoveBy(bundle._gameObject, iTween.Hash(
-				"amount", pos_targetWeapon,//bundle._data.GetDirection() * distance,
+			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+				"position", pos_targetWeapon,//bundle._data.GetDirection() * distance,
 				"time", time, "easetype",  "easeOutCubic"//"easeOutCubic"//"easeInOutBounce"//
-//				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
-//				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
-//				,"onupdate","Rotate_Towards_FrontGap"
-//				,"onupdatetarget",gameObject
-//				,"onupdateparams",bundle._gameObject.transform
+				//,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				//,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				,"onupdate","Rotate_Towards_FrontGap"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
 			));
 				
 
@@ -3577,6 +3577,7 @@ namespace CounterBlock
 
 			Vector3 euler = tr.localEulerAngles;
 			euler.z = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
+			//euler.z += 10f;
 			tr.localEulerAngles = euler;
 
 			//DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
