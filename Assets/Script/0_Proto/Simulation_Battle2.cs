@@ -3363,10 +3363,32 @@ namespace CounterBlock
 		}//end func
 
 
+		void OnTriggerEnter(Collider other)
+		{
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (_id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnTriggerStay(Collider other)
+		{
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (_id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnTriggerExit(Collider other)
+		{
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (_id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+
 		void OnCollisionEnter (Collision col)
 		{
-			
-			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
+			UI_CharacterCard dst = col.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag  + "  " + dst._id );
 		}
 		void OnCollisionStay (Collision col)
 		{
