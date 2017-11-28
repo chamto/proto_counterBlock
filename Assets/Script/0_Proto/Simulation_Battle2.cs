@@ -3049,7 +3049,13 @@ namespace CounterBlock
 
 						//공격이 "막히지 않았을때" 
 						if(_data.GetJudgmentState () != Judgment.eState.Attack_Clogged)
+						{
 							this.RevertData_All ();
+
+							//test
+							Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+							trEffect.gameObject.SetActive(false);
+						}
 					}
 					break;
 				}
@@ -3362,15 +3368,31 @@ namespace CounterBlock
 
 		}//end func
 
+
+
 		//====================================================================================
+
+
 
 		public void OnCollisionEnter (Collision other)
 		{
 			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
+
+			if(other.gameObject.tag.Equals("weapon"))
+			{
+				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+				//DebugWide.LogBlue (trEffect);
+				trEffect.gameObject.SetActive(true);
+				trEffect.transform.position = other.contacts [0].point;
+
+				//chamto test
+				iTween.ShakeScale(trEffect.gameObject,new Vector3(-0.5f,-0.5f,0.1f), 1f);
+			}
 			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
+
 		public void OnCollisionStay (Collision other)
 		{
 			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
@@ -3378,15 +3400,26 @@ namespace CounterBlock
 				return;
 			DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
+
 		public void OnCollisionExit (Collision other)
 		{
 			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
+
+			if(other.gameObject.tag.Equals("weapon"))
+			{
+				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+				//trEffect.gameObject.SetActive(false);
+			}
 			DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 
+
+
 		//====================================================================================
+
+
 
 		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
 		{
