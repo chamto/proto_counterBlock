@@ -2717,7 +2717,6 @@ namespace CounterBlock
 			//action
 			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
 			ui._actions = new Dictionary<eAction, InitialData> ();
-			//ui._action_originalPos = new List<Vector3> ();
 
 			SpriteRenderer img = null;
 			Transform trs = null;
@@ -2731,6 +2730,7 @@ namespace CounterBlock
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Hilt/Blade");
 			iData = new InitialData (img);
 			ui._actions.Add (eAction.Blade, iData);
+			img.gameObject.AddComponent<Mono_CrashMonitor> (); //무기카드에 충돌감시기를 붙인다
 			trs = Single.hierarchy.Find<Transform> (parentPath + "/Images/Hilt");
 			iData = new InitialData (trs);
 			ui._actions.Add (eAction.Hilt, iData);
@@ -3363,41 +3363,6 @@ namespace CounterBlock
 		}//end func
 
 
-		void OnTriggerEnter(Collider other)
-		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			if (_id == dst._id)
-				return;
-			DebugWide.LogBlue ("OnTriggerEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
-		}
-		void OnTriggerStay(Collider other)
-		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			if (_id == dst._id)
-				return;
-			DebugWide.LogBlue ("OnTriggerStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
-		}
-		void OnTriggerExit(Collider other)
-		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			if (_id == dst._id)
-				return;
-			DebugWide.LogBlue ("OnTriggerExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
-		}
-
-		void OnCollisionEnter (Collision col)
-		{
-			UI_CharacterCard dst = col.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag  + "  " + dst._id );
-		}
-		void OnCollisionStay (Collision col)
-		{
-			DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
-		}
-		void OnCollisionExit (Collision col)
-		{
-			DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
-		}
 
 		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
 		{
@@ -3795,6 +3760,59 @@ namespace CounterBlock
 
 	}
 
+	public class Mono_CrashMonitor : MonoBehaviour
+	{
+		
+		void OnTriggerEnter(Collider other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerEnter:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnTriggerStay(Collider other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerStay:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnTriggerExit(Collider other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnTriggerExit:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+
+		void OnCollisionEnter (Collision other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnCollisionStay (Collision other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnCollisionStay:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+		void OnCollisionExit (Collision other)
+		{
+			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			if (null == dst || src._id == dst._id)
+				return;
+			DebugWide.LogBlue ("OnCollisionExit:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+		}
+	}
 
 
 	public struct CharDataBundle
