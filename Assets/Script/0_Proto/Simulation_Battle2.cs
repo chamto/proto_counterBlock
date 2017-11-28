@@ -3363,6 +3363,20 @@ namespace CounterBlock
 		}//end func
 
 
+		void OnCollisionEnter (Collision col)
+		{
+			
+			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
+		}
+		void OnCollisionStay (Collision col)
+		{
+			DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
+		}
+		void OnCollisionExit (Collision col)
+		{
+			DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + col.gameObject.name + "  " + col.gameObject.tag);
+		}
+
 		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
 		{
 
