@@ -3603,12 +3603,13 @@ namespace CounterBlock
 			Vector3 euler = tr.localEulerAngles;
 			float angle = Mathf.Atan2(dir.y , dir.x) * Mathf.Rad2Deg;
 			//90도 보다 작은 변화량만 적용한다. ITween 펀치에서 180도가 나와 적용한 코드이다
-			if (90f > angle)
+			if (90f > Mathf.Abs(angle))
 				euler.z = angle;
 			
 			tr.localEulerAngles = euler;
 
-			//DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir);//chamto test
+//			if(1 == _id)
+//				DebugWide.LogBlue ("Rotate_Towards_FrontGap : " + tr.localPosition + "  " + _prev_position_ + "  "  + dir.sqrMagnitude + "  " + dir + "  " + angle);//chamto test
 
 			_prev_position_ = tr.localPosition;
 		}
