@@ -3294,14 +3294,14 @@ namespace CounterBlock
 
 			if (_data.Valid_CloggedTime ()) 
 			{
-				this._actions [eAction.Action].color = Color.red;
+				this._actions [eAction.Blade].color = Color.gray;
 
 //				if(1 == _id)
 //					DebugWide.LogBlue (_data.CurrentState() + "  "  + _data.GetBehavior().cloggedTime_0 + "   "  + _data.GetBehavior().cloggedTime_1 + "  "+ _data.GetTimeDelta() + "  ");
 
 			} else 
 			{
-				this._actions [eAction.Action].color = Color.white;
+				this._actions [eAction.Blade].color = Color.white;
 
 //				if(1 == _id)
 //					DebugWide.LogBlue (_data.CurrentState() + " - --- - - - - - " + _data.GetTimeDelta() + "  " );
@@ -3388,7 +3388,8 @@ namespace CounterBlock
 				trEffect.transform.position = other.contacts [0].point;
 
 				//chamto test
-				iTween.ShakeScale(trEffect.gameObject,new Vector3(-0.5f,-0.5f,0.1f), 1f);
+				//iTween.Stop (trEffect.gameObject);
+				iTween.ShakeScale(trEffect.gameObject,new Vector3(0.5f,0.5f,0.1f), 1f);
 			}
 			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
