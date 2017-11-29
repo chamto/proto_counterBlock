@@ -862,9 +862,9 @@ namespace CounterBlock
 		}
 
 
-		public bool IsSkill_Counter()
+		public bool IsSkill_HitWeapon()
 		{
-			if (Skill.eKind.Counter == _skill_current.kind)
+			if (Skill.eName.Hit_Weapon == _skill_current.name)
 				return true;
 
 			return false;
@@ -957,7 +957,7 @@ namespace CounterBlock
 		{
 			this.AddHP (damage);
 
-			SetSkill_AfterInterruption (Skill.eName.Hit);
+			SetSkill_AfterInterruption (Skill.eName.Hit_Body);
 		}
 
 
@@ -1240,12 +1240,12 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
-					float prev_distance = dst.GetWeaponDistance ();
-					dst.SetSkill_AfterInterruption (Skill.eName.Counter);
-					dst.GetBehavior ().distance_travel = prev_distance;
-					//상대 무기 위치값을 정지시킴
-					//1초 동안 상대무기 정지
-					//상대 무기로의 내무기 이동
+					//상대행동을 "카운터"로 변경시킨다
+					//카운터 행동 : 1초간 무기 정지 
+					float prev_distance = dst.GetWeaponDistance (); 
+					dst.SetSkill_AfterInterruption (Skill.eName.Hit_Weapon);
+					dst.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+
 				}
 				break;
 			}//end switch
@@ -1755,8 +1755,9 @@ namespace CounterBlock
 			None,
 			Attack_Strong,
 			Attack_Weak,
+			Withstand,
 			Block,
-			Counter,
+			Hit,
 			Max
 		}
 
@@ -1764,16 +1765,17 @@ namespace CounterBlock
 		{
 			None,
 			Idle,
-			Hit,
+			Hit_Body,
+			Hit_Weapon,
 
 			Attack_Strong_1,
 			Attack_Weak_1,
 
 			Attack_3Combo,
 
+			Withstand_1,
 			Block_1,
 
-			Counter,
 			Max
 		}
 
@@ -1785,9 +1787,11 @@ namespace CounterBlock
 				return "None";
 			case Skill.eName.Idle:
 				return "Idle";
-			case Skill.eName.Hit:
-				return "Hit";
-
+			case Skill.eName.Hit_Body:
+				return "Hit_Body";
+			case Skill.eName.Hit_Weapon:
+				return "Hit_Weapon";
+			
 			case Skill.eName.Attack_Strong_1:
 				return "Attack_Strong_1";
 			case Skill.eName.Attack_Weak_1:
@@ -1795,11 +1799,10 @@ namespace CounterBlock
 			case Skill.eName.Attack_3Combo:
 				return "Attack_3Combo";
 
+			case Skill.eName.Withstand_1:
+				return "Withstand_1";
 			case Skill.eName.Block_1:
 				return "Block_1";
-			
-			case Skill.eName.Counter:
-				return "Counter";
 			
 			}
 
@@ -1882,12 +1885,12 @@ namespace CounterBlock
 			return skinfo;
 		}
 
-		static public Skill Details_Hit()
+		static public Skill Details_HitBody()
 		{
 			Skill skinfo = new Skill ();
 
-			skinfo.kind = eKind.None;
-			skinfo.name = eName.Hit;
+			skinfo.kind = eKind.Hit;
+			skinfo.name = eName.Hit_Body;
 
 			Behavior bhvo = new Behavior ();
 			bhvo.runningTime = 1f;
@@ -1895,6 +1898,74 @@ namespace CounterBlock
 			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
 			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
+			skinfo.Add (bhvo);
+
+			return skinfo;
+		}
+
+		static public Skill Details_HitWeapon()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Hit;
+			skinfo.name = eName.Hit_Weapon;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.runningTime = 1.0f;
+			//1
+			bhvo.cloggedTime_0 = 0f;
+			bhvo.cloggedTime_1 = 0f;
+			//2
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
+			//3
+			bhvo.openTime_0 = 0.8f;
+			bhvo.openTime_1 = 1f;
+			//4
+			bhvo.rigidTime = 0f;
+
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.angle = 0f;
+			bhvo.plus_range_0 = 0f;
+			bhvo.plus_range_1 = 0f;
+			bhvo.distance_travel = 0f;
+			bhvo.distance_maxTime = 0f;
+			bhvo.Calc_Velocity ();
+			skinfo.Add (bhvo);
+
+			return skinfo;
+		}
+
+		static public Skill Details_Withstand_1()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Withstand;
+			skinfo.name = eName.Withstand_1;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.runningTime = 1.0f;
+			//1
+			bhvo.cloggedTime_0 = 0f;
+			bhvo.cloggedTime_1 = 0f;
+			//2
+			bhvo.eventTime_0 = 0f;
+			bhvo.eventTime_1 = 0f;
+			//3
+			bhvo.openTime_0 = 0.8f;
+			bhvo.openTime_1 = 1f;
+			//4
+			bhvo.rigidTime = 0f;
+
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.angle = 0f;
+			bhvo.plus_range_0 = 0f;
+			bhvo.plus_range_1 = 0f;
+			bhvo.distance_travel = 0f;
+			bhvo.distance_maxTime = 0f;
+			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
 			return skinfo;
@@ -2028,61 +2099,7 @@ namespace CounterBlock
 
 			return skinfo;
 		}
-
-		static public Skill Details_CounterBlock()
-		{
-			Skill skinfo = new Skill ();
-
-			skinfo.kind = eKind.Counter;
-			skinfo.name = eName.Counter;
-
-			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1f;
-			bhvo.eventTime_0 = 0f;
-			bhvo.eventTime_1 = 0f;
-			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
-			bhvo.openTime_1 = Behavior.MAX_OPEN_TIME;
-			skinfo.Add (bhvo);
-
-
-			return skinfo;
-		}
-
-		static public Skill Details_Counter()
-		{
-			Skill skinfo = new Skill ();
-
-			skinfo.kind = eKind.Counter;
-			skinfo.name = eName.Counter;
-
-			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.0f;
-			//1
-			bhvo.cloggedTime_0 = 0f;
-			bhvo.cloggedTime_1 = 0f;
-			//2
-			bhvo.eventTime_0 = 0f;
-			bhvo.eventTime_1 = 0f;
-			//3
-			bhvo.openTime_0 = 0.8f;
-			bhvo.openTime_1 = 1f;
-			//4
-			bhvo.rigidTime = 0f;
-
-
-			bhvo.attack_shape = eTraceShape.Straight;
-			bhvo.angle = 0f;
-			bhvo.plus_range_0 = 0f;
-			bhvo.plus_range_1 = 0f;
-			bhvo.distance_travel = 0f;
-			bhvo.distance_maxTime = 0f;
-			bhvo.Calc_Velocity ();
-			skinfo.Add (bhvo);
-
-			return skinfo;
-		}
-
-
+			
 	}
 
 
@@ -2091,7 +2108,7 @@ namespace CounterBlock
 		public SkillBook()
 		{
 			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
-			this.Add (Skill.eName.Hit, Skill.Details_Hit ());
+			this.Add (Skill.eName.Hit_Body, Skill.Details_HitBody ());
 
 			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong ());
 			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak ());
@@ -2101,7 +2118,7 @@ namespace CounterBlock
 			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
 
 			//this.Add (Skill.eName.Counter, Skill.Details_CounterBlock ());
-			this.Add (Skill.eName.Counter, Skill.Details_Counter ());
+			this.Add (Skill.eName.Hit_Weapon, Skill.Details_HitWeapon ());
 
 		}
 	}
@@ -3064,7 +3081,7 @@ namespace CounterBlock
 			}
 
 			//칼죽이기 UI 출력
-			if (Skill.eName.Counter == _data.CurrentSkill().name ) 
+			if (Skill.eName.Hit_Weapon == _data.CurrentSkill().name ) 
 			{
 
 				switch (_data.CurrentState ()) 
@@ -3392,7 +3409,7 @@ namespace CounterBlock
 				//iTween.Stop (trEffect.gameObject);
 				iTween.ShakeScale(trEffect.gameObject,new Vector3(0.5f,0.5f,0.1f), 1f);
 			}
-			DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+			//DebugWide.LogBlue ("OnCollisionEnter:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 
 		public void OnCollisionStay (Collision other)
@@ -3400,7 +3417,7 @@ namespace CounterBlock
 			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
-			DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+			//DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 
 		public void OnCollisionExit (Collision other)
@@ -3409,12 +3426,12 @@ namespace CounterBlock
 			if (null == dst || this._id == dst._id)
 				return;
 
-			if(other.gameObject.tag.Equals("weapon"))
-			{
-				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
-				//trEffect.gameObject.SetActive(false);
-			}
-			DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
+//			if(other.gameObject.tag.Equals("weapon"))
+//			{
+//				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+//				//trEffect.gameObject.SetActive(false);
+//			}
+			//DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 
 
