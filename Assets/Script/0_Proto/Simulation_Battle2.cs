@@ -882,7 +882,7 @@ namespace CounterBlock
 		{
 			//_skill_next = null;
 			_skill_current = ref_skillBook [name];
-			_behavior = _skill_current.FirstBehavior ().Clone();
+			_behavior = _skill_current.FirstBehavior ();
 
 			//SetState (eState.Start);
 			SetState (eState.None);
@@ -893,26 +893,37 @@ namespace CounterBlock
 			this._timeDelta = 0f; //판정후 갱신되는 구조로 인해, 갱신되지 않은 상태에서 판정하는 문제 발생. => 스킬요청시 바로 초기화 시켜준다.  
 		}
 			
-		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
+
 		public void SetSkill_AfterInterruption(Skill.eName name)
+		{
+			this.SetSkill_AfterInterruption(ref_skillBook [name]);
+		}
+
+		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
+		public void SetSkill_AfterInterruption(Skill skill)
 		{
 			//현재 스킬이 지정되어 있지 않으면 바로 요청 스킬로 지정한다
 			//현재 상태가 end라면 스킬을 바로 지정한다
 			if (null == _skill_current || eState.End == this._state_current) 
 			{
-				this.SetSkill_Start (name);
+				this.SetSkill_Start (skill);
 				return;
 			}
 
-			_skill_next = ref_skillBook [name];
+			_skill_next = skill;
 
 			SetState (eState.End);
 		}
 
-		private void SetSkill_Start(Skill.eName name)
+		public void SetSkill_Start(Skill.eName name)
 		{
-			_skill_current = ref_skillBook [name];
-			_behavior = _skill_current.FirstBehavior ().Clone();
+			this.SetSkill_Start (ref_skillBook [name]);
+		}
+
+		public void SetSkill_Start(Skill skill)
+		{
+			_skill_current = skill;
+			_behavior = _skill_current.FirstBehavior ();
 			SetState (eState.Start);
 			this._timeDelta = 0f;
 		}
@@ -1243,8 +1254,9 @@ namespace CounterBlock
 					//해당 3초간 공격키 연타 - 칼밀기 행동함
 					//칼밀기를 많이 하여 칼이 상대몸에 도달하면 공격성공이 됨 
 					float prev_distance = this.GetWeaponDistance (); 
-					this.SetSkill_AfterInterruption (Skill.eName.Withstand_1);
-					this.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+					Skill nextSkill = Skill.Details_Withstand_1 ();
+					this.SetSkill_AfterInterruption (nextSkill);
+					nextSkill.FirstBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
 				}
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
@@ -1252,11 +1264,10 @@ namespace CounterBlock
 					//상대행동을 "Hit_Weapon"로 변경시킨다
 					//Hit_Weapon 행동 : 1초간 무기 정지 
 					float prev_distance = dst.GetWeaponDistance (); 
-					dst.SetSkill_AfterInterruption (Skill.eName.Hit_Weapon);
-					//dst.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
-					//dst.GetBehavior ().distance_travel = 1f;
-					//dst.GetBehavior ().Calc_Velocity ();
-					//ref_skillBook [Skill.eName.Hit_Weapon].FirstBehavior ().distance_travel = prev_distance;
+					Skill nextSkill = Skill.Details_HitWeapon();
+					dst.SetSkill_AfterInterruption (nextSkill);
+					nextSkill.FirstBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+
 					DebugWide.LogBlue ("Attack_Weapon : " + dst.GetBehavior ().distance_travel);
 
 				}
@@ -1383,20 +1394,20 @@ namespace CounterBlock
 					//* 다음 스킬입력 처리  
 					if (null != _skill_next) 
 					{
-						SetSkill_Start (_skill_next.name);
+						SetSkill_Start (_skill_next);
 						_skill_next = null;
 					} else 
 					{
 						//** 콤보 스킬 처리
-						//_behavior = _skill_current.NextBehavior ();
-						//if (null == _behavior) 
-						if(false == _skill_current.IsNextBehavior())
+						_behavior = _skill_current.NextBehavior ();
+						if (null == _behavior) 
+						//if(false == _skill_current.IsNextBehavior())
 						{
 							//스킬 동작을 모두 꺼냈으면 아이들상태로 들어간다
 							Idle ();
 						} else 
 						{
-							_behavior = _skill_current.NextBehavior ().Clone();
+							//_behavior = _skill_current.NextBehavior ().Clone();
 
 							//다음 스킬 동작으로 넘어간다
 							SetState (eState.Start);
