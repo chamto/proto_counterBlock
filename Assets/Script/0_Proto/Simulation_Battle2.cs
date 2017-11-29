@@ -3108,14 +3108,15 @@ namespace CounterBlock
 			}
 
 			//칼죽이기 UI 출력
-			if (Skill.eName.Hit_Weapon == _data.CurrentSkill().name ) 
+			if (Skill.eName.Hit_Weapon == _data.CurrentSkill().name ||
+				Skill.eName.Withstand_1 == _data.CurrentSkill().name) 
 			{
 
 				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
 					{
-						this._actions[eAction.Action].gameObject.SetActive (false);
+						this._actions[eAction.Action].gameObject.SetActive (true);
 						this._actions[eAction.Hilt].gameObject.SetActive (true);
 
 						this._actions[eAction.Action].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
@@ -3453,11 +3454,12 @@ namespace CounterBlock
 			if (null == dst || this._id == dst._id)
 				return;
 
-//			if(other.gameObject.tag.Equals("weapon"))
-//			{
-//				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
-//				//trEffect.gameObject.SetActive(false);
-//			}
+			if(other.gameObject.tag.Equals("weapon"))
+			{
+				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+				//trEffect.gameObject.SetActive(false);
+				//iTween.Stop (trEffect.gameObject);
+			}
 			//DebugWide.LogBlue ("OnCollisionExit:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 
