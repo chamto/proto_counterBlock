@@ -1236,6 +1236,9 @@ namespace CounterBlock
 					//무기 위치값을 정지시킴
 					//해당 3초간 공격키 연타 - 칼밀기 행동함
 					//칼밀기를 많이 하여 칼이 상대몸에 도달하면 공격성공이 됨 
+					float prev_distance = this.GetWeaponDistance (); 
+					this.SetSkill_AfterInterruption (Skill.eName.Withstand_1);
+					this.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
 				}
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
@@ -1945,7 +1948,7 @@ namespace CounterBlock
 			skinfo.name = eName.Withstand_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.0f;
+			bhvo.runningTime = 3.0f;
 			//1
 			bhvo.cloggedTime_0 = 0f;
 			bhvo.cloggedTime_1 = 0f;
@@ -2109,16 +2112,15 @@ namespace CounterBlock
 		{
 			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
 			this.Add (Skill.eName.Hit_Body, Skill.Details_HitBody ());
+			this.Add (Skill.eName.Hit_Weapon, Skill.Details_HitWeapon ());
+
+			this.Add (Skill.eName.Withstand_1, Skill.Details_Withstand_1 ());
+			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
 
 			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong ());
 			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak ());
 
 			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo ());
-
-			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
-
-			//this.Add (Skill.eName.Counter, Skill.Details_CounterBlock ());
-			this.Add (Skill.eName.Hit_Weapon, Skill.Details_HitWeapon ());
 
 		}
 	}
