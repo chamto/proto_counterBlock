@@ -932,21 +932,30 @@ namespace CounterBlock
 		{
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
+				//DebugWide.LogBlue ("Attack_Strong - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
+
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
 				SetSkill_AfterInterruption (Skill.eName.Attack_Strong_1);
-
-				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
+			else if (Skill.eKind.Withstand == _skill_current.kind) 
+			{	//칼견디기 상태일때 칼밀기를 실행한다
+				this.Attack_SwordPush();
+			}
+		}
+
+		public void Attack_SwordPush()
+		{
+			DebugWide.LogBlue ("Attack_SwordPush !!! "); //chamto test
 		}
 
 		public void Attack_Weak ()
 		{
 			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
 			{
+				//DebugWide.LogBlue ("Attack_Weak - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
+
 				//아이들상태거나 연결시간안에 행동이 들어온 경우
 				SetSkill_AfterInterruption (Skill.eName.Attack_Weak_1);
-
-				//DebugWide.LogBlue ("succeced!!! "); //chamto test
 			}
 		}
 			
@@ -1981,8 +1990,8 @@ namespace CounterBlock
 			bhvo.eventTime_0 = 0f;
 			bhvo.eventTime_1 = 0f;
 			//3
-			bhvo.openTime_0 = 0.8f;
-			bhvo.openTime_1 = 1f;
+			bhvo.openTime_0 = 0f;
+			bhvo.openTime_1 = 0f;
 			//4
 			bhvo.rigidTime = 0f;
 
@@ -3608,7 +3617,7 @@ namespace CounterBlock
 
 			//bundle._ui.RevertData_All ();
 			//bundle._gameObject.transform.position = bundle._data.GetWeaponPosition (); //위치로 이동
-			DebugWide.LogBlue(bundle._data.GetBehavior ().distance_travel  + "  " + bundle._data.CurrentSkill().name); //chamto test
+			//DebugWide.LogBlue(bundle._data.GetBehavior ().distance_travel  + "  " + bundle._data.CurrentSkill().name); //chamto test
 
 
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
