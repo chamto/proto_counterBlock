@@ -385,6 +385,11 @@ namespace CounterBlock
 
 		}
 
+		public Behavior Clone()
+		{
+			return this.MemberwiseClone() as Behavior;
+		}
+
 		public void Calc_Velocity()
 		{
 			//t * s = d
@@ -401,21 +406,23 @@ namespace CounterBlock
 
 		public float CurrentDistance(float currentTime)
 		{
-			//러닝타임 보다 더 큰 값이 들어오면 사용오류임
+			//* 러닝타임 보다 더 큰 값이 들어오면 사용오류임
 			if (runningTime < currentTime)
 				return 0f; 
 
-			//최대거리에 도달하는 시간이 0이면 최대거리를 반환한다.
+			//* 최대거리에 도달하는 시간이 0이면 최대거리를 반환한다.
 			if (0f == distance_maxTime) 
 			{
 				return distance_travel;
 			}
 
+			//1. 전진
 			if (currentTime <= distance_maxTime) 
 			{
 				return this.velocity_before * currentTime;
 			}
 
+			//2. 후진
 			//if(distance_maxTime < currentTime)
 			return  this.velocity_after * (runningTime - currentTime);
 		}
@@ -870,31 +877,12 @@ namespace CounterBlock
 			return false;
 		}
 
-		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
-		public void SetSkill_AfterInterruption(Skill.eName kind)
-		{
-			//현재 스킬이 지정되어 있지 않으면 바로 요청 스킬로 지정한다
-			//현재 상태가 end라면 스킬을 바로 지정한다
-			if (null == _skill_current || eState.End == this._state_current) 
-			{
-				_skill_current = ref_skillBook [kind];
-				_behavior = _skill_current.FirstBehavior ();
-				SetState (eState.Start);
-				this._timeDelta = 0f;
-				return;
-			}
-
-			_skill_next = ref_skillBook [kind];
-
-			SetState (eState.End);
-		}
-
 		//[사용제한] 입력되는 스킬로 바로 적용한다  - (End 상태를 거치지 않는다)
-		private void setSkill(Skill.eName kind)
+		private void setSkill_None(Skill.eName name)
 		{
 			//_skill_next = null;
-			_skill_current = ref_skillBook [kind];
-			_behavior = _skill_current.FirstBehavior ();
+			_skill_current = ref_skillBook [name];
+			_behavior = _skill_current.FirstBehavior ().Clone();
 
 			//SetState (eState.Start);
 			SetState (eState.None);
@@ -904,11 +892,29 @@ namespace CounterBlock
 
 			this._timeDelta = 0f; //판정후 갱신되는 구조로 인해, 갱신되지 않은 상태에서 판정하는 문제 발생. => 스킬요청시 바로 초기화 시켜준다.  
 		}
-
-		private void NextSkill()
+			
+		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
+		public void SetSkill_AfterInterruption(Skill.eName name)
 		{
-			SetSkill_AfterInterruption (_skill_next.name);
-			_skill_next = null;
+			//현재 스킬이 지정되어 있지 않으면 바로 요청 스킬로 지정한다
+			//현재 상태가 end라면 스킬을 바로 지정한다
+			if (null == _skill_current || eState.End == this._state_current) 
+			{
+				this.SetSkill_Start (name);
+				return;
+			}
+
+			_skill_next = ref_skillBook [name];
+
+			SetState (eState.End);
+		}
+
+		private void SetSkill_Start(Skill.eName name)
+		{
+			_skill_current = ref_skillBook [name];
+			_behavior = _skill_current.FirstBehavior ().Clone();
+			SetState (eState.Start);
+			this._timeDelta = 0f;
 		}
 
 		public void Attack_Strong ()
@@ -1247,7 +1253,11 @@ namespace CounterBlock
 					//Hit_Weapon 행동 : 1초간 무기 정지 
 					float prev_distance = dst.GetWeaponDistance (); 
 					dst.SetSkill_AfterInterruption (Skill.eName.Hit_Weapon);
-					dst.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+					//dst.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+					//dst.GetBehavior ().distance_travel = 1f;
+					//dst.GetBehavior ().Calc_Velocity ();
+					//ref_skillBook [Skill.eName.Hit_Weapon].FirstBehavior ().distance_travel = prev_distance;
+					DebugWide.LogBlue ("Attack_Weapon : " + dst.GetBehavior ().distance_travel);
 
 				}
 				break;
@@ -1373,17 +1383,21 @@ namespace CounterBlock
 					//* 다음 스킬입력 처리  
 					if (null != _skill_next) 
 					{
-						NextSkill ();
+						SetSkill_Start (_skill_next.name);
+						_skill_next = null;
 					} else 
 					{
 						//** 콤보 스킬 처리
-						_behavior = _skill_current.NextBehavior ();
-						if (null == _behavior) 
+						//_behavior = _skill_current.NextBehavior ();
+						//if (null == _behavior) 
+						if(false == _skill_current.IsNextBehavior())
 						{
 							//스킬 동작을 모두 꺼냈으면 아이들상태로 들어간다
 							Idle ();
 						} else 
 						{
+							_behavior = _skill_current.NextBehavior ().Clone();
+
 							//다음 스킬 동작으로 넘어간다
 							SetState (eState.Start);
 							_timeDelta = 0f;
@@ -2063,7 +2077,7 @@ namespace CounterBlock
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
-			bhvo.runningTime = 1f;
+			bhvo.runningTime = 2f;
 			bhvo.eventTime_0 = 0f;
 			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -2071,7 +2085,7 @@ namespace CounterBlock
 			skinfo.Add (bhvo);
 
 			bhvo = new Behavior ();
-			bhvo.runningTime = 1f;
+			bhvo.runningTime = 3f;
 			bhvo.eventTime_0 = 0f;
 			bhvo.eventTime_1 = 0f;
 			bhvo.openTime_0 = Behavior.MIN_OPEN_TIME;
@@ -3104,7 +3118,7 @@ namespace CounterBlock
 						bundle._gameObject = this._actions [eAction.Hilt].gameObject;
 
 						StopCoroutine_WeaponCard ();
-						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Counter",bundle); 
+						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Weapon",bundle); 
 
 						//================================================
 
@@ -3182,11 +3196,11 @@ namespace CounterBlock
 						StopCoroutine_WeaponCard ();
 						if (Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name) 
 						{
-							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Test_2",bundle); 
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Weak_1",bundle); 
 						}
 						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
-							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Test_3",bundle); 
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Strong_1",bundle); 
 						}	
 
 						//================================================
@@ -3442,7 +3456,7 @@ namespace CounterBlock
 
 
 
-		public IEnumerator AniStart_Attack_Test_3(CharDataBundle bundle)
+		public IEnumerator AniStart_Attack_Strong_1(CharDataBundle bundle)
 		{
 
 			float time_pause = 0.3f;
@@ -3500,7 +3514,7 @@ namespace CounterBlock
 
 		}
 
-		public IEnumerator AniStart_Attack_Test_2(CharDataBundle bundle)
+		public IEnumerator AniStart_Attack_Weak_1(CharDataBundle bundle)
 		{
 			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
 			Vector3 pos_targetWeapon = target._actions [eAction.Hilt].transform.position;
@@ -3572,7 +3586,7 @@ namespace CounterBlock
 
 
 
-		public IEnumerator AniStart_Attack_Counter(CharDataBundle bundle)
+		public IEnumerator AniStart_Hit_Weapon(CharDataBundle bundle)
 		{
 
 			float time = bundle._data.GetRunningTime ();
@@ -3581,7 +3595,7 @@ namespace CounterBlock
 
 			//bundle._ui.RevertData_All ();
 			//bundle._gameObject.transform.position = bundle._data.GetWeaponPosition (); //위치로 이동
-
+			DebugWide.LogBlue(bundle._data.GetBehavior ().distance_travel  + "  " + bundle._data.CurrentSkill().name); //chamto test
 
 
 			//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
