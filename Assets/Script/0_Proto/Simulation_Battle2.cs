@@ -3047,15 +3047,16 @@ namespace CounterBlock
 //							DebugWide.LogBlue ("["+this._id + "]  " + "State.End  " + _data.CurrentSkill().name + 
 //								"  " + _data.GetTimeDelta() + "  " + _data.GetBehavior().runningTime + "  " + _data.GetBehavior().rigidTime);
 
-						//공격이 "막히지 않았을때" 
+						//공격이 "막히지 않았을때" 만 카드 초기화 시켜준다  
 						if(_data.GetJudgmentState () != Judgment.eState.Attack_Clogged)
 						{
 							this.RevertData_All ();
-
-							//test
-							Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
-							trEffect.gameObject.SetActive(false);
 						}
+
+						//chamto test
+						//칼충돌 이펙트 끄기
+						Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+						trEffect.gameObject.SetActive(false);
 					}
 					break;
 				}
