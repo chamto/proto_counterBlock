@@ -1240,8 +1240,8 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
-					//상대행동을 "카운터"로 변경시킨다
-					//카운터 행동 : 1초간 무기 정지 
+					//상대행동을 "Hit_Weapon"로 변경시킨다
+					//Hit_Weapon 행동 : 1초간 무기 정지 
 					float prev_distance = dst.GetWeaponDistance (); 
 					dst.SetSkill_AfterInterruption (Skill.eName.Hit_Weapon);
 					dst.GetBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
