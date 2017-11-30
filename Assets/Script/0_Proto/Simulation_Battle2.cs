@@ -881,7 +881,7 @@ namespace CounterBlock
 		private void setSkill_None(Skill.eName name)
 		{
 			//_skill_next = null;
-			_skill_current = ref_skillBook [name];
+			_skill_current = ref_skillBook.Refer(name);
 			_behavior = _skill_current.FirstBehavior ();
 
 			//SetState (eState.Start);
@@ -896,7 +896,7 @@ namespace CounterBlock
 
 		public void SetSkill_AfterInterruption(Skill.eName name)
 		{
-			this.SetSkill_AfterInterruption(ref_skillBook [name]);
+			this.SetSkill_AfterInterruption(ref_skillBook.Refer(name));
 		}
 
 		//현재 스킬 중단후 다음스킬 시작 (현재 스킬을 end 상태로 바로 전환한다)  
@@ -917,7 +917,7 @@ namespace CounterBlock
 
 		public void SetSkill_Start(Skill.eName name)
 		{
-			this.SetSkill_Start (ref_skillBook [name]);
+			this.SetSkill_Start (ref_skillBook.Refer(name));
 		}
 
 		public void SetSkill_Start(Skill skill)
@@ -1263,7 +1263,8 @@ namespace CounterBlock
 					//해당 3초간 공격키 연타 - 칼밀기 행동함
 					//칼밀기를 많이 하여 칼이 상대몸에 도달하면 공격성공이 됨 
 					float prev_distance = this.GetWeaponDistance (); 
-					Skill nextSkill = Skill.Details_Withstand_1 ();
+					//Skill nextSkill = Skill.Details_Withstand_1 ();
+					Skill nextSkill = ref_skillBook.Create(Skill.eName.Withstand_1);
 					this.SetSkill_AfterInterruption (nextSkill);
 					nextSkill.FirstBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
 				}
@@ -1273,11 +1274,12 @@ namespace CounterBlock
 					//상대행동을 "Hit_Weapon"로 변경시킨다
 					//Hit_Weapon 행동 : 1초간 무기 정지 
 					float prev_distance = dst.GetWeaponDistance (); 
-					Skill nextSkill = Skill.Details_HitWeapon();
+					//Skill nextSkill = Skill.Details_HitWeapon();
+					Skill nextSkill = ref_skillBook.Create(Skill.eName.Hit_Weapon);
 					dst.SetSkill_AfterInterruption (nextSkill);
 					nextSkill.FirstBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
 
-					DebugWide.LogBlue ("Attack_Weapon : " + dst.GetBehavior ().distance_travel);
+					//DebugWide.LogBlue ("Attack_Weapon : " + dst.GetBehavior ().distance_travel);
 
 				}
 				break;
@@ -1968,7 +1970,7 @@ namespace CounterBlock
 			bhvo.plus_range_1 = 0f;
 			bhvo.distance_travel = 0f;
 			bhvo.distance_maxTime = 0f;
-			bhvo.Calc_Velocity ();
+			//bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
 			return skinfo;
@@ -2002,7 +2004,7 @@ namespace CounterBlock
 			bhvo.plus_range_1 = 0f;
 			bhvo.distance_travel = 0f;
 			bhvo.distance_maxTime = 0f;
-			bhvo.Calc_Velocity ();
+			//bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
 			return skinfo;
@@ -2139,23 +2141,47 @@ namespace CounterBlock
 			
 	}
 
-
-	public class SkillBook : Dictionary<Skill.eName, Skill>
+	/// <summary>
+	/// Skill book.
+	/// </summary>
+	public class SkillBook //: Dictionary<Skill.eName, Skill>
 	{
+		private delegate Skill Details_Skill();
+		private Dictionary<Skill.eName, Skill> _referDict = new Dictionary<Skill.eName, Skill>();	//미리 만들어진 정보로 빠르게 사용
+		private Dictionary<Skill.eName, Details_Skill> _createDict = new Dictionary<Skill.eName, Details_Skill>(); //새로운 스킬인스턴스를 만들때 사용 
+
 		public SkillBook()
 		{
-			this.Add (Skill.eName.Idle, Skill.Details_Idle ());
-			this.Add (Skill.eName.Hit_Body, Skill.Details_HitBody ());
-			this.Add (Skill.eName.Hit_Weapon, Skill.Details_HitWeapon ());
+			this.Add (Skill.eName.Idle, Skill.Details_Idle );
+			this.Add (Skill.eName.Hit_Body, Skill.Details_HitBody );
+			this.Add (Skill.eName.Hit_Weapon, Skill.Details_HitWeapon );
 
-			this.Add (Skill.eName.Withstand_1, Skill.Details_Withstand_1 ());
-			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 ());
+			this.Add (Skill.eName.Withstand_1, Skill.Details_Withstand_1 );
+			this.Add (Skill.eName.Block_1, Skill.Details_Block_1 );
 
-			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong ());
-			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak ());
+			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong );
+			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak );
 
-			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo ());
+			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo );
 
+		}
+
+		private void Add(Skill.eName name , Details_Skill skillPtr)
+		{
+			_referDict.Add (name, skillPtr ());
+			_createDict.Add (name, skillPtr);
+		}
+
+		//만들어진 객체를 참조한다 
+		public Skill Refer(Skill.eName name)
+		{
+			return _referDict [name];
+		}
+
+		//요청객체를 생성한다
+		public Skill Create(Skill.eName name)
+		{
+			return _createDict [name] ();
 		}
 	}
 
