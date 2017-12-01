@@ -1281,14 +1281,14 @@ namespace CounterBlock
 						//여러명에게 공격받았을 때의 처리 문제로, 상대의 피해함수를 호출해 준다
 						//apply jugement : HP
 						dst.BeDamage (-1);
-						//DebugWide.LogRed (this.GetID() + "  !!!  dst.BeDamage"); //chamto test
-					}
 
-					//칼버티기에서 공격성공
-					if (Skill.eKind.Withstand == this.CurrentSkill ().kind && Skill.eKind.Withstand != dst.CurrentSkill ().kind) 
-					{
-						//SetState (eState.End);
-						//this.Idle();
+
+						//칼버티기에서 공격성공함
+						//start 서브상태에 안들어와 있으면 None 서브상태에서 먼저 수행되어, BeDamage 함수를 호출할수 없게 된다 
+						if (Skill.eKind.Withstand == this.CurrentSkill ().kind )
+						{
+							this.Idle();
+						}
 					}
 						
 				}
