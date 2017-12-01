@@ -1266,8 +1266,8 @@ namespace CounterBlock
 			this._target = dst;
 			//============================
 
-			//if(1 == this.GetID())
-			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current); //chamto test
+			//if(1 == this.GetID() &&  Judgment.eState.None != _judgment.state_current)
+			//	DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current + "  " + CurrentGiveState ()); //chamto test
 
 			switch (this.GetJudgmentState()) 
 			{
@@ -1281,6 +1281,14 @@ namespace CounterBlock
 						//여러명에게 공격받았을 때의 처리 문제로, 상대의 피해함수를 호출해 준다
 						//apply jugement : HP
 						dst.BeDamage (-1);
+						//DebugWide.LogRed (this.GetID() + "  !!!  dst.BeDamage"); //chamto test
+					}
+
+					//칼버티기에서 공격성공
+					if (Skill.eKind.Withstand == this.CurrentSkill ().kind && Skill.eKind.Withstand != dst.CurrentSkill ().kind) 
+					{
+						//SetState (eState.End);
+						//this.Idle();
 					}
 						
 				}
@@ -1295,6 +1303,8 @@ namespace CounterBlock
 					Skill nextSkill = ref_skillBook.Create(Skill.eName.Withstand_1);
 					this.SetSkill_AfterInterruption (nextSkill);
 					nextSkill.FirstBehavior ().distance_travel = prev_distance; //정지 거리를 넣어준다
+
+					//DebugWide.LogBlue ("sdss");
 				}
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
@@ -1313,17 +1323,21 @@ namespace CounterBlock
 				break;
 			}//end switch
 
-			//현재 스킬이 칼버티기 상태일때
-			if (Skill.eKind.Withstand == this.CurrentSkill ().kind &&
-				Skill.eKind.Withstand == dst.CurrentSkill().kind) 
+
+			if (Skill.eKind.Withstand == this.CurrentSkill ().kind)
 			{
-				const float MIN_LENGTH = 2f;
-				float sqrLength = (this.GetWeaponPosition () - dst.GetWeaponPosition ()).sqrMagnitude;
-				if (MIN_LENGTH * MIN_LENGTH > sqrLength) 
+				//양쪽의 현재스킬이 칼버티기 상태일때	
+				if (Skill.eKind.Withstand == dst.CurrentSkill ().kind) 
 				{
-					this.GetBehavior ().distance_travel -= 0.2f; //임시
-					dst.GetBehavior ().distance_travel -= 0.2f; //임시
+					const float MIN_LENGTH = 2f;
+					float sqrLength = (this.GetWeaponPosition () - dst.GetWeaponPosition ()).sqrMagnitude;
+					if (MIN_LENGTH * MIN_LENGTH > sqrLength) 
+					{
+						this.GetBehavior ().distance_travel -= 0.2f; //임시
+						dst.GetBehavior ().distance_travel -= 0.2f; //임시
+					}
 				}
+
 			}
 
 		}//end func
@@ -1408,12 +1422,22 @@ namespace CounterBlock
 						break;
 					case eSubState.Start:
 						{
+							//DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current + "  " + _skill_current.name); //chamto test
 							this.SetGiveState (eSubState.Running);
 						}
 						break;
 					case eSubState.Running:
 						{
-							
+							if (Judgment.eState.Attack_Succeed != this.GetJudgmentState () &&
+							    Judgment.eState.Block_Succeed != this.GetJudgmentState ()) 
+							{
+								this.SetGiveState (eSubState.End);
+							}
+						}
+						break;
+					case eSubState.End:
+						{
+							this.SetGiveState (eSubState.None);
 						}
 						break;
 					}
@@ -1446,6 +1470,7 @@ namespace CounterBlock
 					//* 다음 스킬입력 처리  
 					if (null != _skill_next) 
 					{
+						//DebugWide.LogBlue ("next : " + _skill_next.name);
 						SetSkill_Start (_skill_next);
 						_skill_next = null;
 					} else 
@@ -1488,6 +1513,7 @@ namespace CounterBlock
 				break;
 			case eSubState.Start:
 				{
+					//DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current + "  " + _skill_current.name); //chamto test
 					this.SetReceiveState (eSubState.Running);
 				}
 				break;
@@ -1495,8 +1521,13 @@ namespace CounterBlock
 				{
 					if (Judgment.eState.Damaged != this.GetJudgmentState ())
 					{
-						this.SetReceiveState (eSubState.None);
+						this.SetReceiveState (eSubState.End);
 					}
+				}
+				break;
+			case eSubState.End:
+				{
+					this.SetReceiveState (eSubState.None);
 				}
 				break;
 			}
@@ -2025,7 +2056,8 @@ namespace CounterBlock
 			skinfo.name = eName.Withstand_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 3.0f;
+			bhvo.runningTime = 10.0f; //임시값
+			//bhvo.runningTime = 3.0f; 
 			//1
 			bhvo.cloggedTime_0 = 0f;
 			bhvo.cloggedTime_1 = 0f;
