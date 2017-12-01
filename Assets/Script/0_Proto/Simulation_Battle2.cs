@@ -930,17 +930,21 @@ namespace CounterBlock
 
 		public void Attack_Strong ()
 		{
-			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
+			if (Skill.eKind.Withstand == _skill_current.kind) 
+			{	//칼견디기 상태일때 칼밀기를 실행한다	
+				this.Attack_SwordPush ();
+			} else 
 			{
-				//DebugWide.LogBlue ("Attack_Strong - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
+				if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
+				{
+					//DebugWide.LogBlue ("Attack_Strong - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
 
-				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill_AfterInterruption (Skill.eName.Attack_Strong_1);
+					//아이들상태거나 연결시간안에 행동이 들어온 경우
+					SetSkill_AfterInterruption (Skill.eName.Attack_Strong_1);
+				}
+
 			}
-			else if (Skill.eKind.Withstand == _skill_current.kind) 
-			{	//칼견디기 상태일때 칼밀기를 실행한다
-				this.Attack_SwordPush();
-			}
+
 		}
 
 		public void Attack_SwordPush()
