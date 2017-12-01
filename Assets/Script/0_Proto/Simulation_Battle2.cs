@@ -945,7 +945,8 @@ namespace CounterBlock
 
 		public void Attack_SwordPush()
 		{
-			DebugWide.LogBlue ("Attack_SwordPush !!! "); //chamto test
+			//DebugWide.LogBlue ("Attack_SwordPush !!! "); //chamto test
+			this.GetBehavior ().distance_travel += 1f; //임시
 		}
 
 		public void Attack_Weak ()
@@ -1106,6 +1107,18 @@ namespace CounterBlock
 			return false;
 		}
 
+		public bool Collision_Weaphon_Withstand_VS(Character dst)
+		{
+			if (true == Util.Collision_Sphere (new Figure.Sphere(this.GetWeaponPosition(), this.weapon.collider_sphere_radius), 
+				dst.GetCollider_Sphere(),
+				Util.eSphere_Include_Status.Focus)) 
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		public void Test_Judge(Character dst)
 		{
 			//----------------------------------
@@ -1153,7 +1166,18 @@ namespace CounterBlock
 
 			}
 
-
+			//칼버티기 상태일때
+			if (Skill.eKind.Withstand == this.CurrentSkill ().kind && Skill.eKind.Withstand == dst.CurrentSkill ().kind) 
+			{
+				if (true == this.Collision_Weaphon_Withstand_VS(dst)) 
+				{	//먼저공격 나
+					jState = Judgment.eState.Attack_Succeed;
+				}
+				if (true == dst.Collision_Weaphon_Withstand_VS(this)) 
+				{	//먼저공격 상대
+					jState = Judgment.eState.Damaged;
+				}
+			}
 
 
 			//!!! 반대상태 연결 !!!
@@ -1284,6 +1308,19 @@ namespace CounterBlock
 				}
 				break;
 			}//end switch
+
+			//현재 스킬이 칼버티기 상태일때
+			if (Skill.eKind.Withstand == this.CurrentSkill ().kind &&
+				Skill.eKind.Withstand == dst.CurrentSkill().kind) 
+			{
+				const float MIN_LENGTH = 2f;
+				float sqrLength = (this.GetWeaponPosition () - dst.GetWeaponPosition ()).sqrMagnitude;
+				if (MIN_LENGTH * MIN_LENGTH > sqrLength) 
+				{
+					this.GetBehavior ().distance_travel -= 0.2f; //임시
+					dst.GetBehavior ().distance_travel -= 0.2f; //임시
+				}
+			}
 
 		}//end func
 
@@ -1958,8 +1995,8 @@ namespace CounterBlock
 			bhvo.eventTime_0 = 0f;
 			bhvo.eventTime_1 = 0f;
 			//3
-			bhvo.openTime_0 = 0.8f;
-			bhvo.openTime_1 = 1f;
+			bhvo.openTime_0 = -1f; //연결 동작을 못 넣게 막는다. 0으로 설정시 연속입력을 허용하게 된다
+			bhvo.openTime_1 = -1f;
 			//4
 			bhvo.rigidTime = 0f;
 
@@ -1992,8 +2029,8 @@ namespace CounterBlock
 			bhvo.eventTime_0 = 0f;
 			bhvo.eventTime_1 = 0f;
 			//3
-			bhvo.openTime_0 = 0f;
-			bhvo.openTime_1 = 0f;
+			bhvo.openTime_0 = -1f; //연결 동작을 못 넣게 막는다. 0으로 설정시 연속입력을 허용하게 된다
+			bhvo.openTime_1 = -1f;
 			//4
 			bhvo.rigidTime = 0f;
 
