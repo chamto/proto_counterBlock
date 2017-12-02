@@ -3151,7 +3151,9 @@ namespace CounterBlock
 				StopCoroutine (_prev_coroutine_weaponCard_);
 		}
 
-
+		float _prev_dist_ = 0f;
+		Vector3 _dir_forward_ = Vector3.zero;
+		Vector3 _dir_backward_ = Vector3.zero;
 		private void Update_UI_Card()
 		{
 			
@@ -3219,7 +3221,7 @@ namespace CounterBlock
 			if (Skill.eName.Hit_Weapon == _data.CurrentSkill().name ||
 				Skill.eName.Withstand_1 == _data.CurrentSkill().name) 
 			{
-
+				
 				switch (_data.CurrentState ()) 
 				{
 				case Character.eState.Start:
@@ -3241,12 +3243,42 @@ namespace CounterBlock
 						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Weapon",bundle); 
 
 						//================================================
-
+						UI_CharacterCard dstCard = this._UI_Battle.GetCharacter (_data.CurrentTarget ());
+						_dir_forward_ = this._actions[eAction.Hilt].transform.position - dstCard._actions[eAction.Idle].transform.position;
+						_dir_backward_ = this._actions[eAction.Hilt].transform.position - this._actions[eAction.Idle].transform.position;
 					}
 					break;
 				case Character.eState.Running:
 					{
+						//chamto test
+						if (Skill.eKind.Withstand == _data.CurrentSkill ().kind)
+						{
+							Vector3 temp = this._actions [eAction.Hilt].transform.position;
+							float tan = temp.y; //직각삼각형의 높이 = tan(y/x) * 밑변
+							float compare = _data.GetWeaponDistance () - _prev_dist_;
+							if (Mathf.Abs (compare) > 0.5f) 
+							{
+								if (0 < compare) {
+									//상대쪽으로
+									tan = this._data.GetPosition ().y + Mathf.Abs(_dir_forward_.y / _dir_forward_.x) *  _data.CurrentTarget ().GetWeaponDistance();
+									if(1 == _id)DebugWide.LogBlue ("-------> forward ");
+								} else {
+									//내쪽으로 
+									tan = this._data.GetPosition ().y + Mathf.Abs(_dir_backward_.y / _dir_backward_.x) *  _data.GetWeaponDistance();
+									if(1 == _id)DebugWide.LogBlue ("back <-------");
+								}
+							}
 
+
+							if(1 == _id)DebugWide.LogBlue (_prev_dist_  + " " + _data.GetWeaponDistance());
+							_prev_dist_ = _data.GetWeaponDistance ();
+
+
+							temp.x = this._data.GetWeaponPosition ().x;
+							temp.y = tan;
+							this._actions [eAction.Hilt].transform.position = temp;
+
+						}
 
 						//====================================================
 						//update sub_state
