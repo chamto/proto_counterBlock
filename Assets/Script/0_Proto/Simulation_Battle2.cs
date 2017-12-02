@@ -2056,8 +2056,8 @@ namespace CounterBlock
 			skinfo.name = eName.Withstand_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 10.0f; //임시값
-			//bhvo.runningTime = 3.0f; 
+			//bhvo.runningTime = 10.0f; //임시값
+			bhvo.runningTime = 3.0f; 
 			//1
 			bhvo.cloggedTime_0 = 0f;
 			bhvo.cloggedTime_1 = 0f;
@@ -3245,6 +3245,7 @@ namespace CounterBlock
 						if (Skill.eName.Withstand_1 == _data.CurrentSkill().name) 
 						{
 							//bundle._gameObject = this._actions [eAction.Blade].gameObject;
+							//bundle._gameObject = this._actionRoot.gameObject;
 							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Withstand_1",bundle); 
 						}
 
@@ -3781,22 +3782,24 @@ namespace CounterBlock
 		public IEnumerator AniStart_Hit_Withstand_1(CharDataBundle bundle)
 		{
 
-			float time = bundle._data.GetRunningTime ();
+			float time = bundle._data.GetRunningTime () + 1f;
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
 			//iTween.Stop (bundle._ui._actions[eAction.Blade].gameObject);
 
 
-			iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0), time);
+			//iTween.ShakeScale(bundle._ui._actionRoot.gameObject,new Vector3(0.1f,0.05f,0), time);
+			//iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0), time);
 			//iTween.ShakePosition(bundle._ui._actions[eAction.Hilt].gameObject,new Vector3(0.5f,0.5f,0), 10);
 			//iTween.ShakePosition(bundle._gameObject,new Vector3(0.5f,0.5f,0),time);
-//			iTween.ShakePosition(bundle._gameObject, iTween.Hash(
-//				"amount", new Vector3(0.5f,0.5f,0),
-//				"time", time
-//				,"onupdate","Withstand_Update_Position"
-//				,"onupdatetarget",gameObject
-//				,"onupdateparams",bundle._gameObject.transform
-//				));
+			iTween.ShakeScale(bundle._ui._actionRoot.gameObject, iTween.Hash(
+				"amount", new Vector3(0.1f,0.1f,0),
+				"time", time
+				,"space",Space.World
+				,"onupdate","Rotate_Towards_FrontGap"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
+				));
 
 
 			yield return new WaitForSeconds(time);
