@@ -1489,6 +1489,8 @@ namespace CounterBlock
 							//다음 스킬 동작으로 넘어간다
 							SetState (eState.Start);
 							_timeDelta = 0f;
+
+							DebugWide.LogBlue ("next combo !!");
 						}
 					}
 
@@ -1866,6 +1868,7 @@ namespace CounterBlock
 			None,
 			Attack_Strong,
 			Attack_Weak,
+			Attack_Counter,
 			Withstand,
 			Block,
 			Hit,
@@ -1881,6 +1884,7 @@ namespace CounterBlock
 
 			Attack_Strong_1,
 			Attack_Weak_1,
+			Attack_Counter_1,
 
 			Attack_3Combo,
 
@@ -1907,6 +1911,8 @@ namespace CounterBlock
 				return "Attack_Strong_1";
 			case Skill.eName.Attack_Weak_1:
 				return "Attack_Weak_1";
+			case Skill.eName.Attack_Counter_1:
+				return "Attack_Counter_1";
 			case Skill.eName.Attack_3Combo:
 				return "Attack_3Combo";
 
@@ -2117,6 +2123,67 @@ namespace CounterBlock
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
+			//===== chamto test
+
+//			bhvo = new Behavior ();
+//			bhvo.runningTime = 1.0f;
+//			//1
+//			bhvo.cloggedTime_0 = 0.0f;
+//			bhvo.cloggedTime_1 = 0.6f;
+//			//2
+//			bhvo.eventTime_0 = 0.7f;
+//			bhvo.eventTime_1 = 0.8f;
+//			//3
+//			bhvo.openTime_0 = 0.7f;
+//			bhvo.openTime_1 = 1f;
+//			//4
+//			bhvo.rigidTime = 0.2f;
+//
+//
+//			bhvo.attack_shape = eTraceShape.Straight;
+//			//bhvo.attack_shape = eTraceShape.Vertical;
+//			bhvo.angle = 45f;
+//			bhvo.plus_range_0 = 0f;
+//			bhvo.plus_range_1 = -4f;
+//			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
+//			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
+//			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
+//			//bhvo.distance_maxTime = 0.6f; //chamto test
+//			bhvo.Calc_Velocity ();
+//			skinfo.Add (bhvo);
+
+			return skinfo;
+		}
+
+		static public Skill Details_Attack_Counter()
+		{
+			Skill skinfo = new Skill ();
+
+			skinfo.kind = eKind.Attack_Counter;
+			skinfo.name = eName.Attack_Counter_1;
+
+			Behavior bhvo = new Behavior ();
+			bhvo.runningTime = 0.8f;
+			//1
+			bhvo.cloggedTime_0 = 0.0f;
+			bhvo.cloggedTime_1 = 0.6f;
+			//2
+			bhvo.eventTime_0 = 0.6f;
+			bhvo.eventTime_1 = 0.7f;
+			//3
+			bhvo.openTime_0 = 0.8f;
+			bhvo.openTime_1 = 0.8f;
+			//4
+			bhvo.rigidTime = 0.2f;
+
+
+			bhvo.attack_shape = eTraceShape.Straight;
+			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
+			bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
+			//bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
+			bhvo.Calc_Velocity ();
+			skinfo.Add (bhvo);
+
 			return skinfo;
 		}
 
@@ -2234,6 +2301,7 @@ namespace CounterBlock
 
 			this.Add (Skill.eName.Attack_Strong_1, Skill.Details_Attack_Strong );
 			this.Add (Skill.eName.Attack_Weak_1, Skill.Details_Attack_Weak );
+			this.Add (Skill.eName.Attack_Counter_1, Skill.Details_Attack_Counter );
 
 			this.Add (Skill.eName.Attack_3Combo, Skill.Details_Attack_3Combo );
 
