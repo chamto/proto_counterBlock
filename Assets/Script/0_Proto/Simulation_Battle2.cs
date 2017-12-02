@@ -4027,7 +4027,7 @@ namespace CounterBlock
 			if (PATH_03 == kind)
 				pathName = "p03";
 			if (PATH_04 == kind)
-				pathName = "p04";
+				pathName = "p04_strong";
 			if (PATH_05 == kind)
 				pathName = "p05_counter";
 
