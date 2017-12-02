@@ -1115,7 +1115,7 @@ namespace CounterBlock
 		{
 			if (true == Util.Collision_Sphere (new Figure.Sphere(this.GetWeaponPosition(), this.weapon.collider_sphere_radius), 
 				dst.GetCollider_Sphere(),
-				Util.eSphere_Include_Status.Focus)) 
+				Util.eSphere_Include_Status.Boundary,0.5f)) 
 			{
 				return true;
 			}
@@ -3151,9 +3151,7 @@ namespace CounterBlock
 				StopCoroutine (_prev_coroutine_weaponCard_);
 		}
 
-		float _prev_dist_ = 0f;
-		Vector3 _dir_forward_ = Vector3.zero;
-		Vector3 _dir_backward_ = Vector3.zero;
+
 		private void Update_UI_Card()
 		{
 			
@@ -3240,42 +3238,43 @@ namespace CounterBlock
 						bundle._gameObject = this._actions [eAction.Hilt].gameObject;
 
 						StopCoroutine_WeaponCard ();
-						_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Weapon",bundle); 
+						if (Skill.eName.Hit_Weapon == _data.CurrentSkill ().name) 
+						{
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Weapon",bundle); 
+						}
+						if (Skill.eName.Withstand_1 == _data.CurrentSkill().name) 
+						{
+							//bundle._gameObject = this._actions [eAction.Blade].gameObject;
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Hit_Withstand_1",bundle); 
+						}
+
 
 						//================================================
-						UI_CharacterCard dstCard = this._UI_Battle.GetCharacter (_data.CurrentTarget ());
-						_dir_forward_ = this._actions[eAction.Hilt].transform.position - dstCard._actions[eAction.Idle].transform.position;
-						_dir_backward_ = this._actions[eAction.Hilt].transform.position - this._actions[eAction.Idle].transform.position;
+
 					}
 					break;
 				case Character.eState.Running:
 					{
-						//chamto test
-						if (Skill.eKind.Withstand == _data.CurrentSkill ().kind)
+						UI_CharacterCard dstCard = this._UI_Battle.GetCharacter (_data.CurrentTarget ());
+
+						//칼버티기 상태에서의 칼밀기 애니 처리 
+						if (Skill.eName.Withstand_1 == _data.CurrentSkill().name)
 						{
+							//상대와 나 사이의 중간위치가 최대거리가 되게 한다
+							float max_dist = (this._actions [eAction.Idle].transform.position - dstCard._actions [eAction.Idle].transform.position).magnitude * 0.5f;
+							float cur_dist = this._data.GetWeaponDistance ();
+
+							//높이값의 분포를 이등변 삼각형모양으로 만들기 위해, 최대 거리를 넘어가는 길이는 목표점까지 점점 작아지게 변형한다
+							if (cur_dist > max_dist)
+								cur_dist = 2 * max_dist - cur_dist;
+							
+							float rate = cur_dist / max_dist; //최대길이값을 이용하여 0~1 선형 범위값으로 변환한다
+							float inter_rate = Utility.Interpolation.easeInOutBounce(0,1,rate); //보간함수를 이용하여 선형 범위값을 변조시킨다
+							const float MAX_HEIGHT = 5f;
+
 							Vector3 temp = this._actions [eAction.Hilt].transform.position;
-							float tan = temp.y; //직각삼각형의 높이 = tan(y/x) * 밑변
-							float compare = _data.GetWeaponDistance () - _prev_dist_;
-							if (Mathf.Abs (compare) > 0.5f) 
-							{
-								if (0 < compare) {
-									//상대쪽으로
-									tan = this._data.GetPosition ().y + Mathf.Abs(_dir_forward_.y / _dir_forward_.x) *  _data.CurrentTarget ().GetWeaponDistance();
-									if(1 == _id)DebugWide.LogBlue ("-------> forward ");
-								} else {
-									//내쪽으로 
-									tan = this._data.GetPosition ().y + Mathf.Abs(_dir_backward_.y / _dir_backward_.x) *  _data.GetWeaponDistance();
-									if(1 == _id)DebugWide.LogBlue ("back <-------");
-								}
-							}
-
-
-							if(1 == _id)DebugWide.LogBlue (_prev_dist_  + " " + _data.GetWeaponDistance());
-							_prev_dist_ = _data.GetWeaponDistance ();
-
-
+							temp.y = this._data.GetPosition ().y + (MAX_HEIGHT * inter_rate);
 							temp.x = this._data.GetWeaponPosition ().x;
-							temp.y = tan;
 							this._actions [eAction.Hilt].transform.position = temp;
 
 						}
@@ -3768,6 +3767,41 @@ namespace CounterBlock
 
 			yield return new WaitForSeconds(time);
 
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+
+		}
+
+
+		public void Withstand_Update_Position(Transform tr)
+		{
+			
+		}
+
+		public IEnumerator AniStart_Hit_Withstand_1(CharDataBundle bundle)
+		{
+
+			float time = bundle._data.GetRunningTime ();
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			//iTween.Stop (bundle._ui._actions[eAction.Blade].gameObject);
+
+
+			iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0), time);
+			//iTween.ShakePosition(bundle._ui._actions[eAction.Hilt].gameObject,new Vector3(0.5f,0.5f,0), 10);
+			//iTween.ShakePosition(bundle._gameObject,new Vector3(0.5f,0.5f,0),time);
+//			iTween.ShakePosition(bundle._gameObject, iTween.Hash(
+//				"amount", new Vector3(0.5f,0.5f,0),
+//				"time", time
+//				,"onupdate","Withstand_Update_Position"
+//				,"onupdatetarget",gameObject
+//				,"onupdateparams",bundle._gameObject.transform
+//				));
+
+
+			yield return new WaitForSeconds(time);
+
+			//iTween.Stop (bundle._ui._actions[eAction.Blade].gameObject);
 			iTween.Stop (bundle._gameObject);
 			bundle._gameObject.SetActive (false);
 
