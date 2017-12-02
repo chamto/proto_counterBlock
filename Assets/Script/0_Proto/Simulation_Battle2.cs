@@ -854,7 +854,8 @@ namespace CounterBlock
 
 		public bool IsSkill_Attack()
 		{
-			if (Skill.eKind.Attack_Strong == _skill_current.kind || Skill.eKind.Attack_Weak == _skill_current.kind )
+			if (Skill.eKind.Attack_Strong == _skill_current.kind || Skill.eKind.Attack_Weak == _skill_current.kind ||
+				Skill.eKind.Attack_Counter == _skill_current.kind)
 				return true;
 
 			return false;
@@ -947,6 +948,7 @@ namespace CounterBlock
 
 		}
 
+		//칼밀기 - 칼버티기시 실행된다
 		public void Attack_SwordPush()
 		{
 			//DebugWide.LogBlue ("Attack_SwordPush !!! "); //chamto test
@@ -955,13 +957,41 @@ namespace CounterBlock
 
 		public void Attack_Weak ()
 		{
-			if (Skill.eName.Idle == _skill_current.name || true == this.Valid_OpenTime ()) 
+			//카운터스킬을 쓸수있는 조건
+			//상대무기 공격을 성공한 경우 연결시간 조건과 상광없이 실행되게 한다
+			if (Skill.eName.Hit_Weapon == this.CurrentTarget ().CurrentSkill ().name) 
 			{
-				//DebugWide.LogBlue ("Attack_Weak - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
+				//DebugWide.LogBlue ("denide  "+ this.GetTimeDelta() + "  " + this.CurrentSkill().name);
+				//일정시간 뒤에 실행가능함
+				if (Skill.eKind.Attack_Counter != this.CurrentSkill().kind && this.GetTimeDelta () > 0.5f) 
+				{
+					Attack_Counter ();
+				}
 
-				//아이들상태거나 연결시간안에 행동이 들어온 경우
-				SetSkill_AfterInterruption (Skill.eName.Attack_Weak_1);
+			} 
+			else 
+			{
+				
+				if (Skill.eKind.Attack_Counter == this.CurrentTarget ().CurrentSkill ().kind && this.GetTimeDelta () > 0.3f) 
+				{	//상대가 카운터 스킬을 발동했으면 연결시간과 상관없이 약공격을 쓸수있다
+					SetSkill_AfterInterruption (Skill.eName.Attack_Weak_1);
+				}
+				else if (Skill.eName.Idle == this.CurrentSkill().name || true == this.Valid_OpenTime () )
+				{	//일반스킬 사용조건
+					
+					//DebugWide.LogBlue ("Attack_Weak - " + this.Valid_OpenTime() + "  " + _skill_current.name); //chamto test
+					SetSkill_AfterInterruption (Skill.eName.Attack_Weak_1);
+				}
+					
 			}
+
+
+		}
+
+		//카운터공격 
+		public void Attack_Counter()
+		{
+			SetSkill_AfterInterruption (Skill.eName.Attack_Counter_1);
 		}
 			
 
@@ -1309,6 +1339,8 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
+
+
 					//상대행동을 "Hit_Weapon"로 변경시킨다
 					//Hit_Weapon 행동 : 1초간 무기 정지 
 					float prev_distance = dst.GetWeaponDistance (); 
@@ -2028,7 +2060,7 @@ namespace CounterBlock
 			skinfo.name = eName.Hit_Weapon;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.0f;
+			bhvo.runningTime = 1.5f;
 			//1
 			bhvo.cloggedTime_0 = 0f;
 			bhvo.cloggedTime_1 = 0f;
@@ -2097,18 +2129,18 @@ namespace CounterBlock
 			skinfo.name = eName.Attack_Weak_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 1.0f;
+			bhvo.runningTime = 1.5f;
 			//1
 			bhvo.cloggedTime_0 = 0.0f;
-			bhvo.cloggedTime_1 = 0.6f;
+			bhvo.cloggedTime_1 = 1.3f;
 			//2
 			bhvo.eventTime_0 = 0.7f;
-			bhvo.eventTime_1 = 0.8f;
+			bhvo.eventTime_1 = 1f;
 			//3
-			bhvo.openTime_0 = 0.7f;
-			bhvo.openTime_1 = 1f;
+			bhvo.openTime_0 = 1f;
+			bhvo.openTime_1 = 1.3f;
 			//4
-			bhvo.rigidTime = 0.2f;
+			bhvo.rigidTime = 0f;
 
 
 			bhvo.attack_shape = eTraceShape.Straight;
@@ -2119,7 +2151,7 @@ namespace CounterBlock
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE - 4f;
 			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
 			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
-			//bhvo.distance_maxTime = 0.6f; //chamto test
+
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
@@ -2163,24 +2195,24 @@ namespace CounterBlock
 			skinfo.name = eName.Attack_Counter_1;
 
 			Behavior bhvo = new Behavior ();
-			bhvo.runningTime = 0.8f;
+			bhvo.runningTime = 1.2f;
 			//1
 			bhvo.cloggedTime_0 = 0.0f;
-			bhvo.cloggedTime_1 = 0.6f;
+			bhvo.cloggedTime_1 = 0.7f;
 			//2
-			bhvo.eventTime_0 = 0.6f;
-			bhvo.eventTime_1 = 0.7f;
+			bhvo.eventTime_0 = 0.8f;
+			bhvo.eventTime_1 = 1.0f;
 			//3
-			bhvo.openTime_0 = 0.8f;
-			bhvo.openTime_1 = 0.8f;
+			bhvo.openTime_0 = -1f;
+			bhvo.openTime_1 = -1f;
 			//4
 			bhvo.rigidTime = 0.2f;
 
 
 			bhvo.attack_shape = eTraceShape.Straight;
 			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-			bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
-			//bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
+			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
+			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
@@ -3391,7 +3423,8 @@ namespace CounterBlock
 
 			//공격 UI 출력 
 			if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name  || 
-				Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name ) 
+				Skill.eName.Attack_Weak_1 == _data.CurrentSkill().name ||
+				Skill.eName.Attack_Counter_1 == _data.CurrentSkill().name) 
 			{
 
 				switch (_data.CurrentState ()) 
@@ -3421,6 +3454,10 @@ namespace CounterBlock
 						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
 							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Strong_1",bundle); 
+						}	
+						if (Skill.eName.Attack_Counter_1 == _data.CurrentSkill().name) 
+						{
+							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Counter_1",bundle); 
 						}	
 
 						//================================================
@@ -3735,6 +3772,64 @@ namespace CounterBlock
 
 		}
 
+		public IEnumerator AniStart_Attack_Counter_1(CharDataBundle bundle)
+		{
+
+			float time_pause = 0.3f;
+			float time_before = bundle._data.GetBehavior().distance_maxTime - time_pause;
+			float time_after = bundle._data.GetRunningTime () - time_before;
+			int path = 5;
+
+			//======================================
+			yield return new WaitForSeconds(time_pause);
+
+			bundle._gameObject.SetActive (true);
+			iTween.Stop (bundle._gameObject);
+			bundle._ui.RevertData_All ();
+
+			Vector3 start = bundle._ui._actions [eAction.Hilt].transform.localPosition;
+			Vector3[] list = GetPaths (path, start);
+
+			_prev_position_ = list [0];
+
+			//iTween.RotateBy (bundle._gameObject,new Vector3(0,0,60f),time_before); //표창느낌
+			iTween.MoveTo(bundle._gameObject, iTween.Hash(
+				"time", time_before - 0.1f //애니와 충돌순간이 맞지 않아서 애니를 0.1초 짧게 준다
+				,"easetype",  "linear"//"easeInExpo"//"easeInOutBounce"//"easeOutCubic"
+				,"path", list
+				//,"orienttopath",true
+				//,"axis","z"
+				//,"looktarget",bundle._ui._actions [2].Get_InitialPostition ()
+				,"islocal",true //로컬위치값을 사용하겠다는 옵션. 대상객체의 로컬위치값이 (0,0,0)이 되는 문제 있음. 직접 대상객체 로컬위치값을 더해주어야 한다.
+				,"movetopath",false //현재객체에서 첫번째 노드까지 자동으로 경로를 만들겠냐는 옵션. 경로 생성하는데 문제가 있음. 비활성으로 사용해야함
+				,"onupdate","Rotate_Towards_FrontGap"
+				,"onupdatetarget",gameObject
+				,"onupdateparams",bundle._gameObject.transform
+			));
+
+			//======================================
+			yield return new WaitForSeconds(time_before);
+			//iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
+			iTween.MoveTo (bundle._gameObject, iTween.Hash (
+				"time", time_after
+				, "easetype", "easeOutExpo"//"easeInOutBounce"//"easeOutCubic"//"linear"
+				, "position", bundle._ui._actions [eAction.Hilt].Get_InitialPostition ()
+				, "onupdate", "Rotate_Towards_BehindGap"
+				, "onupdatetarget", gameObject
+				, "onupdateparams", bundle._gameObject.transform
+			));
+
+			//======================================
+			yield return new WaitForSeconds(time_after);
+
+			iTween.Stop (bundle._gameObject);
+			bundle._gameObject.SetActive (false);
+			//======================================
+
+			//DebugWide.LogBlue ("end");
+
+		}
+
 		public IEnumerator AniStart_Attack_Weak_1(CharDataBundle bundle)
 		{
 			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
@@ -3921,6 +4016,7 @@ namespace CounterBlock
 			const int PATH_02 = 2;
 			const int PATH_03 = 3;
 			const int PATH_04 = 4;
+			const int PATH_05 = 5;
 			const int NODE_COUNT = 6;
 			Vector3[] list = new Vector3[NODE_COUNT];
 
@@ -3932,6 +4028,8 @@ namespace CounterBlock
 				pathName = "p03";
 			if (PATH_04 == kind)
 				pathName = "p04";
+			if (PATH_05 == kind)
+				pathName = "p05_counter";
 
 			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
 			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
