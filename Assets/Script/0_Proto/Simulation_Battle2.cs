@@ -2907,6 +2907,7 @@ namespace CounterBlock
 			Text,
 			Hit,
 			Block,
+			Wind,
 			Max
 		};
 
@@ -3000,6 +3001,9 @@ namespace CounterBlock
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Block,iData);
+			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/wind");
+			iData = new InitialData (img);
+			ui._effects.Add (eEffect.Wind,iData);
 			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Text,iData);
@@ -3113,7 +3117,7 @@ namespace CounterBlock
 			return Mathf.Abs (_actions [eAction.Hilt].transform.localPosition.x);
 		}
 
-		public void Init_ActionRoot()
+		public void Revert_ActionRoot()
 		{
 			_actionRoot.localEulerAngles = Vector3.zero;
 			_actionRoot.localPosition = Vector3.zero;
@@ -3126,7 +3130,21 @@ namespace CounterBlock
 			{	//왼쪽을 보고 있음
 				_actionRoot.localScale = new Vector3(-1,1,1);
 			}
+		}
 
+		public void Revert_EffectRoot()
+		{
+			_effectRoot.localEulerAngles = Vector3.zero;
+			_effectRoot.localPosition = Vector3.zero;
+
+			if (_data.GetDirection ().x > 0) 
+			{  	//오른쪽을 보고 있음
+				_effectRoot.localScale = new Vector3(1,1,1);
+			} 
+			else 
+			{	//왼쪽을 보고 있음
+				_effectRoot.localScale = new Vector3(-1,1,1);
+			}
 		}
 
 		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
@@ -3290,6 +3308,7 @@ namespace CounterBlock
 						this._actions [eAction.Hilt].gameObject.SetActive (false);
 
 						this._actions [eAction.Idle].SelectAction (_data.kind, ResourceManager.eActionKind.Idle);
+
 					}
 					break;
 				case Character.eState.End:
@@ -3309,6 +3328,9 @@ namespace CounterBlock
 						//칼충돌 이펙트 끄기
 						Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
 						trEffect.gameObject.SetActive(false);
+
+						this.Revert_ActionRoot();
+						this.Revert_EffectRoot();
 					}
 					break;
 				}
@@ -3330,7 +3352,11 @@ namespace CounterBlock
 						this._actions[eAction.Action].SelectAction(_data.kind, ResourceManager.eActionKind.AttackBefore);
 						this._actions[eAction.Hilt].SelectAction (_data.kind, ResourceManager.eActionKind.AttackValid);
 
-
+						if (Skill.eName.Withstand_1 == _data.CurrentSkill ().name) 
+						{
+							this._effects [eEffect.Wind].gameObject.SetActive (true);
+						}
+							
 						//================================================
 						CharDataBundle bundle;
 						bundle._data = _data;
@@ -3408,11 +3434,13 @@ namespace CounterBlock
 					break;
 				case Character.eState.Waiting:
 					{
+						//this._actions[eAction.Action].SelectAction (_data.kind, ResourceManager.eActionKind.AttackAfter);
 					}
 
 					break;
 				case Character.eState.End:
 					{
+						this._effects [eEffect.Wind].gameObject.SetActive (false);
 					}
 					break;
 
@@ -3431,6 +3459,7 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
+						
 						this._actions[eAction.Action].gameObject.SetActive (true);
 						this._actions[eAction.Hilt].gameObject.SetActive (false);
 
@@ -3453,10 +3482,13 @@ namespace CounterBlock
 						}
 						if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
 						{
+							//this._effects [eEffect.Wind].gameObject.SetActive (true);
+							StartCoroutine("Effect_AttackWind",bundle); 
 							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Strong_1",bundle); 
 						}	
 						if (Skill.eName.Attack_Counter_1 == _data.CurrentSkill().name) 
 						{
+							//this._effects [eEffect.Wind].gameObject.SetActive (true);
 							_prev_coroutine_weaponCard_ = StartCoroutine("AniStart_Attack_Counter_1",bundle); 
 						}	
 
@@ -3475,18 +3507,10 @@ namespace CounterBlock
 						{
 						case Character.eSubState.Start:
 							{
-								//DebugWide.LogBlue ("Valid_Start"); //chamto test
-
-								//================================================
-								CharDataBundle bundle;
-								bundle._data = _data;
-								bundle._ui = this;
-								bundle._gameObject = this._actions [eAction.Hilt].gameObject;
-
-								//StartCoroutine("AniStart_Attack_1",bundle); 
-								//StartCoroutine("AniStart_Attack_1_Random",bundle); 
-								//StartCoroutine("AniStart_Attack_2",bundle); 
-								//================================================
+								if (Skill.eName.Attack_Strong_1 == _data.CurrentSkill().name) 
+								{
+									//this._effects [eEffect.Wind].gameObject.SetActive (true);
+								}	
 
 							}
 							break;
@@ -3515,14 +3539,13 @@ namespace CounterBlock
 				case Character.eState.Waiting:
 					{
 						this._actions[eAction.Action].SelectAction (_data.kind, ResourceManager.eActionKind.AttackAfter);
-
+						this._effects [eEffect.Wind].gameObject.SetActive (false);
 					}
 
 					break;
 				case Character.eState.End:
 					{
-						//charUI._actions[1].gameObject.SetActive (false);
-						//charUI._actions[2].gameObject.SetActive (false);
+						this._effects [eEffect.Wind].gameObject.SetActive (false);
 					}
 					break;
 
@@ -3749,6 +3772,9 @@ namespace CounterBlock
 				,"onupdateparams",bundle._gameObject.transform
 			));
 
+			iTween.ShakePosition(bundle._ui._effectRoot.gameObject,new Vector3(0.5f,0.5f,0), time_before+time_after);
+
+
 			//======================================
 			yield return new WaitForSeconds(time_before);
 			//iTween.MoveTo (bundle._gameObject, bundle._ui._actions [2].Get_InitialPostition(), time_after);
@@ -3791,6 +3817,7 @@ namespace CounterBlock
 			Vector3[] list = GetPaths (path, start);
 
 			_prev_position_ = list [0];
+
 
 			//iTween.RotateBy (bundle._gameObject,new Vector3(0,0,60f),time_before); //표창느낌
 			iTween.MoveTo(bundle._gameObject, iTween.Hash(
@@ -3950,11 +3977,11 @@ namespace CounterBlock
 			iTween.Stop (bundle._gameObject);
 			//iTween.Stop (bundle._ui._actions[eAction.Blade].gameObject);
 
-
 			//iTween.ShakeScale(bundle._ui._actionRoot.gameObject,new Vector3(0.1f,0.05f,0), time);
 			//iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0), time);
 			//iTween.ShakePosition(bundle._ui._actions[eAction.Hilt].gameObject,new Vector3(0.5f,0.5f,0), 10);
 			//iTween.ShakePosition(bundle._gameObject,new Vector3(0.5f,0.5f,0),time);
+
 			iTween.ShakeScale(bundle._ui._actionRoot.gameObject, iTween.Hash(
 				"amount", new Vector3(0.1f,0.1f,0),
 				"time", time
@@ -3964,6 +3991,7 @@ namespace CounterBlock
 				,"onupdateparams",bundle._gameObject.transform
 				));
 
+			iTween.ShakePosition(bundle._ui._effectRoot.gameObject,new Vector3(1.5f,1.5f,0), time);
 
 			yield return new WaitForSeconds(time);
 
@@ -4114,6 +4142,14 @@ namespace CounterBlock
 		}
 
 
+		public IEnumerator Effect_AttackWind(CharDataBundle bundle)
+		{
+
+			bundle._ui._effects[eEffect.Wind].gameObject.SetActive (false);
+			yield return new WaitForSeconds(0.5f);
+			bundle._ui._effects[eEffect.Wind].gameObject.SetActive (true);
+
+		}
 
 		//피해입다
 		public IEnumerator EffectStart_Damaged(CharDataBundle bundle)
@@ -4122,7 +4158,7 @@ namespace CounterBlock
 
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
-			this.Init_ActionRoot();
+			this.Revert_ActionRoot();
 
 
 			//gobj.transform.localScale = Vector3.one;
@@ -4144,7 +4180,7 @@ namespace CounterBlock
 		{
 
 			iTween.Stop (bundle._gameObject);
-			this.Init_ActionRoot();
+			this.Revert_ActionRoot();
 			//bundle._ui.RevertData_All ();
 			//bundle._gameObject.transform.localPosition = Vector3.zero;
 
@@ -4163,7 +4199,7 @@ namespace CounterBlock
 
 			bundle._gameObject.SetActive (true);
 			iTween.Stop (bundle._gameObject);
-			this.Init_ActionRoot();
+			this.Revert_ActionRoot();
 			//gobj.transform.localScale = Vector3.one;
 
 			iTween.ShakeScale(bundle._gameObject,new Vector3(1f,1f,1f), 0.5f);
@@ -4187,7 +4223,7 @@ namespace CounterBlock
 			float time = 1.0f;
 			iTween.Stop (bundle._gameObject);
 			//bundle._gameObject.transform.localEulerAngles = Vector3.zero;
-			this.Init_ActionRoot();
+			this.Revert_ActionRoot();
 
 
 			iTween.ShakeRotation(bundle._gameObject,new Vector3(0,100f,0), time);
