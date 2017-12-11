@@ -203,12 +203,25 @@ namespace CounterBlock
 			//DebugWide.LogBlue (" r+r: "+Mathf.Sqrt(sqr_standard_value) + " p-p: " + Mathf.Sqrt(sqr_dis_between));
 
 			if (sqr_standard_value > sqr_dis_between)
+			{
+				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return true; //두원이 겹쳐짐 
+			}
 			if (sqr_standard_value == sqr_dis_between)
+			{
+				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return true; //포함조건과 똑같음
+			}
 			if (sqr_standard_value < sqr_dis_between)
+			{
+				DebugWide.LogBlue ("F-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return false; //두원이 겹쳐 있지 않음
+			}
 
+			DebugWide.LogWhite ("***** unreachable !!! ******");
 			return false;
 		}
 
@@ -1022,7 +1035,7 @@ namespace CounterBlock
 		}
 
 
-		public bool IsStart_AttackDamage()
+		public bool IsStart_AttackSucced()
 		{
 			if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () &&
 			   eSubState.Start == CurrentGiveState ())
@@ -1049,7 +1062,7 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool IsAttack_Withstand(Character dst)
+		public bool IsAttackStart_Withstand(Character dst)
 		{
 			if(true == Util.Collision_Sphere (this.GetWeaponCollider_Sphere(), dst.GetWeaponCollider_Sphere(),
 				Util.eSphere_Include_Status.Fully)) 
@@ -1113,7 +1126,7 @@ namespace CounterBlock
 
 
 					//fixme : 원과 반직선 충돌 처리로 변경하는게 더 낫다. 현재 처리로는 부족하다.
-					//정면 6도안에 상대가 있을 경우만 공격가능
+					//정면 5도안에 상대가 있을 경우만 공격가능
 					//=======================================================================
 					const float ANGLE_SCOPE = 10f;
 					//각도를 2로 나누는 이유 : 1,4사분면 부호가 같기 때문에 둘을 구별 할 수 없다. 의도와 다르게 2배 영역이 된다.
@@ -1123,13 +1136,14 @@ namespace CounterBlock
 					float cos = Vector3.Dot (this.GetDirection(), toDst);
 					if(2 == Util.Compare_CosAngle(angle, cos)) //angle 보다 cos이 작아야 함
 					{  
+						DebugWide.LogBlue ("std angle: " + angle + "   dst angle: " + Mathf.Acos(cos) * Mathf.Rad2Deg); //chamto test
 						return false;	
 					} 
 					//=======================================================================
 
 					if (true == Util.Collision_Sphere (new Figure.Sphere(this.GetWeaponPosition(), this.weapon.collider_sphere_radius), 
 						dst.GetCollider_Sphere(),
-						Util.eSphere_Include_Status.Fully)) 
+						Util.eSphere_Include_Status.Focus)) 
 					{
 						return true;
 					}
@@ -1157,6 +1171,7 @@ namespace CounterBlock
 		{
 			//----------------------------------
 			Judgment.eState jState = Judgment.eState.None;
+
 
 			//============================
 			//Attack_Vs_Attack
@@ -1190,7 +1205,7 @@ namespace CounterBlock
 				}
 				else if (Skill.eKind.Attack_Strong ==  this.CurrentSkill().kind  && Skill.eKind.Attack_Strong ==  dst.CurrentSkill().kind &&
 					true == this.Valid_CloggedTime () && true == dst.Valid_CloggedTime() &&
-					this.IsAttack_Withstand(dst)) 
+					this.IsAttackStart_Withstand(dst)) 
 				{	//칼맞부딪힘 
 					jState = Judgment.eState.Attack_Withstand;
 				}
@@ -1287,6 +1302,23 @@ namespace CounterBlock
 
 			this.SetJudgmentState (jState);
 			//----------------------------------
+			if (1 == _id && this.IsSkill_Attack ()) 
+			{
+				if(this.Valid_EventTime())
+				{
+					DebugWide.LogGreen (" id: "+ _id + "  dst isAttack: " +dst.IsSkill_Attack () + "  isEventTime: " + this.Valid_EventTime() + 
+						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test
+				}
+				else
+				{
+					DebugWide.LogBlue (" id: "+ _id + "  dst isAttack: " +dst.IsSkill_Attack ()+ "  isEventTime: " + this.Valid_EventTime() + 
+						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test		
+				}
+			}
+
+//			if(this.Valid_EventTime() && this.IsSkill_Attack())
+//				DebugWide.LogBlue (" id: "+ _id + "  isAttack: " +this.IsSkill_Attack ()+ "  isEventTime: " + this.Valid_EventTime() + 
+//					"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString()); //chamto test
 		}
 
 		public void Judge(Character dst)
@@ -1303,7 +1335,10 @@ namespace CounterBlock
 			{
 			case Judgment.eState.Attack_Succeed: //1 vs n
 				{
-					//DebugWide.LogRed (this.GetID() + "  !!!  "+result.src + "  " + result.dst); //chamto test
+					DebugWide.LogRed ("**********;*********************;***********" + CurrentGiveState());
+					DebugWide.LogRed ("*********************" +this.GetID() + "  !!!  " + this.CurrentSkill().name + "***********************"); //chamto test
+
+					this.SetReceiveState (eSubState.Start); //다음 프레임의 캐릭터 갱신함수에서 상태전이 된다 
 
 					//한동작에서 일어난 사건
 					if (eSubState.Start == CurrentGiveState ()) 
@@ -1321,6 +1356,11 @@ namespace CounterBlock
 						}
 					}
 						
+				}
+				break;
+			case Judgment.eState.Damaged:
+				{
+					this.SetReceiveState (eSubState.Start); //다음 프레임의 캐릭터 갱신함수에서 상태전이 된다 
 				}
 				break;
 			case Judgment.eState.Attack_Withstand: //1 vs 1
@@ -1539,10 +1579,10 @@ namespace CounterBlock
 			case eSubState.None:
 				{
 					
-					if (Judgment.eState.Damaged == this.GetJudgmentState ())
-					{
-						this.SetReceiveState (eSubState.Start);
-					}
+//					if (Judgment.eState.Damaged == this.GetJudgmentState ())
+//					{
+//						this.SetReceiveState (eSubState.Start);
+//					}
 				}
 				break;
 			case eSubState.Start:
