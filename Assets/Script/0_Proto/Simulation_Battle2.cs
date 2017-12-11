@@ -857,9 +857,10 @@ namespace CounterBlock
 			return false;
 		}
 
-		public bool IsSkill_None()
+		public bool IsSkill_Unprotected()
 		{
-			if (Skill.eKind.None == _skill_current.kind )
+			if (Skill.eKind.None == _skill_current.kind || Skill.eKind.Hit == _skill_current.kind || 
+				Skill.eKind.Withstand == _skill_current.kind) //1대1에서 제3자 끼어듬
 				return true;
 
 			return false;
@@ -1110,6 +1111,8 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
+			if(_id == 1)
+				DebugWide.LogYellow ("****************Collision_Weaphon_Attack_VS**************");//chamto test
 			
 			switch (this._behavior.attack_shape) 
 			{
@@ -1274,7 +1277,7 @@ namespace CounterBlock
 			//============================
 			//Attack_Vs_None
 			//============================
-			if (true == this.IsSkill_Attack () && true == dst.IsSkill_None ()) 
+			if (true == this.IsSkill_Attack () && true == dst.IsSkill_Unprotected ()) 
 			{
 				if (true == this.Collision_Weaphon_Attack_VS (dst)) 
 				{
@@ -1288,7 +1291,7 @@ namespace CounterBlock
 			//============================
 			//None_Vs_Attack
 			//============================
-			if (true == this.IsSkill_None () && true == dst.IsSkill_Attack ()) 
+			if (true == this.IsSkill_Unprotected () && true == dst.IsSkill_Attack ()) 
 			{
 				if (true == dst.Collision_Weaphon_Attack_VS (this)) 
 				{
@@ -1306,12 +1309,12 @@ namespace CounterBlock
 			{
 				if(this.Valid_EventTime())
 				{
-					DebugWide.LogGreen (" id: "+ _id + "  dst isAttack: " +dst.IsSkill_Attack () + "  isEventTime: " + this.Valid_EventTime() + 
+					DebugWide.LogGreen (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
 						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test
 				}
 				else
 				{
-					DebugWide.LogBlue (" id: "+ _id + "  dst isAttack: " +dst.IsSkill_Attack ()+ "  isEventTime: " + this.Valid_EventTime() + 
+					DebugWide.LogBlue (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
 						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test		
 				}
 			}
@@ -1409,7 +1412,7 @@ namespace CounterBlock
 					const float MIN_LENGTH = 2f;
 					float sqrLength = (this.GetWeaponPosition () - dst.GetWeaponPosition ()).sqrMagnitude;
 					if (MIN_LENGTH * MIN_LENGTH > sqrLength) 
-					{
+					{	//칼이 붙어 있을때 떨어뜨린다 
 						this.GetBehavior ().distance_travel -= 0.2f; //임시
 						dst.GetBehavior ().distance_travel -= 0.2f; //임시
 					}
@@ -1875,7 +1878,7 @@ namespace CounterBlock
 			//============================
 			//Attack_Vs_None
 			//============================
-			if (true == src.IsSkill_Attack () && true == dst.IsSkill_None ()) {
+			if (true == src.IsSkill_Attack () && true == dst.IsSkill_Unprotected ()) {
 				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Attack_Succeed;
 					result.second = eState.Damaged;
@@ -1898,7 +1901,7 @@ namespace CounterBlock
 			//============================
 			//None_Vs_Attack
 			//============================
-			if (true == src.IsSkill_None () && true == dst.IsSkill_Attack ()) {
+			if (true == src.IsSkill_Unprotected () && true == dst.IsSkill_Attack ()) {
 				if (true == src.Valid_EventTime () && true == dst.Valid_EventTime ()) {
 					result.first = eState.Damaged;
 					result.second = eState.Attack_Succeed;
