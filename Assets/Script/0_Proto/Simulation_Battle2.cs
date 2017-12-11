@@ -1338,7 +1338,7 @@ namespace CounterBlock
 					DebugWide.LogRed ("**********;*********************;***********" + CurrentGiveState());
 					DebugWide.LogRed ("*********************" +this.GetID() + "  !!!  " + this.CurrentSkill().name + "***********************"); //chamto test
 
-					this.SetReceiveState (eSubState.Start); //다음 프레임의 캐릭터 갱신함수에서 상태전이 된다 
+					this.SetGiveState (eSubState.Start);
 
 					//한동작에서 일어난 사건
 					if (eSubState.Start == CurrentGiveState ()) 
@@ -1358,11 +1358,17 @@ namespace CounterBlock
 						
 				}
 				break;
+			case Judgment.eState.Block_Succeed:
+				{
+					this.SetGiveState (eSubState.Start); //다음 프레임의 캐릭터 갱신함수에서 상태전이 된다 
+				}
+				break;
 			case Judgment.eState.Damaged:
 				{
 					this.SetReceiveState (eSubState.Start); //다음 프레임의 캐릭터 갱신함수에서 상태전이 된다 
 				}
 				break;
+			
 			case Judgment.eState.Attack_Withstand: //1 vs 1
 				{
 					//무기 위치값을 정지시킴
@@ -1379,7 +1385,6 @@ namespace CounterBlock
 				break;
 			case Judgment.eState.Attack_Weapon: //1 vs 1
 				{
-
 
 					//상대행동을 "Hit_Weapon"로 변경시킨다
 					//Hit_Weapon 행동 : 1초간 무기 정지 
@@ -1485,11 +1490,11 @@ namespace CounterBlock
 					{
 					case eSubState.None:
 						{
-							if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () ||
-								Judgment.eState.Block_Succeed == this.GetJudgmentState()) 
-							{
-								this.SetGiveState (eSubState.Start);
-							}
+//							if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () ||
+//								Judgment.eState.Block_Succeed == this.GetJudgmentState()) 
+//							{
+//								this.SetGiveState (eSubState.Start);
+//							}
 						}
 						break;
 					case eSubState.Start:
