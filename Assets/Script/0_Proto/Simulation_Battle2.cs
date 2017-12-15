@@ -204,24 +204,24 @@ namespace CounterBlock
 
 			if (sqr_standard_value > sqr_dis_between)
 			{
-				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
-					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
+//				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+//					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return true; //두원이 겹쳐짐 
 			}
 			if (sqr_standard_value == sqr_dis_between)
 			{
-				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
-					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
+//				DebugWide.LogGreen ("T-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+//					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return true; //포함조건과 똑같음
 			}
 			if (sqr_standard_value < sqr_dis_between)
 			{
-				DebugWide.LogBlue ("F-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
-					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
+//				DebugWide.LogBlue ("F-----  include: " + eInclude.ToString() + "  std: "+Mathf.Sqrt(sqr_standard_value) + "   dis: " + Mathf.Sqrt(sqr_dis_between)
+//					+ "  srcPos: "+src.pos + "   dstPos: "+ dst.pos); //chamto test
 				return false; //두원이 겹쳐 있지 않음
 			}
 
-			DebugWide.LogWhite ("***** unreachable !!! ******");
+//			DebugWide.LogWhite ("***** unreachable !!! ******");
 			return false;
 		}
 
@@ -1111,8 +1111,8 @@ namespace CounterBlock
 		//!!! 무기 범위가 방향성이 없다.  뒤나 앞이나 판정이 같다
 		public bool Collision_Weaphon_Attack_VS(Character dst)
 		{
-			if(_id == 1)
-				DebugWide.LogYellow ("****************Collision_Weaphon_Attack_VS**************");//chamto test
+//			if(_id == 1)
+//				DebugWide.LogYellow ("****************Collision_Weaphon_Attack_VS**************");//chamto test
 			
 			switch (this._behavior.attack_shape) 
 			{
@@ -1305,19 +1305,19 @@ namespace CounterBlock
 
 			this.SetJudgmentState (jState);
 			//----------------------------------
-			if (1 == _id && this.IsSkill_Attack ()) 
-			{
-				if(this.Valid_EventTime())
-				{
-					DebugWide.LogGreen (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
-						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test
-				}
-				else
-				{
-					DebugWide.LogBlue (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
-						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test		
-				}
-			}
+//			if (1 == _id && this.IsSkill_Attack ()) 
+//			{
+//				if(this.Valid_EventTime())
+//				{
+//					DebugWide.LogGreen (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
+//						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test
+//				}
+//				else
+//				{
+//					DebugWide.LogBlue (" id: "+ _id + "  dst_skill: " +dst.CurrentSkill().name + "  isEventTime: " + this.Valid_EventTime() + 
+//						"  weaponPos: " + this.GetWeaponPosition() + "  state: "+jState.ToString() + "  timeDelta: "+this.GetTimeDelta()); //chamto test		
+//				}
+//			}
 
 //			if(this.Valid_EventTime() && this.IsSkill_Attack())
 //				DebugWide.LogBlue (" id: "+ _id + "  isAttack: " +this.IsSkill_Attack ()+ "  isEventTime: " + this.Valid_EventTime() + 
@@ -1338,8 +1338,8 @@ namespace CounterBlock
 			{
 			case Judgment.eState.Attack_Succeed: //1 vs n
 				{
-					DebugWide.LogRed ("**********;*********************;***********" + CurrentGiveState());
-					DebugWide.LogRed ("*********************" +this.GetID() + "  !!!  " + this.CurrentSkill().name + "***********************"); //chamto test
+//					DebugWide.LogRed ("**********;*********************;***********");
+//					DebugWide.LogRed ("*********************" +this.GetID() + "  !!!  " + this.CurrentSkill().name + "***********************"); //chamto test
 
 					this.SetGiveState (eSubState.Start);
 
