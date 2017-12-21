@@ -22,7 +22,7 @@ public class Dict_English : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		Single.coroutine.Update ();	
+		Single.Update ();	
 	}
 }
 
@@ -163,6 +163,11 @@ namespace XML_Data
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
 
+		public Dictionary<int, DictInfo.Meaning> GetData()
+		{
+			return _data;
+		}
+
 		public string GetTitle()
 		{
 			return Single.hashString.GetString(_hashTitle);
@@ -192,7 +197,7 @@ namespace XML_Data
 		}
 
 
-		public Meaning GetValueMeaning(int hashKey)
+		public Meaning GetMeaningFromKey(int hashKey)
 		{
 			if (_data.ContainsKey (hashKey)) 
 			{
@@ -204,28 +209,28 @@ namespace XML_Data
 			return null; //존재하지 않는 키값
 		}
 
-		public Meaning GetValueMeaning(string textKey)
+		public Meaning GetMeaningFromKey(string textKey)
 		{
-			return this.GetValueMeaning (textKey.GetHashCode ());
+			return this.GetMeaningFromKey (textKey.GetHashCode ());
 		}
 
-		public string GetValueMeaning_First(string textKey)
+		public string GetMeaningFromKey_First(string textKey)
 		{
-			int hashValue = GetValueMeaning (textKey).ElementAt (0); 
+			int hashValue = GetMeaningFromKey (textKey).ElementAt (0); 
 
 			return Single.hashString.GetString (hashValue);
 		}
 
 
-		public string GetKeyText(int hashValue)
+		public string GetTextFromValue(int hashValue)
 		{
 			int hashKey = _valueToKeyMap.GetDstHash (hashValue);
 			return Single.hashString.GetString (hashKey);
 		}
 
-		public string GetKeyText(string meaningValue)
+		public string GetTextFromValue(string meaningValue)
 		{
-			return this.GetKeyText (meaningValue.GetHashCode());
+			return this.GetTextFromValue (meaningValue.GetHashCode());
 		}
 
 	}
@@ -245,7 +250,22 @@ namespace XML_Data
 
 		public void Print ()
 		{
-			
+			DebugWide.LogBlue ("==================== "+ m_strFileName +" ====================");
+			foreach(DictInfo info in _dictInfoMap.Values)
+			{
+				DebugWide.LogBlue ("=== DictInfo - title : " + info.GetTitle ());
+
+				foreach (KeyValuePair<int,DictInfo.Meaning> kv in info.GetData()) 
+				{
+					DebugWide.LogBlue ("========= DictInfo - <eng> : " + Single.hashString.GetString(kv.Key));
+
+					foreach (int v in kv.Value) 
+					{
+						DebugWide.LogBlue ("========= DictInfo - <kor> : " + Single.hashString.GetString(v));
+					}
+				}
+
+			}
 		}
 
 
@@ -265,8 +285,8 @@ namespace XML_Data
 			}
 			this.LoadXMLFromMemory (stream);
 
-			//chamto test
-			//PrintValue ();
+
+			Print(); //chamto test
 
 		}
 
@@ -335,7 +355,7 @@ namespace XML_Data
 							Single.hashString.Add (n.Value.GetHashCode (), n.Value);
 							item.Add (n.Value.GetHashCode(), meaning);
 							//n.Name => eng ?
-							DebugWide.LogBlue ("<eng> " + n.Name + "  =  " + n.Value );
+							//DebugWide.LogBlue ("<eng> " + n.Name + "  =  " + n.Value );
 							break;
 						}
 					}
@@ -354,14 +374,14 @@ namespace XML_Data
 							case "meaning":
 								Single.hashString.Add (n.Value.GetHashCode (), n.Value);
 								meaning.Add (n.Value.GetHashCode ());
-								DebugWide.LogBlue ("     <kor> " + n.Name + "  =  " + n.Value + "  " + eKind.ToString());
+								//DebugWide.LogBlue ("     <kor> " + n.Name + "  =  " + n.Value + "  " + eKind.ToString());
 								break;
 							}
 						}
 					}
 					//====================//====================
 				}
-				DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
+				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
 				_dictInfoMap.Add(xmlNode.Value.GetHashCode(), item);
 			}
 
