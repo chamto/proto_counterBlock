@@ -166,7 +166,7 @@ public class NaverTTSBehaviour : MonoBehaviour
 		_tts.SetSpeaker (NaverTTS.eLanguage.Korean, NaverTTS.eSex.Man);
 		_tts.SetSpeed (0);
 		//_tts.Request ("안녕 하시렵니까  드루와 드루와 ㄲㄲㄲㄱ 드루와 드루와 ㄲㄲㄲㄱ드루와 드루와 ㄲㄲㄲㄱ드루와 ");
-		_tts.Request ("Update is called once per frame 안녕");
+		//_tts.Request ("Update is called once per frame 안녕");
 	}
 	
 	// Update is called once per frame
@@ -174,3 +174,7 @@ public class NaverTTSBehaviour : MonoBehaviour
 		
 	}
 }
+
+
+//===============================
+

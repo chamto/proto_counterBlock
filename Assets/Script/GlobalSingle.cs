@@ -9,25 +9,30 @@ using UnityEngine;
 
 namespace CounterBlock
 {
-	public class Single
+	public static class Single
 	{
 
-		//	public static WideUseCoroutine coroutine
-		//	{
-		//		get
-		//		{
-		//			return CSingleton<WideUseCoroutine>.Instance;
-		//		}
-		//	}
-		//
-		//	public static IEnumerator startCoroutine
-		//	{
-		//		set
-		//		{
-		//			coroutine.Start_Async(value);
-		//
-		//		}
-		//	}
+		//갱신처리
+		public static void Update()
+		{
+			Single.coroutine.Update ();
+		}
+
+		public static WideCoroutine coroutine
+		{
+			get
+			{
+				return CSingleton<WideCoroutine>.Instance;
+			}
+		}
+	
+		public static HashToStringMap hashString
+		{
+			get
+			{
+				return CSingleton<HashToStringMap>.Instance;
+			}
+		}
 
 		public static HierarchyPreLoader hierarchy
 		{

@@ -224,6 +224,8 @@ namespace CounterBlock
 		void Update () 
 		{
 
+			Single.Update ();
+
 			//frame test
 			//if(5f < Time.time)
 			{
