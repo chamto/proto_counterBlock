@@ -20,6 +20,9 @@ public class NaverTTS
 	public const int MIN_SPEED = 5;
 	public const int BASIC_SPEED = 0;
 
+	public const string PATH_Voice = "Assets/Resources/Sound/Voice/";
+	public const string PATH_StreamingAssets = "Assets/StreamingAssets/";
+
 	public enum eLanguage
 	{
 		Korean,
@@ -37,6 +40,18 @@ public class NaverTTS
 
 	private int 	_speed = BASIC_SPEED;
 	private string 	_speaker = "jinho";
+	private string  _path = PATH_StreamingAssets;
+	private string _fileName = "tts.mp3";
+
+	public void SetPath(string path)
+	{
+		_path = path;
+	}
+
+	public void SetFileName(string fileName)
+	{
+		_fileName = fileName + ".mp3";
+	}
 
 	public void SetSpeaker(eLanguage lang , eSex sex)
 	{
@@ -124,21 +139,25 @@ public class NaverTTS
 		DebugWide.LogBlue ("status="+ status);
 		//Console.WriteLine("status="+ status);
 
-		File.Delete ("Assets/StreamingAssets/" + "tts.mp3");
+		if(true == File.Exists(_path + _fileName))
+			File.Delete (_path + _fileName);
+
+		if (false == Directory.Exists (_path))
+			Directory.CreateDirectory (_path);
 		
-		using (Stream output = File.OpenWrite ("Assets/StreamingAssets/" + "tts.mp3")) 
+		using (Stream output = File.OpenWrite (_path + _fileName))
 		{
 			using (Stream input = response.GetResponseStream ()) 
 			{
 			
-				//input.CopyTo(output);
-				this.CopyTo(input, output);
+				//input.CopyTo(output); //.Net4.0 이후
+				this.CopyTo(input, output); //.Net3.5 용
 
 			}
 		}
 
-		DebugWide.LogBlue("Assets/StreamingAssets/" +"tts.mp3 was created");
-		//Console.WriteLine("c:/tts.mp3 was created");
+		DebugWide.LogBlue(_path + _fileName +" was created");
+
 	}
 
 	//ref : https://stackoverflow.com/questions/5730863/how-to-use-stream-copyto-on-net-framework-3-5
@@ -163,10 +182,14 @@ public class NaverTTSBehaviour : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		_tts.SetSpeaker (NaverTTS.eLanguage.Korean, NaverTTS.eSex.Man);
-		_tts.SetSpeed (0);
+		string text = "Update is called once per frame 안녕";
+		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
+		_tts.SetSpeed (NaverTTS.MAX_SPEED);
+		//_tts.SetPath (NaverTTS.PATH_StreamingAssets);
+		_tts.SetPath (NaverTTS.PATH_Voice);
+		_tts.SetFileName (text);
+		_tts.Request (text);
 		//_tts.Request ("안녕 하시렵니까  드루와 드루와 ㄲㄲㄲㄱ 드루와 드루와 ㄲㄲㄲㄱ드루와 드루와 ㄲㄲㄲㄱ드루와 ");
-		//_tts.Request ("Update is called once per frame 안녕");
 	}
 	
 	// Update is called once per frame
