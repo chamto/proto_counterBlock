@@ -20,6 +20,9 @@ public class NaverTTS
 	public const int MIN_SPEED = 5;
 	public const int BASIC_SPEED = 0;
 
+	//54321012345
+	//012345678910
+
 	public const string PATH_Voice = "Assets/Resources/Sound/Voice/";
 	public const string PATH_StreamingAssets = "Assets/StreamingAssets/";
 
@@ -106,10 +109,10 @@ public class NaverTTS
 
 	public void SetSpeed(int speed)
 	{
-		if (MAX_SPEED < speed)
+		if (MAX_SPEED > speed)
 			speed = MAX_SPEED;
 
-		if (MIN_SPEED > speed)
+		if (MIN_SPEED < speed)
 			speed = MIN_SPEED;
 
 		_speed = speed;
@@ -184,12 +187,19 @@ public class NaverTTSBehaviour : MonoBehaviour
 	{
 		string text = "Update is called once per frame 안녕";
 		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-		_tts.SetSpeed (NaverTTS.MAX_SPEED);
-		//_tts.SetPath (NaverTTS.PATH_StreamingAssets);
+		_tts.SetSpeed (NaverTTS.BASIC_SPEED);
 		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName (text);
+		_tts.SetFileName ("basic_"+text);
 		_tts.Request (text);
-		//_tts.Request ("안녕 하시렵니까  드루와 드루와 ㄲㄲㄲㄱ 드루와 드루와 ㄲㄲㄲㄱ드루와 드루와 ㄲㄲㄲㄱ드루와 ");
+
+		text = "Update is called once per frame 안녕";
+		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
+		_tts.SetSpeed (NaverTTS.MIN_SPEED);
+		_tts.SetPath (NaverTTS.PATH_Voice);
+		_tts.SetFileName ("min_"+text);
+		_tts.Request (text);
+
+
 	}
 	
 	// Update is called once per frame
