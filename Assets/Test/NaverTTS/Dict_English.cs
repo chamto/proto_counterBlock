@@ -275,22 +275,24 @@ namespace XML_Data
 			//------------------------------------------------------------------------
 			DebugWide.Log(GlobalConstants.ASSET_PATH + m_strFileName); //chamto test
 			MemoryStream stream = null;
-			IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName, value => stream = value);
+			//IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName, value => stream = value);
+			IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName,null);
 			yield return irator;
 
+			stream = irator.Current as MemoryStream; //이뮬레이터의 양보반환값을 가져온다
 			if (null == stream)
 			{
 				DebugWide.Log("error : failed LoadFromFile : " + GlobalConstants.ASSET_PATH + m_strFileName);
 				yield break;
 			}
-			this.LoadXMLFromMemory (stream);
+			this.Parse_MemoryStream (stream);
 
 
-			Print(); //chamto test
+			//Print(); //chamto test
 
 		}
 
-		private void LoadXMLFromMemory(MemoryStream stream)
+		private void Parse_MemoryStream(MemoryStream stream)
 		{
 			_bCompleteLoad = false;
 			_dictInfoMap.Clear();
