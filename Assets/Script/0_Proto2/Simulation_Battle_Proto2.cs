@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-namespace CounterBlockSting
+namespace CounterBlock_Proto2
 {
 	
 
@@ -227,14 +227,14 @@ namespace CounterBlockSting
 			_state_next = nextState;
 		}
 
-		public void SetBehavior(CounterBlockSting.eSkillKind kind, int sequence)
+		public void SetBehavior(CounterBlock_Proto2.eSkillKind kind, int sequence)
 		{
 			_behavior = _skillBook [kind].ElementAt(sequence);
 		}
 
 		public void SetBegavior_CounterBlock()
 		{
-			this.SetBehavior (CounterBlockSting.eSkillKind.CounterBlock, 0);
+			this.SetBehavior (CounterBlock_Proto2.eSkillKind.CounterBlock, 0);
 		}
 
 
@@ -274,7 +274,7 @@ namespace CounterBlockSting
 					_state_used = false; //init
 					this.SetState (eState.Attack_Before);	
 
-					_behavior = _skillBook [CounterBlockSting.eSkillKind.Attack_1].ElementAt(0);
+					_behavior = _skillBook [CounterBlock_Proto2.eSkillKind.Attack_1].ElementAt(0);
 				}
 				break;
 			case eState.Attack_Before:
@@ -302,7 +302,7 @@ namespace CounterBlockSting
 					_state_used = false; //init
 					this.SetState (eState.Block_Before);
 
-					_behavior = _skillBook [CounterBlockSting.eSkillKind.Block_1].ElementAt(0);
+					_behavior = _skillBook [CounterBlock_Proto2.eSkillKind.Block_1].ElementAt(0);
 				}
 				break;
 			case eState.Block_Before:
@@ -908,7 +908,7 @@ namespace CounterBlockSting
 
 		}
 
-		public class Simulation_Battle : MonoBehaviour 
+		public class Simulation_Battle_Proto2 : MonoBehaviour 
 		{
 
 			private CharacterInfo _1pInfo = new CharacterInfo();

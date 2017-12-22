@@ -2,34 +2,6 @@
 using System.Collections;
 
 
-namespace CounterBlockSting
-{
-	public enum eHashIdx : int
-	{
-		None = 0,
-
-		Root,
-
-		ForwardZ,
-
-		Bone_Body,
-		Bone_Mesh_Body,
-		Bone_Neck,
-		Bone_Mesh_Head,
-
-		Bone_Arm_Left,
-		Bone_Mesh_Hand_Left,
-		Bone_Weapon_Sword_Left,
-		Bone_Weapon_Sword_EndPosition_Left,
-
-		Bone_Arm_Right,
-		Bone_Mesh_Hand_Right,
-		Bone_Weapon_Sword_Right,
-		Bone_Weapon_Sword_EndPosition_Right,
-
-	}
-}
-
 public class GlobalConstants : MonoBehaviour 
 {
 
