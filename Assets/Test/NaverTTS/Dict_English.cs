@@ -14,9 +14,9 @@ public class Dict_English : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		Single.coroutine.Start_Async (_dictEng.LoadXML (),null,"DICT_ENGLISH");
-
-		
+		//Single.coroutine.Start_Async (_dictEng.LoadXML (),null,"DICT_ENGLISH");
+		Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
+		//_dictEng.Print ();
 	}
 	
 	// Update is called once per frame
@@ -53,13 +53,13 @@ public class FileToMemoryStream
 					DebugWide.LogRed("error : " + wwwUrl.error.ToString());
 					yield break;
 				}
-				DebugWide.LogGreen("wwwUrl.progress---" + wwwUrl.progress);
+				//DebugWide.LogGreen("wwwUrl.progress---" + wwwUrl.progress);
 				yield return null;
 			}
 
 			if (wwwUrl.isDone)
 			{   
-				DebugWide.LogGreen("wwwUrl.isDone---size : "+wwwUrl.size);
+				//DebugWide.LogGreen("wwwUrl.isDone---size : "+wwwUrl.size);
 				DebugWide.LogGreen("wwwUrl.isDone---bytesLength : "+wwwUrl.bytes.Length);
 				memStream = new MemoryStream(wwwUrl.bytes);
 			}
@@ -70,7 +70,7 @@ public class FileToMemoryStream
 		{   
 			result(memStream);
 		}
-		DebugWide.LogGreen("WWW Loading complete");
+		DebugWide.LogGreen("*** "+strFilePath+" WWW Loading complete");
 		yield return memStream;
 	}
 
@@ -273,7 +273,7 @@ namespace XML_Data
 		{
 			//내부 코루틴 부분
 			//------------------------------------------------------------------------
-			DebugWide.Log(GlobalConstants.ASSET_PATH + m_strFileName); //chamto test
+			DebugWide.LogBlue(GlobalConstants.ASSET_PATH + m_strFileName); //chamto test
 			MemoryStream stream = null;
 			//IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName, value => stream = value);
 			IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName,null);

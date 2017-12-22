@@ -206,26 +206,26 @@ public class NaverTTSBehaviour : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		string text = "Update is called once per frame 안녕";
-		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-		_tts.SetSpeed (NaverTTS.MAX_ASC_SPEED);
-		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
-		_tts.Request (text);
-
-		text = "Update is called once per frame 안녕";
-		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
-		_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED);
-		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName ("1_"+_tts.GetSpeed()+"_"+text);
-		_tts.Request (text);
-
-		text = "Update is called once per frame 안녕";
-		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-		_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED);
-		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
-		_tts.Request (text);
+//		string text = "Update is called once per frame 안녕";
+//		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
+//		_tts.SetSpeed (NaverTTS.MAX_ASC_SPEED);
+//		_tts.SetPath (NaverTTS.PATH_Voice);
+//		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
+//		_tts.Request (text);
+//
+//		text = "Update is called once per frame 안녕";
+//		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
+//		_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED);
+//		_tts.SetPath (NaverTTS.PATH_Voice);
+//		_tts.SetFileName ("1_"+_tts.GetSpeed()+"_"+text);
+//		_tts.Request (text);
+//
+//		text = "Update is called once per frame 안녕";
+//		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
+//		_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED);
+//		_tts.SetPath (NaverTTS.PATH_Voice);
+//		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
+//		_tts.Request (text);
 
 
 	}

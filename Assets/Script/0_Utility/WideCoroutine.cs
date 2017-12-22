@@ -139,7 +139,7 @@ public class WideCoroutine
                             callBack(job.etorCurrentDepth.Current);
                         }
 
-                        DebugWide.Log("현재 코루틴 완료" + "   " + strName);
+                        //DebugWide.Log("현재 코루틴 완료" + "   " + strName);
                         break;
                     }
                     else
