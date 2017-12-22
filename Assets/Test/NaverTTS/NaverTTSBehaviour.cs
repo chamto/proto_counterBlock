@@ -15,13 +15,10 @@ using UnityEngine;
 //문서 : https://developers.naver.com/docs/clova/api/#/CSS/API_Guide.md#RequestParameter
 public class NaverTTS
 {
-	//-5이면 0.5배 빠른 속도이고 5이면 0.5배 느린 속도입니다
-	public const int MAX_SPEED = -5;
-	public const int MIN_SPEED = 5;
-	public const int BASIC_SPEED = 0;
-
-	//54321012345
-	//012345678910
+	
+	public const int MAX_ASC_SPEED = 10;
+	public const int BASIC_ASC_SPEED = 5;
+	public const int MIN_ASC_SPEED = 0;
 
 	public const string PATH_Voice = "Assets/Resources/Sound/Voice/";
 	public const string PATH_StreamingAssets = "Assets/StreamingAssets/";
@@ -37,15 +34,50 @@ public class NaverTTS
 
 	public enum eSex
 	{
-		Man,
-		Woman,
+		Man = 1,
+		Woman = 2,
 	}
 
-	private int 	_speed = BASIC_SPEED;
+	private int 	_speed = 0; //-5이면 0.5배 빠른 속도이고 5이면 0.5배 느린 속도입니다
 	private string 	_speaker = "jinho";
 	private string  _path = PATH_StreamingAssets;
 	private string _fileName = "tts.mp3";
 
+	//543210-1-2-3-4-5
+	private int ToNaverSpeed(int ascendingSpeed)
+	{
+		int temp = ascendingSpeed;
+		temp = -temp;
+		return temp + 5;
+	}
+
+	//012345678910
+	private int toAscendingSpeed(int naverSpeed)
+	{
+		int temp = naverSpeed;
+		temp = temp - 5;
+		return Mathf.Abs (temp);
+
+	}
+
+	public int GetSpeed()
+	{
+		return toAscendingSpeed (_speed);
+	}
+
+	public void SetSpeed(int ascendingSpeed)
+	{
+		int naverSpeed = ToNaverSpeed (ascendingSpeed);
+		
+		if (-5 > naverSpeed)
+			naverSpeed = -5;
+
+		if (5 < naverSpeed)
+			naverSpeed = 5;
+
+		_speed = naverSpeed;
+	}
+		
 	public void SetPath(string path)
 	{
 		_path = path;
@@ -105,17 +137,6 @@ public class NaverTTS
 		}
 
 		_speaker = temp;
-	}
-
-	public void SetSpeed(int speed)
-	{
-		if (MAX_SPEED > speed)
-			speed = MAX_SPEED;
-
-		if (MIN_SPEED < speed)
-			speed = MIN_SPEED;
-
-		_speed = speed;
 	}
 
 	public void Request(string text)
@@ -187,16 +208,23 @@ public class NaverTTSBehaviour : MonoBehaviour
 	{
 		string text = "Update is called once per frame 안녕";
 		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-		_tts.SetSpeed (NaverTTS.BASIC_SPEED);
+		_tts.SetSpeed (NaverTTS.MAX_ASC_SPEED);
 		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName ("basic_"+text);
+		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
+		_tts.Request (text);
+
+		text = "Update is called once per frame 안녕";
+		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
+		_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED);
+		_tts.SetPath (NaverTTS.PATH_Voice);
+		_tts.SetFileName ("1_"+_tts.GetSpeed()+"_"+text);
 		_tts.Request (text);
 
 		text = "Update is called once per frame 안녕";
 		_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-		_tts.SetSpeed (NaverTTS.MIN_SPEED);
+		_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED);
 		_tts.SetPath (NaverTTS.PATH_Voice);
-		_tts.SetFileName ("min_"+text);
+		_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+text);
 		_tts.Request (text);
 
 
