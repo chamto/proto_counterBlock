@@ -15,14 +15,14 @@ public class Dict_English : MonoBehaviour
 	void Start () 
 	{
 		//Single.coroutine.Start_Async (_dictEng.LoadXML (),null,"DICT_ENGLISH");
-		Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
+		//Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
 		//_dictEng.Print ();
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		Single.Update ();	
+		//Single.Update ();	
 	}
 }
 
