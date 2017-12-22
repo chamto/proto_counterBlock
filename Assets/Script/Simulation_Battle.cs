@@ -18,55 +18,8 @@ using UnityEngine.UI;
 
 namespace CounterBlock
 {
-
-
-	/// <summary>
-	/// frame skip 시 해당프레임의 deltaTime을 최소 프레임시간으로 설정한다.
-	/// </summary>
-	public class FrameControl
-	{
-		static private float _deltaTime_mix = 0f;
-		static private float _deltaTime_max = 0f;
-
-		static public void SetDeltaTime_30FPS()
-		{
-			FrameControl.SetDeltaTime_FPS (30f);
-		}
-
-		static public void SetDeltaTime_FPS(float fps)
-		{
-			_deltaTime_mix = 1f / fps;
-			_deltaTime_max = _deltaTime_mix * 2f; //최소시간의 2배 한다. 
-		}
-
-		static public float DeltaTime_Mix()
-		{
-			return _deltaTime_mix;
-		}
-
-		static public float DeltaTime_Max()
-		{
-			return _deltaTime_max;
-		}
-
-		static public float DeltaTime()
-		{
-			//전프레임이 허용프레임 시간의 최대치를 넘었다면 최소시간을 반환한다.
-			if (Time.deltaTime > _deltaTime_max) 
-			{
-				//DebugWide.LogBlue ("FrameControl - frameSkip detected !!! - DeltaTime : "+Time.deltaTime);//chamto test
-				return _deltaTime_mix;
-			}
-
-
-			return Time.deltaTime;
-		}
-
-
-	}
-
-
-	public class Simulation_Battle3 : MonoBehaviour 
+	
+	public class Simulation_Battle : MonoBehaviour 
 	{
 
 		private CharacterManager _crtMgr = null;
