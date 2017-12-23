@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 using CounterBlock;
 
 public class Dict_English : MonoBehaviour 
@@ -101,6 +102,12 @@ public class HashToStringMap
 		throw new KeyNotFoundException ();
 
 		return ""; //존재하지 않는 키값
+	}
+
+	public string GetString_ForAssetFile(int hash)
+	{
+		string tempStr = this.GetString (hash);
+		return Regex.Replace (tempStr,"[?<>:*|\"]",""); //애셋파일 이름에 들어가면 안되는 특수문자 제거 ?, <, >, :, *, |, ".
 	}
 }
 

@@ -216,23 +216,23 @@ public class NaverTTSBehaviour : MonoBehaviour
 		{
 			foreach (int hash in info.GetData().Keys) 
 			{
-				tempStr = CounterBlock.Single.hashString.GetString (hash);
+				tempStr = CounterBlock.Single.hashString.GetString_ForAssetFile (hash);
+				//DebugWide.LogBlue (tempStr);
+
 				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
-				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED);
+				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED-1);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName ("1_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
 
 				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED);
+				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+1);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
 			}
 
 		}
-
-
 
 	}
 	
