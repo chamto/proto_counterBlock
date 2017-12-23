@@ -60,6 +60,8 @@ namespace CounterBlock
 		//[SerializeField] 
 		public bool _apply = false;
 
+		public int _voiceSequence = 0;
+
 		//===============================================================
 
 //		public Character data
@@ -584,12 +586,19 @@ namespace CounterBlock
 				case Character.eState.Start:
 					{
 						//=================================================
-
+						AudioClips clips = null;
+						if (Character.eKind.Seonbi == _data.kind) {
+							clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
+						} else 
+						{
+							clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverWoman_2);
+						}
 						//_audioSource.Play (); //chamto test
-						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[1].GetSequence();
-						AudioClips clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
-						_audioSource.PlayOneShot(clips[seq[0]]);
-
+						List<int> seq = Single.resource.GetDictEng()._dictInfoMap.ElementAt(1).Value.GetSequence();
+						_audioSource.Stop ();
+						_audioSource.PlayOneShot(clips[seq[_voiceSequence]]);
+						_voiceSequence++;
+						_voiceSequence = _voiceSequence % (seq.Count - 1);
 						//=================================================
 
 						this._actions[eAction.Action].gameObject.SetActive (true);
