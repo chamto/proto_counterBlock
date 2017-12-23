@@ -241,6 +241,8 @@ namespace XML_Data
 
 		public Dictionary<int, DictInfo> _dictInfoMap = new Dictionary<int, DictInfo>();
 
+
+
 		public void Print ()
 		{
 			DebugWide.LogBlue ("==================== "+ m_strFileName +" ====================");
@@ -381,7 +383,7 @@ namespace XML_Data
 
 				}
 				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
-				_dictInfoMap.Add(xmlNode.Value.GetHashCode(), item);
+				_dictInfoMap.Add(i, item);
 			}
 
 			_bCompleteLoad = true;

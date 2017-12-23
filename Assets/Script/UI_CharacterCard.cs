@@ -583,7 +583,14 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						_audioSource.Play (); //chamto test
+						//=================================================
+
+						//_audioSource.Play (); //chamto test
+						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[1].GetSequence();
+						AudioClips clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
+						_audioSource.PlayOneShot(clips[seq[0]]);
+
+						//=================================================
 
 						this._actions[eAction.Action].gameObject.SetActive (true);
 						this._actions[eAction.Hilt].gameObject.SetActive (false);

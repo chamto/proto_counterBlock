@@ -2611,6 +2611,17 @@ namespace CounterBlock
 		public XML_Data.Dict_English _dictEng = new XML_Data.Dict_English();
 
 
+
+		//==================== Get / Set ====================
+		public VoiceClipMap GetVoiceClipMap()
+		{
+			return _voiceClipMap;
+		}
+		public XML_Data.Dict_English GetDictEng()
+		{
+			return _dictEng;
+		}
+
 		//==================== <Method> ====================
 		public ResourceManager()
 		{
