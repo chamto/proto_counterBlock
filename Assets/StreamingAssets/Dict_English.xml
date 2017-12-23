@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
   <DictInfo title="start_of_game" >
-    <eng num="0" kind="vocabulary" text="memory">
+	<eng num="0" kind="sentence" text="gongja wal">
+	    <kor meaning="공자가 말하기를" />
+	</eng>
+  
+    <eng num="1" kind="vocabulary" text="memory">
     	<kor meaning="추억"  />
     	<kor meaning="기억"  />
     </eng>
-    <eng num="1" kind="idiom" text="used to ~">
+    <eng num="2" kind="idiom" text="used to ~">
     	<kor meaning="뭐뭐 하곤 했다" />
     	<kor meaning="한때는 뭐뭐 이었다" />
     	<kor meaning="뭐뭐에 익숙하다" />

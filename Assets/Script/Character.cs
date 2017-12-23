@@ -2527,9 +2527,16 @@ namespace CounterBlock
 
 		private HierarchyPreLoader _ref_herch = null;
 
-		private Dictionary<eSPRITE_NAME, string> _sprNameDict = null;
-		private Dictionary<eSPRITE_NAME, Sprite> _loadedDict = new Dictionary<eSPRITE_NAME, Sprite> ();
+		private Dictionary<eSPRITE_NAME, string> _spriteNames = null;
+		private Dictionary<eSPRITE_NAME, Sprite> _sprites = new Dictionary<eSPRITE_NAME, Sprite> ();
 
+		private Dictionary<int, AudioClip> _audioClips = new Dictionary<int, AudioClip>();
+
+		//==================== XML_DATA ====================
+		public XML_Data.Dict_English _dictEng = new XML_Data.Dict_English();
+
+
+		//==================== <Method> ====================
 		public ResourceManager()
 		{
 			_ref_herch = CSingleton<HierarchyPreLoader>.Instance;
@@ -2540,14 +2547,14 @@ namespace CounterBlock
 		{
 			//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
 			//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
-			return _sprNameDict.FirstOrDefault(x => x.Value == name).Key;
+			return _spriteNames.FirstOrDefault(x => x.Value == name).Key;
 		}
 
 		public void Init()
 		{
 			_ref_herch.Init ();
 
-			_sprNameDict = new Dictionary<eSPRITE_NAME, string> ()
+			_spriteNames = new Dictionary<eSPRITE_NAME, string> ()
 			{
 				{eSPRITE_NAME.EMPTY_CARD, "empty_card"},
 				{eSPRITE_NAME.P1_IDLE, "p1_idle"},
@@ -2576,10 +2583,16 @@ namespace CounterBlock
 				{eSPRITE_NAME.EFFECT_STRIKE_CROSS, "effect_7"},
 			};
 
+			this.Load_XML ();
 
 			this.Load_Sprite ();
+			this.Load_AudioClip ();
 		}
 
+		public void Load_XML()
+		{
+			CounterBlock.Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
+		}
 		public void Load_Sprite()
 		{
 
@@ -2591,7 +2604,7 @@ namespace CounterBlock
 			{
 				
 				eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
-				_loadedDict.Add (key, sprites [i]);
+				_sprites.Add (key, sprites [i]);
 			}
 
 
@@ -2603,15 +2616,31 @@ namespace CounterBlock
 			{
 
 				eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
-				_loadedDict.Add (key, sprites [i]);
+				_sprites.Add (key, sprites [i]);
 			}
 
+		}
+
+
+		//[hash string]
+		//[]
+		public void Load_AudioClip()
+		{
+			AudioClip[] clips = Resources.LoadAll <AudioClip>("Sound/Voice");
+
+			for(int i=0;i<clips.Length;i++)
+			{
+				DebugWide.LogBlue(clips [i].name);
+
+				//eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
+				//_audioClips.Add (key, sprites [i]);
+			}
 		}
 
 		public Sprite GetSprite(eSPRITE_NAME eName)
 		{
 			//20170813 chamto fixme - enum 값이 없을 때의 예외 처리가 없음 
-			return _loadedDict [eName];
+			return _sprites [eName];
 		}
 
 		public Sprite GetAction_Seonbi(eActionKind actionKind)
@@ -2758,11 +2787,11 @@ namespace CounterBlock
 
 		public void TestPrint()
 		{
-			foreach (Sprite s in _loadedDict.Values) 
+			foreach (Sprite s in _sprites.Values) 
 			{
 				DebugWide.LogBlue (s.name);
 			}
-			foreach (eSPRITE_NAME s in _loadedDict.Keys) 
+			foreach (eSPRITE_NAME s in _sprites.Keys) 
 			{
 				DebugWide.LogBlue (s);
 			}

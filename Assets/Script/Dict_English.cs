@@ -7,28 +7,6 @@ using System.Xml;
 using System.Text.RegularExpressions;
 using CounterBlock;
 
-public class Dict_English : MonoBehaviour 
-{
-
-	XML_Data.Dict_English _dictEng = new XML_Data.Dict_English();
-
-	// Use this for initialization
-	void Start () 
-	{
-		//Single.coroutine.Start_Async (_dictEng.LoadXML (),null,"DICT_ENGLISH");
-		//Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
-		//_dictEng.Print ();
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		//Single.Update ();	
-	}
-}
-
-
-
 
 public class FileToMemoryStream
 {
@@ -169,10 +147,16 @@ namespace XML_Data
 
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
+		private List<int> _sequence = new List<int>(); //xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
 
 		public Dictionary<int, DictInfo.Meaning> GetData()
 		{
 			return _data;
+		}
+
+		public List<int> GetSequence()
+		{
+			return _sequence;
 		}
 
 		public string GetTitle()
@@ -198,9 +182,11 @@ namespace XML_Data
 
 			foreach (int mOne in mMore) 
 			{
-				DebugWide.LogBlue (mOne +  " ----  " + hashKey);
+				//DebugWide.LogBlue (mOne +  " ----  " + hashKey);
 				_valueToKeyMap.Add (mOne, hashKey);
 			}
+
+			_sequence.Add (hashKey); //순서저장
 		}
 
 
@@ -280,7 +266,7 @@ namespace XML_Data
 		{
 			//내부 코루틴 부분
 			//------------------------------------------------------------------------
-			DebugWide.LogBlue(GlobalConstants.ASSET_PATH + m_strFileName); //chamto test
+			//DebugWide.LogBlue(GlobalConstants.ASSET_PATH + m_strFileName); //chamto test
 			MemoryStream stream = null;
 			//IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName, value => stream = value);
 			IEnumerator irator = this.FileLoading(GlobalConstants.ASSET_PATH + m_strFileName,null);
@@ -343,36 +329,13 @@ namespace XML_Data
 				DictInfo.Meaning.eKind eKind = DictInfo.Meaning.eKind.None;
 
 				//==================== <eng> ====================
-				thirdList = secondList[i].ChildNodes;
+				thirdList = secondList[i].ChildNodes; //<DictInfo>
 				for (int j = 0; j < thirdList.Count; ++j) 
 				{
-					attrs = thirdList[j].Attributes;
-					foreach(XmlNode n in attrs)
-					{
-						switch(n.Name)
-						{
-						case "kind":
-							if ("vocabulary" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Vocabulary;
-							if ("idiom" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Idiom;
-							if ("sentence" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Sentence;
-							break;
-						case "text":
-							meaning = new DictInfo.Meaning ();
-							Single.hashString.Add (n.Value.GetHashCode (), n.Value);
-							item.Add (n.Value.GetHashCode(), meaning);
-							//n.Name => eng ?
-							//DebugWide.LogBlue ("<eng> " + n.Name + "  =  " + n.Value );
-							break;
-						}
-					}
-
-					meaning.kind = eKind;
 
 					//==================== <kor> ====================
-					fourthList = thirdList[j].ChildNodes;
+					meaning = new DictInfo.Meaning ();
+					fourthList = thirdList[j].ChildNodes; //<kor>
 					for (int k = 0; k < fourthList.Count; ++k) 
 					{
 						attrs = fourthList[k].Attributes;
@@ -389,6 +352,33 @@ namespace XML_Data
 						}
 					}
 					//====================//====================
+
+					attrs = thirdList[j].Attributes; //<eng>
+					foreach(XmlNode n in attrs)
+					{
+						switch(n.Name)
+						{
+						case "kind":
+							if ("vocabulary" == n.Value)
+								eKind = DictInfo.Meaning.eKind.Vocabulary;
+							if ("idiom" == n.Value)
+								eKind = DictInfo.Meaning.eKind.Idiom;
+							if ("sentence" == n.Value)
+								eKind = DictInfo.Meaning.eKind.Sentence;
+							break;
+						case "text":
+							{
+								Single.hashString.Add (n.Value.GetHashCode (), n.Value);
+								item.Add (n.Value.GetHashCode(), meaning);
+								//DebugWide.LogBlue ("<eng> " + n.Name + "  =  " + n.Value );
+							}
+							break;
+						}
+					}
+
+					meaning.kind = eKind;
+
+
 				}
 				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
 				_dictInfoMap.Add(xmlNode.Value.GetHashCode(), item);

@@ -86,6 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4051879090036904}
   - component: {fileID: 95472421343176724}
+  - component: {fileID: 82426537013851724}
   m_Layer: 0
   m_Name: character_seonbi2
   m_TagString: Untagged
@@ -545,6 +546,86 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!82 &82426537013851724
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1159028807033776}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: bb0f1e714954e4e72b37a79ef4ef8604, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!95 &95472421343176724
 Animator:
   serializedVersion: 3
@@ -672,7 +753,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300028, guid: 7e9b43528f25543e08b6ca9ce573a86e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -716,7 +797,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 21
   m_Sprite: {fileID: 21300004, guid: 5c98d9b4bd9254a5a8b1ba32875656cc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -760,7 +841,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 12
   m_Sprite: {fileID: 21300004, guid: 7e9b43528f25543e08b6ca9ce573a86e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -804,7 +885,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 22
   m_Sprite: {fileID: 21300000, guid: 5c98d9b4bd9254a5a8b1ba32875656cc, type: 3}
   m_Color: {r: 0.9485294, g: 0.3696475, b: 0.3696475, a: 1}
@@ -848,7 +929,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 7e9b43528f25543e08b6ca9ce573a86e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -892,7 +973,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 11
   m_Sprite: {fileID: 21300002, guid: 7e9b43528f25543e08b6ca9ce573a86e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -980,7 +1061,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1895867203
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 20
   m_Sprite: {fileID: 21300002, guid: 5c98d9b4bd9254a5a8b1ba32875656cc, type: 3}
   m_Color: {r: 0.9852941, g: 0.9413256, b: 0.34775084, a: 1}

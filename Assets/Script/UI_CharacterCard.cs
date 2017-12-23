@@ -48,6 +48,7 @@ namespace CounterBlock
 		public TextMesh _text_explanation { get; set; }
 		public TextMesh _text_time { get; set; }
 		//public Slider _hp_bar { get; set; }
+		public AudioSource _audioSource { get; set; }
 
 		public Transform _actionRoot { get; set; }
 		public Dictionary<eAction,InitialData> _actions { get; set; }
@@ -89,6 +90,7 @@ namespace CounterBlock
 			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
 			ui._text_time = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_time");
 			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
+			ui._audioSource = obj.GetComponent<AudioSource>();
 
 			//action
 			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
@@ -265,6 +267,24 @@ namespace CounterBlock
 			}
 		}
 
+		public void StartSkill(Skill.eName skillName)
+		{
+			switch (skillName) 
+			{
+			case Skill.eName.Attack_Strong_1:
+				_data.Attack_Strong ();
+				break;
+			case Skill.eName.Attack_Weak_1:
+				_data.Attack_Weak ();
+				break;
+			case Skill.eName.Block_1:
+				_data.Block ();
+				break;
+			}
+
+		}
+
+
 		//void Update() {}  //chamto : 유니티 update 사용하지 말것. 호출순서를 코드에서 조작하기 위함
 
 		public void Update_UI()
@@ -409,7 +429,7 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-
+						
 						this._actions [eAction.Action].gameObject.SetActive (false);
 						this._actions [eAction.Hilt].gameObject.SetActive (false);
 
@@ -563,7 +583,8 @@ namespace CounterBlock
 				{
 				case Character.eState.Start:
 					{
-						
+						_audioSource.Play (); //chamto test
+
 						this._actions[eAction.Action].gameObject.SetActive (true);
 						this._actions[eAction.Hilt].gameObject.SetActive (false);
 

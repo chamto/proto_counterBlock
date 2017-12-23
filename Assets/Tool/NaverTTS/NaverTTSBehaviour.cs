@@ -212,23 +212,31 @@ public class NaverTTSBehaviour : MonoBehaviour
 		CounterBlock.Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
 
 		string tempStr = "";
+		int first = 0;
+		int second = 0;
 		foreach (XML_Data.DictInfo info in _dictEng._dictInfoMap.Values) 
 		{
+			first++;
+			second = 0;
 			foreach (int hash in info.GetData().Keys) 
 			{
+				second++;
 				tempStr = CounterBlock.Single.hashString.GetString_ForAssetFile (hash);
 				//DebugWide.LogBlue (tempStr);
+
+				//파일저장양식 
+				//(1)DictInfo num _ (2)eng num _ (3)hash value _ (4)목소리종류 _ (5)말하기속도 _(6)말하기텍스트 
 
 				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
 				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED-1);
 				_tts.SetPath (NaverTTS.PATH_Voice);
-				_tts.SetFileName ("1_"+_tts.GetSpeed()+"_"+tempStr);
+				_tts.SetFileName (first+"_"+second+"_"+hash+"_1_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
 
 				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
-				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+1);
+				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+2);
 				_tts.SetPath (NaverTTS.PATH_Voice);
-				_tts.SetFileName ("2_"+_tts.GetSpeed()+"_"+tempStr);
+				_tts.SetFileName (first+"_"+second+"_"+hash+"_2_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
 			}
 
