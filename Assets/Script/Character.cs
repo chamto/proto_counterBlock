@@ -2473,6 +2473,80 @@ namespace CounterBlock
 	}
 
 
+	public struct VoiceInfo
+	{
+
+		public enum eKind
+		{
+			None,
+			Eng_NaverMan_1 = 1,
+			Eng_NaverWoman_2 = 2,
+			Eng_AmazonMan_3 = 3,
+			Eng_AmazonMan_4 = 4,
+			Eng_AmazonMan_5 = 5,
+			Eng_AmazonWoman_6 = 6,
+			Eng_AmazonWoman_7 = 7,
+			Eng_AmazonWoman_8 = 8,
+			Max,
+		}
+
+		public int dictInfo_num;
+		public int eng_num;
+		public int hash;
+		public eKind kind;
+		public int speed;
+
+
+		public VoiceInfo(string fileName) 
+		{
+			dictInfo_num = -1;
+			eng_num = -1;
+			hash  = -1;
+			kind = eKind.None;
+			speed = -1;
+
+			Parsing_VoiceClipName(fileName);
+		}
+
+		private void Parsing_VoiceClipName(string fileName)
+		{
+			//파일저장양식 
+			//(1)DictInfo num _ (2)eng num _ (3)hash value _ (4)목소리종류 _ (5)말하기속도 _(6)말하기텍스트 
+			const int MAX_COUNT = 6;
+
+			char[] delimiterChars = { '_'};
+			string[] parts = fileName.Split(delimiterChars, System.StringSplitOptions.RemoveEmptyEntries);
+
+			if (MAX_COUNT == parts.Count ()) 
+			{
+				dictInfo_num = int.Parse (parts [0]);
+				eng_num = int.Parse (parts [1]);
+				hash = int.Parse (parts [2]);
+				kind = (eKind)int.Parse (parts [3]);
+				speed = int.Parse (parts [4]);
+			}
+
+		}
+
+		public string ToString()
+		{
+			return "[ " + dictInfo_num + " ]" + "[ " + eng_num + " ]" + "[ " + hash + " ]" + "[ " + kind + " ]" + "[ " + speed + " ]";
+		}
+	}
+
+	public class AudioClips : Dictionary<int, AudioClip> {}
+	public class VoiceClipMap : Dictionary<VoiceInfo.eKind, AudioClips>
+	{
+		public AudioClips GetClips(VoiceInfo.eKind kind)
+		{
+			if (false == this.ContainsKey (kind)) 
+			{
+				this.Add (kind, new AudioClips ());
+			}
+			return this [kind];
+		}
+	}
+
 	public class ResourceManager
 	{
 		public enum eActionKind
@@ -2530,7 +2604,8 @@ namespace CounterBlock
 		private Dictionary<eSPRITE_NAME, string> _spriteNames = null;
 		private Dictionary<eSPRITE_NAME, Sprite> _sprites = new Dictionary<eSPRITE_NAME, Sprite> ();
 
-		private Dictionary<int, AudioClip> _audioClips = new Dictionary<int, AudioClip>();
+		private VoiceClipMap _voiceClipMap = new VoiceClipMap();
+
 
 		//==================== XML_DATA ====================
 		public XML_Data.Dict_English _dictEng = new XML_Data.Dict_English();
@@ -2593,6 +2668,7 @@ namespace CounterBlock
 		{
 			CounterBlock.Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
 		}
+
 		public void Load_Sprite()
 		{
 
@@ -2621,19 +2697,19 @@ namespace CounterBlock
 
 		}
 
-
-		//[hash string]
-		//[]
 		public void Load_AudioClip()
 		{
 			AudioClip[] clips = Resources.LoadAll <AudioClip>("Sound/Voice");
 
+			VoiceInfo vInfo;
 			for(int i=0;i<clips.Length;i++)
 			{
-				DebugWide.LogBlue(clips [i].name);
+				vInfo = new VoiceInfo(clips [i].name);
+				//DebugWide.LogBlue(clips [i].name);
+				//DebugWide.LogBlue(vInfo.ToString()); //chamto test
 
-				//eSPRITE_NAME key = this.StringToEnum (sprites [i].name);
-				//_audioClips.Add (key, sprites [i]);
+				_voiceClipMap.GetClips (vInfo.kind).Add (vInfo.hash, clips [i]);
+
 			}
 		}
 
