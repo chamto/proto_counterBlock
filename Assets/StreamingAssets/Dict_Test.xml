@@ -17,12 +17,9 @@
   </DictInfo>
 
   <!---참고 : https://www.voakorea.com/a/pops-viva-la-vida-129257083/1275747.html -->
-  <DictInfo num="100" title="viva la vida">
+  <DictInfo num="100" title="vocabulary and idiom">
 
-  	<!--- I used to rule the world -->
-  	<eng group="0" kind="sentence" text="I used to rule the world">
-    	<kor meaning="난 한 때 세상을 지배했었지" />
-    </eng>
+  <!--- I used to rule the world -->
     <eng group="0" kind="part" text="I used to">
     	<kor meaning="" />
     </eng>
@@ -34,9 +31,6 @@
     </eng>
 
     <!--- Seas would rise when I gave the word -->
-     <eng group="1" kind="sentence" text="Seas would rise when I gave the word">
-    	<kor meaning="내 말 한 마디에 바다가 솟아 올랐지" />
-    </eng>
     <eng group="1" kind="part" text="Seas">
     	<kor meaning="" />
     </eng>
@@ -51,9 +45,6 @@
     </eng>
 
     <!--- Now in the morning I sleep alone -->
-    <eng group="2" kind="sentence" text="Now in the morning I sleep alone">
-    	<kor meaning="이제 난 아침에 홀로 잠을 자고" />
-    </eng>
     <eng group="2" kind="part" text="Now">
     	<kor meaning="" />
     </eng>
@@ -67,10 +58,8 @@
     	<kor meaning="" />
     </eng>
 
+
     <!--- Sweep the streets I used to own -->
-    <eng group="3" kind="sentence" text="Sweep the streets I used to own">
-    	<kor meaning="내가 한 때 지배했던 거리를 쓸지" />
-    </eng>
     <eng group="3" kind="part" text="Sweep">
     	<kor meaning="" />
     </eng>
@@ -85,9 +74,6 @@
     </eng>
 
     <!--- I used to roll the dice -->
-    <eng group="4" kind="sentence" text="I used to roll the dice">
-    	<kor meaning="난 주사위를 굴리며 도박을 하곤 했지" />
-    </eng>
     <eng group="4" kind="part" text="I used to">
     	<kor meaning="" />
     </eng>
@@ -99,9 +85,6 @@
     </eng>
 
     <!--- Feel the fear in my enemies’ eyes -->
-    <eng group="5" kind="sentence" text="Feel the fear in my enemies’ eyes">
-    	<kor meaning="적의 눈에 서린 공포를 느끼면서" />
-    </eng>
     <eng group="5" kind="part" text="Feel">
     	<kor meaning="" />
     </eng>
@@ -119,9 +102,6 @@
     </eng>
 
     <!--- Listen as the crowd would sing -->
-    <eng group="6" kind="sentence" text="Listen as the crowd would sing">
-    	<kor meaning="군중이 노래하는 걸 들어봐" />
-    </eng>
     <eng group="6" kind="part" text="Listen">
     	<kor meaning="" />
     </eng>
@@ -139,9 +119,6 @@
     </eng>
 
     <!--- Now the old king is dead! Long live the king! -->
-    <eng group="7" kind="sentence" text="Now the old king is dead! Long live the king!">
-    	<kor meaning="이제 옛 왕이 죽었다! 왕이여, 만세!" />
-    </eng>
     <eng group="7" kind="part" text="Now">
     	<kor meaning="" />
     </eng>
@@ -165,9 +142,6 @@
     </eng>
 
     <!--- One minute I held the key -->
-    <eng group="8" kind="sentence" text="One minute I held the key">
-    	<kor meaning="한 때 난 열쇠를 쥐고 있었지만" />
-    </eng>
     <eng group="8" kind="part" text="One minute">
     	<kor meaning="" />
     </eng>
@@ -179,9 +153,6 @@
     </eng>
 
     <!-- Next the walls were closed on me -->
-    <eng group="9" kind="sentence" text="Next the walls were closed on me">
-    	<kor meaning="다음 순간에는 사방에 벽이 나를 에워싸고 있었어" />
-    </eng>
     <eng group="9" kind="part" text="Next">
     	<kor meaning="" />
     </eng>
@@ -196,9 +167,6 @@
     </eng>
 
     <!-- And I discovered that my castles stand -->
-    <eng group="10" kind="sentence" text="And I discovered that my castles stand">
-    	<kor meaning="그리고 난 발견했지, 나의 성은" />
-    </eng>
     <eng group="10" kind="part" text="And">
     	<kor meaning="" />
     </eng>
@@ -216,9 +184,6 @@
     </eng>
 
     <!--- Upon pillars of salt, and pillars of sand -->
-    <eng group="11" kind="sentence" text="Upon pillars of salt, and pillars of sand">
-    	<kor meaning="소금 기둥, 그리고 모래 기둥 위에 서 있었다는 걸" />
-    </eng>
     <eng group="11" kind="part" text="Upon">
     	<kor meaning="" />
     </eng>
@@ -242,9 +207,6 @@
     </eng>
 
     <!--- I hear Jerusalem bells are ringing -->
-    <eng group="12" kind="sentence" text="I hear Jerusalem bells are ringing">
-    	<kor meaning="예루살렘 종소리가 들리네" />
-    </eng>
     <eng group="12" kind="part" text="I hear">
     	<kor meaning="" />
     </eng>
@@ -262,9 +224,6 @@
     </eng>
 
     <!--- Roman Cavalry choirs are singing -->
-    <eng group="13" kind="sentence" text="Roman Cavalry choirs are singing">
-    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
-    </eng>
     <eng group="13" kind="part" text="Roman">
     	<kor meaning="" />
     </eng>
@@ -282,9 +241,6 @@
     </eng>
 
     <!--- Be my mirror my sword and shield -->
-    <eng group="14" kind="sentence" text="Be my mirror my sword and shield">
-    	<kor meaning="나의 거울, 나의 검, 방패가 돼 주오" />
-    </eng>
     <eng group="14" kind="part" text="Be my">
     	<kor meaning="" />
     </eng>
@@ -302,9 +258,6 @@
     </eng>
 
     <!--- My missionaries in a foreign field -->
-    <eng group="15" kind="sentence" text="My missionaries in a foreign field">
-    	<kor meaning="타지에 나가 있는 나의 선교사들이여" />
-    </eng>
     <eng group="15" kind="part" text="My">
     	<kor meaning="" />
     </eng>
@@ -322,9 +275,6 @@
     </eng>
 
     <!--- For some reason I can’t explain -->
-    <eng group="16" kind="sentence" text="For some reason I can’t explain">
-    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
-    </eng>
     <eng group="16" kind="part" text="For">
     	<kor meaning="" />
     </eng>
@@ -342,9 +292,6 @@
     </eng>
 
     <!--- Once you go there was never, -->
-    <eng group="17" kind="sentence" text="Once you go there was never,">
-    	<kor meaning="일단 그 곳에 가면, 절대로" />
-    </eng>
     <eng group="17" kind="part" text="Once">
     	<kor meaning="" />
     </eng>
@@ -359,9 +306,6 @@
     </eng>
 
     <!--- Never an honest word -->
-    <eng group="18" kind="sentence" text="Never an honest word">
-    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
-    </eng>
     <eng group="18" kind="part" text="Never">
     	<kor meaning="" />
     </eng>
@@ -373,9 +317,6 @@
     </eng>
 
     <!--- That was when I ruled the world -->
-    <eng group="19" kind="sentence" text="That was when I ruled the world">
-    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
-    </eng>
     <eng group="19" kind="part" text="That was">
     	<kor meaning="" />
     </eng>
@@ -390,9 +331,6 @@
     </eng>
 
     <!--- It was the wicked and wild wind -->
-    <eng group="20" kind="sentence" text="It was the wicked and wild wind">
-    	<kor meaning="지독하고 사나운 바람이었지" />
-    </eng>
     <eng group="20" kind="part" text="It was">
     	<kor meaning="" />
     </eng>
@@ -407,9 +345,6 @@
     </eng>
 
     <!--- Blew down the doors to let me in -->
-    <eng group="21" kind="sentence" text="Blew down the doors to let me in">
-    	<kor meaning="문을 부숴버려서 내가 들어갈 수 있었지" />
-    </eng>
     <eng group="21" kind="part" text="Blew">
     	<kor meaning="" />
     </eng>
@@ -427,9 +362,6 @@
     </eng>
 
     <!--- Shattered windows and the sound of drums -->
-    <eng group="22" kind="sentence" text="Shattered windows and the sound of drums">
-    	<kor meaning="깨어진 창과 북 소리" />
-    </eng>
     <eng group="22" kind="part" text="Shattered">
     	<kor meaning="" />
     </eng>
@@ -447,9 +379,6 @@
     </eng>
 
     <!--- People couldn’t believe what I'd become -->
-    <eng group="23" kind="sentence" text="People couldn’t believe what I'd become">
-    	<kor meaning="사람들은 나의 변한 모습을 믿지 못했지" />
-    </eng>
     <eng group="23" kind="part" text="People">
     	<kor meaning="" />
     </eng>
@@ -470,9 +399,6 @@
     </eng>
 
     <!--- Revolutionaries wait -->
-    <eng group="24" kind="sentence" text="Revolutionaries wait">
-    	<kor meaning="혁명가들은 기다리지" />
-    </eng>
     <eng group="24" kind="part" text="Revolutionaries">
     	<kor meaning="" />
     </eng>
@@ -481,9 +407,6 @@
     </eng>
 
     <!--- For my head on a silver plate -->
-    <eng group="25" kind="sentence" text="For my head on a silver plate">
-    	<kor meaning="내 머리가 은쟁반에 올려지길" />
-    </eng>
     <eng group="25" kind="part" text="For my">
     	<kor meaning="" />
     </eng>
@@ -498,9 +421,6 @@
     </eng>
 
     <!--- Just a puppet on a lonely string -->
-    <eng group="26" kind="sentence" text="Just a puppet on a lonely string">
-    	<kor meaning="한 가닥 외로운 줄에 매달린 꼭두각시일 뿐이지" />
-    </eng>
     <eng group="26" kind="part" text="Just">
     	<kor meaning="" />
     </eng>
@@ -515,9 +435,6 @@
     </eng>
 
     <!--- Oh who would ever want to be king? -->
-    <eng group="27" kind="sentence" text="Oh who would ever want to be king?">
-    	<kor meaning="오 누가 왕이 되고 싶어하겠어?" />
-    </eng>
     <eng group="27" kind="part" text="Oh who">
     	<kor meaning="" />
     </eng>
@@ -532,9 +449,6 @@
     </eng>
 
     <!--- I hear Jerusalem bells are ringing -->
-    <eng group="28" kind="sentence" text="I hear Jerusalem bells are ringing">
-    	<kor meaning="예루살렘 종소리가 들리네" />
-    </eng>
     <eng group="28" kind="part" text="I hear">
     	<kor meaning="" />
     </eng>
@@ -546,9 +460,6 @@
     </eng>
 
     <!--- Roman Cavalry choirs are singing -->
-    <eng group="29" kind="sentence" text="Roman Cavalry choirs are singing">
-    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
-    </eng>
     <eng group="29" kind="part" text="Roman Cavalry">
     	<kor meaning="" />
     </eng>
@@ -560,9 +471,6 @@
     </eng>
 
     <!--- Be my mirror my sword and shield -->
-    <eng group="30" kind="sentence" text="Be my mirror my sword and shield">
-    	<kor meaning="나의 거울, 나의 검, 나의 방패가 돼 주오" />
-    </eng>
     <eng group="30" kind="part" text="Be my">
     	<kor meaning="" />
     </eng>
@@ -577,9 +485,6 @@
     </eng>
 
     <!--- My missionaries in a foreign field -->
-    <eng group="31" kind="sentence" text="My missionaries in a foreign field">
-    	<kor meaning="타지에 나가있는 나의 선교사들이여" />
-    </eng>
     <eng group="31" kind="part" text="My missionaries">
     	<kor meaning="" />
     </eng>
@@ -591,9 +496,6 @@
     </eng>
 
     <!--- For some reason I can’t explain -->
-    <eng group="32" kind="sentence" text="For some reason I can’t explain">
-    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
-    </eng>
     <eng group="32" kind="part" text="For">
     	<kor meaning="" />
     </eng>
@@ -611,9 +513,6 @@
     </eng>
 
     <!--- I know Saint Peter won't call my name -->
-    <eng group="33" kind="sentence" text="I know Saint Peter won't call my name">
-    	<kor meaning="성 베드로가 내 이름을 부르지 않을 거란 걸 알지" />
-    </eng>
     <eng group="33" kind="part" text="I know">
     	<kor meaning="" />
     </eng>
@@ -634,9 +533,6 @@
     </eng>
 
     <!--- Never an honest word -->
-    <eng group="34" kind="sentence" text="Never an honest word">
-    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
-    </eng>
     <eng group="34" kind="part" text="Never an">
     	<kor meaning="" />
     </eng>
@@ -648,9 +544,6 @@
     </eng>
 
     <!--- And that was when I ruled the world -->
-    <eng group="35" kind="sentence" text="And that was when I ruled the world">
-    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
-    </eng>
     <eng group="35" kind="part" text="And">
     	<kor meaning="" />
     </eng>
@@ -670,5 +563,117 @@
     	
   </DictInfo>
 
+  <!--- 노래 가사  -->
+  <DictInfo num="101" title="viva la vida" >
+    <eng group="0" kind="sentence" text="I used to rule the world">
+    	<kor meaning="난 한 때 세상을 지배했었지" />
+    </eng>
+    <eng group="1" kind="sentence" text="Seas would rise when I gave the word">
+    	<kor meaning="내 말 한 마디에 바다가 솟아 올랐지" />
+    </eng>
+    <eng group="2" kind="sentence" text="Now in the morning I sleep alone">
+    	<kor meaning="이제 난 아침에 홀로 잠을 자고" />
+    </eng>
+    <eng group="3" kind="sentence" text="Sweep the streets I used to own">
+    	<kor meaning="내가 한 때 지배했던 거리를 쓸지" />
+    </eng>
+    <eng group="4" kind="sentence" text="I used to roll the dice">
+    	<kor meaning="난 주사위를 굴리며 도박을 하곤 했지" />
+    </eng>
+    <eng group="5" kind="sentence" text="Feel the fear in my enemies’ eyes">
+    	<kor meaning="적의 눈에 서린 공포를 느끼면서" />
+    </eng>
+    <eng group="6" kind="sentence" text="Listen as the crowd would sing">
+    	<kor meaning="군중이 노래하는 걸 들어봐" />
+    </eng>
+    <eng group="7" kind="sentence" text="Now the old king is dead! Long live the king!">
+    	<kor meaning="이제 옛 왕이 죽었다! 왕이여, 만세!" />
+    </eng>
+    <eng group="8" kind="sentence" text="One minute I held the key">
+    	<kor meaning="한 때 난 열쇠를 쥐고 있었지만" />
+    </eng>
+    <eng group="9" kind="sentence" text="Next the walls were closed on me">
+    	<kor meaning="다음 순간에는 사방에 벽이 나를 에워싸고 있었어" />
+    </eng>
+    <eng group="10" kind="sentence" text="And I discovered that my castles stand">
+    	<kor meaning="그리고 난 발견했지, 나의 성은" />
+    </eng>
+    <eng group="11" kind="sentence" text="Upon pillars of salt, and pillars of sand">
+    	<kor meaning="소금 기둥, 그리고 모래 기둥 위에 서 있었다는 걸" />
+    </eng>
+    <eng group="12" kind="sentence" text="I hear Jerusalem bells are ringing">
+    	<kor meaning="예루살렘 종소리가 들리네" />
+    </eng>
+    <eng group="13" kind="sentence" text="Roman Cavalry choirs are singing">
+    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
+    </eng>
+    <eng group="14" kind="sentence" text="Be my mirror my sword and shield">
+    	<kor meaning="나의 거울, 나의 검, 방패가 돼 주오" />
+    </eng>
+    <eng group="15" kind="sentence" text="My missionaries in a foreign field">
+    	<kor meaning="타지에 나가 있는 나의 선교사들이여" />
+    </eng>
+    <eng group="16" kind="sentence" text="For some reason I can’t explain">
+    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
+    </eng>
+    <eng group="17" kind="sentence" text="Once you go there was never,">
+    	<kor meaning="일단 그 곳에 가면, 절대로" />
+    </eng>
+    <eng group="18" kind="sentence" text="Never an honest word">
+    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
+    </eng>
+    <eng group="19" kind="sentence" text="That was when I ruled the world">
+    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
+    </eng>
+    <eng group="20" kind="sentence" text="It was the wicked and wild wind">
+    	<kor meaning="지독하고 사나운 바람이었지" />
+    </eng>
+    <eng group="21" kind="sentence" text="Blew down the doors to let me in">
+    	<kor meaning="문을 부숴버려서 내가 들어갈 수 있었지" />
+    </eng>
+    <eng group="22" kind="sentence" text="Shattered windows and the sound of drums">
+    	<kor meaning="깨어진 창과 북 소리" />
+    </eng>
+    <eng group="23" kind="sentence" text="People couldn’t believe what I'd become">
+    	<kor meaning="사람들은 나의 변한 모습을 믿지 못했지" />
+    </eng>
+    <eng group="24" kind="sentence" text="Revolutionaries wait">
+    	<kor meaning="혁명가들은 기다리지" />
+    </eng>
+    <eng group="25" kind="sentence" text="For my head on a silver plate">
+    	<kor meaning="내 머리가 은쟁반에 올려지길" />
+    </eng>
+    <eng group="26" kind="sentence" text="Just a puppet on a lonely string">
+    	<kor meaning="한 가닥 외로운 줄에 매달린 꼭두각시일 뿐이지" />
+    </eng>
+    <eng group="27" kind="sentence" text="Oh who would ever want to be king?">
+    	<kor meaning="오 누가 왕이 되고 싶어하겠어?" />
+    </eng>
+    <eng group="28" kind="sentence" text="I hear Jerusalem bells are ringing">
+    	<kor meaning="예루살렘 종소리가 들리네" />
+    </eng>
+    <eng group="29" kind="sentence" text="Roman Cavalry choirs are singing">
+    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
+    </eng>
+    <eng group="30" kind="sentence" text="Be my mirror my sword and shield">
+    	<kor meaning="나의 거울, 나의 검, 나의 방패가 돼 주오" />
+    </eng>
+    <eng group="31" kind="sentence" text="My missionaries in a foreign field">
+    	<kor meaning="타지에 나가있는 나의 선교사들이여" />
+    </eng>
+    <eng group="32" kind="sentence" text="For some reason I can’t explain">
+    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
+    </eng>
+    <eng group="33" kind="sentence" text="I know Saint Peter won't call my name">
+    	<kor meaning="성 베드로가 내 이름을 부르지 않을 거란 걸 알지" />
+    </eng>
+    <eng group="34" kind="sentence" text="Never an honest word">
+    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
+    </eng>
+    <eng group="35" kind="sentence" text="And that was when I ruled the world">
+    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
+    </eng>
+
+  </DictInfo>
 
 </root>
