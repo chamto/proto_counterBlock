@@ -595,7 +595,8 @@ namespace CounterBlock
 						}
 						//_audioSource.Play (); //chamto test
 						//List<int> seq = Single.resource.GetDictEng()._dictInfoMap.ElementAt(101).Value.GetSequence(); //101 임시 처리
-						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(); //101 임시 처리
+						//List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(); //101 임시 처리
+						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //101 임시 처리
 						_audioSource.Stop ();
 						_audioSource.PlayOneShot(clips[seq[_voiceSequence]]);
 						_voiceSequence++;

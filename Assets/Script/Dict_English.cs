@@ -130,17 +130,17 @@ namespace XML_Data
 
 	public class DictInfo
 	{
-		
+		public enum eKind
+		{
+			None,
+			Vocabulary,	//단어 
+			Idiom,		//숙어 
+			Sentence,	//문장
+			Part,		//문장의 부분
+		}
+
 		public class Meaning : List<int>
 		{
-			public enum eKind
-			{
-				None,
-				Vocabulary,	//단어 
-				Idiom,		//숙어 
-				Sentence,	//문장
-				Part,		//문장의 부분
-			}
 			public eKind kind;
 		}
 
@@ -149,7 +149,7 @@ namespace XML_Data
 
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
-		private List<int> _sequence = new List<int>(); //xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
+		private Dictionary<eKind, List<int> > _sequence = new Dictionary<eKind, List<int>>(); //xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
 
 
 		public void SetID_Number(int number)
@@ -166,9 +166,9 @@ namespace XML_Data
 			return _data;
 		}
 
-		public List<int> GetSequence()
+		public List<int> GetSequence(eKind kind)
 		{
-			return _sequence;
+			return _sequence[kind];
 		}
 
 		public string GetTitle()
@@ -197,8 +197,21 @@ namespace XML_Data
 				//DebugWide.LogBlue (mOne +  " ----  " + hashKey);
 				_valueToKeyMap.Add (mOne, hashKey);
 			}
+				
+			this.AddSequence(mMore.kind, hashKey); //순서저장
+		}
 
-			_sequence.Add (hashKey); //순서저장
+		public void AddSequence(eKind kind , int hashKey )
+		{
+			//DebugWide.LogBlue ("AddSequence ............ " + kind + "__" + hashKey ); //chamto test
+			
+			List<int> getList = null;
+			if (false == _sequence.TryGetValue (kind, out getList)) 
+			{
+				getList = new List<int> ();
+				_sequence.Add (kind, getList);
+			}
+			getList.Add (hashKey);
 		}
 
 
@@ -346,7 +359,7 @@ namespace XML_Data
 				item.SetTitle(xmlNode.Value.GetHashCode());
 
 				DictInfo.Meaning meaning = null;
-				DictInfo.Meaning.eKind eKind = DictInfo.Meaning.eKind.None;
+				DictInfo.eKind eKind = DictInfo.eKind.None;
 
 				//==================== <eng> ====================
 				thirdList = secondList[i].ChildNodes; //<DictInfo>
@@ -379,7 +392,7 @@ namespace XML_Data
 						}
 					}
 					//====================//====================
-
+					int textHashCode = 0; //공백문자의 해쉬값이 0 이다
 					attrs = thirdList[j].Attributes; //<eng>
 					foreach(XmlNode n in attrs)
 					{
@@ -387,26 +400,29 @@ namespace XML_Data
 						{
 						case "kind":
 							if ("vocabulary" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Vocabulary;
+								eKind = DictInfo.eKind.Vocabulary;
 							if ("idiom" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Idiom;
+								eKind = DictInfo.eKind.Idiom;
 							if ("sentence" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Sentence;
-							if ("sentence" == n.Value)
-								eKind = DictInfo.Meaning.eKind.Part;
+								eKind = DictInfo.eKind.Sentence;
+							if ("part" == n.Value)
+								eKind = DictInfo.eKind.Part;
+
+							meaning.kind = eKind;
+							//DebugWide.LogGreen (eKind + "____");
 							break;
-						case "text":
+						case "text": //kind -> text 순일때만 정상처리함
 							{
-								Single.hashString.Add (n.Value.GetHashCode (), n.Value);
-								item.Add (n.Value.GetHashCode(), meaning);
+								textHashCode = n.Value.GetHashCode ();
+								Single.hashString.Add (textHashCode, n.Value);
 								//DebugWide.LogBlue ("<eng> " + n.Name + "  =  " + n.Value );
 							}
 							break;
 						}
 					}
 
-					meaning.kind = eKind;
-
+					if(0 != textHashCode)
+						item.Add (textHashCode, meaning);
 
 				}
 				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
@@ -420,4 +436,5 @@ namespace XML_Data
 	}//class end
 
 }//namespace end
+
 
