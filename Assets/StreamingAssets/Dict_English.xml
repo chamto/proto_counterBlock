@@ -9,146 +9,561 @@
     	<kor meaning="추억"  />
     	<kor meaning="기억"  />
     </eng>
-  </DictInfo>
-  <DictInfo num="100" title="vocabulary and idiom">
-  <!---참고 : https://www.voakorea.com/a/pops-viva-la-vida-129257083/1275747.html -->
-
-  <!--- I used to rule the world -->
-    <eng group="0" kind="idiom" text="I used to ~">
+    <eng group="2" kind="idiom" text="used to ~">
     	<kor meaning="뭐뭐 하곤 했다" />
     	<kor meaning="한때는 뭐뭐 이었다" />
     	<kor meaning="뭐뭐에 익숙하다" />
     </eng>
-    <eng group="0" kind="vocabulary" text="rule">
+  </DictInfo>
+
+  <!---참고 : https://www.voakorea.com/a/pops-viva-la-vida-129257083/1275747.html -->
+  <DictInfo num="100" title="vocabulary and idiom">
+
+  <!--- I used to rule the world -->
+    <eng group="0" kind="part" text="I used to">
     	<kor meaning="" />
     </eng>
-    <eng group="0" kind="vocabulary" text="the world">
+    <eng group="0" kind="part" text="rule">
+    	<kor meaning="" />
+    </eng>
+    <eng group="0" kind="part" text="the world">
     	<kor meaning="" />
     </eng>
 
     <!--- Seas would rise when I gave the word -->
-    <eng group="1" kind="vocabulary" text="Seas">
+    <eng group="1" kind="part" text="Seas">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="vocabulary" text="would rise">
+    <eng group="1" kind="part" text="would rise">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="vocabulary" text="when I gave">
+    <eng group="1" kind="part" text="when I gave">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="vocabulary" text="the word">
+    <eng group="1" kind="part" text="the word">
     	<kor meaning="" />
     </eng>
 
     <!--- Now in the morning I sleep alone -->
-    <eng group="2" kind="vocabulary" text="Now">
+    <eng group="2" kind="part" text="Now">
     	<kor meaning="" />
     </eng>
-    <eng group="2" kind="vocabulary" text="in the morning">
+    <eng group="2" kind="part" text="in the morning">
     	<kor meaning="" />
     </eng>
-    <eng group="2" kind="vocabulary" text="I sleep alone">
+    <eng group="2" kind="part" text="I sleep alone">
     	<kor meaning="" />
     </eng>
-    <eng group="2" kind="vocabulary" text="alone">
+    <eng group="2" kind="part" text="alone">
     	<kor meaning="" />
     </eng>
 
-    <!--- RRRRRRRRRRRR  -->
+
     <!--- Sweep the streets I used to own -->
-    <eng group="2" kind="vocabulary" text="Now">
+    <eng group="3" kind="part" text="Sweep">
     	<kor meaning="" />
     </eng>
-     <!--- I used to roll the dice -->
-    <!--- Feel the fear in my enemies’ eyes -->
-    <!--- Listen as the crowd would sing -->
-    <!--- Now the old king is dead! Long live the king! -->
-    <!--- One minute I held the key -->
-    	<kor meaning="한 때 난 열쇠를 쥐고 있었지만" />
+    <eng group="3" kind="part" text="the streets">
+    	<kor meaning="" />
     </eng>
-    <eng group="9" kind="sentence" text="Next the walls were closed on me">
-    	<kor meaning="다음 순간에는 사방에 벽이 나를 에워싸고 있었어" />
+    <eng group="3" kind="part" text="I used to">
+    	<kor meaning="" />
     </eng>
-    <eng group="10" kind="sentence" text="And I discovered that my castles stand">
-    	<kor meaning="그리고 난 발견했지, 나의 성은" />
+    <eng group="3" kind="part" text="own">
+    	<kor meaning="" />
     </eng>
-    <eng group="11" kind="sentence" text="Upon pillars of salt, and pillars of sand">
-    	<kor meaning="소금 기둥, 그리고 모래 기둥 위에 서 있었다는 걸" />
-    </eng>
-    <eng group="12" kind="sentence" text="I hear Jerusalem bells are ringing">
-    	<kor meaning="예루살렘 종소리가 들리네" />
-    </eng>
-    <eng group="13" kind="sentence" text="Roman Cavalry choirs are singing">
-    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
-    </eng>
-    <eng group="14" kind="sentence" text="Be my mirror my sword and shield">
-    	<kor meaning="나의 거울, 나의 검, 방패가 돼 주오" />
-    </eng>
-    <eng group="15" kind="sentence" text="My missionaries in a foreign field">
-    	<kor meaning="타지에 나가 있는 나의 선교사들이여" />
-    </eng>
-    <eng group="16" kind="sentence" text="For some reason I can’t explain">
-    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
-    </eng>
-    <eng group="17" kind="sentence" text="Once you go there was never,">
-    	<kor meaning="일단 그 곳에 가면, 절대로" />
-    </eng>
-    <eng group="18" kind="sentence" text="Never an honest word">
-    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
-    </eng>
-    <eng group="19" kind="sentence" text="That was when I ruled the world">
-    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
-    </eng>
-    <eng group="20" kind="sentence" text="It was the wicked and wild wind">
-    	<kor meaning="지독하고 사나운 바람이었지" />
-    </eng>
-    <eng group="21" kind="sentence" text="Blew down the doors to let me in">
-    	<kor meaning="문을 부숴버려서 내가 들어갈 수 있었지" />
-    </eng>
-    <eng group="22" kind="sentence" text="Shattered windows and the sound of drums">
-    	<kor meaning="깨어진 창과 북 소리" />
-    </eng>
-    <eng group="23" kind="sentence" text="People couldn’t believe what I'd become">
-    	<kor meaning="사람들은 나의 변한 모습을 믿지 못했지" />
-    </eng>
-    <eng group="24" kind="sentence" text="Revolutionaries wait">
-    	<kor meaning="혁명가들은 기다리지" />
-    </eng>
-    <eng group="25" kind="sentence" text="For my head on a silver plate">
-    	<kor meaning="내 머리가 은쟁반에 올려지길" />
-    </eng>
-    <eng group="26" kind="sentence" text="Just a puppet on a lonely string">
-    	<kor meaning="한 가닥 외로운 줄에 매달린 꼭두각시일 뿐이지" />
-    </eng>
-    <eng group="27" kind="sentence" text="Oh who would ever want to be king?">
-    	<kor meaning="오 누가 왕이 되고 싶어하겠어?" />
-    </eng>
-    <eng group="28" kind="sentence" text="I hear Jerusalem bells are ringing">
-    	<kor meaning="예루살렘 종소리가 들리네" />
-    </eng>
-    <eng group="29" kind="sentence" text="Roman Cavalry choirs are singing">
-    	<kor meaning="로마 기병대가 합창하는 소리가 들리네" />
-    </eng>
-    <eng group="30" kind="sentence" text="Be my mirror my sword and shield">
-    	<kor meaning="나의 거울, 나의 검, 나의 방패가 돼 주오" />
-    </eng>
-    <eng group="31" kind="sentence" text="My missionaries in a foreign field">
-    	<kor meaning="타지에 나가있는 나의 선교사들이여" />
-    </eng>
-    <eng group="32" kind="sentence" text="For some reason I can’t explain">
-    	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
-    </eng>
-    <eng group="33" kind="sentence" text="I know Saint Peter won't call my name">
-    	<kor meaning="성 베드로가 내 이름을 부르지 않을 거란 걸 알지" />
-    </eng>
-    <eng group="34" kind="sentence" text="Never an honest word">
-    	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
-    </eng>
-    <eng group="35" kind="sentence" text="And that was when I ruled the world">
-    	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
 
-    <!--- RRRRRRRR -->
+    <!--- I used to roll the dice -->
+    <eng group="4" kind="part" text="I used to">
+    	<kor meaning="" />
+    </eng>
+    <eng group="4" kind="part" text="roll">
+    	<kor meaning="" />
+    </eng>
+    <eng group="4" kind="part" text="the dice">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Feel the fear in my enemies’ eyes -->
+    <eng group="5" kind="part" text="Feel">
+    	<kor meaning="" />
+    </eng>
+    <eng group="5" kind="part" text="the fear">
+    	<kor meaning="" />
+    </eng>
+    <eng group="5" kind="part" text="in my">
+    	<kor meaning="" />
+    </eng>
+    <eng group="5" kind="part" text="enemies’">
+    	<kor meaning="" />
+    </eng>
+    <eng group="5" kind="part" text="eyes’">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Listen as the crowd would sing -->
+    <eng group="6" kind="part" text="Listen">
+    	<kor meaning="" />
+    </eng>
+    <eng group="6" kind="part" text="as">
+    	<kor meaning="" />
+    </eng>
+    <eng group="6" kind="part" text="the crowd">
+    	<kor meaning="" />
+    </eng>
+    <eng group="6" kind="part" text="would">
+    	<kor meaning="" />
+    </eng>
+   	<eng group="6" kind="part" text="sing">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Now the old king is dead! Long live the king! -->
+    <eng group="7" kind="part" text="Now">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="the old king">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="is">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="dead!">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="Long">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="live">
+    	<kor meaning="" />
+    </eng>
+    <eng group="7" kind="part" text="the king!">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- One minute I held the key -->
+    <eng group="8" kind="part" text="One minute">
+    	<kor meaning="" />
+    </eng>
+    <eng group="8" kind="part" text="I held">
+    	<kor meaning="" />
+    </eng>
+    <eng group="8" kind="part" text="the key">
+    	<kor meaning="" />
+    </eng>
+
+    <!-- Next the walls were closed on me -->
+    <eng group="9" kind="part" text="Next">
+    	<kor meaning="" />
+    </eng>
+    <eng group="9" kind="part" text="the walls">
+    	<kor meaning="" />
+    </eng>
+    <eng group="9" kind="part" text="closed on">
+    	<kor meaning="" />
+    </eng>
+    <eng group="9" kind="part" text="me">
+    	<kor meaning="" />
+    </eng>
+
+    <!-- And I discovered that my castles stand -->
+    <eng group="10" kind="part" text="And">
+    	<kor meaning="" />
+    </eng>
+    <eng group="10" kind="part" text="I discovered">
+    	<kor meaning="" />
+    </eng>
+    <eng group="10" kind="part" text="that">
+    	<kor meaning="" />
+    </eng>
+    <eng group="10" kind="part" text="my castles">
+    	<kor meaning="" />
+    </eng>
+    <eng group="10" kind="part" text="stand">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Upon pillars of salt, and pillars of sand -->
+    <eng group="11" kind="part" text="Upon">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="pillars">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="of">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="salt,">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="and">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="pillars of">
+    	<kor meaning="" />
+    </eng>
+    <eng group="11" kind="part" text="sand">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- I hear Jerusalem bells are ringing -->
+    <eng group="12" kind="part" text="I hear">
+    	<kor meaning="" />
+    </eng>
+    <eng group="12" kind="part" text="Jerusalem">
+    	<kor meaning="" />
+    </eng>
+    <eng group="12" kind="part" text="bells">
+    	<kor meaning="" />
+    </eng>
+    <eng group="12" kind="part" text="are">
+    	<kor meaning="" />
+    </eng>
+    <eng group="12" kind="part" text="ringing">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Roman Cavalry choirs are singing -->
+    <eng group="13" kind="part" text="Roman">
+    	<kor meaning="" />
+    </eng>
+    <eng group="13" kind="part" text="Cavalry">
+    	<kor meaning="" />
+    </eng>
+    <eng group="13" kind="part" text="choirs">
+    	<kor meaning="" />
+    </eng>
+    <eng group="13" kind="part" text="are">
+    	<kor meaning="" />
+    </eng>
+    <eng group="13" kind="part" text="singing">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Be my mirror my sword and shield -->
+    <eng group="14" kind="part" text="Be my">
+    	<kor meaning="" />
+    </eng>
+    <eng group="14" kind="part" text="mirror">
+    	<kor meaning="" />
+    </eng>
+    <eng group="14" kind="part" text="my sword">
+    	<kor meaning="" />
+    </eng>
+    <eng group="14" kind="part" text="and">
+    	<kor meaning="" />
+    </eng>
+    <eng group="14" kind="part" text="shield">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- My missionaries in a foreign field -->
+    <eng group="15" kind="part" text="My">
+    	<kor meaning="" />
+    </eng>
+    <eng group="15" kind="part" text="missionaries">
+    	<kor meaning="" />
+    </eng>
+    <eng group="15" kind="part" text="in">
+    	<kor meaning="" />
+    </eng>
+    <eng group="15" kind="part" text="a foreign">
+    	<kor meaning="" />
+    </eng>
+    <eng group="15" kind="part" text="field">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- For some reason I can’t explain -->
+    <eng group="16" kind="part" text="For">
+    	<kor meaning="" />
+    </eng>
+    <eng group="16" kind="part" text="some">
+    	<kor meaning="" />
+    </eng>
+    <eng group="16" kind="part" text="reason">
+    	<kor meaning="" />
+    </eng>
+    <eng group="16" kind="part" text="I can’t">
+    	<kor meaning="" />
+    </eng>
+    <eng group="16" kind="part" text="explain">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Once you go there was never, -->
+    <eng group="17" kind="part" text="Once">
+    	<kor meaning="" />
+    </eng>
+    <eng group="17" kind="part" text="you go">
+    	<kor meaning="" />
+    </eng>
+    <eng group="17" kind="part" text="there was">
+    	<kor meaning="" />
+    </eng>
+    <eng group="17" kind="part" text="never,">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Never an honest word -->
+    <eng group="18" kind="part" text="Never">
+    	<kor meaning="" />
+    </eng>
+    <eng group="18" kind="part" text="an honest">
+    	<kor meaning="" />
+    </eng>
+    <eng group="18" kind="part" text="word">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- That was when I ruled the world -->
+    <eng group="19" kind="part" text="That was">
+    	<kor meaning="" />
+    </eng>
+    <eng group="19" kind="part" text="when I">
+    	<kor meaning="" />
+    </eng>
+    <eng group="19" kind="part" text="ruled">
+    	<kor meaning="" />
+    </eng>
+    <eng group="19" kind="part" text="the world">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- It was the wicked and wild wind -->
+    <eng group="20" kind="part" text="It was">
+    	<kor meaning="" />
+    </eng>
+    <eng group="20" kind="part" text="the wicked">
+    	<kor meaning="" />
+    </eng>
+    <eng group="20" kind="part" text="and wild">
+    	<kor meaning="" />
+    </eng>
+    <eng group="20" kind="part" text="wind">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Blew down the doors to let me in -->
+    <eng group="21" kind="part" text="Blew">
+    	<kor meaning="" />
+    </eng>
+    <eng group="21" kind="part" text="down">
+    	<kor meaning="" />
+    </eng>
+    <eng group="21" kind="part" text="the doors">
+    	<kor meaning="" />
+    </eng>
+    <eng group="21" kind="part" text="to">
+    	<kor meaning="" />
+    </eng>
+    <eng group="21" kind="part" text="let me in">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Shattered windows and the sound of drums -->
+    <eng group="22" kind="part" text="Shattered">
+    	<kor meaning="" />
+    </eng>
+    <eng group="22" kind="part" text="windows">
+    	<kor meaning="" />
+    </eng>
+    <eng group="22" kind="part" text="and">
+    	<kor meaning="" />
+    </eng>
+    <eng group="22" kind="part" text="the sound of">
+    	<kor meaning="" />
+    </eng>
+    <eng group="22" kind="part" text="drums">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- People couldn’t believe what I'd become -->
+    <eng group="23" kind="part" text="People">
+    	<kor meaning="" />
+    </eng>
+    <eng group="23" kind="part" text="couldn’t">
+    	<kor meaning="could not" />
+    </eng>
+    <eng group="23" kind="part" text="believe">
+    	<kor meaning="" />
+    </eng>
+    <eng group="23" kind="part" text="what">
+    	<kor meaning="" />
+    </eng>
+    <eng group="23" kind="part" text="I'd">
+    	<kor meaning="I had" />
+    </eng>
+    <eng group="23" kind="part" text="become">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Revolutionaries wait -->
+    <eng group="24" kind="part" text="Revolutionaries">
+    	<kor meaning="" />
+    </eng>
+    <eng group="24" kind="part" text="wait">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- For my head on a silver plate -->
+    <eng group="25" kind="part" text="For my">
+    	<kor meaning="" />
+    </eng>
+    <eng group="25" kind="part" text="head">
+    	<kor meaning="" />
+    </eng>
+    <eng group="25" kind="part" text="on a silver">
+    	<kor meaning="" />
+    </eng>
+    <eng group="25" kind="part" text="plate">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Just a puppet on a lonely string -->
+    <eng group="26" kind="part" text="Just">
+    	<kor meaning="" />
+    </eng>
+    <eng group="26" kind="part" text="a puppet">
+    	<kor meaning="" />
+    </eng>
+    <eng group="26" kind="part" text="on a lonely">
+    	<kor meaning="" />
+    </eng>
+    <eng group="26" kind="part" text="string">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Oh who would ever want to be king? -->
+    <eng group="27" kind="part" text="Oh who">
+    	<kor meaning="" />
+    </eng>
+    <eng group="27" kind="part" text="would ever">
+    	<kor meaning="" />
+    </eng>
+    <eng group="27" kind="part" text="want to">
+    	<kor meaning="" />
+    </eng>
+    <eng group="27" kind="part" text="be king?">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- I hear Jerusalem bells are ringing -->
+    <eng group="28" kind="part" text="I hear">
+    	<kor meaning="" />
+    </eng>
+    <eng group="28" kind="part" text="Jerusalem bells">
+    	<kor meaning="" />
+    </eng>
+    <eng group="28" kind="part" text="are ringing">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Roman Cavalry choirs are singing -->
+    <eng group="29" kind="part" text="Roman Cavalry">
+    	<kor meaning="" />
+    </eng>
+    <eng group="29" kind="part" text="choirs are">
+    	<kor meaning="" />
+    </eng>
+    <eng group="29" kind="part" text="singing">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Be my mirror my sword and shield -->
+    <eng group="30" kind="part" text="Be my">
+    	<kor meaning="" />
+    </eng>
+    <eng group="30" kind="part" text="mirror">
+    	<kor meaning="" />
+    </eng>
+    <eng group="30" kind="part" text="my sword">
+    	<kor meaning="" />
+    </eng>
+    <eng group="30" kind="part" text="and shield">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- My missionaries in a foreign field -->
+    <eng group="31" kind="part" text="My missionaries">
+    	<kor meaning="" />
+    </eng>
+    <eng group="31" kind="part" text="in a foreign">
+    	<kor meaning="" />
+    </eng>
+    <eng group="31" kind="part" text="field">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- For some reason I can’t explain -->
+    <eng group="32" kind="part" text="For">
+    	<kor meaning="" />
+    </eng>
+    <eng group="32" kind="part" text="some">
+    	<kor meaning="" />
+    </eng>
+    <eng group="32" kind="part" text="reason">
+    	<kor meaning="" />
+    </eng>
+    <eng group="32" kind="part" text="I can’t">
+    	<kor meaning="" />
+    </eng>
+    <eng group="32" kind="part" text="explain">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- I know Saint Peter won't call my name -->
+    <eng group="33" kind="part" text="I know">
+    	<kor meaning="" />
+    </eng>
+    <eng group="33" kind="part" text="Saint">
+    	<kor meaning="" />
+    </eng>
+    <eng group="33" kind="part" text="Peter">
+    	<kor meaning="" />
+    </eng>
+    <eng group="33" kind="part" text="won't">
+    	<kor meaning="" />
+    </eng>
+    <eng group="33" kind="part" text="call my">
+    	<kor meaning="" />
+    </eng>
+    <eng group="33" kind="part" text="name">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- Never an honest word -->
+    <eng group="34" kind="part" text="Never an">
+    	<kor meaning="" />
+    </eng>
+    <eng group="34" kind="part" text="honest">
+    	<kor meaning="" />
+    </eng>
+    <eng group="34" kind="part" text="word">
+    	<kor meaning="" />
+    </eng>
+
+    <!--- And that was when I ruled the world -->
+    <eng group="35" kind="part" text="And">
+    	<kor meaning="" />
+    </eng>
+    <eng group="35" kind="part" text="that was">
+    	<kor meaning="" />
+    </eng>
+    <eng group="35" kind="part" text="when I">
+    	<kor meaning="" />
+    </eng>
+    <eng group="35" kind="part" text="ruled">
+    	<kor meaning="" />
+    </eng>
+    <eng group="35" kind="part" text="the world">
+    	<kor meaning="" />
+    </eng>
+
+    	
   </DictInfo>
+
+  <!--- 노래 가사  -->
   <DictInfo num="101" title="viva la vida" >
     <eng group="0" kind="sentence" text="I used to rule the world">
     	<kor meaning="난 한 때 세상을 지배했었지" />

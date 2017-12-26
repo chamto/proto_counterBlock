@@ -139,15 +139,27 @@ namespace XML_Data
 				Vocabulary,	//단어 
 				Idiom,		//숙어 
 				Sentence,	//문장
+				Part,		//문장의 부분
 			}
 			public eKind kind;
 		}
 
+		private int _id_number = -1; //고유번호 
 		private int _hashTitle = -1;
 
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
 		private List<int> _sequence = new List<int>(); //xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
+
+
+		public void SetID_Number(int number)
+		{
+			_id_number = number;
+		}
+		public int GetID_Number()
+		{
+			return _id_number;
+		}
 
 		public Dictionary<int, DictInfo.Meaning> GetData()
 		{
@@ -320,9 +332,15 @@ namespace XML_Data
 			DictInfo item = null;
 			for (int i = 0; i < secondList.Count; ++i) 
 			{
+				//DebugWide.LogBlue(secondList[i] + " ------- i:" + i);
+				if (false == (secondList [i] is System.Xml.XmlElement)) //System.Xml.XmlComment 주석일 때는 처리 하지 않는다
+					continue;
+				
 				item = new DictInfo();
 
 				//==================== <DictInfo title> ====================
+				xmlNode = secondList[i].Attributes.GetNamedItem("num");
+				item.SetID_Number (int.Parse (xmlNode.Value));
 				xmlNode = secondList[i].Attributes.GetNamedItem("title");
 				Single.hashString.Add (xmlNode.Value.GetHashCode (), xmlNode.Value);
 				item.SetTitle(xmlNode.Value.GetHashCode());
@@ -334,12 +352,19 @@ namespace XML_Data
 				thirdList = secondList[i].ChildNodes; //<DictInfo>
 				for (int j = 0; j < thirdList.Count; ++j) 
 				{
-
+					//DebugWide.LogBlue(thirdList[j] + " ------- j:" + j);
+					if (false == (thirdList [j] is System.Xml.XmlElement)) //System.Xml.XmlComment 주석일 때는 처리 하지 않는다
+						continue;
+					
 					//==================== <kor> ====================
 					meaning = new DictInfo.Meaning ();
 					fourthList = thirdList[j].ChildNodes; //<kor>
 					for (int k = 0; k < fourthList.Count; ++k) 
 					{
+						//DebugWide.LogBlue(fourthList[k] + " ------- k:" + k);
+						if (false == (fourthList [k] is System.Xml.XmlElement)) //System.Xml.XmlComment 주석일 때는 처리 하지 않는다
+							continue;
+						
 						attrs = fourthList[k].Attributes;
 						foreach(XmlNode n in attrs)
 						{
@@ -367,6 +392,8 @@ namespace XML_Data
 								eKind = DictInfo.Meaning.eKind.Idiom;
 							if ("sentence" == n.Value)
 								eKind = DictInfo.Meaning.eKind.Sentence;
+							if ("sentence" == n.Value)
+								eKind = DictInfo.Meaning.eKind.Part;
 							break;
 						case "text":
 							{
@@ -383,7 +410,7 @@ namespace XML_Data
 
 				}
 				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
-				_dictInfoMap.Add(i, item);
+				_dictInfoMap.Add(item.GetID_Number(), item);
 			}
 
 			_bCompleteLoad = true;
