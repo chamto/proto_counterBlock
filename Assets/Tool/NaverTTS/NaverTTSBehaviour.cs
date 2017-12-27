@@ -196,6 +196,11 @@ public class NaverTTS
 			output.Write(buffer, 0, bytesRead);
 		}
 	}
+
+	public bool FileExists()
+	{
+		return File.Exists (_path + _fileName);
+	}
 }
 
 
@@ -264,18 +269,22 @@ public class NaverTTSBehaviour : MonoBehaviour
 				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED-1);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
-				_tts.Request (tempStr);
-
-				yield return null;
+				if (false == _tts.FileExists()) 
+				{
+					_tts.Request (tempStr);
+					yield return null;
+				}
 
 				vKind = VoiceInfo.eKind.Eng_NaverWoman_2;
 				_tts.SetSpeaker (nLang, ToNaverTTS(nLang, vKind));
 				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+2);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
-				_tts.Request (tempStr);
-
-				yield return null;
+				if (false == _tts.FileExists()) 
+				{
+					_tts.Request (tempStr);
+					yield return null;
+				}
 			}
 
 		}
