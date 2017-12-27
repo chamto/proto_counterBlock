@@ -1484,50 +1484,6 @@ namespace CounterBlock
 
 					}
 
-					//if(1 == this.GetID())
-					//	DebugWide.LogBlue ("[1:_validState_current : "+_validState_current );//chamto test
-
-					//====================================================
-					// 실제 공격/방어 한 범위
-					//====================================================
-//					switch (_giveState_current) 
-//					{
-//					case eSubState.None:
-//						{
-////							if (Judgment.eState.Attack_Succeed == this.GetJudgmentState () ||
-////								Judgment.eState.Block_Succeed == this.GetJudgmentState()) 
-////							{
-////								this.SetGiveState (eSubState.Start);
-////							}
-//						}
-//						break;
-//					case eSubState.Start:
-//						{
-//							//DebugWide.LogBlue ("[0:Judge : "+this.GetID() + "  !!!  "+_judgment.state_current + "  " + _skill_current.name); //chamto test
-//							this.SetGiveState (eSubState.Running);
-//						}
-//						break;
-//					case eSubState.Running:
-//						{
-//							if (Judgment.eState.Attack_Succeed != this.GetJudgmentState () &&
-//							    Judgment.eState.Block_Succeed != this.GetJudgmentState ()) 
-//							{
-//								this.SetGiveState (eSubState.End);
-//							}
-//						}
-//						break;
-//					case eSubState.End:
-//						{
-//							this.SetGiveState (eSubState.None);
-//						}
-//						break;
-//					}
-
-					//if(1 == this.GetID())
-					//	DebugWide.LogBlue ("[2:_giveState_current : " + _giveState_current);
-					
-					//====================================================
-
 					
 					if (_behavior.runningTime <= this._timeDelta) 
 					{
@@ -2269,35 +2225,6 @@ namespace CounterBlock
 			bhvo.Calc_Velocity ();
 			skinfo.Add (bhvo);
 
-			//===== chamto test
-
-//			bhvo = new Behavior ();
-//			bhvo.runningTime = 1.0f;
-//			//1
-//			bhvo.cloggedTime_0 = 0.0f;
-//			bhvo.cloggedTime_1 = 0.6f;
-//			//2
-//			bhvo.eventTime_0 = 0.7f;
-//			bhvo.eventTime_1 = 0.8f;
-//			//3
-//			bhvo.openTime_0 = 0.7f;
-//			bhvo.openTime_1 = 1f;
-//			//4
-//			bhvo.rigidTime = 0.2f;
-//
-//
-//			bhvo.attack_shape = eTraceShape.Straight;
-//			//bhvo.attack_shape = eTraceShape.Vertical;
-//			bhvo.angle = 45f;
-//			bhvo.plus_range_0 = 0f;
-//			bhvo.plus_range_1 = -4f;
-//			bhvo.distance_travel = Behavior.DEFAULT_DISTANCE;
-//			//bhvo.distance_maxTime = bhvo.eventTime_0; //유효범위 시작시간에 최대 거리가 되게 한다. : 떙겨치기 , [시간증가에 따라 유효거리 감소]
-//			bhvo.distance_maxTime = bhvo.eventTime_1; //유효범위 끝시간에 최대 거리가 되게 한다. : 일반치기 , [시간증가에 따라 유효거리 증가]
-//			//bhvo.distance_maxTime = 0.6f; //chamto test
-//			bhvo.Calc_Velocity ();
-//			skinfo.Add (bhvo);
-
 			return skinfo;
 		}
 
@@ -2880,90 +2807,6 @@ namespace CounterBlock
 				DebugWide.LogBlue (s);
 			}
 		}
-	}//end class
-
-
-	public class AnimationCard
-	{
-
-		public enum eState
-		{
-			None,
-			Start,
-			Running,
-			End,
-			Max
-		}
-
-		private eState _state = eState.None;
-		private float _accumulate = 0f;
-		private float _scaleDelta = 0f;
-
-		private float _start = 0f;
-		private float _end = 0f;
-		private float _maxSecond = 0f;
-		private Transform _dst = null;
-
-		public void Start_Card_Move(Transform dst, float start, float end, float maxSecond)
-		{
-			_dst = dst;
-			_start = start;
-			_end = end;
-			_maxSecond = maxSecond;
-
-			_state = eState.Start;
-		}
-
-		public void Stop()
-		{
-			_state = eState.None;
-		}
-
-		public void Update()
-		{
-
-			switch (_state) 
-			{
-			case eState.None:
-				break;
-			case eState.Start:
-				{
-					_state = eState.Running;
-					_accumulate = 0f;
-					_scaleDelta = 0f;
-
-				}
-				break;
-
-			case eState.Running:
-				{
-					_accumulate += Time.deltaTime;
-					if (_maxSecond <= _accumulate) 
-					{
-						_state = eState.End;
-						break;
-					}
-
-					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-					_scaleDelta = Utility.Interpolation.easeOutElastic (_start, _end, _accumulate/_maxSecond);
-
-
-					_dst.Translate(_scaleDelta,0,0);
-					//DebugWide.LogBlue (_scaleDelta); //chamto test
-					//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-				}
-				break;
-			case eState.End:
-				{
-					_state = eState.None;
-				}
-				break;
-			}
-
-		}//end func
-
-
 	}//end class
 
 
