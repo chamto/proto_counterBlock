@@ -37,16 +37,16 @@
      <eng group="1" kind="sentence" text="Seas would rise when I gave the word">
     	<kor meaning="내 말 한 마디에 바다가 솟아 올랐지" />
     </eng>
-    <eng group="1" kind="part" text="Seas">
+    <eng group="1" kind="part" text="Seas would">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="part" text="would rise">
+    <eng group="1" kind="part" text="rise">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="part" text="when I gave">
+    <eng group="1" kind="part" text="when I">
     	<kor meaning="" />
     </eng>
-    <eng group="1" kind="part" text="the word">
+    <eng group="1" kind="part" text="gave the word">
     	<kor meaning="" />
     </eng>
 
@@ -54,16 +54,10 @@
     <eng group="2" kind="sentence" text="Now in the morning I sleep alone">
     	<kor meaning="이제 난 아침에 홀로 잠을 자고" />
     </eng>
-    <eng group="2" kind="part" text="Now">
-    	<kor meaning="" />
-    </eng>
-    <eng group="2" kind="part" text="in the morning">
+    <eng group="2" kind="part" text="Now in the morning">
     	<kor meaning="" />
     </eng>
     <eng group="2" kind="part" text="I sleep alone">
-    	<kor meaning="" />
-    </eng>
-    <eng group="2" kind="part" text="alone">
     	<kor meaning="" />
     </eng>
 
@@ -77,10 +71,7 @@
     <eng group="3" kind="part" text="the streets">
     	<kor meaning="" />
     </eng>
-    <eng group="3" kind="part" text="I used to">
-    	<kor meaning="" />
-    </eng>
-    <eng group="3" kind="part" text="own">
+    <eng group="3" kind="part" text="I used to own">
     	<kor meaning="" />
     </eng>
 
@@ -91,10 +82,7 @@
     <eng group="4" kind="part" text="I used to">
     	<kor meaning="" />
     </eng>
-    <eng group="4" kind="part" text="roll">
-    	<kor meaning="" />
-    </eng>
-    <eng group="4" kind="part" text="the dice">
+    <eng group="4" kind="part" text="roll the dice">
     	<kor meaning="" />
     </eng>
 
@@ -102,19 +90,13 @@
     <eng group="5" kind="sentence" text="Feel the fear in my enemies’ eyes">
     	<kor meaning="적의 눈에 서린 공포를 느끼면서" />
     </eng>
-    <eng group="5" kind="part" text="Feel">
-    	<kor meaning="" />
-    </eng>
-    <eng group="5" kind="part" text="the fear">
+    <eng group="5" kind="part" text="Feel the fear">
     	<kor meaning="" />
     </eng>
     <eng group="5" kind="part" text="in my">
     	<kor meaning="" />
     </eng>
-    <eng group="5" kind="part" text="enemies’">
-    	<kor meaning="" />
-    </eng>
-    <eng group="5" kind="part" text="eyes’">
+    <eng group="5" kind="part" text="enemies’ eyes">
     	<kor meaning="" />
     </eng>
 
@@ -125,16 +107,10 @@
     <eng group="6" kind="part" text="Listen">
     	<kor meaning="" />
     </eng>
-    <eng group="6" kind="part" text="as">
+    <eng group="6" kind="part" text="as the crowd">
     	<kor meaning="" />
     </eng>
-    <eng group="6" kind="part" text="the crowd">
-    	<kor meaning="" />
-    </eng>
-    <eng group="6" kind="part" text="would">
-    	<kor meaning="" />
-    </eng>
-   	<eng group="6" kind="part" text="sing">
+    <eng group="6" kind="part" text="would sing">
     	<kor meaning="" />
     </eng>
 
@@ -142,22 +118,13 @@
     <eng group="7" kind="sentence" text="Now the old king is dead! Long live the king!">
     	<kor meaning="이제 옛 왕이 죽었다! 왕이여, 만세!" />
     </eng>
-    <eng group="7" kind="part" text="Now">
+    <eng group="7" kind="part" text="Now the old king">
     	<kor meaning="" />
     </eng>
-    <eng group="7" kind="part" text="the old king">
+    <eng group="7" kind="part" text="is dead!">
     	<kor meaning="" />
     </eng>
-    <eng group="7" kind="part" text="is">
-    	<kor meaning="" />
-    </eng>
-    <eng group="7" kind="part" text="dead!">
-    	<kor meaning="" />
-    </eng>
-    <eng group="7" kind="part" text="Long">
-    	<kor meaning="" />
-    </eng>
-    <eng group="7" kind="part" text="live">
+    <eng group="7" kind="part" text="Long live">
     	<kor meaning="" />
     </eng>
     <eng group="7" kind="part" text="the king!">
@@ -182,16 +149,13 @@
     <eng group="9" kind="sentence" text="Next the walls were closed on me">
     	<kor meaning="다음 순간에는 사방에 벽이 나를 에워싸고 있었어" />
     </eng>
-    <eng group="9" kind="part" text="Next">
+    <eng group="9" kind="part" text="Next the walls">
     	<kor meaning="" />
     </eng>
-    <eng group="9" kind="part" text="the walls">
+    <eng group="9" kind="part" text="were closed">
     	<kor meaning="" />
     </eng>
-    <eng group="9" kind="part" text="closed on">
-    	<kor meaning="" />
-    </eng>
-    <eng group="9" kind="part" text="me">
+    <eng group="9" kind="part" text="on me">
     	<kor meaning="" />
     </eng>
 
@@ -199,16 +163,10 @@
     <eng group="10" kind="sentence" text="And I discovered that my castles stand">
     	<kor meaning="그리고 난 발견했지, 나의 성은" />
     </eng>
-    <eng group="10" kind="part" text="And">
+    <eng group="10" kind="part" text="And I discovered">
     	<kor meaning="" />
     </eng>
-    <eng group="10" kind="part" text="I discovered">
-    	<kor meaning="" />
-    </eng>
-    <eng group="10" kind="part" text="that">
-    	<kor meaning="" />
-    </eng>
-    <eng group="10" kind="part" text="my castles">
+    <eng group="10" kind="part" text="that my castles">
     	<kor meaning="" />
     </eng>
     <eng group="10" kind="part" text="stand">
@@ -219,22 +177,13 @@
     <eng group="11" kind="sentence" text="Upon pillars of salt, and pillars of sand">
     	<kor meaning="소금 기둥, 그리고 모래 기둥 위에 서 있었다는 걸" />
     </eng>
-    <eng group="11" kind="part" text="Upon">
+    <eng group="11" kind="part" text="Upon pillars">
     	<kor meaning="" />
     </eng>
-    <eng group="11" kind="part" text="pillars">
+    <eng group="11" kind="part" text="of salt,">
     	<kor meaning="" />
     </eng>
-    <eng group="11" kind="part" text="of">
-    	<kor meaning="" />
-    </eng>
-    <eng group="11" kind="part" text="salt,">
-    	<kor meaning="" />
-    </eng>
-    <eng group="11" kind="part" text="and">
-    	<kor meaning="" />
-    </eng>
-    <eng group="11" kind="part" text="pillars of">
+    <eng group="11" kind="part" text="and pillars of">
     	<kor meaning="" />
     </eng>
     <eng group="11" kind="part" text="sand">
@@ -248,16 +197,10 @@
     <eng group="12" kind="part" text="I hear">
     	<kor meaning="" />
     </eng>
-    <eng group="12" kind="part" text="Jerusalem">
+    <eng group="12" kind="part" text="Jerusalem bells">
     	<kor meaning="" />
     </eng>
-    <eng group="12" kind="part" text="bells">
-    	<kor meaning="" />
-    </eng>
-    <eng group="12" kind="part" text="are">
-    	<kor meaning="" />
-    </eng>
-    <eng group="12" kind="part" text="ringing">
+    <eng group="12" kind="part" text="are ringing">
     	<kor meaning="" />
     </eng>
 
@@ -272,12 +215,9 @@
     	<kor meaning="" />
     </eng>
     <eng group="13" kind="part" text="choirs">
-    	<kor meaning="" />
+    	<kor meaning="성가대" />
     </eng>
-    <eng group="13" kind="part" text="are">
-    	<kor meaning="" />
-    </eng>
-    <eng group="13" kind="part" text="singing">
+    <eng group="13" kind="part" text="are singing">
     	<kor meaning="" />
     </eng>
 
@@ -294,10 +234,7 @@
     <eng group="14" kind="part" text="my sword">
     	<kor meaning="" />
     </eng>
-    <eng group="14" kind="part" text="and">
-    	<kor meaning="" />
-    </eng>
-    <eng group="14" kind="part" text="shield">
+    <eng group="14" kind="part" text="and shield">
     	<kor meaning="" />
     </eng>
 
@@ -305,16 +242,10 @@
     <eng group="15" kind="sentence" text="My missionaries in a foreign field">
     	<kor meaning="타지에 나가 있는 나의 선교사들이여" />
     </eng>
-    <eng group="15" kind="part" text="My">
+    <eng group="15" kind="part" text="My missionaries">
     	<kor meaning="" />
     </eng>
-    <eng group="15" kind="part" text="missionaries">
-    	<kor meaning="" />
-    </eng>
-    <eng group="15" kind="part" text="in">
-    	<kor meaning="" />
-    </eng>
-    <eng group="15" kind="part" text="a foreign">
+    <eng group="15" kind="part" text="in a foreign">
     	<kor meaning="" />
     </eng>
     <eng group="15" kind="part" text="field">
@@ -325,10 +256,7 @@
     <eng group="16" kind="sentence" text="For some reason I can’t explain">
     	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
     </eng>
-    <eng group="16" kind="part" text="For">
-    	<kor meaning="" />
-    </eng>
-    <eng group="16" kind="part" text="some">
+    <eng group="16" kind="part" text="For some">
     	<kor meaning="" />
     </eng>
     <eng group="16" kind="part" text="reason">
@@ -345,16 +273,10 @@
     <eng group="17" kind="sentence" text="Once you go there was never,">
     	<kor meaning="일단 그 곳에 가면, 절대로" />
     </eng>
-    <eng group="17" kind="part" text="Once">
+    <eng group="17" kind="part" text="Once you go">
     	<kor meaning="" />
     </eng>
-    <eng group="17" kind="part" text="you go">
-    	<kor meaning="" />
-    </eng>
-    <eng group="17" kind="part" text="there was">
-    	<kor meaning="" />
-    </eng>
-    <eng group="17" kind="part" text="never,">
+    <eng group="17" kind="part" text="there was never,">
     	<kor meaning="" />
     </eng>
 
@@ -410,19 +332,13 @@
     <eng group="21" kind="sentence" text="Blew down the doors to let me in">
     	<kor meaning="문을 부숴버려서 내가 들어갈 수 있었지" />
     </eng>
-    <eng group="21" kind="part" text="Blew">
-    	<kor meaning="" />
-    </eng>
-    <eng group="21" kind="part" text="down">
+    <eng group="21" kind="part" text="Blew down">
     	<kor meaning="" />
     </eng>
     <eng group="21" kind="part" text="the doors">
     	<kor meaning="" />
     </eng>
-    <eng group="21" kind="part" text="to">
-    	<kor meaning="" />
-    </eng>
-    <eng group="21" kind="part" text="let me in">
+    <eng group="21" kind="part" text="to let me in">
     	<kor meaning="" />
     </eng>
 
@@ -430,16 +346,10 @@
     <eng group="22" kind="sentence" text="Shattered windows and the sound of drums">
     	<kor meaning="깨어진 창과 북 소리" />
     </eng>
-    <eng group="22" kind="part" text="Shattered">
+    <eng group="22" kind="part" text="Shattered windows">
     	<kor meaning="" />
     </eng>
-    <eng group="22" kind="part" text="windows">
-    	<kor meaning="" />
-    </eng>
-    <eng group="22" kind="part" text="and">
-    	<kor meaning="" />
-    </eng>
-    <eng group="22" kind="part" text="the sound of">
+    <eng group="22" kind="part" text="and the sound of">
     	<kor meaning="" />
     </eng>
     <eng group="22" kind="part" text="drums">
@@ -450,23 +360,14 @@
     <eng group="23" kind="sentence" text="People couldn’t believe what I'd become">
     	<kor meaning="사람들은 나의 변한 모습을 믿지 못했지" />
     </eng>
-    <eng group="23" kind="part" text="People">
-    	<kor meaning="" />
-    </eng>
-    <eng group="23" kind="part" text="couldn’t">
+    <eng group="23" kind="part" text="People couldn’t">
     	<kor meaning="could not" />
     </eng>
-    <eng group="23" kind="part" text="believe">
+    <eng group="23" kind="part" text="believe what">
     	<kor meaning="" />
     </eng>
-    <eng group="23" kind="part" text="what">
-    	<kor meaning="" />
-    </eng>
-    <eng group="23" kind="part" text="I'd">
+    <eng group="23" kind="part" text="I'd become">
     	<kor meaning="I had" />
-    </eng>
-    <eng group="23" kind="part" text="become">
-    	<kor meaning="" />
     </eng>
 
     <!--- Revolutionaries wait -->
@@ -487,13 +388,10 @@
     <eng group="25" kind="part" text="For my">
     	<kor meaning="" />
     </eng>
-    <eng group="25" kind="part" text="head">
+    <eng group="25" kind="part" text="head on">
     	<kor meaning="" />
     </eng>
-    <eng group="25" kind="part" text="on a silver">
-    	<kor meaning="" />
-    </eng>
-    <eng group="25" kind="part" text="plate">
+    <eng group="25" kind="part" text="a silver plate">
     	<kor meaning="" />
     </eng>
 
@@ -501,10 +399,7 @@
     <eng group="26" kind="sentence" text="Just a puppet on a lonely string">
     	<kor meaning="한 가닥 외로운 줄에 매달린 꼭두각시일 뿐이지" />
     </eng>
-    <eng group="26" kind="part" text="Just">
-    	<kor meaning="" />
-    </eng>
-    <eng group="26" kind="part" text="a puppet">
+    <eng group="26" kind="part" text="Just a puppet">
     	<kor meaning="" />
     </eng>
     <eng group="26" kind="part" text="on a lonely">
@@ -563,10 +458,7 @@
     <eng group="30" kind="sentence" text="Be my mirror my sword and shield">
     	<kor meaning="나의 거울, 나의 검, 나의 방패가 돼 주오" />
     </eng>
-    <eng group="30" kind="part" text="Be my">
-    	<kor meaning="" />
-    </eng>
-    <eng group="30" kind="part" text="mirror">
+    <eng group="30" kind="part" text="Be my mirror">
     	<kor meaning="" />
     </eng>
     <eng group="30" kind="part" text="my sword">
@@ -583,10 +475,7 @@
     <eng group="31" kind="part" text="My missionaries">
     	<kor meaning="" />
     </eng>
-    <eng group="31" kind="part" text="in a foreign">
-    	<kor meaning="" />
-    </eng>
-    <eng group="31" kind="part" text="field">
+    <eng group="31" kind="part" text="in a foreign field">
     	<kor meaning="" />
     </eng>
 
@@ -594,19 +483,13 @@
     <eng group="32" kind="sentence" text="For some reason I can’t explain">
     	<kor meaning="어떤 이유에서인지 설명할 수가 없네" />
     </eng>
-    <eng group="32" kind="part" text="For">
-    	<kor meaning="" />
-    </eng>
-    <eng group="32" kind="part" text="some">
+    <eng group="32" kind="part" text="For some">
     	<kor meaning="" />
     </eng>
     <eng group="32" kind="part" text="reason">
     	<kor meaning="" />
     </eng>
-    <eng group="32" kind="part" text="I can’t">
-    	<kor meaning="" />
-    </eng>
-    <eng group="32" kind="part" text="explain">
+    <eng group="32" kind="part" text="I can’t explain">
     	<kor meaning="" />
     </eng>
 
@@ -617,19 +500,13 @@
     <eng group="33" kind="part" text="I know">
     	<kor meaning="" />
     </eng>
-    <eng group="33" kind="part" text="Saint">
+    <eng group="33" kind="part" text="Saint Peter">
     	<kor meaning="" />
     </eng>
-    <eng group="33" kind="part" text="Peter">
+    <eng group="33" kind="part" text="won't call">
     	<kor meaning="" />
     </eng>
-    <eng group="33" kind="part" text="won't">
-    	<kor meaning="" />
-    </eng>
-    <eng group="33" kind="part" text="call my">
-    	<kor meaning="" />
-    </eng>
-    <eng group="33" kind="part" text="name">
+    <eng group="33" kind="part" text="my name">
     	<kor meaning="" />
     </eng>
 
@@ -637,13 +514,10 @@
     <eng group="34" kind="sentence" text="Never an honest word">
     	<kor meaning="절대로 진실된 말 따위는 없다는 걸" />
     </eng>
-    <eng group="34" kind="part" text="Never an">
+    <eng group="34" kind="part" text="Never">
     	<kor meaning="" />
     </eng>
-    <eng group="34" kind="part" text="honest">
-    	<kor meaning="" />
-    </eng>
-    <eng group="34" kind="part" text="word">
+    <eng group="34" kind="part" text="an honest word">
     	<kor meaning="" />
     </eng>
 
@@ -651,19 +525,13 @@
     <eng group="35" kind="sentence" text="And that was when I ruled the world">
     	<kor meaning="그건 내가 세상을 지배했을 때의 얘기지" />
     </eng>
-    <eng group="35" kind="part" text="And">
-    	<kor meaning="" />
-    </eng>
-    <eng group="35" kind="part" text="that was">
+    <eng group="35" kind="part" text="And that was">
     	<kor meaning="" />
     </eng>
     <eng group="35" kind="part" text="when I">
     	<kor meaning="" />
     </eng>
-    <eng group="35" kind="part" text="ruled">
-    	<kor meaning="" />
-    </eng>
-    <eng group="35" kind="part" text="the world">
+    <eng group="35" kind="part" text="ruled the world">
     	<kor meaning="" />
     </eng>
 

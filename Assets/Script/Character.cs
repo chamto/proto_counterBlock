@@ -2490,8 +2490,7 @@ namespace CounterBlock
 			Max,
 		}
 
-		public int dictInfo_num;
-		public int eng_num;
+		public int number;
 		public int hash;
 		public eKind kind;
 		public int speed;
@@ -2499,8 +2498,7 @@ namespace CounterBlock
 
 		public VoiceInfo(string fileName) 
 		{
-			dictInfo_num = -1;
-			eng_num = -1;
+			number = -1;
 			hash  = -1;
 			kind = eKind.None;
 			speed = -1;
@@ -2511,26 +2509,25 @@ namespace CounterBlock
 		private void Parsing_VoiceClipName(string fileName)
 		{
 			//파일저장양식 
-			//(1)DictInfo num _ (2)eng num _ (3)hash value _ (4)목소리종류 _ (5)말하기속도 _(6)말하기텍스트 
-			const int MAX_COUNT = 6;
+			//(1)number _ (2)hash value _ (3)목소리종류 _ (4)말하기속도 _(5)말하기텍스트 
+			const int MAX_COUNT = 5;
 
 			char[] delimiterChars = { '_'};
 			string[] parts = fileName.Split(delimiterChars, System.StringSplitOptions.RemoveEmptyEntries);
 
 			if (MAX_COUNT == parts.Count ()) 
 			{
-				dictInfo_num = int.Parse (parts [0]);
-				eng_num = int.Parse (parts [1]);
-				hash = int.Parse (parts [2]);
-				kind = (eKind)int.Parse (parts [3]);
-				speed = int.Parse (parts [4]);
+				number = int.Parse (parts [0]);
+				hash = int.Parse (parts [1]);
+				kind = (eKind)int.Parse (parts [2]);
+				speed = int.Parse (parts [3]);
 			}
 
 		}
 
 		public string ToString()
 		{
-			return "[ " + dictInfo_num + " ]" + "[ " + eng_num + " ]" + "[ " + hash + " ]" + "[ " + kind + " ]" + "[ " + speed + " ]";
+			return "[ " + number + " ]" + "[ " + hash + " ]" + "[ " + kind + " ]" + "[ " + speed + " ]";
 		}
 	}
 

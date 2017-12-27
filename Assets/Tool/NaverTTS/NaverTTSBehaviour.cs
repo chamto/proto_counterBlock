@@ -35,6 +35,7 @@ public class NaverTTS
 
 	public enum eSex
 	{
+		None = 0,
 		Man = 1,
 		Woman = 2,
 	}
@@ -211,9 +212,40 @@ public class NaverTTSBehaviour : MonoBehaviour
 
 		CounterBlock.Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
 
+		CounterBlock.Single.coroutine.Start_Async (Request_NaverTTS());
+
+	}
+
+	// Update is called once per frame
+	void Update () 
+	{
+		CounterBlock.Single.Update ();		
+	}
+
+
+	public NaverTTS.eSex ToNaverTTS(NaverTTS.eLanguage lang ,VoiceInfo.eKind kind)
+	{
+		if (NaverTTS.eLanguage.English == lang) 
+		{
+			switch (kind) 
+			{
+			case VoiceInfo.eKind.Eng_NaverMan_1:
+				return NaverTTS.eSex.Man;
+			case VoiceInfo.eKind.Eng_NaverWoman_2:
+				return NaverTTS.eSex.Woman;
+			}
+		}
+
+		return NaverTTS.eSex.None;
+	}
+	
+	IEnumerator Request_NaverTTS()
+	{
 		string tempStr = "";
 		int first = 0;
 		int second = 0;
+		VoiceInfo.eKind vKind;
+		NaverTTS.eLanguage nLang = NaverTTS.eLanguage.English;
 		foreach (XML_Data.DictInfo info in _dictEng._dictInfoMap.Values) 
 		{
 			first++;
@@ -225,29 +257,31 @@ public class NaverTTSBehaviour : MonoBehaviour
 				//DebugWide.LogBlue (tempStr);
 
 				//파일저장양식 
-				//(1)DictInfo num _ (2)eng num _ (3)hash value _ (4)목소리종류 _ (5)말하기속도 _(6)말하기텍스트 
+				//(0)number _ (1)hash value _ (2)목소리종류 _ (3)말하기속도 _(4)말하기텍스트 
 
-				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Man);
+				vKind = VoiceInfo.eKind.Eng_NaverMan_1;
+				_tts.SetSpeaker (nLang, ToNaverTTS(nLang, vKind));
 				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED-1);
 				_tts.SetPath (NaverTTS.PATH_Voice);
-				_tts.SetFileName (first+"_"+second+"_"+hash+"_1_"+_tts.GetSpeed()+"_"+tempStr);
+				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
 
-				_tts.SetSpeaker (NaverTTS.eLanguage.English, NaverTTS.eSex.Woman);
+				yield return null;
+
+				vKind = VoiceInfo.eKind.Eng_NaverWoman_2;
+				_tts.SetSpeaker (nLang, ToNaverTTS(nLang, vKind));
 				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+2);
 				_tts.SetPath (NaverTTS.PATH_Voice);
-				_tts.SetFileName (first+"_"+second+"_"+hash+"_2_"+_tts.GetSpeed()+"_"+tempStr);
+				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
 				_tts.Request (tempStr);
+
+				yield return null;
 			}
 
 		}
 
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		CounterBlock.Single.Update ();		
+		DebugWide.LogBlue ("");
+		DebugWide.LogBlue ("================= Complete Request_NaverTTS ==================");
 	}
 
 	void Test_NaverTTS()
