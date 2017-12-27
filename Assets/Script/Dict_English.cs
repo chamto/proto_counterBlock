@@ -139,10 +139,15 @@ namespace XML_Data
 			Part,		//문장의 부분
 		}
 
-		public class Meaning : List<int>
+		public class Meaning : List<int> { }
+
+		//<eng> 정보
+		public class VocaInfo
 		{
-			public int groupNum = -1;
-			public eKind kind = eKind.None;
+			public int 		groupNum = -1;
+			public eKind 	kind = eKind.None;
+			public int 		hashKey;
+
 		}
 
 		private int _id_number = -1; //고유번호 
@@ -152,8 +157,8 @@ namespace XML_Data
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
 
 		//xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
-		private Dictionary<eKind, List<int>> _sequenceKind = new Dictionary<eKind, List<int>>(); //<종류, 해쉬목록> 
-		private Dictionary<int, List<int>> _sequenceGroupNum = new Dictionary<int, List<int>>(); //<그룹번호, 해쉬목록>
+		private Dictionary<eKind, List<VocaInfo>> _sequenceKind = new Dictionary<eKind, List<VocaInfo>>(); //<종류, 해쉬목록> 
+		private Dictionary<int, List<VocaInfo>> _sequenceGroupNum = new Dictionary<int, List<VocaInfo>>(); //<그룹번호, 해쉬목록>
 
 		public void SetID_Number(int number)
 		{
@@ -169,12 +174,12 @@ namespace XML_Data
 			return _data;
 		}
 
-		public List<int> GetSequence(eKind kind)
+		public List<VocaInfo> GetSequence(eKind kind)
 		{
 			return _sequenceKind[kind];
 		}
 
-		public List<int> GetSequence(int groupNum)
+		public List<VocaInfo> GetSequence(int groupNum)
 		{
 			return _sequenceGroupNum[groupNum];
 		}
@@ -188,7 +193,7 @@ namespace XML_Data
 			_hashTitle = hashTitle;
 		}
 
-		public void Add(int hashKey, DictInfo.Meaning mMore)
+		public void Add(int hashKey, DictInfo.Meaning mMore, int groupNum, eKind kind)
 		{
 			
 			if (_data.ContainsKey (hashKey)) 
@@ -205,33 +210,37 @@ namespace XML_Data
 				//DebugWide.LogBlue (mOne +  " ----  " + hashKey);
 				_valueToKeyMap.Add (mOne, hashKey);
 			}
-				
-			this.AddSequence_Kind(mMore.kind, hashKey); //순서저장
-			this.AddSequence_GroupNum(mMore.groupNum, hashKey);
+
+			VocaInfo voca = new VocaInfo ();
+			voca.groupNum = groupNum;
+			voca.kind = kind;
+			voca.hashKey = hashKey;
+			this.AddSequence_Kind(voca); //순서저장
+			this.AddSequence_GroupNum(voca);
 		}
 
-		public void AddSequence_Kind(eKind kind , int hashKey )
+		public void AddSequence_Kind(VocaInfo voca )
 		{
 			//DebugWide.LogBlue ("AddSequence ............ " + kind + "__" + hashKey ); //chamto test
 			
-			List<int> getList = null;
-			if (false == _sequenceKind.TryGetValue (kind, out getList)) 
+			List<VocaInfo> getList = null;
+			if (false == _sequenceKind.TryGetValue (voca.kind, out getList)) 
 			{
-				getList = new List<int> ();
-				_sequenceKind.Add (kind, getList);
+				getList = new List<VocaInfo> ();
+				_sequenceKind.Add (voca.kind, getList);
 			}
-			getList.Add (hashKey);
+			getList.Add (voca);
 		}
 
-		public void AddSequence_GroupNum(int groupNum, int hashKey)
+		public void AddSequence_GroupNum(VocaInfo voca)
 		{
-			List<int> getList = null;
-			if (false == _sequenceGroupNum.TryGetValue (groupNum, out getList)) 
+			List<VocaInfo> getList = null;
+			if (false == _sequenceGroupNum.TryGetValue (voca.groupNum, out getList)) 
 			{
-				getList = new List<int> ();
-				_sequenceGroupNum.Add (groupNum, getList);
+				getList = new List<VocaInfo> ();
+				_sequenceGroupNum.Add (voca.groupNum, getList);
 			}
-			getList.Add (hashKey);
+			getList.Add (voca);
 		}
 
 
@@ -378,9 +387,10 @@ namespace XML_Data
 				Single.hashString.Add (xmlNode.Value.GetHashCode (), xmlNode.Value);
 				item.SetTitle(xmlNode.Value.GetHashCode());
 
-				DictInfo.Meaning meaning = null;
-				DictInfo.eKind eKind = DictInfo.eKind.None;
 
+				DictInfo.Meaning meaning = null;
+				int 			groupNum = -1;
+				DictInfo.eKind 	eKind = DictInfo.eKind.None;
 				//==================== <eng> ====================
 				thirdList = secondList[i].ChildNodes; //<DictInfo>
 				for (int j = 0; j < thirdList.Count; ++j) 
@@ -419,7 +429,7 @@ namespace XML_Data
 						switch(n.Name)
 						{
 						case "group":
-							meaning.groupNum = int.Parse (n.Value);
+							groupNum = int.Parse (n.Value);
 							break;
 						case "kind":
 							if ("vocabulary" == n.Value)
@@ -430,8 +440,7 @@ namespace XML_Data
 								eKind = DictInfo.eKind.Sentence;
 							if ("part" == n.Value)
 								eKind = DictInfo.eKind.Part;
-
-							meaning.kind = eKind;
+							
 							//DebugWide.LogGreen (eKind + "____");
 							break;
 						case "text": //kind -> text 순일때만 정상처리함
@@ -445,7 +454,7 @@ namespace XML_Data
 					}
 
 					if(0 != textHashCode)
-						item.Add (textHashCode, meaning);
+						item.Add (textHashCode, meaning ,groupNum, eKind);
 
 				}
 				//DebugWide.LogBlue (xmlNode.Value + "  ----  " + xmlNode.Value.GetHashCode());
