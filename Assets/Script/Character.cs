@@ -2509,7 +2509,7 @@ namespace CounterBlock
 		private void Parsing_VoiceClipName(string fileName)
 		{
 			//파일저장양식 
-			//(1)number _ (2)hash value _ (3)목소리종류 _ (4)말하기속도 _(5)말하기텍스트 
+			//(0)number _ (1)hash value _ (2)목소리종류 _ (3)말하기속도 _(4)말하기텍스트 
 			const int MAX_COUNT = 5;
 
 			char[] delimiterChars = { '_'};
