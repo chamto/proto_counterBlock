@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 11c6a3f37e31546aab7637cd94651c18
+timeCreated: 1514405137
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: GungSeo
+  fontNames:
+  - GungSeo
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
