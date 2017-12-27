@@ -141,7 +141,8 @@ namespace XML_Data
 
 		public class Meaning : List<int>
 		{
-			public eKind kind;
+			public int groupNum = -1;
+			public eKind kind = eKind.None;
 		}
 
 		private int _id_number = -1; //고유번호 
@@ -149,8 +150,10 @@ namespace XML_Data
 
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
 		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
-		private Dictionary<eKind, List<int> > _sequence = new Dictionary<eKind, List<int>>(); //xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
 
+		//xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
+		private Dictionary<eKind, List<int>> _sequenceKind = new Dictionary<eKind, List<int>>(); //<종류, 해쉬목록> 
+		private Dictionary<int, List<int>> _sequenceGroupNum = new Dictionary<int, List<int>>(); //<그룹번호, 해쉬목록>
 
 		public void SetID_Number(int number)
 		{
@@ -168,7 +171,12 @@ namespace XML_Data
 
 		public List<int> GetSequence(eKind kind)
 		{
-			return _sequence[kind];
+			return _sequenceKind[kind];
+		}
+
+		public List<int> GetSequence(int groupNum)
+		{
+			return _sequenceGroupNum[groupNum];
 		}
 
 		public string GetTitle()
@@ -198,18 +206,30 @@ namespace XML_Data
 				_valueToKeyMap.Add (mOne, hashKey);
 			}
 				
-			this.AddSequence(mMore.kind, hashKey); //순서저장
+			this.AddSequence_Kind(mMore.kind, hashKey); //순서저장
+			this.AddSequence_GroupNum(mMore.groupNum, hashKey);
 		}
 
-		public void AddSequence(eKind kind , int hashKey )
+		public void AddSequence_Kind(eKind kind , int hashKey )
 		{
 			//DebugWide.LogBlue ("AddSequence ............ " + kind + "__" + hashKey ); //chamto test
 			
 			List<int> getList = null;
-			if (false == _sequence.TryGetValue (kind, out getList)) 
+			if (false == _sequenceKind.TryGetValue (kind, out getList)) 
 			{
 				getList = new List<int> ();
-				_sequence.Add (kind, getList);
+				_sequenceKind.Add (kind, getList);
+			}
+			getList.Add (hashKey);
+		}
+
+		public void AddSequence_GroupNum(int groupNum, int hashKey)
+		{
+			List<int> getList = null;
+			if (false == _sequenceGroupNum.TryGetValue (groupNum, out getList)) 
+			{
+				getList = new List<int> ();
+				_sequenceGroupNum.Add (groupNum, getList);
 			}
 			getList.Add (hashKey);
 		}
@@ -398,6 +418,9 @@ namespace XML_Data
 					{
 						switch(n.Name)
 						{
+						case "group":
+							meaning.groupNum = int.Parse (n.Value);
+							break;
 						case "kind":
 							if ("vocabulary" == n.Value)
 								eKind = DictInfo.eKind.Vocabulary;

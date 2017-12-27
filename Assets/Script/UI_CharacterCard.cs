@@ -594,9 +594,8 @@ namespace CounterBlock
 							clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverWoman_2);
 						}
 						//_audioSource.Play (); //chamto test
-						//List<int> seq = Single.resource.GetDictEng()._dictInfoMap.ElementAt(101).Value.GetSequence(); //101 임시 처리
-						//List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(); //101 임시 처리
-						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Part); //101 임시 처리
+						//List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Part); //100 임시 처리
+						List<int> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(9); //100 임시 처리
 						_audioSource.Stop ();
 						_audioSource.PlayOneShot(clips[seq[_voiceSequence]]);
 						_voiceSequence++;
