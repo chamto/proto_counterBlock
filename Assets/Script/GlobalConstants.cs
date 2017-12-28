@@ -22,6 +22,13 @@ public class GlobalConstants : MonoBehaviour
 	public static string ASSET_PATH = "Data_KOR\\";
 	#endif
 
+	public class Scene
+	{
+		public const string TITLE 		= "0_title";
+		public const string MAIN_MENU 	= "1_MainMenu";
+		public const string LOADING 	= "2_Loading";
+		public const string GAME 		= "3_Game";
+	}
 	
 	public class Hierarchy
 	{
