@@ -27,14 +27,13 @@ public class UI_MainMenu : MonoBehaviour
 		//                    초 기 화 
 		//=================================================
 		Single.hierarchy.Init ();
+		_root = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
 		_menu[(int)eMenu.Map] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_map");
 		_menu[(int)eMenu.Market] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_market");
 		_menu[(int)eMenu.Option] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_option");
-		//=================================================
-
-		_root = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
 
 		StartCoroutine (GlobalFunctions.FadeIn (_root , 1.0f));
+		//=================================================
 
 	}
 	
