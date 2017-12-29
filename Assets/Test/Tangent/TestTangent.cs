@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 public class TestTangent : MonoBehaviour 
 {
@@ -25,10 +24,11 @@ public class TestTangent : MonoBehaviour
 		_joint.Rotate (_rot, 0, 0);
 	}
 
-
+	#if UNITY_EDITOR
 	void OnDrawGizmos()
 	{
-		if (false == Selection.Contains (_joint.gameObject))
+		
+		if (false == UnityEditor.Selection.Contains (_joint.gameObject))
 			return;
 		Vector3 from, to;
 		from = Vector3.zero;
@@ -73,9 +73,9 @@ public class TestTangent : MonoBehaviour
 			x +=  dir*(1f / DIVISION);
 			theta += (int)(90 / DIVISION);
 
+		}//end for
 
-		}
 
-
-	}
+	}//end OnDrawGizmos
+	#endif
 }
