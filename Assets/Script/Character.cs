@@ -2789,7 +2789,7 @@ namespace CounterBlock
 			obj.transform.SetParent (parent,false);
 			obj.transform.name = name;
 
-			_ref_herch.PreOrderTraversal (obj.transform);
+			_ref_herch.PreOrderTraversal (obj.transform); //새로 생성되는 객체의 경로를 추가한다
 
 			return obj;
 		}

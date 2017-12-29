@@ -88,6 +88,13 @@ public class HierarchyPreLoader
 
 		//return f.GetComponentInChildren (typeof(TaaT), true) as TaaT;
 		//DebugWide.LogBlue(f.name); //chamto test
+
+		//GameObject 를 컴포넌트로 검색하면 에러남. GameObject 는 컴포넌트가 아니다
+		if (typeof(TaaT) == typeof(GameObject)) 
+		{
+			return f.gameObject as TaaT;
+		}
+
 		return f.GetComponentInChildren <TaaT>(true);
 	}
 
@@ -97,6 +104,12 @@ public class HierarchyPreLoader
 		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
 		Transform f =  Resources.FindObjectsOfTypeAll<Transform> ().Where (
 			tr => this.GetTransformFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First ();
+
+		//GameObject 를 컴포넌트로 검색하면 에러남. GameObject 는 컴포넌트가 아니다
+		if (typeof(TaaT) == typeof(GameObject)) 
+		{
+			return f.gameObject as TaaT;
+		}
 
 		return f.GetComponentInChildren <TaaT>(true);
 	}
