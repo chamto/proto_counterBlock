@@ -43,7 +43,7 @@ public class UI_Loading : MonoBehaviour
 
 		yield return new WaitForSeconds (1.5f);
 
-		CSingleton<ResourceManager>.Instance.Init (); //todo : 비동기 지원되게 다시 작성해야함 
+		//CSingleton<ResourceManager>.Instance.Init (); //todo : 비동기 지원되게 다시 작성해야함 
 
 		//todo : 내가 만든 코루틴에 WaitForTime 기능 넣기
 
