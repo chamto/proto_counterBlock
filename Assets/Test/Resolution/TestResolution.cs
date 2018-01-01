@@ -16,12 +16,17 @@ public class TestResolution : MonoBehaviour
     private int org_height = 0;
     private bool org_fullFlag = false;
 
-    const int WIDTH800 = 800;
-    const int HEIGHT480 = 480;
+	const float WIDTH_800 = 800;
+	const float HEIGHT_480 = 480;
+	const float H_divide_W = HEIGHT_480 / WIDTH_800;
+	const float W_divide_H = WIDTH_800 / HEIGHT_480;
+
+	Camera _camera = null;
 
 	// Use this for initialization
 	void Start () 
     {
+		_camera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 
         org_width = in_width = Screen.width;
         org_height = in_height = Screen.height;
@@ -37,11 +42,17 @@ public class TestResolution : MonoBehaviour
 	void Update () {
 	
 	}
-
+		
     public void OnGUI()
     {
-        
-        //20130729 chamto - 테스트를 위한 자체서버 접속용 추가
+		int btn_x = 0;
+		for (int i = 0; i < 10; i++) 
+		{
+			btn_x = 300 + i * 200;
+			GUI.Button (new Rect (300 + i*200 , 10, 100, 100), btn_x+",10");
+		}
+
+		//===============================================================
         if (GUI.Button(new Rect(10, 10, 150, 50), "SetResolution Excute"))
         {
             Screen.SetResolution(in_width, in_height, isFullScreen);
@@ -52,19 +63,23 @@ public class TestResolution : MonoBehaviour
         }
         if (GUI.Button(new Rect(10, 10 + 100, 150, 50), "swingResolution"))
         {
+			//* 지정된 비율로 해상도를 재조정한다.
+			//디바이스 상에서는 실제 화면비율에 따라 늘어나 보이게 된다
+			//이 처리로는 에디터와 디바이스 화면이 다르게 보이는 것을 잡을수 없다
+			
+			//standard : h/w = 0.6
+			//h/w > 0.6 : 기준보다 h값 비율이 크다. w값 비율이 작다.
+			//h/w < 0.6 : 기준보다 h값 비율이 작다. w값 비율이 크다.
+
             float fScreenRate = (float)Screen.height / (float)Screen.width;
-            if (fScreenRate > 0.6f) //기준해상도 비율에 비해 , 모바일 기기의 화면세로비율이 커졌거나, 가로비율이 작아진 경우
+			if (fScreenRate > H_divide_W) //기준해상도 비율에 비해 , 모바일 기기의 화면세로비율이 커졌거나, 가로비율이 작아진 경우
             {
-                float fRate = (float)Screen.width / WIDTH800;
-                int iHeight = (int)(HEIGHT480 * fRate);
-                //CDefine.DebugLog("------------------Screen.height / Screen.width :" + Screen.height + " / " + Screen.width + "  iHeight : " + iHeight);//chamto test
+				int iHeight = (int)(Screen.width * H_divide_W);
                 Screen.SetResolution(Screen.width, iHeight, false);
             }
-            else if (fScreenRate < 0.6f) //기준해상도 비율에 비해 , 모바일 기기의 화면가로비율이 커졌거나, 세로비율이 작아진 경우
+			else if (fScreenRate < H_divide_W) //기준해상도 비율에 비해 , 모바일 기기의 화면가로비율이 커졌거나, 세로비율이 작아진 경우
             {
-                float fRate = (float)Screen.height / HEIGHT480;
-                int iWidth = (int)(WIDTH800 * fRate);
-                //CDefine.DebugLog("-----------------  iHeight : " + iWidth + "    Screen.height / Screen.width :" + Screen.height + " / " + Screen.width);//chamto test
+				int iWidth = (int)(Screen.height * W_divide_H);
                 Screen.SetResolution(iWidth, Screen.height, false);
             }
 
