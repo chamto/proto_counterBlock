@@ -11,6 +11,7 @@ public class TestResolution : MonoBehaviour
     private string vw_width = "";
     private string vw_height = "";
     private string vw_fullFlag = "";
+	private string text_info1 = "";
 
     private int org_width = 0;
     private int org_height = 0;
@@ -52,6 +53,8 @@ public class TestResolution : MonoBehaviour
 			GUI.Button (new Rect (300 + i*200 , 10, 100, 100), btn_x+",10");
 		}
 
+		text_info1 = _camera.pixelRect.ToString();
+
 		//===============================================================
         if (GUI.Button(new Rect(10, 10, 150, 50), "SetResolution Excute"))
         {
@@ -86,6 +89,8 @@ public class TestResolution : MonoBehaviour
         }//endif
 
 
+
+
         //--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
 
         GUI.TextArea(new Rect(10 + 150, 10, 150, 50), "Screen.width/height :" + Screen.width + "/" + Screen.height + " isFull : " + Screen.fullScreen.ToString());
@@ -93,6 +98,7 @@ public class TestResolution : MonoBehaviour
         vw_width = GUI.TextArea(new Rect(10 + 150, 10 + 50, 150, 50), vw_width, 100);
         vw_height = GUI.TextArea(new Rect(10 + 150, 10 + 100, 150, 50), vw_height, 100);
         vw_fullFlag = GUI.TextArea(new Rect(10 + 150, 10 + 150, 150, 50), vw_fullFlag, 100);
+		GUI.TextArea(new Rect(10 + 150, 10 + 200, 150, 50), text_info1, 100);
 
         int.TryParse(vw_width, out in_width);
         int.TryParse(vw_height, out in_height);
