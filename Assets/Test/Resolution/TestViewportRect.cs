@@ -112,10 +112,7 @@ public class TestViewportRect : MonoBehaviour
 			_camera.pixelRect = pr;
 			//==================================
 			DebugWide.LogBlue (_camera.pixelRect + "  camera aspect:" + GetCameraAspect() + "  reverse:" + GetCameraReverseAspect() );
-		} else 
-		{
-			InitViewportRect ();
-		}
+		} 
 
 		text_info1 = _camera.pixelRect.ToString ();
 		text_info2 = "aspect -  st: " + ASPECT_RATIO + "  cu:" + GetCameraAspect();

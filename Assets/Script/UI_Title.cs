@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using CounterBlock;
 
 public class UI_Title : MonoBehaviour 
 {
-	CanvasRenderer _root = null;
+	Camera _mainCamera = null;
+	Canvas _canvasRoot = null;
+	CanvasRenderer _panelRoot = null;
 
 	// Use this for initialization
 	void Start () 
@@ -14,9 +17,13 @@ public class UI_Title : MonoBehaviour
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-		_root = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
+		_mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
+		_canvasRoot = GameObject.Find ("Canvas").GetComponent<Canvas>().rootCanvas; 
+		_panelRoot = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
 
-		StartCoroutine (GlobalFunctions.FadeOut (_root , 2.0f));
+		ResolutionController.CalcViewportRect (_canvasRoot, _mainCamera); //화면크기조정
+
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.MAIN_MENU, 3.5f));
 		//=================================================
 	}
@@ -26,6 +33,7 @@ public class UI_Title : MonoBehaviour
 		
 	}
 
-
 }
+
+
 

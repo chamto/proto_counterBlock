@@ -58,6 +58,13 @@ namespace CounterBlock
 			}
 		}
 
+//		public static ResolutionController resolutionCtr
+//		{
+//			get
+//			{
+//				return CSingleton<ResolutionController>.Instance;
+//			}
+//		}
 
 		private static Transform _ui_root = null;
 		public static Transform ui_root
