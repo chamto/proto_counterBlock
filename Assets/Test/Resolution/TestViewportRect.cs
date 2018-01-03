@@ -22,20 +22,13 @@ public class TestViewportRect : MonoBehaviour
 	const float REVERSE_ASPECT_RATIO = HEIGHT_STANDARD / WIDTH_STANDARD;
 
 	Camera _camera = null;
-	Canvas _canvas = null;
 	CanvasScaler _canvasScaler = null;
 
 	// Use this for initialization
 	void Start () 
     {
 		_camera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
-		_canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
 		_canvasScaler = GameObject.Find ("Canvas").GetComponent<CanvasScaler> ();
-
-		//뷰포트rect 크기에 맞게 조절한다
-		_canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-		_canvasScaler.referenceResolution = new Vector2 (WIDTH_STANDARD,HEIGHT_STANDARD);
-		_canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand; //이 모드를 사용해야 에디터와 디바이스상의 위치값이 일치한다
 
 
 		InitViewportRect ();
@@ -64,6 +57,13 @@ public class TestViewportRect : MonoBehaviour
 
 	public void InitViewportRect()
 	{
+		//ui canvas
+		//뷰포트렉 크기 기준으로 해상도에 상관없이 크기조정 설정
+		_canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+		_canvasScaler.referenceResolution = new Vector2 (WIDTH_STANDARD,HEIGHT_STANDARD);
+		_canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand; //이 모드를 사용해야 에디터와 디바이스상의 위치값이 일치한다
+
+
 		//viewport
 		_camera.aspect = ASPECT_RATIO; 
 		Rect pr = _camera.pixelRect;
@@ -72,18 +72,10 @@ public class TestViewportRect : MonoBehaviour
 		pr.width = WIDTH_STANDARD;
 		pr.height = HEIGHT_STANDARD;
 		_camera.pixelRect = pr;
-		//_canvas.pixelRect = pr; //ui canvas
+
 		DebugWide.LogBlue (_camera.pixelRect);
 	}
 
-	public IEnumerator ClearBackground()
-	{
-		Rect back = _camera.rect;
-		_camera.rect = Rect.zero;
-		yield return new WaitForSeconds(2f);
-
-		//_camera.rect = back;
-	}
 
 	public void CalcViewportRect()
 	{
