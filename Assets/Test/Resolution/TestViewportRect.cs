@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class TestViewportRect : MonoBehaviour 
@@ -21,20 +22,28 @@ public class TestViewportRect : MonoBehaviour
 	const float REVERSE_ASPECT_RATIO = HEIGHT_STANDARD / WIDTH_STANDARD;
 
 	Camera _camera = null;
+	Canvas _canvas = null;
+	CanvasScaler _canvasScaler = null;
 
 	// Use this for initialization
 	void Start () 
     {
+		_camera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
+		_canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
+		_canvasScaler = GameObject.Find ("Canvas").GetComponent<CanvasScaler> ();
+
+		//뷰포트rect 크기에 맞게 조절한다
+		_canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+		_canvasScaler.referenceResolution = new Vector2 (WIDTH_STANDARD,HEIGHT_STANDARD);
+		_canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand; //이 모드를 사용해야 에디터와 디바이스상의 위치값이 일치한다
+
+
+		InitViewportRect ();
+
 		org_width = input_width = Screen.width;
 		org_height = input_height = Screen.height;
 		text_width = org_width.ToString();
 		text_height = org_height.ToString();
-		
-		_camera = GameObject.Find ("Main Camera").GetComponent<Camera> ();
-		_camera.aspect = ASPECT_RATIO; 
-
-		InitCameraViewportRect ();
-
 
 
 		text_info1 = _camera.pixelRect.ToString ();
@@ -53,14 +62,17 @@ public class TestViewportRect : MonoBehaviour
 		return (float)_camera.pixelHeight / (float)_camera.pixelWidth;
 	}
 
-	public void InitCameraViewportRect()
+	public void InitViewportRect()
 	{
+		//viewport
+		_camera.aspect = ASPECT_RATIO; 
 		Rect pr = _camera.pixelRect;
 		pr.x = 0f;
 		pr.y = 0f;
 		pr.width = WIDTH_STANDARD;
 		pr.height = HEIGHT_STANDARD;
 		_camera.pixelRect = pr;
+		//_canvas.pixelRect = pr; //ui canvas
 		DebugWide.LogBlue (_camera.pixelRect);
 	}
 
@@ -76,7 +88,7 @@ public class TestViewportRect : MonoBehaviour
 	public void CalcViewportRect()
 	{
 		DebugWide.LogBlue ("CalcResolution");
-		InitCameraViewportRect ();
+		InitViewportRect ();
 
 		//==================================
 		int iHeight = (int)(Screen.width * REVERSE_ASPECT_RATIO);
@@ -110,7 +122,7 @@ public class TestViewportRect : MonoBehaviour
 			DebugWide.LogBlue (_camera.pixelRect + "  camera aspect:" + GetCameraAspect() + "  reverse:" + GetCameraReverseAspect() );
 		} else 
 		{
-			InitCameraViewportRect ();
+			InitViewportRect ();
 		}
 
 		text_info1 = _camera.pixelRect.ToString ();
