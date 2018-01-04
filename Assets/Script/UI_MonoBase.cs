@@ -25,4 +25,26 @@ public class UI_MonoBase : MonoBehaviour
 		ResolutionController.CalcViewportRect (_canvasRoot, _mainCamera); //화면크기조정
 		//=================================================
 	}
+
+	private bool _process_title_ = false;
+	public void LoadScene_Title()
+	{
+		if (true == _process_title_)
+			return;
+		//DebugWide.LogBlue ("Load...");
+		_process_title_ = !_process_title_;
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.TITLE, 3.0f));
+	}
+
+	private bool _process_proto_singing_ = false;
+	public void LoadScene_Proto_Singing()
+	{
+		if (true == _process_proto_singing_)
+			return;
+		//DebugWide.LogBlue ("Load...");
+		_process_proto_singing_ = !_process_proto_singing_;
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.Proto_Singing, 3.0f));
+	}
 }

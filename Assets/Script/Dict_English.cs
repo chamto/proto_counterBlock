@@ -317,6 +317,11 @@ namespace XML_Data
 			}
 		}
 
+		public void ClearAll()
+		{
+			_bCompleteLoad = false;
+			_dictInfoMap.Clear ();
+		}
 
 		public IEnumerator LoadXML()
 		{

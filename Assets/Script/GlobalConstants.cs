@@ -28,6 +28,10 @@ public class GlobalConstants : MonoBehaviour
 		public const string MAIN_MENU 	= "1_MainMenu";
 		public const string LOADING 	= "2_Loading";
 		public const string GAME 		= "3_Game";
+
+		//proto scene
+		public const string Proto_Singing 	= "Proto_Singing";
+
 	}
 	
 	public class Hierarchy

@@ -19,7 +19,7 @@ using UnityEngine.UI;
 namespace CounterBlock
 {
 	
-	public class Simulation_Battle : MonoBehaviour 
+	public class Simulation_Battle : UI_MonoBase 
 	{
 
 		private CharacterManager _crtMgr = null;
@@ -38,14 +38,17 @@ namespace CounterBlock
 		// Use this for initialization
 		void Start () 
 		{
-			
+			base.Init_UI ();
+
 			FrameControl.SetDeltaTime_30FPS (); //30Fps 기준으로 설정한다.  30Fps 고정프레임으로 사용하겠다는 것이 아님.
+
+			Single.resource.Init ();
 
 			_crtMgr = new CharacterManager ();
 			_crtMgr.Init (CHARACTER_COUNT);
 
-			_rscMgr = CSingleton<ResourceManager>.Instance;
-			_rscMgr.Init ();
+			//_rscMgr = CSingleton<ResourceManager>.Instance;
+			//_rscMgr.Init ();
 
 			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
 			_ui_battle.Init ();
