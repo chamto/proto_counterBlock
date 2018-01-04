@@ -31,4 +31,15 @@ public class UI_Game : UI_MonoBase
 	{
 		
 	}
+
+	private bool _process_load_ = false;
+	public void LoadScene_Title()
+	{
+		if (true == _process_load_)
+			return;
+		//DebugWide.LogBlue ("Load...");
+		_process_load_ = !_process_load_;
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.TITLE, 3.0f));
+	}
 }
