@@ -184,24 +184,35 @@ namespace CounterBlock
 
 			//frame test
 			//if(5f < Time.time)
-			{
+			//{
 				//Time.fixedDeltaTime : 고정프레임 설정
 				//System.DateTime.Now.Millisecond;
 				//QualitySettings.vSyncCount
 				//Thread.Sleep (1000);
 				//DebugWide.LogBlue (" UnityDelta : "+Time.deltaTime + "   dateMs: " + System.DateTime.Now.Millisecond); //chamto test
-			}
+			//}
 
+			//===================
 			//1. key input
 			//2. UI update
 			//3. data update
 
+			//===== 입력 갱신 =====
+			this.Update_Input();
 
-			//test
+			//===== 후처리 갱신 =====
+			_ui_battle.Update_UI ();
+			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
+
+
+		}//end Update
+
+		public void Update_Input()
+		{
 			if (Input.GetKeyUp ("z")) 
 			{
 				//DebugWide.LogBlue (" UnityDelta : "+Time.deltaTime + "   A : " + Time.time); //chamto test
-				
+
 				CharDataBundle bundle;
 				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
 				bundle._data = _ui_1Player.GetData();
@@ -261,18 +272,10 @@ namespace CounterBlock
 				//DebugWide.LogBlue ("2p - keyinput");
 				_ui_2Player.GetData().Block ();
 			}
+		}
 
-
-			_ui_battle.Update_UI ();
-			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
-
-
-		}//end Update
 
 	}//end class Simulation 
-
-
-
 
 }//end namespace 
 
