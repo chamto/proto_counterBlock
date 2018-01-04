@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using CounterBlock;
 
-public class UI_Loading : MonoBehaviour 
+public class UI_Loading : UI_MonoBase 
 {
 
-	CanvasRenderer _root = null;
+
 
 	// Use this for initialization
 	void Start () 
@@ -14,14 +14,13 @@ public class UI_Loading : MonoBehaviour
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-		Single.hierarchy.Init ();
-		_root = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
+		base.Init_UI ();
 
-
-		StartCoroutine (GlobalFunctions.FadeIn (_root , 1.0f));
+		StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
+		StartCoroutine (LoadResource_AndScene());
 		//=================================================
 
-		StartCoroutine (LoadResource_AndScene());
+
 	}
 	
 	// Update is called once per frame
@@ -33,7 +32,7 @@ public class UI_Loading : MonoBehaviour
 	public void LoadScene_Game()
 	{
 
-		StartCoroutine (GlobalFunctions.FadeOut (_root , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.GAME, 3.0f));
 	}
 

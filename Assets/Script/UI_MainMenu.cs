@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using CounterBlock;
 
-public class UI_MainMenu : MonoBehaviour 
+public class UI_MainMenu : UI_MonoBase 
 {
 
 	public enum eMenu : int
@@ -15,8 +15,7 @@ public class UI_MainMenu : MonoBehaviour
 		Option,
 		Max
 	}
-
-	CanvasRenderer _root = null;
+		
 	private GameObject[] _menu = new GameObject[(int)eMenu.Max];
 
 
@@ -26,13 +25,13 @@ public class UI_MainMenu : MonoBehaviour
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-		Single.hierarchy.Init ();
-		_root = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
+		base.Init_UI ();
+
 		_menu[(int)eMenu.Map] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_map");
 		_menu[(int)eMenu.Market] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_market");
 		_menu[(int)eMenu.Option] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_option");
 
-		StartCoroutine (GlobalFunctions.FadeIn (_root , 1.0f));
+		StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
 		//=================================================
 
 	}
@@ -64,7 +63,7 @@ public class UI_MainMenu : MonoBehaviour
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_load_ = !_process_load_;
-		StartCoroutine (GlobalFunctions.FadeOut (_root , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.LOADING, 3.0f));
 	}
 }
