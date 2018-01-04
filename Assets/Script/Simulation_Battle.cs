@@ -50,6 +50,7 @@ namespace CounterBlock
 			//_rscMgr = CSingleton<ResourceManager>.Instance;
 			//_rscMgr.Init ();
 
+			this.gameObject.AddComponent<MonoInputManager> ();
 			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
 			_ui_battle.Init ();
 
