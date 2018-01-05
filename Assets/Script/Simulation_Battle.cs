@@ -275,6 +275,42 @@ namespace CounterBlock
 			}
 		}
 
+		public void OnAttackWeak(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Attack_Weak ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Attack_Weak ();
+			}
+		}
+
+		public void OnAttackStrong(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Attack_Strong ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Attack_Strong ();
+			}
+		}
+
+		public void OnBlock(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Block ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Block ();
+			}
+		}
+
 
 	}//end class Simulation 
 
