@@ -23,7 +23,7 @@ namespace CounterBlock
 	{
 
 		private CharacterManager _crtMgr = null;
-		private ResourceManager _rscMgr = null;
+		//private ResourceManager _rscMgr = null;
 
 		//====//====//====//====//====//====//====//====
 		private UI_Battle _ui_battle = null;
@@ -46,9 +46,6 @@ namespace CounterBlock
 
 			_crtMgr = new CharacterManager ();
 			_crtMgr.Init (CHARACTER_COUNT);
-
-			//_rscMgr = CSingleton<ResourceManager>.Instance;
-			//_rscMgr.Init ();
 
 			this.gameObject.AddComponent<MonoInputManager> ();
 			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
