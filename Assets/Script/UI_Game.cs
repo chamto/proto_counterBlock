@@ -119,7 +119,7 @@ public class GameMode_Couple : MonoBehaviour
 
 	void Update()
 	{
-		_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
+		//_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
 	}
 
 }
@@ -128,9 +128,34 @@ public class PineCone_Card : MonoBehaviour
 {
 	public int _idx = -1;
 
+	public AudioSource _audioSource { get; set; }
+	public int _voiceSequence = 0;
+
+	void Start()
+	{
+		_audioSource = gameObject.GetComponent<AudioSource>();
+	}
+
 	void TouchBegan() 
 	{
 		DebugWide.LogBlue (gameObject); //chamto test
+
+		//=================================================
+		AudioClips clips = null;
+		if (true) {
+			clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
+		} else 
+		{
+			clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverWoman_2);
+		}
+		//_audioSource.Play (); //chamto test
+		List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
+		//List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(6); //100 , 9 임시 처리
+		_audioSource.Stop ();
+		_audioSource.PlayOneShot(clips[seq[_voiceSequence].hashKey]);
+		_voiceSequence++;
+		_voiceSequence = _voiceSequence % (seq.Count);
+		//=================================================
 	}
 	void TouchMoved() {}
 	void TouchEnded() {}
