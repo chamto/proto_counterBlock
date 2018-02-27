@@ -105,11 +105,14 @@ public class GameMode_Couple : MonoBehaviour
 	private Transform _loading = null;
 	private Vector3 _loading_angle = Vector3.zero;
 	private Transform _speaker_shout = null;
-	private List<Transform> _pineCones = new List<Transform>();
+	private List<PineCone_Card> _pineCones = new List<PineCone_Card>();
 
 	private List<int> _randomTable = new List<int> ();
 
 	const int MAX_PAINCONES = 8;
+
+
+	//public List<int> _selectedCard = new List<int> ();
 
 
 	void Start()
@@ -122,6 +125,9 @@ public class GameMode_Couple : MonoBehaviour
 
 		this.RandomTableSetting ();
 
+		//_selectedCard.Add (-1); //첫째 선택 
+		//_selectedCard.Add (-1); //둘쨰 선택
+
 		CharDataBundle bundle;
 		bundle._data = null;
 		bundle._ui = null;
@@ -133,14 +139,15 @@ public class GameMode_Couple : MonoBehaviour
 			PineCone_Card card = tr.gameObject.AddComponent<PineCone_Card> ();
 			card._idx = i;
 			card._coupleNumber = _randomTable [i];
-			_pineCones.Add(tr);
+			card._GameMode_Couple = this;
+			_pineCones.Add(card);
 
 			bundle._gameObject = _pineCones [i].gameObject;
 			StartCoroutine("Rolling",bundle); 
 		}
 
 		bundle._gameObject = _speaker_shout.gameObject;
-		StartCoroutine("Shout",bundle); 
+		//StartCoroutine("Shout",bundle); 
 
 	}
 
@@ -189,11 +196,37 @@ public class GameMode_Couple : MonoBehaviour
 		_randomTable [dst] = temp;
 	}
 
+	public void DeSelectAll()
+	{
+		int selectCount = 0;
+		for(int i=0;i<_pineCones.Count;i++)
+		{
+			if (_pineCones[i]._isSelect)
+			{
+				selectCount++;
+			}
+		}
+
+		const int MAX_SELECT_COUNT = 2;
+		if (MAX_SELECT_COUNT <= selectCount) 
+		{
+			for (int i = 0; i < _pineCones.Count; i++) 
+			{
+				_pineCones [i].DeSelect ();
+			}
+		}
+
+	}
+
 	void Update()
 	{
 		_loading_angle.z += 1f;
 		_loading.localEulerAngles = _loading_angle;
 		//_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
+
+
+		//짝판별
+
 	}
 
 	public IEnumerator Shout(CharDataBundle bundle)
@@ -245,8 +278,23 @@ public class GameMode_Couple : MonoBehaviour
 		StartCoroutine("Rolling",bundle); 
 	}
 
+	public IEnumerator MoveFrom(CharDataBundle bundle)
+	{
+
+		float time = 2f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		iTween.MoveFrom (bundle._gameObject, _loading.position, time);
+
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+	}
 }
 
+//솔방울카드
 public class PineCone_Card : MonoBehaviour
 {
 	public int _idx = -1;
@@ -256,18 +304,38 @@ public class PineCone_Card : MonoBehaviour
 
 	public int _coupleNumber = 0;
 
+	public GameMode_Couple _GameMode_Couple = null;
+
+	public bool _isSelect = false;
+
 	void Start()
 	{
 		_audioSource = gameObject.GetComponent<AudioSource>();
+	}
+
+	public void DeSelect()
+	{
+		if (true == _isSelect) 
+		{
+			CharDataBundle bundle;
+			bundle._data = null;
+			bundle._ui = null;
+			bundle._gameObject = gameObject;
+			StartCoroutine("Scale_Down",bundle); 
+		}
+		_isSelect = false;
+
 	}
 
 	void TouchBegan() 
 	{
 		DebugWide.LogBlue (gameObject); //chamto test
 
+		_GameMode_Couple.DeSelectAll ();
+
 		//=================================================
 		AudioClips clips = null;
-		if (true) {
+		if (_isSelect) {
 			clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
 		} else 
 		{
@@ -285,7 +353,17 @@ public class PineCone_Card : MonoBehaviour
 		bundle._data = null;
 		bundle._ui = null;
 		bundle._gameObject = gameObject;
-		StartCoroutine("Scale_Up",bundle); 
+
+		if(false == _isSelect)
+			StartCoroutine("Scale_Up",bundle); 
+		else 
+			StartCoroutine("Scale_Down",bundle); 
+
+
+		_isSelect = !_isSelect;
+		//======
+
+
 	}
 	void TouchMoved() {}
 	void TouchEnded() {}
@@ -320,4 +398,6 @@ public class PineCone_Card : MonoBehaviour
 
 		iTween.Stop (bundle._gameObject);
 	}
+
+
 }
