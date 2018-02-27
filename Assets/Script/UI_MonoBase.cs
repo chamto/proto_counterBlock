@@ -37,6 +37,28 @@ public class UI_MonoBase : MonoBehaviour
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.TITLE, 3.0f));
 	}
 
+	private bool _process_menu_ = false;
+	public void LoadScene_Menu()
+	{
+		if (true == _process_menu_)
+			return;
+		//DebugWide.LogBlue ("Load...");
+		_process_menu_ = !_process_menu_;
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.MAIN_MENU, 3.0f));
+	}
+
+	private bool _process_game_couple_ = false;
+	public void LoadScene_Game_Couple()
+	{
+		if (true == _process_game_couple_)
+			return;
+		//DebugWide.LogBlue ("Load...");
+		_process_game_couple_ = !_process_game_couple_;
+		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.GAME, 3.0f));
+	}
+
 	private bool _process_proto_singing_ = false;
 	public void LoadScene_Proto_Singing()
 	{

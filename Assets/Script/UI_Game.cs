@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using CounterBlock;
 
 public class UI_Game : UI_MonoBase 
@@ -105,14 +106,13 @@ public class GameMode_Couple : MonoBehaviour
 	public Transform _loading = null;
 	private Vector3 _loading_angle = Vector3.zero;
 	private Transform _speaker_shout = null;
-	private List<PineCone_Card> _pineCones = new List<PineCone_Card>();
+	private Button _btnScore = null;
 
+	private List<PineCone_Card> _pineCones = new List<PineCone_Card>();
 	private List<int> _randomTable = new List<int> ();
 
 	const int MAX_PAINCONES = 8;
 	const int MAX_SELECT_COUNT = 2;
-
-	//public List<int> _selectedCard = new List<int> ();
 
 
 	void Start()
@@ -122,11 +122,10 @@ public class GameMode_Couple : MonoBehaviour
 		_loading_angle = _loading.eulerAngles;
 		_speaker_shout = GameObject.Find ("sp_shout").GetComponent<Transform> ();
 		_speaker_shout.gameObject.SetActive (false);
+		_btnScore = GameObject.Find ("Score").GetComponent<Button>();
+		_btnScore.gameObject.SetActive (false);
 
 		this.RandomTableSetting ();
-
-		//_selectedCard.Add (-1); //첫째 선택 
-		//_selectedCard.Add (-1); //둘쨰 선택
 
 		CharDataBundle bundle;
 		bundle._data = null;
@@ -145,9 +144,6 @@ public class GameMode_Couple : MonoBehaviour
 			bundle._gameObject = _pineCones [i].gameObject;
 			StartCoroutine("Rolling",bundle); 
 		}
-
-		bundle._gameObject = _speaker_shout.gameObject;
-		//StartCoroutine("Shout",bundle); 
 
 	}
 
@@ -248,6 +244,20 @@ public class GameMode_Couple : MonoBehaviour
 
 				StartCoroutine ("EndProcess", 2f);
 			}
+		}
+
+		int endCount = 0;
+		for(int i=0;i<_pineCones.Count;i++)
+		{
+			if (true == _pineCones[i]._isEnd)
+			{
+				endCount++;
+			}
+		}
+		if (MAX_PAINCONES == endCount) 
+		{
+			//게임 완료 
+			_btnScore.gameObject.SetActive(true);
 		}
 	}
 
@@ -381,7 +391,7 @@ public class PineCone_Card : MonoBehaviour
 		if (true == _isEnd)
 			return;
 		
-		DebugWide.LogBlue (gameObject); //chamto test
+		//DebugWide.LogBlue (gameObject); //chamto test
 
 		_GameMode_Couple.DeSelectAll ();
 
