@@ -19,11 +19,11 @@ using UnityEngine.UI;
 namespace CounterBlock
 {
 	
-	public class Simulation_Battle : MonoBehaviour 
+	public class Simulation_Battle : UI_MonoBase 
 	{
 
 		private CharacterManager _crtMgr = null;
-		private ResourceManager _rscMgr = null;
+		//private ResourceManager _rscMgr = null;
 
 		//====//====//====//====//====//====//====//====
 		private UI_Battle _ui_battle = null;
@@ -38,15 +38,16 @@ namespace CounterBlock
 		// Use this for initialization
 		void Start () 
 		{
-			
+			base.Init_UI ();
+
 			FrameControl.SetDeltaTime_30FPS (); //30Fps 기준으로 설정한다.  30Fps 고정프레임으로 사용하겠다는 것이 아님.
+
+			Single.resource.Init ();
 
 			_crtMgr = new CharacterManager ();
 			_crtMgr.Init (CHARACTER_COUNT);
 
-			_rscMgr = CSingleton<ResourceManager>.Instance;
-			_rscMgr.Init ();
-
+			this.gameObject.AddComponent<MonoInputManager> ();
 			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
 			_ui_battle.Init ();
 
@@ -181,24 +182,35 @@ namespace CounterBlock
 
 			//frame test
 			//if(5f < Time.time)
-			{
+			//{
 				//Time.fixedDeltaTime : 고정프레임 설정
 				//System.DateTime.Now.Millisecond;
 				//QualitySettings.vSyncCount
 				//Thread.Sleep (1000);
 				//DebugWide.LogBlue (" UnityDelta : "+Time.deltaTime + "   dateMs: " + System.DateTime.Now.Millisecond); //chamto test
-			}
+			//}
 
+			//===================
 			//1. key input
 			//2. UI update
 			//3. data update
 
+			//===== 입력 갱신 =====
+			this.Update_Input();
 
-			//test
+			//===== 후처리 갱신 =====
+			_ui_battle.Update_UI ();
+			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
+
+
+		}//end Update
+
+		public void Update_Input()
+		{
 			if (Input.GetKeyUp ("z")) 
 			{
 				//DebugWide.LogBlue (" UnityDelta : "+Time.deltaTime + "   A : " + Time.time); //chamto test
-				
+
 				CharDataBundle bundle;
 				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
 				bundle._data = _ui_1Player.GetData();
@@ -258,18 +270,46 @@ namespace CounterBlock
 				//DebugWide.LogBlue ("2p - keyinput");
 				_ui_2Player.GetData().Block ();
 			}
+		}
 
+		public void OnAttackWeak(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Attack_Weak ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Attack_Weak ();
+			}
+		}
 
-			_ui_battle.Update_UI ();
-			_crtMgr.Update (); //갱신순서 중요!!!! , start 상태는 1Frame 뒤 변경되는데, 갱신순서에 따라 ui에서 탐지 못할 수 있다. fixme:콜백함수로 처리해야함  
+		public void OnAttackStrong(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Attack_Strong ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Attack_Strong ();
+			}
+		}
 
+		public void OnBlock(int playerNum)
+		{
+			if (1 == playerNum) 
+			{
+				_ui_1Player.GetData().Block ();
+			}
+			if (2 == playerNum) 
+			{
+				_ui_2Player.GetData().Block ();
+			}
+		}
 
-		}//end Update
 
 	}//end class Simulation 
-
-
-
 
 }//end namespace 
 

@@ -6,6 +6,7 @@ using System.Linq;
 
 public class HierarchyPreLoader
 {
+	private bool _isInit = false;
 	private UInt32 _keySecquence = 0;
 	protected Dictionary<string, UInt32> 	_pathToKey = new Dictionary<string, UInt32>();
 	protected Dictionary<UInt32, Transform> _keyToData = new Dictionary<UInt32, Transform>();
@@ -43,6 +44,12 @@ public class HierarchyPreLoader
 	
 	public void PreOrderTraversal(string path , Transform data)
 	{
+		if (false == _isInit) 
+		{
+			DebugWide.LogError ("Func : PreOrderTraversal : Initial function not called");
+			return;
+		}
+
 		//1. visit
 		//DebugWide.LogRed (path +"    "+ data.name); //chamto test
 		uint value;
@@ -132,6 +139,7 @@ public class HierarchyPreLoader
 		_keyToData.Clear ();
 		_dataToPath.Clear ();
 		_keySecquence = 0;
+		_isInit = true;
 
 		//여러 최상위 루트마다 순회
 		foreach (Transform oneOfManyRoots in UnityEngine.Object.FindObjectsOfType<Transform>())

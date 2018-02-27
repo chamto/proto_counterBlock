@@ -2523,7 +2523,7 @@ namespace CounterBlock
 		}
 
 
-		private HierarchyPreLoader _ref_herch = null;
+		//private HierarchyPreLoader _ref_herch = null;
 
 		private Dictionary<eSPRITE_NAME, string> _spriteNames = null;
 		private Dictionary<eSPRITE_NAME, Sprite> _sprites = new Dictionary<eSPRITE_NAME, Sprite> ();
@@ -2549,20 +2549,7 @@ namespace CounterBlock
 		//==================== <Method> ====================
 		public ResourceManager()
 		{
-			_ref_herch = CSingleton<HierarchyPreLoader>.Instance;
-		}
-
-
-		public eSPRITE_NAME StringToEnum(string name)
-		{
-			//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
-			//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
-			return _spriteNames.FirstOrDefault(x => x.Value == name).Key;
-		}
-
-		public void Init()
-		{
-			_ref_herch.Init ();
+			//_ref_herch = CSingleton<HierarchyPreLoader>.Instance;
 
 			_spriteNames = new Dictionary<eSPRITE_NAME, string> ()
 			{
@@ -2592,9 +2579,31 @@ namespace CounterBlock
 				{eSPRITE_NAME.EFFECT_STRIKE_X, "effect_6"},
 				{eSPRITE_NAME.EFFECT_STRIKE_CROSS, "effect_7"},
 			};
+		}
 
+
+		public eSPRITE_NAME StringToEnum(string name)
+		{
+			//20170813 chamto fixme - value 값이 없을 때의 예외 처리가 없음 
+			//ref : https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
+			return _spriteNames.FirstOrDefault(x => x.Value == name).Key;
+		}
+
+
+		public void ClearAll()
+		{
+			_sprites.Clear ();
+			_voiceClipMap.Clear ();
+			_dictEng.ClearAll ();
+		}
+
+		public void Init()
+		{
+			//_ref_herch.Init ();
+			this.ClearAll();
+
+			//====== LOAD ======
 			this.Load_XML ();
-
 			this.Load_Sprite ();
 			this.Load_AudioClip ();
 		}
@@ -2789,7 +2798,8 @@ namespace CounterBlock
 			obj.transform.SetParent (parent,false);
 			obj.transform.name = name;
 
-			_ref_herch.PreOrderTraversal (obj.transform); //새로 생성되는 객체의 경로를 추가한다
+			Single.hierarchy.PreOrderTraversal(obj.transform); //새로 생성되는 객체의 경로를 추가한다
+			//_ref_herch.PreOrderTraversal (obj.transform); //새로 생성되는 객체의 경로를 추가한다
 
 			return obj;
 		}
