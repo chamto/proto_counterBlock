@@ -289,22 +289,24 @@ public class MonoInputManager : MonoBehaviour
 		}
 
 		//2. game input event test
-		RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-		
-		if(hit){
+		RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction);
+
+		if(hit2D)
+		{
 			//DebugWide.Log(hit.transform.gameObject.name); //chamto test
-			hit.transform.gameObject.SendMessage(callbackMethod,0,SendMessageOptions.DontRequireReceiver);
+			hit2D.transform.gameObject.SendMessage(callbackMethod,0,SendMessageOptions.DontRequireReceiver);
 
-//			if(hit.tag.Equals("collider"))
-//			{
-//				hit.transform.parent.gameObject.SendMessage(methodName,0,SendMessageOptions.DontRequireReceiver);
-//			}else
-//			{
-//				hit.transform.gameObject.SendMessage(methodName,0,SendMessageOptions.DontRequireReceiver);
-//			}
-
-			return hit.transform.gameObject;
+			return hit2D.transform.gameObject;
 		}
+
+		RaycastHit hit3D;
+		if (true == Physics.Raycast (ray, out hit3D, Mathf.Infinity)) 
+		{
+			hit3D.transform.gameObject.SendMessage(callbackMethod,0,SendMessageOptions.DontRequireReceiver);
+
+			return hit3D.transform.gameObject;
+		}
+
 
 		return null;
 	}

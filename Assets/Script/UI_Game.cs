@@ -8,6 +8,7 @@ public class UI_Game : UI_MonoBase
 
 	private CharacterManager _crtMgr = null;
 	private UI_Battle _ui_battle = null;
+	private GameMode_Couple _game_couple = null;
 
 	// Use this for initialization
 	void Start () 
@@ -33,6 +34,8 @@ public class UI_Game : UI_MonoBase
 
 		//this.CreatePlayer ();
 
+		//=================================================
+		_game_couple = this.gameObject.AddComponent<GameMode_Couple>();
 
 		//=================================================
 	}
@@ -90,12 +93,45 @@ public class UI_Game : UI_MonoBase
 	}
 
 
-
-
-
 	public void Update_Input()
 	{
 		
 	}
 
+}
+
+public class GameMode_Couple : MonoBehaviour
+{
+	private List<Transform> _pineCones = new List<Transform>();
+
+	void Start()
+	{
+		const int MAX_PAINCONES = 9;
+		for (int i = 0; i < MAX_PAINCONES ; i++) 
+		{
+			Transform tr = GameObject.Find ("pinecone_" + i).GetComponent<Transform> ();
+			PineCone_Card card = tr.gameObject.AddComponent<PineCone_Card> ();
+			card._idx = i;
+			_pineCones.Add(tr);
+		}
+
+	}
+
+	void Update()
+	{
+		_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
+	}
+
+}
+
+public class PineCone_Card : MonoBehaviour
+{
+	public int _idx = -1;
+
+	void TouchBegan() 
+	{
+		DebugWide.LogBlue (gameObject); //chamto test
+	}
+	void TouchMoved() {}
+	void TouchEnded() {}
 }

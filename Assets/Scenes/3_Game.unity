@@ -164,6 +164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 163297633}
   - component: {fileID: 163297634}
+  - component: {fileID: 163297635}
   m_Layer: 0
   m_Name: pinecone_2
   m_TagString: Untagged
@@ -219,6 +220,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &163297635
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 163297632}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.835
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &206053956
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,6 +610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 645677000}
   - component: {fileID: 645677001}
+  - component: {fileID: 645677002}
   m_Layer: 0
   m_Name: pinecone_1
   m_TagString: Untagged
@@ -652,6 +666,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &645677002
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 645676999}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.82
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &696488035
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,7 +922,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: df386d270f4cb4e8aa6a07e34d58184b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.672}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.247}
   m_FlipX: 0
   m_FlipY: 0
 --- !u!4 &825185440
@@ -1445,6 +1471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1347854125}
   - component: {fileID: 1347854126}
+  - component: {fileID: 1347854127}
   m_Layer: 0
   m_Name: pinecone_0
   m_TagString: Untagged
@@ -1500,6 +1527,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1347854127
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1347854124}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.84
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1351304735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1509,6 +1548,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1351304736}
   - component: {fileID: 1351304737}
+  - component: {fileID: 1351304738}
   m_Layer: 0
   m_Name: pinecone_7
   m_TagString: Untagged
@@ -1564,6 +1604,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1351304738
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1351304735}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.82
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1352271903
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,6 +1625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1352271904}
   - component: {fileID: 1352271905}
+  - component: {fileID: 1352271906}
   m_Layer: 0
   m_Name: pinecone_8
   m_TagString: Untagged
@@ -1628,6 +1681,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1352271906
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1352271903}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.84
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1369445688
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,6 +1702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1369445689}
   - component: {fileID: 1369445690}
+  - component: {fileID: 1369445691}
   m_Layer: 0
   m_Name: pinecone_3
   m_TagString: Untagged
@@ -1692,6 +1758,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1369445691
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1369445688}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.835
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1419730892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,6 +1936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1531656814}
   - component: {fileID: 1531656815}
+  - component: {fileID: 1531656816}
   m_Layer: 0
   m_Name: pinecone_5
   m_TagString: Untagged
@@ -1913,6 +1992,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1531656816
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1531656813}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.84
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1536236523
 GameObject:
   m_ObjectHideFlags: 0
@@ -1922,6 +2013,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1536236524}
   - component: {fileID: 1536236525}
+  - component: {fileID: 1536236526}
   m_Layer: 0
   m_Name: pinecone_4
   m_TagString: Untagged
@@ -1977,6 +2069,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1536236526
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1536236523}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.82
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1661642999
 GameObject:
   m_ObjectHideFlags: 0
@@ -2283,6 +2387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1853800266}
   - component: {fileID: 1853800267}
+  - component: {fileID: 1853800268}
   m_Layer: 0
   m_Name: pinecone_6
   m_TagString: Untagged
@@ -2338,6 +2443,18 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!135 &1853800268
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1853800265}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.835
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1970588967
 GameObject:
   m_ObjectHideFlags: 0
