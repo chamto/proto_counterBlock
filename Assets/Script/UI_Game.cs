@@ -102,7 +102,7 @@ public class UI_Game : UI_MonoBase
 
 public class GameMode_Couple : MonoBehaviour
 {
-	private Transform _loading = null;
+	public Transform _loading = null;
 	private Vector3 _loading_angle = Vector3.zero;
 	private Transform _speaker_shout = null;
 	private List<PineCone_Card> _pineCones = new List<PineCone_Card>();
@@ -110,7 +110,7 @@ public class GameMode_Couple : MonoBehaviour
 	private List<int> _randomTable = new List<int> ();
 
 	const int MAX_PAINCONES = 8;
-
+	const int MAX_SELECT_COUNT = 2;
 
 	//public List<int> _selectedCard = new List<int> ();
 
@@ -198,6 +198,8 @@ public class GameMode_Couple : MonoBehaviour
 
 	public void DeSelectAll()
 	{
+		
+		// 
 		int selectCount = 0;
 		for(int i=0;i<_pineCones.Count;i++)
 		{
@@ -207,7 +209,7 @@ public class GameMode_Couple : MonoBehaviour
 			}
 		}
 
-		const int MAX_SELECT_COUNT = 2;
+
 		if (MAX_SELECT_COUNT <= selectCount) 
 		{
 			for (int i = 0; i < _pineCones.Count; i++) 
@@ -218,14 +220,42 @@ public class GameMode_Couple : MonoBehaviour
 
 	}
 
+	public void Discrimination()
+	{
+		//짝판별
+		List<int> selected = new List<int> ();
+		for(int i=0;i<_pineCones.Count;i++)
+		{
+			if (_pineCones[i]._isSelect)
+			{
+				selected.Add (i);
+			}
+		}
+
+		if (MAX_SELECT_COUNT == selected.Count) 
+		{
+
+			if(_pineCones[selected[0]]._coupleNumber == _pineCones[selected[1]]._coupleNumber)
+			{
+				CharDataBundle bundle;
+				bundle._data = null;
+				bundle._ui = null;
+				bundle._gameObject = _speaker_shout.gameObject;
+				StartCoroutine("Shout",bundle); 
+
+				_pineCones [selected [0]].End ();
+				_pineCones [selected [1]].End ();
+
+				StartCoroutine ("EndProcess", 2f);
+			}
+		}
+	}
+
 	void Update()
 	{
 		_loading_angle.z += 1f;
 		_loading.localEulerAngles = _loading_angle;
 		//_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
-
-
-		//짝판별
 
 	}
 
@@ -244,8 +274,8 @@ public class GameMode_Couple : MonoBehaviour
 		iTween.Stop (bundle._gameObject);
 		bundle._gameObject.SetActive (false);
 
-		yield return new WaitForSeconds(Single.rand.Next (4, 10));
-		StartCoroutine("Shout",bundle); 
+		//yield return new WaitForSeconds(Single.rand.Next (4, 10));
+		//StartCoroutine("Shout",bundle); 
 	}
 
 	public IEnumerator Rolling(CharDataBundle bundle)
@@ -278,20 +308,21 @@ public class GameMode_Couple : MonoBehaviour
 		StartCoroutine("Rolling",bundle); 
 	}
 
-	public IEnumerator MoveFrom(CharDataBundle bundle)
+	public IEnumerator EndProcess(float waitTime)
 	{
+		yield return new WaitForSeconds(waitTime);
 
-		float time = 2f;
-		bundle._gameObject.SetActive (true);
-		iTween.Stop (bundle._gameObject);
-
-		iTween.MoveFrom (bundle._gameObject, _loading.position, time);
-
-
-		yield return new WaitForSeconds(time);
-
-		iTween.Stop (bundle._gameObject);
+		//뱀고리에 넣는다 - 임시처리
+		for (int i = 0; i < _pineCones.Count; i++) 
+		{
+			if (true == _pineCones [i]._isEnd) 
+			{
+				_pineCones [i].transform.position = _loading.position;
+				_pineCones [i].transform.localScale = Vector3.one;
+			}
+		}
 	}
+
 }
 
 //솔방울카드
@@ -307,6 +338,8 @@ public class PineCone_Card : MonoBehaviour
 	public GameMode_Couple _GameMode_Couple = null;
 
 	public bool _isSelect = false;
+	public bool _isEnd = false;
+
 
 	void Start()
 	{
@@ -327,8 +360,27 @@ public class PineCone_Card : MonoBehaviour
 
 	}
 
+	public void End()
+	{
+		if (false == _isEnd && true == _isSelect) 
+		{
+			_isEnd = true;
+
+			CharDataBundle bundle;
+			bundle._data = null;
+			bundle._ui = null;
+			bundle._gameObject = gameObject;
+			StartCoroutine("MoveTo",bundle);
+		}
+
+
+	}
+
 	void TouchBegan() 
 	{
+		if (true == _isEnd)
+			return;
+		
 		DebugWide.LogBlue (gameObject); //chamto test
 
 		_GameMode_Couple.DeSelectAll ();
@@ -363,6 +415,8 @@ public class PineCone_Card : MonoBehaviour
 		_isSelect = !_isSelect;
 		//======
 
+		//판단 
+		_GameMode_Couple.Discrimination();
 
 	}
 	void TouchMoved() {}
@@ -399,5 +453,20 @@ public class PineCone_Card : MonoBehaviour
 		iTween.Stop (bundle._gameObject);
 	}
 
+	public IEnumerator MoveTo(CharDataBundle bundle)
+	{
+
+		float time = 2f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		//iTween.MoveTo(bundle._gameObject, _GameMode_Couple._loading.position, time);
+		iTween.ShakeScale(bundle._gameObject, new Vector3(0.2f,0.2f,1f), time);
+
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+	}
 
 }
