@@ -102,24 +102,147 @@ public class UI_Game : UI_MonoBase
 
 public class GameMode_Couple : MonoBehaviour
 {
+	private Transform _loading = null;
+	private Vector3 _loading_angle = Vector3.zero;
+	private Transform _speaker_shout = null;
 	private List<Transform> _pineCones = new List<Transform>();
+
+	private List<int> _randomTable = new List<int> ();
+
+	const int MAX_PAINCONES = 8;
+
 
 	void Start()
 	{
-		const int MAX_PAINCONES = 9;
+
+		_loading = GameObject.Find ("loading_serpent").GetComponent<Transform> ();
+		_loading_angle = _loading.eulerAngles;
+		_speaker_shout = GameObject.Find ("sp_shout").GetComponent<Transform> ();
+		_speaker_shout.gameObject.SetActive (false);
+
+		this.RandomTableSetting ();
+
+		CharDataBundle bundle;
+		bundle._data = null;
+		bundle._ui = null;
+
+
 		for (int i = 0; i < MAX_PAINCONES ; i++) 
 		{
 			Transform tr = GameObject.Find ("pinecone_" + i).GetComponent<Transform> ();
 			PineCone_Card card = tr.gameObject.AddComponent<PineCone_Card> ();
 			card._idx = i;
+			card._coupleNumber = _randomTable [i];
 			_pineCones.Add(tr);
+
+			bundle._gameObject = _pineCones [i].gameObject;
+			StartCoroutine("Rolling",bundle); 
 		}
 
+		bundle._gameObject = _speaker_shout.gameObject;
+		StartCoroutine("Shout",bundle); 
+
+	}
+
+	public void RandomTableSetting()
+	{
+		List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
+
+		int rnd_num = -1;
+		rnd_num = Single.rand.Next (0, seq.Count - 1 - 3);
+		_randomTable.Add (rnd_num);
+		rnd_num++;
+		_randomTable.Add (rnd_num);
+		rnd_num++;
+		_randomTable.Add (rnd_num);
+		rnd_num++;
+		_randomTable.Add (rnd_num);
+
+		_randomTable.Add (_randomTable[0]);
+		_randomTable.Add (_randomTable[1]);
+		_randomTable.Add (_randomTable[2]);
+		_randomTable.Add (_randomTable[3]);
+
+		//섞기
+		for (int i = 0; i < 20; i++) 
+		{
+			int src = Single.rand.Next (0, MAX_PAINCONES-1);
+			int dst = Single.rand.Next (0, MAX_PAINCONES-1);
+			Swap_RandomTable (src, dst);
+		}
+
+		//test print
+		string temp = "";
+		foreach (int num in _randomTable) 
+		{
+			temp += num + "  ";
+		}
+		DebugWide.LogBlue (temp);	
+
+	}
+
+	public void Swap_RandomTable(int src, int dst)
+	{
+		int temp = 0;
+		temp = _randomTable [src];
+		_randomTable [src] = _randomTable [dst];
+		_randomTable [dst] = temp;
 	}
 
 	void Update()
 	{
+		_loading_angle.z += 1f;
+		_loading.localEulerAngles = _loading_angle;
 		//_pineCones [0].eulerAngles = new Vector3 (0,0,45f);
+	}
+
+	public IEnumerator Shout(CharDataBundle bundle)
+	{
+
+		float time = 1.5f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		iTween.PunchScale(bundle._gameObject,iTween.Hash("amount",new Vector3(1.5f,1.5f,1f),"loopType","loop","time",time));
+		//iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0.5f), time);
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+		bundle._gameObject.SetActive (false);
+
+		yield return new WaitForSeconds(Single.rand.Next (4, 10));
+		StartCoroutine("Shout",bundle); 
+	}
+
+	public IEnumerator Rolling(CharDataBundle bundle)
+	{
+
+		float time = 10f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		int rand = Single.rand.Next (100, 500);
+
+		//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",100,"y",100,"time",0.5f));
+		//iTween.PunchPosition(charUI._action[2].gameObject, iTween.Hash("x",50,"loopType","loop","time",0.5f));
+		//iTween.PunchRotation(bundle._gameObject,new Vector3(0,0,300f),time);
+		iTween.PunchRotation(bundle._gameObject,iTween.Hash("z",rand,"loopType","loop","time",time));
+		//iTween.PunchPosition(bundle._gameObject, iTween.Hash("z",-200f,"time",time));	
+		//			iTween.MoveBy(bundle._gameObject, iTween.Hash(
+		//				"amount", new Vector3(0,0,30f),
+		//				"time", time, "easetype",  "easeInOutBounce"//"linear"
+		//			));
+		//			iTween.RotateBy(bundle._gameObject, iTween.Hash(
+		//				"amount", new Vector3(0,30f,0),
+		//				"time", time, "easetype",  "easeInOutBounce"//"linear"
+		//			));
+		//iTween.ShakeScale(bundle._gameObject,new Vector3(0.5f,0.5f,0.5f), time);
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+		StartCoroutine("Rolling",bundle); 
 	}
 
 }
@@ -130,6 +253,8 @@ public class PineCone_Card : MonoBehaviour
 
 	public AudioSource _audioSource { get; set; }
 	public int _voiceSequence = 0;
+
+	public int _coupleNumber = 0;
 
 	void Start()
 	{
@@ -152,11 +277,47 @@ public class PineCone_Card : MonoBehaviour
 		List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
 		//List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(6); //100 , 9 임시 처리
 		_audioSource.Stop ();
-		_audioSource.PlayOneShot(clips[seq[_voiceSequence].hashKey]);
-		_voiceSequence++;
-		_voiceSequence = _voiceSequence % (seq.Count);
+		_audioSource.PlayOneShot(clips[seq[_coupleNumber].hashKey]);
+
 		//=================================================
+
+		CharDataBundle bundle;
+		bundle._data = null;
+		bundle._ui = null;
+		bundle._gameObject = gameObject;
+		StartCoroutine("Scale_Up",bundle); 
 	}
 	void TouchMoved() {}
 	void TouchEnded() {}
+
+
+	public IEnumerator Scale_Up(CharDataBundle bundle)
+	{
+
+		float time = 2f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		iTween.ScaleTo (bundle._gameObject, new Vector3 (2f,2f,1f), time);
+
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+	}
+
+	public IEnumerator Scale_Down(CharDataBundle bundle)
+	{
+
+		float time = 2f;
+		bundle._gameObject.SetActive (true);
+		iTween.Stop (bundle._gameObject);
+
+		iTween.ScaleTo (bundle._gameObject, new Vector3 (1f,1f,1f), time);
+
+
+		yield return new WaitForSeconds(time);
+
+		iTween.Stop (bundle._gameObject);
+	}
 }
