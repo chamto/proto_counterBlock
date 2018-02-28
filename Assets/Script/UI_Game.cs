@@ -216,6 +216,14 @@ public class GameMode_Couple : MonoBehaviour
 
 	}
 
+	public void SoundStopAll()
+	{
+		for(int i=0;i<_pineCones.Count;i++)
+		{
+			_pineCones [i]._audioSource.Stop ();
+		}	
+	}
+
 	public void Discrimination()
 	{
 		//짝판별
@@ -392,7 +400,7 @@ public class PineCone_Card : MonoBehaviour
 			return;
 		
 		//DebugWide.LogBlue (gameObject); //chamto test
-
+		_GameMode_Couple.SoundStopAll();
 		_GameMode_Couple.DeSelectAll ();
 
 		//=================================================
