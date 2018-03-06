@@ -1,9 +1,14 @@
 fileFormatVersion: 2
 guid: 465ce2f5188db420c83d293d96c8ac30
-timeCreated: 1520259977
+timeCreated: 1520349802
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: chun_jiho_0
+    21300002: chun_jiho_1
+    21300004: chun_jiho_2
+    21300006: chun_jiho_3
+    21300008: chun_jiho_4
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -88,7 +93,77 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: chun_jiho_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 419
+        width: 208
+        height: 326
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_1
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 413
+        width: 230
+        height: 331
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_2
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 45
+        width: 270
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_3
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 423
+        width: 259
+        height: 328
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 107
+        width: 292
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
     outline: []
     physicsShape: []
   spritePackingTag: 
