@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 2f18d61d80d76481f82db94fff8f68f2
-timeCreated: 1520697504
+timeCreated: 1520703347
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -16,6 +16,7 @@ TextureImporter:
     21300018: effect_2_9
     21300020: effect_2_10
     21300022: effect_2_11
+    21300024: effect_2_12
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -133,10 +134,10 @@ TextureImporter:
       name: effect_2_3
       rect:
         serializedVersion: 2
-        x: 568
-        y: 528
-        width: 280
-        height: 156
+        x: 321
+        y: 74
+        width: 216
+        height: 112
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -251,6 +252,34 @@ TextureImporter:
         height: 94
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: effect_2_0
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 529
+        width: 207
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: effect_2_12
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 532
+        width: 216
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
