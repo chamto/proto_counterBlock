@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: a61ef87effac94bfea6f3216d43ecc7a
-timeCreated: 1520531511
+guid: e3d9888e94c1a4a5d80e5a62514b1bf0
+timeCreated: 1520693534
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: park_sunbi_old_0
+  fileIDToRecycleName: {}
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -89,21 +88,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: park_sunbi_old_0
-      rect:
-        serializedVersion: 2
-        x: 72
-        y: 30
-        width: 211
-        height: 334
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
+    sprites: []
     outline: []
     physicsShape: []
   spritePackingTag: 
