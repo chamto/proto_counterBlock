@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 2f18d61d80d76481f82db94fff8f68f2
-timeCreated: 1520529990
+timeCreated: 1520697504
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -105,10 +105,10 @@ TextureImporter:
       name: effect_2_1
       rect:
         serializedVersion: 2
-        x: 4
-        y: 470
-        width: 288
-        height: 290
+        x: 34
+        y: 497
+        width: 240
+        height: 246
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
