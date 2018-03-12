@@ -405,7 +405,7 @@ public class PineCone_Card : MonoBehaviour
 
 		//=================================================
 		AudioClips clips = null;
-		if (_isSelect) {
+		if (true == _isSelect) {
 			clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverMan_1);
 		} else 
 		{

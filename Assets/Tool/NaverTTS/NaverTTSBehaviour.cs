@@ -219,6 +219,7 @@ public class NaverTTSBehaviour : MonoBehaviour
 
 		CounterBlock.Single.coroutine.Start_Async (Request_NaverTTS());
 
+		//Test_NaverTTS (); //chamto test
 	}
 
 	// Update is called once per frame
@@ -266,7 +267,7 @@ public class NaverTTSBehaviour : MonoBehaviour
 
 				vKind = VoiceInfo.eKind.Eng_NaverMan_1;
 				_tts.SetSpeaker (nLang, ToNaverTTS(nLang, vKind));
-				_tts.SetSpeed (NaverTTS.BASIC_ASC_SPEED-1);
+				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
 				if (false == _tts.FileExists()) 
@@ -277,7 +278,7 @@ public class NaverTTSBehaviour : MonoBehaviour
 
 				vKind = VoiceInfo.eKind.Eng_NaverWoman_2;
 				_tts.SetSpeaker (nLang, ToNaverTTS(nLang, vKind));
-				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED+2);
+				_tts.SetSpeed (NaverTTS.MIN_ASC_SPEED);
 				_tts.SetPath (NaverTTS.PATH_Voice);
 				_tts.SetFileName (second.ToString("0000")+"_"+hash+"_"+ (int)vKind +"_"+_tts.GetSpeed()+"_"+tempStr);
 				if (false == _tts.FileExists()) 
