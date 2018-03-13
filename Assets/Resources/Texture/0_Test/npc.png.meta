@@ -1,11 +1,13 @@
 fileFormatVersion: 2
 guid: cd847a7a750574d98b37f5bce7216bf3
-timeCreated: 1520260672
+timeCreated: 1520926991
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: npc_0
     21300002: npc_1
+    21300004: npc_2
+    21300006: npc_3
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -100,7 +102,7 @@ TextureImporter:
         width: 335
         height: 212
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -113,6 +115,34 @@ TextureImporter:
         y: 507
         width: 244
         height: 249
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: npc_2
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 185
+        width: 225
+        height: 323
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: npc_3
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 528
+        width: 214
+        height: 185
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
