@@ -40,7 +40,7 @@ namespace CounterBlock
 			Max
 		};
 
-		public UI_Battle _UI_Battle = null;
+		public GameMode_Battle _UI_Battle = null;
 
 		public uint _id = 0;
 		public Character _data = null;
@@ -1555,7 +1555,7 @@ namespace CounterBlock
 		public GameObject 		_gameObject;
 	}
 
-	public class UI_Battle : MonoBehaviour
+	public class GameMode_Battle : MonoBehaviour
 	{
 
 		private Transform _1P_start = null;

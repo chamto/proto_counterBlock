@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using CounterBlock;
 
-public class UI_Game : UI_MonoBase 
+public class UI_GameController : UI_MonoBase 
 {
 
 	private CharacterManager _crtMgr = null;
-	private UI_Battle _ui_battle = null;
+	private GameMode_Battle _ui_battle = null;
 	private GameMode_Couple _game_couple = null;
 
 	// Use this for initialization
@@ -30,15 +30,17 @@ public class UI_Game : UI_MonoBase
 		//_crtMgr.Init (CHARACTER_COUNT);
 
 		this.gameObject.AddComponent<MonoInputManager> ();
-		_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
+		_ui_battle = this.gameObject.AddComponent<GameMode_Battle> ();
 		//_ui_battle.Init ();
 
 		//this.CreatePlayer ();
 
 		//=================================================
+		//					게임 모드 추가
+		//=================================================
 		_game_couple = this.gameObject.AddComponent<GameMode_Couple>();
 
-		//=================================================
+		//================================================
 	}
 
 	// Update is called once per frame
@@ -75,7 +77,7 @@ public class UI_Game : UI_MonoBase
 			if ((chter.GetID () % 2) == 1) 
 			{ //홀수는 왼쪽 1 3 5 ...
 				//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
-				_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
+				_ui_battle.SetStartPoint (chter.GetID (), -1f * count, GameMode_Battle.START_POINT_LEFT);	
 				//card.data.kind = Character.eKind.Biking;
 				card.SetKind(Character.eKind.Biking);
 
@@ -83,7 +85,7 @@ public class UI_Game : UI_MonoBase
 			if ((chter.GetID () % 2) == 0) 
 			{ //짝수는 오른쪽 2 4 6 ... 
 				//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
-				_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
+				_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), GameMode_Battle.START_POINT_RIGHT);
 				//card.data.kind = Character.eKind.Seonbi;
 				card.SetKind(Character.eKind.Seonbi);
 

@@ -26,7 +26,7 @@ namespace CounterBlock
 		//private ResourceManager _rscMgr = null;
 
 		//====//====//====//====//====//====//====//====
-		private UI_Battle _ui_battle = null;
+		private GameMode_Battle _ui_battle = null;
 		private UI_CharacterCard _ui_1Player = null;
 		private UI_CharacterCard _ui_2Player = null;
 		//====//====//====//====//====//====//====//====
@@ -48,7 +48,7 @@ namespace CounterBlock
 			_crtMgr.Init (CHARACTER_COUNT);
 
 			this.gameObject.AddComponent<MonoInputManager> ();
-			_ui_battle = this.gameObject.AddComponent<UI_Battle> ();
+			_ui_battle = this.gameObject.AddComponent<GameMode_Battle> ();
 			_ui_battle.Init ();
 
 			this.CreatePlayer ();
@@ -69,7 +69,7 @@ namespace CounterBlock
 				if ((chter.GetID () % 2) == 1) 
 				{ //홀수는 왼쪽 1 3 5 ...
 					//DebugWide.LogBlue(-10f * count + " left " + count); //chamto test
-					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, UI_Battle.START_POINT_LEFT);	
+					_ui_battle.SetStartPoint (chter.GetID (), -1f * count, GameMode_Battle.START_POINT_LEFT);	
 					//card.data.kind = Character.eKind.Biking;
 					card.SetKind(Character.eKind.Biking);
 
@@ -77,7 +77,7 @@ namespace CounterBlock
 				if ((chter.GetID () % 2) == 0) 
 				{ //짝수는 오른쪽 2 4 6 ... 
 					//DebugWide.LogBlue(10f * count + " right " + count); //chamto test
-					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), UI_Battle.START_POINT_RIGHT);
+					_ui_battle.SetStartPoint (chter.GetID (), 1f * (count-1), GameMode_Battle.START_POINT_RIGHT);
 					//card.data.kind = Character.eKind.Seonbi;
 					card.SetKind(Character.eKind.Seonbi);
 
