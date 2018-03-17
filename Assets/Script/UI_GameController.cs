@@ -9,7 +9,7 @@ public class UI_GameController : UI_MonoBase
 
 	private CharacterManager _crtMgr = null;
 	private GameMode_Battle _ui_battle = null;
-	private GameMode_Couple _game_couple = null;
+	//private GameMode_Couple _game_couple = null;
 
 	// Use this for initialization
 	void Start () 
@@ -38,7 +38,7 @@ public class UI_GameController : UI_MonoBase
 		//=================================================
 		//					게임 모드 추가
 		//=================================================
-		_game_couple = this.gameObject.AddComponent<GameMode_Couple>();
+		//_game_couple = this.gameObject.AddComponent<GameMode_Couple>();
 
 		//================================================
 	}
