@@ -86,7 +86,7 @@ namespace CounterBlock
 		{
 			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
 
-			string parentPath = Single.hierarchy.GetTransformFullPath (obj.transform);
+			string parentPath = Single.hierarchy.GetFullPath (obj.transform);
 
 			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
 			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
@@ -1572,7 +1572,7 @@ namespace CounterBlock
 		{
 			//this.transform.SetParent (Single.game_root, false);
 
-			string parentPath = Single.hierarchy.GetTransformFullPath (Single.game_root);
+			string parentPath = Single.hierarchy.GetFullPath (Single.game_root);
 			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
 			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
 

@@ -38,7 +38,8 @@ public class UI_GameController : UI_MonoBase
 		//=================================================
 		//					게임 모드 추가
 		//=================================================
-		//_game_couple = this.gameObject.AddComponent<GameMode_Couple>();
+		//_game_couple = this.gameObject.AddComponent<GameMode_Couple>(); //짝맞추기 모드 추가
+		this.gameObject.AddComponent<GameMode_Catching>(); //두더지잡기 모드 추가 
 
 		//================================================
 	}

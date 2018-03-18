@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 56341652}
   - component: {fileID: 56341651}
   m_Layer: 0
-  m_Name: effect_0_10
+  m_Name: fire_off_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -838,7 +838,7 @@ GameObject:
   - component: {fileID: 173714692}
   - component: {fileID: 173714691}
   m_Layer: 0
-  m_Name: effect_0_13
+  m_Name: fire_off_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1733,7 +1733,7 @@ GameObject:
   - component: {fileID: 285366921}
   - component: {fileID: 285366920}
   m_Layer: 0
-  m_Name: effect_0_2
+  m_Name: fire_off_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2402,7 +2402,7 @@ GameObject:
   - component: {fileID: 393518299}
   - component: {fileID: 393518298}
   m_Layer: 0
-  m_Name: effect_0_4
+  m_Name: fire_off_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2769,7 +2769,7 @@ GameObject:
   - component: {fileID: 508460050}
   - component: {fileID: 508460049}
   m_Layer: 0
-  m_Name: effect_0_18
+  m_Name: fire_off_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2842,7 +2842,7 @@ GameObject:
   - component: {fileID: 514910627}
   - component: {fileID: 514910626}
   m_Layer: 0
-  m_Name: effect_0_11
+  m_Name: fire_off_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2915,7 +2915,7 @@ GameObject:
   - component: {fileID: 527450319}
   - component: {fileID: 527450318}
   m_Layer: 0
-  m_Name: effect_0_14
+  m_Name: fire_off_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4893,7 +4893,7 @@ GameObject:
   - component: {fileID: 859099506}
   - component: {fileID: 859099505}
   m_Layer: 0
-  m_Name: effect_0_17
+  m_Name: fire_off_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6173,7 +6173,7 @@ GameObject:
   - component: {fileID: 1061317236}
   - component: {fileID: 1061317235}
   m_Layer: 0
-  m_Name: effect_0_6
+  m_Name: fire_off_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6319,7 +6319,7 @@ GameObject:
   - component: {fileID: 1080543533}
   - component: {fileID: 1080543532}
   m_Layer: 0
-  m_Name: effect_0_16
+  m_Name: fire_off_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7365,7 +7365,7 @@ GameObject:
   - component: {fileID: 1184725330}
   - component: {fileID: 1184725329}
   m_Layer: 0
-  m_Name: effect_0_21
+  m_Name: fire_off_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9115,7 +9115,7 @@ GameObject:
   - component: {fileID: 1380125385}
   - component: {fileID: 1380125384}
   m_Layer: 0
-  m_Name: effect_0_5
+  m_Name: fire_off_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9755,7 +9755,7 @@ GameObject:
   - component: {fileID: 1509778285}
   - component: {fileID: 1509778284}
   m_Layer: 0
-  m_Name: effect_0_19
+  m_Name: fire_off_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10235,7 +10235,7 @@ GameObject:
   - component: {fileID: 1547053896}
   - component: {fileID: 1547053895}
   m_Layer: 0
-  m_Name: effect_0_9
+  m_Name: fire_off_9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10811,7 +10811,7 @@ GameObject:
   - component: {fileID: 1642311162}
   - component: {fileID: 1642311161}
   m_Layer: 0
-  m_Name: effect_0_7
+  m_Name: fire_off_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11516,7 +11516,7 @@ GameObject:
   - component: {fileID: 1795452836}
   - component: {fileID: 1795452835}
   m_Layer: 0
-  m_Name: effect_0_3
+  m_Name: fire_off_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11841,7 +11841,7 @@ GameObject:
   - component: {fileID: 1836407735}
   - component: {fileID: 1836407734}
   m_Layer: 0
-  m_Name: effect_0_1
+  m_Name: fire_off_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12665,7 +12665,7 @@ GameObject:
   - component: {fileID: 1913660933}
   - component: {fileID: 1913660932}
   m_Layer: 0
-  m_Name: effect_0_20
+  m_Name: fire_off_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12778,7 +12778,7 @@ GameObject:
   - component: {fileID: 1924340857}
   - component: {fileID: 1924340856}
   m_Layer: 0
-  m_Name: effect_0_15
+  m_Name: fire_off_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12851,7 +12851,7 @@ GameObject:
   - component: {fileID: 1946813429}
   - component: {fileID: 1946813428}
   m_Layer: 0
-  m_Name: effect_0_12
+  m_Name: fire_off_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13320,7 +13320,7 @@ GameObject:
   - component: {fileID: 2022162090}
   - component: {fileID: 2022162089}
   m_Layer: 0
-  m_Name: effect_0_8
+  m_Name: fire_off_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
