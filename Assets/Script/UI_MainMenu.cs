@@ -27,9 +27,9 @@ public class UI_MainMenu : UI_MonoBase
 		//=================================================
 		base.Init_UI ();
 
-		_menu[(int)eMenu.Map] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_map");
-		_menu[(int)eMenu.Market] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_market");
-		_menu[(int)eMenu.Option] = Single.hierarchy.Find<GameObject> ("Canvas/Panel_root/Panel_option");
+		_menu[(int)eMenu.Map] 	= Single.hierarchy.GetGameObject ("Canvas/Panel_root/Panel_map");
+		_menu[(int)eMenu.Market] = Single.hierarchy.GetGameObject ("Canvas/Panel_root/Panel_market");
+		_menu[(int)eMenu.Option] = Single.hierarchy.GetGameObject ("Canvas/Panel_root/Panel_option");
 
 		StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
 		//=================================================

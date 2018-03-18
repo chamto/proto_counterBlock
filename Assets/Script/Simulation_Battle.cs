@@ -96,12 +96,12 @@ namespace CounterBlock
 
 			string pathName = "p01";
 			Vector3[] list = new Vector3[6];
-			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
-			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
-			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (2)").localPosition + start;
-			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (3)").localPosition + start;
-			list[4] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (4)").localPosition + start;
-			list[5] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (5)").localPosition + start;
+			list[0] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (0)").localPosition + start;
+			list[1] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (1)").localPosition + start;
+			list[2] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (2)").localPosition + start;
+			list[3] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (3)").localPosition + start;
+			list[4] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (4)").localPosition + start;
+			list[5] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (5)").localPosition + start;
 
 
 			return list;

@@ -62,7 +62,34 @@ public class HierarchyPreLoader
 
 		return null;
 	}
-	
+
+	public GameObject GetGameObject(string full_path)
+	{
+		Transform tr = this.GetTransform (full_path);
+		if (null != tr) 
+		{
+			return tr.gameObject;
+		}
+
+		return null;
+	}
+
+
+	public TaaT GetTypeObject<TaaT>(string fullPath) where TaaT : class
+	{
+		Transform f = this.GetTransform (fullPath);
+		if (null == f)
+			return null;
+
+		//GameObject 를 컴포넌트로 검색하면 에러남. GameObject 는 컴포넌트가 아니다
+		if (typeof(TaaT) == typeof(GameObject)) 
+		{
+			return f.gameObject as TaaT;
+		}
+
+		return f.GetComponentInChildren <TaaT>(true);
+	}
+
 	public void PreOrderTraversal(Transform data)
 	{
 		if (false == _isInit) 
@@ -139,7 +166,7 @@ public class HierarchyPreLoader
 	//=================================================
 	//        유니티 함수를 다시 렙핑한 것임 . 속도 장점없음
 	//=================================================
-	public TaaT Find<TaaT>(string fullPath) where TaaT : class
+	private TaaT Find<TaaT>(string fullPath) where TaaT : class
 	{
 		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
 		Transform f = Resources.FindObjectsOfTypeAll<Transform>().Where(tr => this.GetFullPath (tr) == fullPath).First();
@@ -159,7 +186,7 @@ public class HierarchyPreLoader
 	//=================================================
 	//        유니티 함수를 다시 렙핑한 것임 . 속도 장없음
 	//=================================================
-	public TaaT FindOnlyActive<TaaT>(string fullPath) where TaaT : class
+	private TaaT FindOnlyActive<TaaT>(string fullPath) where TaaT : class
 	{
 		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
 		Transform f =  Resources.FindObjectsOfTypeAll<Transform> ().Where (

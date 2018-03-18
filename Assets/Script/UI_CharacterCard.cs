@@ -89,49 +89,49 @@ namespace CounterBlock
 			string parentPath = Single.hierarchy.GetFullPath (obj.transform);
 
 			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
-			ui._text_explanation = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_explanation");
-			ui._text_time = Single.hierarchy.Find<TextMesh> (parentPath + "/Text_time");
+			ui._text_explanation = Single.hierarchy.GetTypeObject<TextMesh> (parentPath + "/Text_explanation") ;
+			ui._text_time = Single.hierarchy.GetTypeObject<TextMesh> (parentPath + "/Text_time");
 			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
 			ui._audioSource = obj.GetComponent<AudioSource>();
 
 			//action
-			ui._actionRoot = Single.hierarchy.Find<Transform> (parentPath + "/Images");
+			ui._actionRoot = Single.hierarchy.GetTransform (parentPath + "/Images");
 			ui._actions = new Dictionary<eAction, InitialData> ();
 
 			SpriteRenderer img = null;
 			Transform trs = null;
 			InitialData iData = null;
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_00");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Images/Action_00");
 			iData = new InitialData (img);
 			ui._actions.Add (eAction.Idle, iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Action_01");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Images/Action_01");
 			iData = new InitialData (img);
 			ui._actions.Add (eAction.Action, iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Images/Hilt/Blade");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Images/Hilt/Blade");
 			iData = new InitialData (img);
 			ui._actions.Add (eAction.Blade, iData);
 			img.gameObject.AddComponent<Mono_CrashMonitor> (); //무기카드에 충돌감시기를 붙인다
-			trs = Single.hierarchy.Find<Transform> (parentPath + "/Images/Hilt");
+			trs = Single.hierarchy.GetTransform (parentPath + "/Images/Hilt");
 			iData = new InitialData (trs);
 			ui._actions.Add (eAction.Hilt, iData);
 
 			//effect
-			ui._effectRoot = Single.hierarchy.Find<Transform> (parentPath + "/Effects");
-			ui._effect_Texts = Single.hierarchy.Find<Transform> (parentPath + "/Effects/texts");
+			ui._effectRoot = Single.hierarchy.GetTransform (parentPath + "/Effects");
+			ui._effect_Texts = Single.hierarchy.GetTransform (parentPath + "/Effects/texts");
 			ui._effects = new Dictionary<eEffect, InitialData> ();
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/empty");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Effects/empty");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Empty,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Effects/texts/hit");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Hit,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/block");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Effects/block");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Block,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/wind");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Effects/wind");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Wind,iData);
-			img = Single.hierarchy.Find<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
+			img = Single.hierarchy.GetTypeObject<SpriteRenderer> (parentPath + "/Effects/texts/hit/fuck");
 			iData = new InitialData (img);
 			ui._effects.Add (eEffect.Text,iData);
 
@@ -454,7 +454,7 @@ namespace CounterBlock
 
 						//chamto test
 						//칼충돌 이펙트 끄기
-						Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+						Transform trEffect = Single.hierarchy.GetTransform("2_Effects/effect_6");
 						trEffect.gameObject.SetActive(false);
 
 						this.Revert_ActionRoot();
@@ -822,7 +822,7 @@ namespace CounterBlock
 
 			if(other.gameObject.tag.Equals("weapon"))
 			{
-				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+				Transform trEffect = Single.hierarchy.GetTransform ("2_Effects/effect_6");
 				//DebugWide.LogBlue (trEffect);
 				trEffect.gameObject.SetActive(true);
 				trEffect.transform.position = other.contacts [0].point;
@@ -850,7 +850,7 @@ namespace CounterBlock
 
 			if(other.gameObject.tag.Equals("weapon"))
 			{
-				Transform trEffect = Single.hierarchy.Find<Transform> ("2_Effects/effect_6");
+				Transform trEffect = Single.hierarchy.GetTransform ("2_Effects/effect_6");
 				//trEffect.gameObject.SetActive(false);
 				//iTween.Stop (trEffect.gameObject);
 			}
@@ -1166,12 +1166,12 @@ namespace CounterBlock
 			if (PATH_05 == kind)
 				pathName = "p05_counter";
 
-			list[0] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (0)").localPosition + start;
-			list[1] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (1)").localPosition + start;
-			list[2] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (2)").localPosition + start;
-			list[3] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (3)").localPosition + start;
-			list[4] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (4)").localPosition + start;
-			list[5] = Single.hierarchy.Find<Transform> ("1_Paths/"+pathName+"/node (5)").localPosition + start;
+			list[0] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (0)").localPosition + start;
+			list[1] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (1)").localPosition + start;
+			list[2] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (2)").localPosition + start;
+			list[3] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (3)").localPosition + start;
+			list[4] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (4)").localPosition + start;
+			list[5] = Single.hierarchy.GetTransform ("1_Paths/"+pathName+"/node (5)").localPosition + start;
 
 			return list;
 		}
@@ -1573,8 +1573,8 @@ namespace CounterBlock
 			//this.transform.SetParent (Single.game_root, false);
 
 			string parentPath = Single.hierarchy.GetFullPath (Single.game_root);
-			_1P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_1");
-			_2P_start = Single.hierarchy.Find<Transform> (parentPath + "/startPoint_2");
+			_1P_start = Single.hierarchy.GetTransform (parentPath + "/startPoint_1");
+			_2P_start = Single.hierarchy.GetTransform (parentPath + "/startPoint_2");
 
 		}
 

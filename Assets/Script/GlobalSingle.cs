@@ -73,7 +73,7 @@ namespace CounterBlock
 			{
 				if (null == _ui_root) 
 				{
-					_ui_root = Single.hierarchy.FindOnlyActive<Transform> ("Canvas");
+					_ui_root = Single.hierarchy.GetTransform ("Canvas");
 				}
 				return _ui_root;
 			}
@@ -86,7 +86,7 @@ namespace CounterBlock
 			{
 				if (null == _game_root) 
 				{
-					_game_root = Single.hierarchy.FindOnlyActive<Transform> ("0_Game");
+					_game_root = Single.hierarchy.GetTransform ("0_Game");
 				}
 				return _game_root;
 			}
