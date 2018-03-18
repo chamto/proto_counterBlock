@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 2f18d61d80d76481f82db94fff8f68f2
-timeCreated: 1520842891
+timeCreated: 1520919377
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -18,6 +18,9 @@ TextureImporter:
     21300022: effect_2_11
     21300024: effect_2_12
     21300026: effect_2_13
+    21300028: effect_2_14
+    21300030: effect_2_15
+    21300032: effect_2_16
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -107,8 +110,8 @@ TextureImporter:
       name: effect_2_1
       rect:
         serializedVersion: 2
-        x: 188
-        y: 636
+        x: 399
+        y: 628
         width: 91
         height: 113
       alignment: 0
@@ -247,10 +250,10 @@ TextureImporter:
       name: effect_2_11
       rect:
         serializedVersion: 2
-        x: 34
-        y: 25
-        width: 260
-        height: 94
+        x: 50
+        y: 36
+        width: 200
+        height: 77
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -295,6 +298,48 @@ TextureImporter:
         height: 116
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: effect_2_14
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 611
+        width: 162
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: effect_2_15
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 466
+        width: 144
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: effect_2_16
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 466
+        width: 133
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

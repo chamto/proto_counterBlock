@@ -72,12 +72,14 @@ public class Character_HashInfoMap : HashInfoMap
 	}
 
 
+
+
 	delegate  Transform DeleMethod(string path);
 	public void InitHashInfoMap(Transform transform)
 	{
 		
 		string basePath = "/"+transform.parent.name+"/"+transform.name;
-		DeleMethod GetTForm = p => CounterBlock.Single.hierarchy.GetData (basePath + p);
+		DeleMethod GetTForm = p => CounterBlock.Single.hierarchy.GetTransform (basePath + p);
 
 		//DebugWide.LogBlue (basePath);
 

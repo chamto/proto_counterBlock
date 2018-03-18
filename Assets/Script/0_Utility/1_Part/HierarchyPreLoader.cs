@@ -7,42 +7,90 @@ using System.Linq;
 public class HierarchyPreLoader
 {
 	private bool _isInit = false;
-	private UInt32 _keySecquence = 0;
-	protected Dictionary<string, UInt32> 	_pathToKey = new Dictionary<string, UInt32>();
-	protected Dictionary<UInt32, Transform> _keyToData = new Dictionary<UInt32, Transform>();
-	protected Dictionary<Transform, string> _dataToPath = new Dictionary<Transform, string>();
 
-	private UInt32 createKey()
+	private Dictionary<int,Transform> _hashMap = new Dictionary<int, Transform> ();
+
+	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
+	static public string FullPath(Transform tr)
 	{
-		//사용후 반환된 키목록에, 키가 있으면 먼저 반환한다.
-		//code..
-		
-		return _keySecquence++;
+		string path = tr.name;
+		while (tr.parent != null)
+		{
+			tr = tr.parent;
+			path = tr.name + "/" + path;
+		}
+		return path;
+
+		//  aaa/aaa/~
 	}
-	//path -> key -> data
-	//data -> path
-	public UInt32 PathToKey(string path)
+
+	public string GetFullPath(Transform tr)
 	{
-		return _pathToKey [path];
+		return HierarchyPreLoader.FullPath (tr);
 	}
-	public UInt32 PathToKey(Transform data, string remainderPath)
+
+	public void Add(Transform tr)
 	{
-		return _pathToKey [this.DataToPath(data) + remainderPath];
+		//tr값에서 경로정보를 얻는다. 얻은 경로정보를 해쉬값으로 변경한다 
+		int hash_key = HierarchyPreLoader.FullPath (tr).GetHashCode ();
+
+		Transform getTr = null;
+		if (true == _hashMap.TryGetValue (hash_key, out getTr)) 
+		{
+			//해쉬값이 존재할 경우 새로운 값으로 변경한다
+			this._hashMap[hash_key] = tr;
+			return;
+		}
+
+		this._hashMap.Add(hash_key, tr);
 	}
-	public string DataToPath(Transform data)
+
+	//해쉬값으로 tr값을 얻는다
+	public Transform GetTransform(int hash_key)
 	{
-		return _dataToPath [data];
+		return this._hashMap[hash_key];
 	}
-	public Transform GetData(UInt32 key)
+
+	public Transform GetTransform(string full_path)
 	{
-		return _keyToData [key];
+		int hash_key = full_path.GetHashCode ();
+		Transform getTr = null;
+		if (true == _hashMap.TryGetValue (hash_key , out getTr)) 
+		{
+			return this._hashMap[hash_key];
+		}
+
+		return null;
 	}
-	public Transform GetData(string path)
+
+	public GameObject GetGameObject(string full_path)
 	{
-		return _keyToData [ this.PathToKey(path) ];
+		Transform tr = this.GetTransform (full_path);
+		if (null != tr) 
+		{
+			return tr.gameObject;
+		}
+
+		return null;
 	}
-	
-	public void PreOrderTraversal(string path , Transform data)
+
+
+	public TaaT GetTypeObject<TaaT>(string fullPath) where TaaT : class
+	{
+		Transform f = this.GetTransform (fullPath);
+		if (null == f)
+			return null;
+
+		//GameObject 를 컴포넌트로 검색하면 에러남. GameObject 는 컴포넌트가 아니다
+		if (typeof(TaaT) == typeof(GameObject)) 
+		{
+			return f.gameObject as TaaT;
+		}
+
+		return f.GetComponentInChildren <TaaT>(true);
+	}
+
+	public void PreOrderTraversal(Transform data)
 	{
 		if (false == _isInit) 
 		{
@@ -50,48 +98,78 @@ public class HierarchyPreLoader
 			return;
 		}
 
+
+		string full_path = HierarchyPreLoader.FullPath (data);
+		int hash_key = full_path.GetHashCode ();
+
+
 		//1. visit
 		//DebugWide.LogRed (path +"    "+ data.name); //chamto test
-		uint value;
-		if (true == _pathToKey.TryGetValue (path, out value)) 
+		Transform getTr;
+		if (true == _hashMap.TryGetValue (hash_key, out getTr)) 
 		{
-			//Debug.Assert (false);
-			//UnityEngine.Assertions.Assert.IsFalse (true);
-
+			
 			//이미 있는 경로일 경우 자식쪽은 탐색을 중지 한다
-			DebugWide.LogRed (path + "  이미 탐색한 경로입니다");
+			DebugWide.LogRed (full_path + "  이미 탐색한 경로입니다");
 			return;
 		}
 
-		_pathToKey.Add (path, this.createKey ());
-		_keyToData.Add (_pathToKey [path], data);
-		_dataToPath.Add (data, path);
+		//2. 값등록
+		this._hashMap.Add(hash_key, data);
 
 		
-		//2. traversal
+		//3. traversal
 		Transform[] tfoList = data.GetComponentsInChildren<Transform> (true);
 		foreach(Transform child in tfoList)
 		{
 			if(child != data && child.parent == data) 
 			{
-				this.PreOrderTraversal(path+"/"+child.name, child);
+				this.PreOrderTraversal(child);
 			}
 		}
 	}
 
 
 
-	public void PreOrderTraversal( Transform data )
+	public void Init()
 	{
-		PreOrderTraversal ("/"+this.GetTransformFullPath (data), data);
+		_hashMap.Clear ();
+		_isInit = true;
+
+		//여러 최상위 루트마다 순회
+		foreach (Transform oneOfManyRoots in UnityEngine.Object.FindObjectsOfType<Transform>())
+		{
+			if (oneOfManyRoots.parent == null)
+			{
+				
+				//DebugWide.LogRed(oneOfManyRoots.name);
+				this.PreOrderTraversal (oneOfManyRoots);
+			}
+		}
+
+		//TestPrint(); //chamto test
+	}
+	
+	public void TestPrint()
+	{
+		
+
+		Debug.Log ("---------- HierarchyLoader : TestPrint ----------");
+		foreach(KeyValuePair<int, Transform> keyValue in _hashMap)
+		{
+			Debug.Log("<color=blue>" + keyValue.Key + " : </color> <color=green>" + this.GetFullPath( keyValue.Value) + "</color> \n");
+		}
 	}
 
 
 
-	public TaaT Find<TaaT>(string fullPath) where TaaT : class
+	//=================================================
+	//        유니티 함수를 다시 렙핑한 것임 . 속도 장점없음
+	//=================================================
+	private TaaT Find<TaaT>(string fullPath) where TaaT : class
 	{
 		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
-		Transform f = Resources.FindObjectsOfTypeAll<Transform>().Where(tr => this.GetTransformFullPath (tr) == fullPath).First();
+		Transform f = Resources.FindObjectsOfTypeAll<Transform>().Where(tr => this.GetFullPath (tr) == fullPath).First();
 
 		//return f.GetComponentInChildren (typeof(TaaT), true) as TaaT;
 		//DebugWide.LogBlue(f.name); //chamto test
@@ -105,12 +183,14 @@ public class HierarchyPreLoader
 		return f.GetComponentInChildren <TaaT>(true);
 	}
 
-
-	public TaaT FindOnlyActive<TaaT>(string fullPath) where TaaT : class
+	//=================================================
+	//        유니티 함수를 다시 렙핑한 것임 . 속도 장없음
+	//=================================================
+	private TaaT FindOnlyActive<TaaT>(string fullPath) where TaaT : class
 	{
 		//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
 		Transform f =  Resources.FindObjectsOfTypeAll<Transform> ().Where (
-			tr => this.GetTransformFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First ();
+			tr => this.GetFullPath (tr) == fullPath && tr.hideFlags != HideFlags.HideInHierarchy).First ();
 
 		//GameObject 를 컴포넌트로 검색하면 에러남. GameObject 는 컴포넌트가 아니다
 		if (typeof(TaaT) == typeof(GameObject)) 
@@ -120,49 +200,5 @@ public class HierarchyPreLoader
 
 		return f.GetComponentInChildren <TaaT>(true);
 	}
-
-	//ref : http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
-	public string GetTransformFullPath(Transform transform)
-	{
-		string path = transform.name;
-		while (transform.parent != null)
-		{
-			transform = transform.parent;
-			path = transform.name + "/" + path;
-		}
-		return path;
-	}
-
-	public void Init()
-	{
-		_pathToKey.Clear ();
-		_keyToData.Clear ();
-		_dataToPath.Clear ();
-		_keySecquence = 0;
-		_isInit = true;
-
-		//여러 최상위 루트마다 순회
-		foreach (Transform oneOfManyRoots in UnityEngine.Object.FindObjectsOfType<Transform>())
-		{
-			if (oneOfManyRoots.parent == null)
-			{
-				
-				//DebugWide.LogRed(oneOfManyRoots.name);
-				this.PreOrderTraversal ("/"+oneOfManyRoots.name, oneOfManyRoots);
-			}
-		}
-
-		//TestPrint(); //chamto test
-	}
-	
-	public void TestPrint()
-	{
-		
-
-		Debug.Log ("---------- HierarchyLoader : TestPrint ----------");
-		foreach(KeyValuePair<Transform, string> keyValue in _dataToPath)
-		{
-			Debug.Log("<color=blue>" + keyValue.Key.name + " : </color> <color=green>" + keyValue.Value + "</color> \n");
-		}
-	}
 }
+
