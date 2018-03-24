@@ -67,7 +67,7 @@ namespace CounterBlock
 //		}
 
 		private static Transform _canvasRoot = null;
-		public static Transform ui_root
+		public static Transform canvasRoot
 		{
 			get
 			{
