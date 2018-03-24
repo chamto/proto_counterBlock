@@ -169,33 +169,33 @@ namespace CounterBlock
 	public class Mono_CrashMonitor : MonoBehaviour
 	{
 
-		private UI_CharacterCard _ui_parent = null;
+		private UI_BattleCard _ui_parent = null;
 
 		void Start()
 		{
-			_ui_parent = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			_ui_parent = this.gameObject.GetComponentInParent<UI_BattleCard> ();
 		}
 
 		void OnTriggerEnter(Collider other)
 		{
-			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard src = this.gameObject.GetComponentInParent<UI_BattleCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || src._id == dst._id)
 				return;
 			DebugWide.LogBlue ("OnTriggerEnter:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 		void OnTriggerStay(Collider other)
 		{
-			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard src = this.gameObject.GetComponentInParent<UI_BattleCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || src._id == dst._id)
 				return;
 			DebugWide.LogBlue ("OnTriggerStay:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
 		}
 		void OnTriggerExit(Collider other)
 		{
-			UI_CharacterCard src = this.gameObject.GetComponentInParent<UI_CharacterCard> ();
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard src = this.gameObject.GetComponentInParent<UI_BattleCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || src._id == dst._id)
 				return;
 			DebugWide.LogBlue ("OnTriggerExit:  " + " [" + src._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
@@ -224,7 +224,7 @@ namespace CounterBlock
 	public struct CharDataBundle
 	{
 		public Character 		_data;
-		public UI_CharacterCard _ui;
+		public UI_BattleCard _ui;
 		public GameObject 		_gameObject;
 	}
 
@@ -234,7 +234,7 @@ namespace CounterBlock
 		private Transform _1P_start = null;
 		private Transform _2P_start = null;
 
-		private Dictionary<uint, UI_CharacterCard> _characters = new Dictionary<uint, UI_CharacterCard> ();
+		private Dictionary<uint, UI_BattleCard> _characters = new Dictionary<uint, UI_BattleCard> ();
 
 		public const int START_POINT_LEFT = 1;
 		public const int START_POINT_RIGHT = 2;
@@ -251,20 +251,20 @@ namespace CounterBlock
 
 		}
 
-		public UI_CharacterCard GetCharacter(Character data)
+		public UI_BattleCard GetCharacter(Character data)
 		{
 			return _characters [data.GetID ()];
 		}
 
-		public UI_CharacterCard GetCharacter(uint idx)
+		public UI_BattleCard GetCharacter(uint idx)
 		{
 			return _characters [idx];
 		}
 
-		public UI_CharacterCard AddCharacter(Character data)
+		public UI_BattleCard AddCharacter(Character data)
 		{
 			uint id = data.GetID();
-			UI_CharacterCard card = UI_CharacterCard.Create ("player_"+id.ToString("00"));
+			UI_BattleCard card = UI_BattleCard.Create ("player_"+id.ToString("00"));
 			//card.data = data;
 			card.SetData(data);
 			card._id = id;
@@ -280,7 +280,7 @@ namespace CounterBlock
 		{
 
 
-			UI_CharacterCard card = _characters [id];
+			UI_BattleCard card = _characters [id];
 			Vector3 pos = Vector3.zero;
 
 			switch (pointNumber) 
@@ -306,7 +306,7 @@ namespace CounterBlock
 
 		public void Update_UI()
 		{
-			foreach (UI_CharacterCard card in _characters.Values) 
+			foreach (UI_BattleCard card in _characters.Values) 
 			{
 				card.Update_UI ();
 			}

@@ -16,7 +16,7 @@ using UnityEngine.UI;
 namespace CounterBlock
 {
 	
-	public class UI_CharacterCard : MonoBehaviour
+	public class UI_BattleCard : MonoBehaviour
 	{
 
 		public enum eAction
@@ -72,7 +72,7 @@ namespace CounterBlock
 
 		//===============================================================
 
-		public UI_CharacterCard()
+		public UI_BattleCard()
 		{
 			//this.data = null;
 		}
@@ -82,13 +82,13 @@ namespace CounterBlock
 
 		}
 
-		static public UI_CharacterCard Create(string name)
+		static public UI_BattleCard Create(string name)
 		{
 			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
 
 			string parentPath = Single.hierarchy.GetFullPath (obj.transform);
 
-			UI_CharacterCard ui = obj.AddComponent<UI_CharacterCard> ();
+			UI_BattleCard ui = obj.AddComponent<UI_BattleCard> ();
 			ui._text_explanation = Single.hierarchy.GetTypeObject<TextMesh> (parentPath + "/Text_explanation") ;
 			ui._text_time = Single.hierarchy.GetTypeObject<TextMesh> (parentPath + "/Text_time");
 			//ui._hp_bar = Single.hierarchy.Find<Slider> (parentPath + "/Slider");
@@ -509,7 +509,7 @@ namespace CounterBlock
 					break;
 				case Character.eState.Running:
 					{
-						UI_CharacterCard dstCard = this._UI_Battle.GetCharacter (_data.CurrentTarget ());
+						UI_BattleCard dstCard = this._UI_Battle.GetCharacter (_data.CurrentTarget ());
 
 						//칼버티기 상태에서의 칼밀기 애니 처리 
 						if (Skill.eName.Withstand_1 == _data.CurrentSkill().name)
@@ -760,7 +760,7 @@ namespace CounterBlock
 				CharDataBundle bundle;
 				bundle._data = _data;
 				bundle._ui = this;
-				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Hit].gameObject;
+				bundle._gameObject = this._effects [UI_BattleCard.eEffect.Hit].gameObject;
 				StartCoroutine("EffectStart_Damaged",bundle);
 
 				bundle._gameObject = this._actionRoot.gameObject;
@@ -773,7 +773,7 @@ namespace CounterBlock
 				CharDataBundle bundle;
 				bundle._data = _data;
 				bundle._ui = this;
-				bundle._gameObject = this._effects [UI_CharacterCard.eEffect.Block].gameObject;
+				bundle._gameObject = this._effects [UI_BattleCard.eEffect.Block].gameObject;
 				StartCoroutine("EffectStart_Block",bundle);
 
 				bundle._gameObject = this._actionRoot.gameObject;
@@ -816,7 +816,7 @@ namespace CounterBlock
 
 		public void OnCollisionEnter (Collision other)
 		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
 
@@ -836,7 +836,7 @@ namespace CounterBlock
 
 		public void OnCollisionStay (Collision other)
 		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
 			//DebugWide.LogBlue ("OnCollisionStay:  " + " [" + this._id + "] " + other.gameObject.name + "  " + other.gameObject.tag  + "  " + dst._id );
@@ -844,7 +844,7 @@ namespace CounterBlock
 
 		public void OnCollisionExit (Collision other)
 		{
-			UI_CharacterCard dst = other.gameObject.GetComponentInParent<UI_CharacterCard> ();
+			UI_BattleCard dst = other.gameObject.GetComponentInParent<UI_BattleCard> ();
 			if (null == dst || this._id == dst._id)
 				return;
 
@@ -979,7 +979,7 @@ namespace CounterBlock
 
 		public IEnumerator AniStart_Attack_Weak_1(CharDataBundle bundle)
 		{
-			UI_CharacterCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
+			UI_BattleCard target = bundle._ui._UI_Battle.GetCharacter (bundle._data.CurrentTarget ());
 			Vector3 pos_targetWeapon = target._actions [eAction.Hilt].transform.position;
 			GameObject obj_blade = bundle._ui._actions [eAction.Blade].gameObject;
 			bundle._gameObject.SetActive (true);

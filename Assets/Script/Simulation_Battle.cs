@@ -27,8 +27,8 @@ namespace CounterBlock
 
 		//====//====//====//====//====//====//====//====
 		private GameMode_Battle _ui_battle = null;
-		private UI_CharacterCard _ui_1Player = null;
-		private UI_CharacterCard _ui_2Player = null;
+		private UI_BattleCard _ui_1Player = null;
+		private UI_BattleCard _ui_2Player = null;
 		//====//====//====//====//====//====//====//====
 		private const uint ID_PLAYER_1 = 1;
 		private const uint ID_PLAYER_2 = 2;
@@ -64,7 +64,7 @@ namespace CounterBlock
 			int count = 0;
 			foreach (Character chter in _crtMgr.Values) 
 			{
-				UI_CharacterCard card = _ui_battle.AddCharacter (chter);
+				UI_BattleCard card = _ui_battle.AddCharacter (chter);
 
 				if ((chter.GetID () % 2) == 1) 
 				{ //홀수는 왼쪽 1 3 5 ...
@@ -212,7 +212,7 @@ namespace CounterBlock
 				//DebugWide.LogBlue (" UnityDelta : "+Time.deltaTime + "   A : " + Time.time); //chamto test
 
 				CharDataBundle bundle;
-				bundle._gameObject = _ui_1Player._effects [UI_CharacterCard.eEffect.Empty].gameObject;
+				bundle._gameObject = _ui_1Player._effects [UI_BattleCard.eEffect.Empty].gameObject;
 				bundle._data = _ui_1Player.GetData();
 				bundle._ui = _ui_1Player;
 				//StopCoroutine ("AniStart_Attack_1_Random");
