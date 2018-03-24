@@ -18,7 +18,7 @@ public class GameMode_Talk : MonoBehaviour
 		//=================================================
 
 
-		//StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
+		StartCoroutine (GlobalFunctions.FadeIn (Single.panelRoot , 1.0f));
 
 
 

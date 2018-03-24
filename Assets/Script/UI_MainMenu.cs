@@ -31,7 +31,7 @@ public class UI_MainMenu : UI_MonoBase
 		_menu[(int)eMenu.Market] = Single.hierarchy.GetGameObject ("Canvas/Panel_root/Panel_market");
 		_menu[(int)eMenu.Option] = Single.hierarchy.GetGameObject ("Canvas/Panel_root/Panel_option");
 
-		StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
+		StartCoroutine (GlobalFunctions.FadeIn (Single.panelRoot , 1.0f));
 		//=================================================
 
 	}
@@ -63,7 +63,7 @@ public class UI_MainMenu : UI_MonoBase
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_load_ = !_process_load_;
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.LOADING, 3.0f));
 	}
 }

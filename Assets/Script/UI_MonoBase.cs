@@ -7,22 +7,22 @@ using CounterBlock;
 
 public class UI_MonoBase : MonoBehaviour
 {
-	protected Camera _mainCamera = null;
-	protected Canvas _canvasRoot = null;
-	protected CanvasRenderer _panelRoot = null;
+//	protected Camera _mainCamera = null;
+//	protected Canvas _canvasRoot = null;
+//	protected CanvasRenderer _panelRoot = null;
 
 	public void Init_UI()
 	{
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-		_mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
-		_canvasRoot = GameObject.Find ("Canvas").GetComponent<Canvas>().rootCanvas; 
-		_panelRoot = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
+//		_mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
+//		_canvasRoot = GameObject.Find ("Canvas").GetComponent<Canvas>().rootCanvas; 
+//		_panelRoot = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
 
 		Single.hierarchy.Init ();
 
-		ResolutionController.CalcViewportRect (_canvasRoot, _mainCamera); //화면크기조정
+		ResolutionController.CalcViewportRect (Single.canvasRoot, Single.mainCamera); //화면크기조정
 		//=================================================
 	}
 
@@ -33,7 +33,7 @@ public class UI_MonoBase : MonoBehaviour
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_title_ = !_process_title_;
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.TITLE, 3.0f));
 	}
 
@@ -44,7 +44,7 @@ public class UI_MonoBase : MonoBehaviour
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_menu_ = !_process_menu_;
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.MAIN_MENU, 3.0f));
 	}
 
@@ -55,7 +55,7 @@ public class UI_MonoBase : MonoBehaviour
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_game_couple_ = !_process_game_couple_;
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.GAME, 3.0f));
 	}
 
@@ -66,7 +66,7 @@ public class UI_MonoBase : MonoBehaviour
 			return;
 		//DebugWide.LogBlue ("Load...");
 		_process_proto_singing_ = !_process_proto_singing_;
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.Proto_Singing, 3.0f));
 	}
 }

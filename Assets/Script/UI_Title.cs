@@ -14,7 +14,7 @@ public class UI_Title : UI_MonoBase
 	{
 		base.Init_UI ();
 
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.MAIN_MENU, 3.5f));
 	}
 	

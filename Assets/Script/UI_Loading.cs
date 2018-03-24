@@ -16,7 +16,7 @@ public class UI_Loading : UI_MonoBase
 		//=================================================
 		base.Init_UI ();
 
-		StartCoroutine (GlobalFunctions.FadeIn (_panelRoot , 1.0f));
+		StartCoroutine (GlobalFunctions.FadeIn (Single.panelRoot , 1.0f));
 		StartCoroutine (LoadResource_AndScene());
 		//=================================================
 
@@ -32,7 +32,7 @@ public class UI_Loading : UI_MonoBase
 	public void LoadScene_Game()
 	{
 
-		StartCoroutine (GlobalFunctions.FadeOut (_panelRoot , 2.0f));
+		StartCoroutine (GlobalFunctions.FadeOut (Single.panelRoot , 2.0f));
 		StartCoroutine (GlobalFunctions.LoadScene (GlobalConstants.Scene.GAME, 3.0f));
 	}
 
