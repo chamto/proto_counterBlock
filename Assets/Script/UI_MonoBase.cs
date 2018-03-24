@@ -16,11 +16,7 @@ public class UI_MonoBase : MonoBehaviour
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-//		_mainCamera = GameObject.Find ("Main Camera").GetComponent<Camera>();
-//		_canvasRoot = GameObject.Find ("Canvas").GetComponent<Canvas>().rootCanvas; 
-//		_panelRoot = GameObject.Find ("Panel_root").GetComponent<CanvasRenderer>();
-
-		Single.hierarchy.Init ();
+		Single.hierarchy.Init (); //계층정보 색인화
 
 		ResolutionController.CalcViewportRect (Single.canvasRoot, Single.mainCamera); //화면크기조정
 		//=================================================

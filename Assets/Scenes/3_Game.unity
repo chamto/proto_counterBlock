@@ -11235,8 +11235,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: LoadScene_Title
+      - m_Target: {fileID: 761616328}
+        m_MethodName: LoadScene_Menu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

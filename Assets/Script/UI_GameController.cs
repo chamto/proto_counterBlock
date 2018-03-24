@@ -6,8 +6,7 @@ using CounterBlock;
 
 public class UI_GameController : UI_MonoBase 
 {
-
-
+	
 	private GameObject _mainProcess = null;
 
 	// Use this for initialization
@@ -16,13 +15,13 @@ public class UI_GameController : UI_MonoBase
 		//=================================================
 		//                    초 기 화 
 		//=================================================
-		base.Init_UI ();
+		base.Init_UI();
 
 		FrameControl.SetDeltaTime_30FPS (); //30Fps 기준으로 처리가 늦어진 프레임의 경과시간을 재설정한다.  30Fps 고정프레임으로 사용하겠다는 것이 아님.
 
-		Single.resource.Init ();
+		Single.resource.Init (); //게임리소스 로딩
 
-		this.gameObject.AddComponent<MonoInputManager> ();
+		this.gameObject.AddComponent<MonoInputManager> (); //화면터치관리기 추가 
 
 
 		//=================================================
@@ -39,7 +38,7 @@ public class UI_GameController : UI_MonoBase
 	// Update is called once per frame
 	void Update () 
 	{
-		Single.Update ();
+		Single.Update (); //와이드 코루틴 갱신코드
 
 	}//end Update
 
