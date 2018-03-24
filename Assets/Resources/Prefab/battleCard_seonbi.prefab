@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 95472421343176724}
   - component: {fileID: 82426537013851724}
   m_Layer: 0
-  m_Name: character_seonbi2
+  m_Name: battleCard_seonbi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

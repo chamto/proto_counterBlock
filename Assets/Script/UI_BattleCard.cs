@@ -84,7 +84,8 @@ namespace CounterBlock
 
 		static public UI_BattleCard Create(string name)
 		{
-			GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
+			//GameObject obj = Single.resource.CreatePrefab ("character_seonbi2", Single.game_root, name);
+			GameObject obj = Single.resource.CreatePrefab ("battleCard_seonbi", Single.game_root, name);
 
 			string parentPath = Single.hierarchy.GetFullPath (obj.transform);
 
