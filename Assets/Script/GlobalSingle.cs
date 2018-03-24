@@ -66,18 +66,32 @@ namespace CounterBlock
 //			}
 //		}
 
-		private static Transform _ui_root = null;
+		private static Transform _canvasRoot = null;
 		public static Transform ui_root
 		{
 			get
 			{
-				if (null == _ui_root) 
+				if (null == _canvasRoot) 
 				{
-					_ui_root = Single.hierarchy.GetTransform ("Canvas");
+					_canvasRoot = Single.hierarchy.GetTransform ("Canvas");
 				}
-				return _ui_root;
+				return _canvasRoot;
 			}
 		}
+
+		private static Transform _panelRoot = null;
+		public static Transform panelRoot
+		{
+			get
+			{
+				if (null == _panelRoot) 
+				{
+					_panelRoot = Single.hierarchy.GetTransform ("Canvas/Panel_root");
+				}
+				return _panelRoot;
+			}
+		}
+
 
 		private static Transform _game_root = null;
 		public static Transform game_root

@@ -10,6 +10,7 @@ public class UI_GameController : UI_MonoBase
 	private CharacterManager _crtMgr = null;
 	private GameMode_Battle _ui_battle = null;
 	//private GameMode_Couple _game_couple = null;
+	private GameObject _mainProcess = null;
 
 	// Use this for initialization
 	void Start () 
@@ -26,11 +27,13 @@ public class UI_GameController : UI_MonoBase
 
 		Single.resource.Init ();
 
+		_mainProcess = Single.hierarchy.GetGameObject ("0_Main/Process");
+
 		_crtMgr = new CharacterManager ();
 		//_crtMgr.Init (CHARACTER_COUNT);
 
-		this.gameObject.AddComponent<MonoInputManager> ();
-		_ui_battle = this.gameObject.AddComponent<GameMode_Battle> ();
+		_mainProcess.AddComponent<MonoInputManager> ();
+
 		//_ui_battle.Init ();
 
 		//this.CreatePlayer ();
@@ -38,8 +41,9 @@ public class UI_GameController : UI_MonoBase
 		//=================================================
 		//					게임 모드 추가
 		//=================================================
-		//_game_couple = this.gameObject.AddComponent<GameMode_Couple>(); //짝맞추기 모드 추가
-		this.gameObject.AddComponent<GameMode_Catching>(); //두더지잡기 모드 추가 
+		_ui_battle = _mainProcess.AddComponent<GameMode_Battle> ();
+		//_game_couple =_mainProcess.AddComponent<GameMode_Couple>(); //짝맞추기 모드 추가
+		_mainProcess.AddComponent<GameMode_Catching>(); //두더지잡기 모드 추가 
 
 		//================================================
 	}
