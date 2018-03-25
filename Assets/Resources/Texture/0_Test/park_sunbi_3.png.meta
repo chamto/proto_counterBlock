@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b94c3840f69d64fdc93af8a3475ee84b
-timeCreated: 1520918404
+timeCreated: 1522008727
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -104,9 +104,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 29
-        y: 503
-        width: 134
-        height: 252
+        y: 415
+        width: 178
+        height: 340
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,10 +117,10 @@ TextureImporter:
       name: park_sunbi_3_1
       rect:
         serializedVersion: 2
-        x: 192
-        y: 499
-        width: 136
-        height: 254
+        x: 242
+        y: 425
+        width: 181
+        height: 332
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,10 +131,10 @@ TextureImporter:
       name: park_sunbi_3_2
       rect:
         serializedVersion: 2
-        x: 370
-        y: 493
-        width: 146
-        height: 271
+        x: 461
+        y: 411
+        width: 176
+        height: 337
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,10 +145,10 @@ TextureImporter:
       name: park_sunbi_3_3
       rect:
         serializedVersion: 2
-        x: 546
-        y: 499
-        width: 142
-        height: 248
+        x: 677
+        y: 414
+        width: 170
+        height: 349
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -159,10 +159,10 @@ TextureImporter:
       name: park_sunbi_3_4
       rect:
         serializedVersion: 2
-        x: 44
-        y: 230
-        width: 125
-        height: 255
+        x: 245
+        y: 34
+        width: 182
+        height: 347
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,10 +173,10 @@ TextureImporter:
       name: park_sunbi_3_5
       rect:
         serializedVersion: 2
-        x: 200
-        y: 237
-        width: 130
-        height: 229
+        x: 461
+        y: 37
+        width: 201
+        height: 346
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,10 +187,10 @@ TextureImporter:
       name: park_sunbi_3_6
       rect:
         serializedVersion: 2
-        x: 364
-        y: 230
-        width: 133
-        height: 238
+        x: 701
+        y: 55
+        width: 255
+        height: 328
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -201,10 +201,10 @@ TextureImporter:
       name: park_sunbi_3_7
       rect:
         serializedVersion: 2
-        x: 741
-        y: 503
-        width: 176
-        height: 251
+        x: 25
+        y: 37
+        width: 180
+        height: 342
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,24 +215,10 @@ TextureImporter:
       name: park_sunbi_3_8
       rect:
         serializedVersion: 2
-        x: 730
-        y: 252
-        width: 195
-        height: 238
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: park_sunbi_3_9
-      rect:
-        serializedVersion: 2
-        x: 737
-        y: 13
-        width: 180
-        height: 226
+        x: 879
+        y: 529
+        width: 141
+        height: 167
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

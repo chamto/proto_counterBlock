@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 465ce2f5188db420c83d293d96c8ac30
-timeCreated: 1520349802
+timeCreated: 1522008347
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -9,6 +9,8 @@ TextureImporter:
     21300004: chun_jiho_2
     21300006: chun_jiho_3
     21300008: chun_jiho_4
+    21300010: chun_jiho_5
+    21300012: chun_jiho_6
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -103,7 +105,7 @@ TextureImporter:
         width: 208
         height: 326
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -117,7 +119,7 @@ TextureImporter:
         width: 230
         height: 331
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -126,12 +128,12 @@ TextureImporter:
       name: chun_jiho_2
       rect:
         serializedVersion: 2
-        x: 354
-        y: 45
-        width: 270
-        height: 338
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 527
+        y: 415
+        width: 247
+        height: 342
+      alignment: 9
+      pivot: {x: 0.5351657, y: 0.5070227}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -140,12 +142,12 @@ TextureImporter:
       name: chun_jiho_3
       rect:
         serializedVersion: 2
-        x: 545
-        y: 423
-        width: 259
-        height: 328
+        x: 800
+        y: 413
+        width: 219
+        height: 326
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -154,10 +156,38 @@ TextureImporter:
       name: chun_jiho_4
       rect:
         serializedVersion: 2
-        x: 16
-        y: 107
-        width: 292
-        height: 253
+        x: 36
+        y: 112
+        width: 264
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_5
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 128
+        width: 211
+        height: 191
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: chun_jiho_6
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 57
+        width: 228
+        height: 329
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
