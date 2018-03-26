@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 96a2679b5f7144f6cbca1dfecc2a75cf
-timeCreated: 1522087292
+timeCreated: 1522088782
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -10,10 +10,10 @@ TextureImporter:
     21300006: effect_1_3
     21300008: effect_1_4
     21300010: moon_0
-    21300012: double_0
-    21300014: effect_1_7
+    21300012: moon_2
+    21300014: moon_4
     21300016: moon_1
-    21300018: double_1
+    21300018: moon_3
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -184,7 +184,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: double_0
+      name: moon_2
       rect:
         serializedVersion: 2
         x: 495
@@ -198,15 +198,15 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_1_7
+      name: moon_4
       rect:
         serializedVersion: 2
-        x: 99
-        y: 45
-        width: 142
-        height: 131
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 107
+        y: 48
+        width: 134
+        height: 128
+      alignment: 9
+      pivot: {x: 0.53243405, y: 0.4999997}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -226,7 +226,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: double_1
+      name: moon_3
       rect:
         serializedVersion: 2
         x: 328
