@@ -1,18 +1,18 @@
 fileFormatVersion: 2
 guid: b94c3840f69d64fdc93af8a3475ee84b
-timeCreated: 1522056804
+timeCreated: 1522087224
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: park_sunbi_3_0
-    21300002: park_sunbi_3_1
-    21300004: park_sunbi_3_2
-    21300006: park_sunbi_3_3
-    21300008: park_sunbi_3_4
-    21300010: park_sunbi_3_5
-    21300012: park_sunbi_3_6
-    21300014: park_sunbi_3_7
-    21300016: park_sunbi_3_8
+    21300000: front_1
+    21300002: front_1_0
+    21300004: front_0
+    21300006: front_2
+    21300008: back_0
+    21300010: back_2
+    21300012: shout_0
+    21300014: back_1
+    21300016: shout_1
     21300018: park_sunbi_3_9
   externalObjects: {}
   serializedVersion: 4
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: park_sunbi_3_0
+      name: front_1
       rect:
         serializedVersion: 2
         x: 29
@@ -114,7 +114,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_1
+      name: front_1_0
       rect:
         serializedVersion: 2
         x: 242
@@ -128,7 +128,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_2
+      name: front_0
       rect:
         serializedVersion: 2
         x: 462
@@ -142,7 +142,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_3
+      name: front_2
       rect:
         serializedVersion: 2
         x: 677
@@ -156,7 +156,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_4
+      name: back_0
       rect:
         serializedVersion: 2
         x: 245
@@ -170,7 +170,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_5
+      name: back_2
       rect:
         serializedVersion: 2
         x: 461
@@ -184,7 +184,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_6
+      name: shout_0
       rect:
         serializedVersion: 2
         x: 701
@@ -198,7 +198,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_7
+      name: back_1
       rect:
         serializedVersion: 2
         x: 25
@@ -212,7 +212,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: park_sunbi_3_8
+      name: shout_1
       rect:
         serializedVersion: 2
         x: 879

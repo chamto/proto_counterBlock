@@ -1,16 +1,16 @@
 fileFormatVersion: 2
 guid: 465ce2f5188db420c83d293d96c8ac30
-timeCreated: 1522086130
+timeCreated: 1522087103
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: chun_jiho_0
-    21300002: chun_jiho_1
-    21300004: chun_jiho_2
-    21300006: chun_jiho_3
-    21300008: chun_jiho_4
-    21300010: chun_jiho_5
-    21300012: chun_jiho_6
+    21300000: front_0
+    21300002: shout_0
+    21300004: front_1
+    21300006: back_0
+    21300008: lips_0
+    21300010: flower_0
+    21300012: dokkaebi_0
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: chun_jiho_0
+      name: front_0
       rect:
         serializedVersion: 2
         x: 43
@@ -111,7 +111,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_1
+      name: shout_0
       rect:
         serializedVersion: 2
         x: 281
@@ -125,7 +125,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_2
+      name: front_1
       rect:
         serializedVersion: 2
         x: 527
@@ -139,7 +139,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_3
+      name: back_0
       rect:
         serializedVersion: 2
         x: 800
@@ -153,7 +153,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_4
+      name: lips_0
       rect:
         serializedVersion: 2
         x: 101
@@ -167,7 +167,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_5
+      name: flower_0
       rect:
         serializedVersion: 2
         x: 352
@@ -181,7 +181,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: chun_jiho_6
+      name: dokkaebi_0
       rect:
         serializedVersion: 2
         x: 673

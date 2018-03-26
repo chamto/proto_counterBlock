@@ -1,25 +1,25 @@
 fileFormatVersion: 2
 guid: 2f18d61d80d76481f82db94fff8f68f2
-timeCreated: 1522054735
+timeCreated: 1522087563
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: effect_2_0
-    21300002: effect_2_1
-    21300004: effect_2_2
-    21300006: effect_2_3
-    21300008: effect_2_4
-    21300010: effect_2_5
-    21300012: effect_2_6
-    21300014: effect_2_7
-    21300016: effect_2_8
-    21300018: effect_2_9
-    21300020: effect_2_10
-    21300022: effect_2_11
-    21300024: effect_2_12
-    21300026: effect_2_13
-    21300028: effect_2_14
-    21300030: effect_2_15
+    21300000: shader_c_4
+    21300002: shader_c_3
+    21300004: shader_0
+    21300006: bubble_1
+    21300008: bubble_0
+    21300010: bubble_2
+    21300012: front_open_0
+    21300014: front_close_0
+    21300016: back_close_0
+    21300018: back_open_0
+    21300020: dragon_0
+    21300022: rocket_0
+    21300024: shader_c_6
+    21300026: shader_c_5
+    21300028: shader_1
+    21300030: shader_2
     21300032: effect_2_16
   externalObjects: {}
   serializedVersion: 4
@@ -107,7 +107,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: effect_2_1
+      name: shader_c_3
       rect:
         serializedVersion: 2
         x: 399
@@ -121,7 +121,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_2
+      name: shader_0
       rect:
         serializedVersion: 2
         x: 26
@@ -135,7 +135,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_3
+      name: bubble_1
       rect:
         serializedVersion: 2
         x: 321
@@ -149,7 +149,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_4
+      name: bubble_0
       rect:
         serializedVersion: 2
         x: 25
@@ -163,7 +163,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_5
+      name: bubble_2
       rect:
         serializedVersion: 2
         x: 269
@@ -177,7 +177,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_6
+      name: front_open_0
       rect:
         serializedVersion: 2
         x: 571
@@ -191,7 +191,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_7
+      name: front_close_0
       rect:
         serializedVersion: 2
         x: 773
@@ -205,7 +205,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_8
+      name: back_close_0
       rect:
         serializedVersion: 2
         x: 813
@@ -219,7 +219,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_9
+      name: back_open_0
       rect:
         serializedVersion: 2
         x: 581
@@ -233,7 +233,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_10
+      name: dragon_0
       rect:
         serializedVersion: 2
         x: 28
@@ -247,7 +247,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_11
+      name: rocket_0
       rect:
         serializedVersion: 2
         x: 50
@@ -261,7 +261,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_0
+      name: shader_c_4
       rect:
         serializedVersion: 2
         x: 545
@@ -275,7 +275,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_12
+      name: shader_c_6
       rect:
         serializedVersion: 2
         x: 787
@@ -289,7 +289,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_13
+      name: shader_c_5
       rect:
         serializedVersion: 2
         x: 558
@@ -303,7 +303,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_14
+      name: shader_1
       rect:
         serializedVersion: 2
         x: 195
@@ -317,7 +317,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: effect_2_15
+      name: shader_2
       rect:
         serializedVersion: 2
         x: 30

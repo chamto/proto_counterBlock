@@ -9777,6 +9777,12 @@ Prefab:
       propertyPath: m_Name
       value: chun_jiho_0
       objectReference: {fileID: 0}
+    - target: {fileID: 212992714382374242, guid: 18ed890f1e55d4613bc441c29f902504,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300004, guid: 2f18d61d80d76481f82db94fff8f68f2,
+        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 18ed890f1e55d4613bc441c29f902504, type: 2}
   m_IsPrefabParent: 0
