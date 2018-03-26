@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 96a2679b5f7144f6cbca1dfecc2a75cf
-timeCreated: 1520921514
+timeCreated: 1522057300
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -187,12 +187,12 @@ TextureImporter:
       name: effect_1_6
       rect:
         serializedVersion: 2
-        x: 494
+        x: 495
         y: 120
         width: 153
         height: 161
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.05008952, y: 0.5221148}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -219,8 +219,8 @@ TextureImporter:
         y: 160
         width: 114
         height: 123
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.08356703, y: 0.519298}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -233,8 +233,8 @@ TextureImporter:
         y: 45
         width: 144
         height: 96
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.030211555, y: 0.5494511}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
