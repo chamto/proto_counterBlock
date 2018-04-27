@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using CounterBlock;
 
 
+
 public class GameMode_Talk : MonoBehaviour 
 {
 
@@ -17,18 +18,17 @@ public class GameMode_Talk : MonoBehaviour
 		//                    초 기 화 
 		//=================================================
 
-
 		StartCoroutine (GlobalFunctions.FadeIn (Single.panelRoot , 1.0f));
-
 
 
 		_crtMgr = new CharacterManager ();
 		//_crtMgr.Init (CHARACTER_COUNT);
 
-
 		//_ui_battle.Init ();
 
 		//this.CreatePlayer ();
+
+
 
 
 	}
