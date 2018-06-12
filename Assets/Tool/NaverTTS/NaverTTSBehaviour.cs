@@ -217,9 +217,11 @@ public class NaverTTSBehaviour : MonoBehaviour
 
 		CounterBlock.Single.coroutine.Start_Sync (_dictEng.LoadXML (),null,"DICT_ENGLISH");
 
-		CounterBlock.Single.coroutine.Start_Async (Request_NaverTTS());
+        CounterBlock.Single.coroutine.Start_Async (Request_NaverTTS());
 
-		//Test_NaverTTS (); //chamto test
+        //Test_NaverTTS (); //chamto test
+
+        //Test_Pitch_NaverTTS(); //chamto test
 	}
 
 	// Update is called once per frame
@@ -318,8 +320,22 @@ public class NaverTTSBehaviour : MonoBehaviour
 		_tts.Request (text);
 	}
 
+    void Test_Pitch_NaverTTS()
+    {
+        string text = "아";
+        _tts.SetSpeaker(NaverTTS.eLanguage.Korean, NaverTTS.eSex.Woman);
+        _tts.SetSpeed(NaverTTS.BASIC_ASC_SPEED);
+        _tts.SetPath(NaverTTS.PATH_Voice);
+        _tts.SetFileName("testPitch_2_" + _tts.GetSpeed() + "_" + text);
+        _tts.Request(text);
+
+    }
+
 }
 
+
+//"google tts"
+//https://translate.google.com.vn/translate_tts?ie=UTF-8&q=%EC%95%84%EC%95%84%EC%95%84+&tl=ko&client=tw-ob
 
 //===============================
 
