@@ -7,17 +7,23 @@ using Utility;
 public class PullOut : MonoBehaviour 
 {
 
-    public Transform _target = null;
+    public Transform _target_KeyInput = null;
+    public Transform _target_AI_00 = null;
 
 	// Use this for initialization
 	void Start () 
     {
-        ProtoGame.KeyInput keyInput = gameObject.AddComponent<ProtoGame.KeyInput>();
-        keyInput.SetMoveTarget(_target);
+        ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.AddComponent<ProtoGame.KeyInput>();
+        keyInput.SetTarget(_target_KeyInput);
+
+        ProtoGame.AI ai = _target_AI_00.gameObject.AddComponent<ProtoGame.AI>();
+        ai.SetTarget(_target_AI_00);
+
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+    {
 		
 	}
 
@@ -25,7 +31,32 @@ public class PullOut : MonoBehaviour
 
 }
 
+namespace ProtoGame
+{
+    public class AI : MonoBehaviour
+    {
+        private Transform _target = null;
+        private Move _move = new Move();
 
+        public void SetTarget(Transform target)
+        {
+            _target = target;
+            _move._target = target;
+        }
+
+		private void Update()
+		{
+            _move.Up(0f); //test
+		}
+
+	}
+
+}//end namespace
+
+
+//========================================================
+//================== 이동 처리 , 키입력 처리 ==================
+//========================================================
 namespace ProtoGame
 {
     public class CallInterval
@@ -122,7 +153,7 @@ namespace ProtoGame
     {
         private Move _move = new Move();
 
-        public void SetMoveTarget(Transform target)
+        public void SetTarget(Transform target)
         {
             _move._target = target;
         }
