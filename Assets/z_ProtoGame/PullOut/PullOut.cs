@@ -7,44 +7,49 @@ using Utility;
 public class PullOut : MonoBehaviour 
 {
 
-    public Transform _target_KeyInput = null;
-    public Transform _target_AI_00 = null;
-    public bool _active_target_KeyInput_00 = false;
-    public bool _active_target_AI_00 = false;
+    public Transform _target_1p = null;
+    public Transform _target_2p = null;
+    public bool _active_target_1p = false;
+    public bool _active_target_2p = false;
 
 	// Use this for initialization
 	void Start () 
     {
-        ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.AddComponent<ProtoGame.KeyInput>();
-        keyInput.SetTarget(_target_KeyInput);
+        ProtoGame.KeyInput key1p = _target_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
+        key1p.SetTarget(_target_1p);
+        key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
 
-        ProtoGame.AI ai = _target_AI_00.gameObject.AddComponent<ProtoGame.AI>();
-        ai.SetTarget(_target_AI_00);
+        ProtoGame.KeyInput key2p = _target_2p.gameObject.AddComponent<ProtoGame.KeyInput>();
+        key2p.SetTarget(_target_2p);
+        key2p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
+
+        //ProtoGame.AI ai = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
+        //ai.SetTarget(_target_2p);
 
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        if(true == _active_target_KeyInput_00)
-        {
-            ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.GetComponent<ProtoGame.KeyInput>();
-            keyInput.SetTarget(_target_KeyInput);
-        }else
-        {
-            ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.GetComponent<ProtoGame.KeyInput>();
-            keyInput.SetTarget(null);
-        }
+        //if(true == _active_target_1p)
+        //{
+        //    ProtoGame.KeyInput keyInput = _target_1p.gameObject.GetComponent<ProtoGame.KeyInput>();
+        //    keyInput.SetTarget(_target_1p);
+        //}else
+        //{
+        //    ProtoGame.KeyInput keyInput = _target_1p.gameObject.GetComponent<ProtoGame.KeyInput>();
+        //    keyInput.SetTarget(null);
+        //}
 
-        if (true == _active_target_AI_00)
-        {
-            ProtoGame.AI ai = _target_AI_00.gameObject.GetComponent<ProtoGame.AI>();
-            ai.SetTarget(_target_AI_00);
-        }else
-        {
-            ProtoGame.AI ai = _target_AI_00.gameObject.GetComponent<ProtoGame.AI>();
-            ai.SetTarget(null);
-        }
+        //if (true == _active_target_2p)
+        //{
+        //    ProtoGame.AI ai = _target_2p.gameObject.GetComponent<ProtoGame.AI>();
+        //    ai.SetTarget(_target_2p);
+        //}else
+        //{
+        //    ProtoGame.AI ai = _target_2p.gameObject.GetComponent<ProtoGame.AI>();
+        //    ai.SetTarget(null);
+        //}
 		
 	}
 
@@ -174,7 +179,32 @@ namespace ProtoGame
 
     public class KeyInput : MonoBehaviour 
     {
+        public enum ePlayerNum
+        {
+            Player_1 = 0,
+            Player_2 = 1
+        }
+        public enum eKeyName
+        {
+            UP = 0,
+            DOWN,
+            LEFT,
+            RIGHT
+        }
+
+        private ePlayerNum _playerNum = ePlayerNum.Player_1;
+
+
+        private string[,] _keys = { { "w", "s", "a", "d" } , { "up", "down", "left", "right" }};
+
+
         private Move _move = new Move();
+
+
+        public void SelectPlayerNum(ePlayerNum playerNum)
+        {
+            _playerNum = playerNum;
+        }
 
         public void SetTarget(Transform target)
         {
@@ -193,11 +223,11 @@ namespace ProtoGame
 
         public void Up()
         {
-            if (Input.GetKeyUp("up"))
+            if (Input.GetKeyUp(_keys[(int)_playerNum,(int)eKeyName.UP]) )
             {
                 //Debug.Log ("key-up: up state");
             }
-            else if (Input.GetKey("up"))
+            else if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.UP]))
             {
                 //Debug.Log ("key-up: down state");
                 _move.Up(0f);
@@ -206,7 +236,7 @@ namespace ProtoGame
 
         public void Down()
         {
-            if (Input.GetKey("down"))
+            if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.DOWN]))
             {
                 _move.Down(0f);   
             }
@@ -215,11 +245,11 @@ namespace ProtoGame
         
         public void Left()
         {
-            if (Input.GetKeyUp("left"))
+            if (Input.GetKeyUp(_keys[(int)_playerNum, (int)eKeyName.LEFT]))
             {
                 
             }
-            else if (Input.GetKey("left"))
+            else if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.LEFT]))
             {
                 _move.Left(0f);
             }
@@ -228,11 +258,11 @@ namespace ProtoGame
         
         public void Right()
         {
-            if (Input.GetKeyUp("right"))
+            if (Input.GetKeyUp(_keys[(int)_playerNum, (int)eKeyName.RIGHT]))
             {
                 
             }
-            else if (Input.GetKey("right"))
+            else if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.RIGHT]))
             {
                 _move.Right(0f);
             }
