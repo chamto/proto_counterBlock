@@ -9,6 +9,8 @@ public class PullOut : MonoBehaviour
 
     public Transform _target_KeyInput = null;
     public Transform _target_AI_00 = null;
+    public bool _active_target_KeyInput_00 = false;
+    public bool _active_target_AI_00 = false;
 
 	// Use this for initialization
 	void Start () 
@@ -24,6 +26,25 @@ public class PullOut : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        if(true == _active_target_KeyInput_00)
+        {
+            ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.GetComponent<ProtoGame.KeyInput>();
+            keyInput.SetTarget(_target_KeyInput);
+        }else
+        {
+            ProtoGame.KeyInput keyInput = _target_KeyInput.gameObject.GetComponent<ProtoGame.KeyInput>();
+            keyInput.SetTarget(null);
+        }
+
+        if (true == _active_target_AI_00)
+        {
+            ProtoGame.AI ai = _target_AI_00.gameObject.GetComponent<ProtoGame.AI>();
+            ai.SetTarget(_target_AI_00);
+        }else
+        {
+            ProtoGame.AI ai = _target_AI_00.gameObject.GetComponent<ProtoGame.AI>();
+            ai.SetTarget(null);
+        }
 		
 	}
 
@@ -46,6 +67,8 @@ namespace ProtoGame
 
 		private void Update()
 		{
+            if (null == _target) return;
+
             _move.Up(0f); //test
 		}
 
