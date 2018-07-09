@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44659382, g: 0.49643022, b: 0.57482576, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 260613362}
   - component: {fileID: 260613361}
   - component: {fileID: 260613364}
+  - component: {fileID: 260613365}
   m_Layer: 0
   m_Name: body
   m_TagString: Untagged
@@ -271,14 +272,27 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 260613359}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 100
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!138 &260613365
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 260613359}
+  m_ConnectedBody: {fileID: 1134570966}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &267912179
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +391,7 @@ GameObject:
   - component: {fileID: 445572507}
   - component: {fileID: 445572506}
   - component: {fileID: 445572505}
+  - component: {fileID: 445572508}
   m_Layer: 0
   m_Name: beak
   m_TagString: Untagged
@@ -451,6 +466,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 445572503}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &445572508
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 445572503}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &499059867
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,6 +489,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 499059868}
+  - component: {fileID: 499059870}
+  - component: {fileID: 499059869}
   m_Layer: 0
   m_Name: jongdali_1
   m_TagString: Untagged
@@ -481,6 +513,34 @@ Transform:
   m_Father: {fileID: 1264408099}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!138 &499059869
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 499059867}
+  m_ConnectedBody: {fileID: 445572508}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!54 &499059870
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 499059867}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1043486306
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,6 +585,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target_KeyInput: {fileID: 1173134163}
   _target_AI_00: {fileID: 499059868}
+  _active_target_KeyInput_00: 1
+  _active_target_AI_00: 0
 --- !u!1 &1134570961
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,6 +598,7 @@ GameObject:
   - component: {fileID: 1134570965}
   - component: {fileID: 1134570964}
   - component: {fileID: 1134570963}
+  - component: {fileID: 1134570966}
   m_Layer: 0
   m_Name: beak
   m_TagString: Untagged
@@ -610,6 +673,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1134570961}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &1134570966
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1134570961}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1173134162
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,6 +696,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1173134163}
+  - component: {fileID: 1173134165}
+  - component: {fileID: 1173134164}
   m_Layer: 0
   m_Name: jongdali_0
   m_TagString: Untagged
@@ -640,6 +720,34 @@ Transform:
   m_Father: {fileID: 1264408099}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!138 &1173134164
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1173134162}
+  m_ConnectedBody: {fileID: 260613364}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!54 &1173134165
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1173134162}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1264408098
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,6 +790,7 @@ GameObject:
   - component: {fileID: 1929508974}
   - component: {fileID: 1929508973}
   - component: {fileID: 1929508976}
+  - component: {fileID: 1929508977}
   m_Layer: 0
   m_Name: body
   m_TagString: Untagged
@@ -763,14 +872,27 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1929508971}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 100
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!138 &1929508977
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1929508971}
+  m_ConnectedBody: {fileID: 445572508}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &2035987901
 GameObject:
   m_ObjectHideFlags: 0
