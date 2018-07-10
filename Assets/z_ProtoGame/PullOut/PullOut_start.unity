@@ -842,7 +842,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!1 &1005159068
 GameObject:
@@ -989,8 +989,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target_1p: {fileID: 1173134163}
   _target_2p: {fileID: 499059868}
-  _active_target_1p: 0
-  _active_target_2p: 0
+  _active_ai_1p: 0
+  _active_ai_2p: 0
 --- !u!1 &1072852696
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,7 +1352,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!1 &1231004624
 GameObject:

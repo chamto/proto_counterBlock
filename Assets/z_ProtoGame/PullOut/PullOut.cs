@@ -15,9 +15,18 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_1p = null;
     private ProtoGame.AI _ai_2p = null;
 
+    private ProtoGame.GObjects _objects = new ProtoGame.GObjects();
+
 	// Use this for initialization
 	void Start () 
     {
+
+        _objects._characters.Add(_target_1p);
+        _objects._characters.Add(_target_2p);
+
+        //========================================================================
+        //========================================================================
+
         ProtoGame.KeyInput key1p = _target_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
         key1p.SetTarget(_target_1p);
         key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
@@ -26,6 +35,7 @@ public class PullOut : MonoBehaviour
         _ai_1p.SetTarget(_target_1p);
         _ai_1p.enabled = false;
 
+        _ai_1p._ref_objects = _objects;
         //========================================================================
         //========================================================================
 
@@ -37,6 +47,8 @@ public class PullOut : MonoBehaviour
         _ai_2p = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
         _ai_2p.SetTarget(_target_2p);
         _ai_2p.enabled = false;
+
+        _ai_2p._ref_objects = _objects;
 
 	}
 	
@@ -65,12 +77,41 @@ public class PullOut : MonoBehaviour
 
 }
 
+
+//========================================================
+//==================  ==================
+//========================================================
+namespace ProtoGame
+{
+    public class GObjects
+    {
+        public List<Transform> _characters = new List<Transform>();
+    }
+
+}//end namespace 
+
+
+//========================================================
+//==================       인공 지능      ==================
+//========================================================
 namespace ProtoGame
 {
     public class AI : MonoBehaviour
     {
         private Transform _target = null;
         private Move _move = new Move();
+
+        public GObjects _ref_objects = null;
+
+        public enum eState
+        {
+            Detect, //탐지
+            Chase,  //추격
+            Attack,  //공격
+            Escape, //도망
+            Roaming, //배회하기
+        }
+        private eState _state = eState.Roaming;
 
         public void SetTarget(Transform target)
         {
@@ -82,10 +123,98 @@ namespace ProtoGame
 		{
             if (null == _target) return;
 
-            _move.Up(0f); //test
+            this.StateUpdate();
 		}
 
+
+        public bool Situation_Is_AttackTarget()
+        {
+            return false;
+        }
+
+        public bool Situation_Is_AttackRange()
+        {
+            return false;
+        }
+
+        public void StateUpdate()
+        {
+            switch(_state)
+            {
+                case eState.Detect:
+                {
+                        //공격대상이 맞으면 추격한다.
+                        if(true == Situation_Is_AttackTarget())
+                        {
+                            _state = eState.Chase;
+                        }
+                        //공격대상이 아니면 다시 배회한다.
+                        else
+                        {
+                            _state = eState.Roaming;
+                        }
+
+                }break;
+                
+                case eState.Chase:
+                {
+                        //공격사정거리까지 이동했으면 공격한다. 
+                        if(true == Situation_Is_AttackRange())
+                        {
+                            _state = eState.Attack;
+                        }
+                        //거리가 멀리 떨어져 있으면 다시 배회한다.
+                        {
+                            _state = eState.Roaming;
+                        }
+
+                }
+                break;
+                case eState.Attack:
+                {
+                        //못이길것 같으면 도망간다.
+                        {
+                            _state = eState.Escape;
+                        }
+
+                        //적을 잡았으면 다시 배회한다.
+                        {
+                            _state = eState.Roaming;
+                        }
+
+                }
+                break;
+                case eState.Escape:
+                {
+                        //일정 거리 안에 적이 있으면 탐지한다.
+                        {
+                            _state = eState.Detect;
+                        }
+
+                        //다시 배회한다.
+                        {
+                            _state = eState.Roaming;
+                        }
+                }
+                break;
+                case eState.Roaming:
+                {
+                        //일정 거리 안에 적이 있으면 탐지한다.
+                        if(false)
+                        {
+                            _state = eState.Detect;
+                        }
+
+                        //_move.Up(0f); //test
+
+                }
+                break;
+            }
+        }
+
 	}
+
+
 
 }//end namespace
 
@@ -183,6 +312,7 @@ namespace ProtoGame
             float delta = Interpolation.easeOutCirc(0f, 5f, accumulate / MAX_SECOND);
             _target.Rotate(Vector3.up, 1 * delta);
         }
+
     }
 
     public class KeyInput : MonoBehaviour 
