@@ -9,8 +9,11 @@ public class PullOut : MonoBehaviour
 
     public Transform _target_1p = null;
     public Transform _target_2p = null;
-    public bool _active_target_1p = false;
-    public bool _active_target_2p = false;
+    public bool _active_ai_1p = false;
+    public bool _active_ai_2p = false;
+
+    private ProtoGame.AI _ai_1p = null;
+    private ProtoGame.AI _ai_2p = null;
 
 	// Use this for initialization
 	void Start () 
@@ -19,37 +22,42 @@ public class PullOut : MonoBehaviour
         key1p.SetTarget(_target_1p);
         key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
 
+        _ai_1p = _target_1p.gameObject.AddComponent<ProtoGame.AI>();
+        _ai_1p.SetTarget(_target_1p);
+        _ai_1p.enabled = false;
+
+        //========================================================================
+        //========================================================================
+
+
         ProtoGame.KeyInput key2p = _target_2p.gameObject.AddComponent<ProtoGame.KeyInput>();
         key2p.SetTarget(_target_2p);
         key2p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
 
-        //ProtoGame.AI ai = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
-        //ai.SetTarget(_target_2p);
+        _ai_2p = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
+        _ai_2p.SetTarget(_target_2p);
+        _ai_2p.enabled = false;
 
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        //if(true == _active_target_1p)
-        //{
-        //    ProtoGame.KeyInput keyInput = _target_1p.gameObject.GetComponent<ProtoGame.KeyInput>();
-        //    keyInput.SetTarget(_target_1p);
-        //}else
-        //{
-        //    ProtoGame.KeyInput keyInput = _target_1p.gameObject.GetComponent<ProtoGame.KeyInput>();
-        //    keyInput.SetTarget(null);
-        //}
+        if(true == _active_ai_1p)
+        {
+            _ai_1p.enabled = true;
+        }else
+        {
+            _ai_1p.enabled = false;
+        }
 
-        //if (true == _active_target_2p)
-        //{
-        //    ProtoGame.AI ai = _target_2p.gameObject.GetComponent<ProtoGame.AI>();
-        //    ai.SetTarget(_target_2p);
-        //}else
-        //{
-        //    ProtoGame.AI ai = _target_2p.gameObject.GetComponent<ProtoGame.AI>();
-        //    ai.SetTarget(null);
-        //}
+        if (true == _active_ai_2p)
+        {
+            _ai_2p.enabled = true;
+        }else
+        {
+            _ai_2p.enabled = false;
+        }
 		
 	}
 
