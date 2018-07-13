@@ -137,7 +137,7 @@ namespace ProtoGame
             _move._mainBody = mainBody;
         }
 
-		private void Update()
+		private void FixedUpdate()
 		{
             if (null == _mainBody) return;
 
@@ -319,8 +319,14 @@ namespace ProtoGame
 
             //보간, 이동 처리
             float delta = Interpolation.easeInOutBack(0f, 0.2f, accumulate / MAX_SECOND);
-            _mainBody.Translate(Vector3.forward * delta);
+            //_mainBody.Translate(Vector3.forward * delta);
 
+            //=============
+            //chamto test
+            Vector3 dir = this.GetForwardDirect();
+            dir.Normalize();
+            //_mainBody.GetComponent<Rigidbody>().AddRelativeForce(dir*10f, ForceMode.Impulse);
+            _mainBody.GetComponent<Rigidbody>().AddForce(dir * 150f * delta, ForceMode.Impulse);
         }
 
         public void Down(float MAX_SECOND)
@@ -344,7 +350,12 @@ namespace ProtoGame
 
             //보간, 이동 처리
             float delta = Interpolation.easeOutCirc(0f, angle, accumulate / MAX_SECOND);
-            _mainBody.Rotate(Vector3.up, -1 * delta);
+            //_mainBody.Rotate(Vector3.up, -1 * delta);
+
+
+            //=============
+            //물리 처리로 변경 
+            _mainBody.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta , ForceMode.VelocityChange);
         }
 
 
@@ -360,7 +371,13 @@ namespace ProtoGame
 
             //보간, 이동 처리
             float delta = Interpolation.easeOutCirc(0f, angle, accumulate / MAX_SECOND);
-            _mainBody.Rotate(Vector3.up, 1 * delta);
+            //_mainBody.Rotate(Vector3.up, 1 * delta);
+
+
+            //=============
+            //물리 처리로 변경 
+            _mainBody.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * 1f * delta , ForceMode.VelocityChange);
+
         }
 
 
