@@ -35,5 +35,10 @@ public class TestTorque : MonoBehaviour
 
         //_rigid.AddRelativeTorque(transform.up * h, _fMode);
         //_rigid.AddRelativeTorque(transform.right * v, _fMode);
+
+        if (Input.GetKeyUp("a"))
+        {
+            _rigid.AddExplosionForce(1000f, _rigid.transform.position, 20f, 20f);
+        }
     }
 }
