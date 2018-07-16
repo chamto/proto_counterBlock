@@ -77,16 +77,30 @@ public class PullOut : MonoBehaviour
 
 }
 
+//========================================================
+//==================     게임 스테이지     ==================
+//========================================================
+namespace ProtoGame
+{
+    public class GStage
+    {
+        //1. 장애물이 하늘에서 1개 떨어진다.
+        //2. 장애물이 시끄럽게 말을 한다. 말할때 마다 조금씩 들썩인다 
+        //3. 시끄러운 장애물을 밀어서 떨어뜨린다
+        //4. 1번으로 돌아간. 장애물의 숫자가 증가한다. 여러개 중에 하나만 말을 한다
+    }
+
+}//end namespace
 
 //========================================================
-//==================  ==================
+//==================      객체 관리기      ==================
 //========================================================
 namespace ProtoGame
 {
     public class GObjects
     {
         public List<Transform> _characters = new List<Transform>();
-
+        public List<Transform> _chatterboxes = new List<Transform>();   //말하는 장애물 
 
         //최대 반경이내에서 가장 가까운 객체를 반환한다
         public Transform GetNearCharacter(Transform exceptChar , float maxRadius)
@@ -103,7 +117,25 @@ namespace ProtoGame
 
             return null;
         }
+
+        public void Create_Chatterbox()
+        {
+            
+        }
     }
+
+    public class Chatterbox : MonoBehaviour
+    {
+		private void Start()
+		{
+			
+		}
+
+        public void Speaking()
+        {
+            
+        }
+	}
 
 }//end namespace 
 
