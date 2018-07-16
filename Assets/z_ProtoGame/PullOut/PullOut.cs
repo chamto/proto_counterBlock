@@ -307,6 +307,47 @@ namespace ProtoGame
         private CallInterval _Interval_Right = new CallInterval();
 
 
+        public void PostureRecovery()
+        {
+            //chamto test
+            //DebugWide.LogBlue(_mainBody.transform.localEulerAngles); //chamto test
+
+            Vector3 angles = _mainBody.transform.localEulerAngles;
+            float angle_x = -1.5f * Time.deltaTime;
+            float angle_z = -1.5f * Time.deltaTime;
+
+            //180도를 넘는 각도에 대해 음수 각도표현으로 변경
+            if (angles.x > 180f) angles.x -= 360f;
+            if (angles.z > 180f) angles.z -= 360f;
+
+
+            if (angles.x < 0) angle_x *= -1f;
+            if (angles.z < 0) angle_z *= -1f;
+
+            //DebugWide.LogBlue(angle_x + "   " + angle_z); //chamto test
+
+            angles.x = angles.x + angle_x;
+            angles.z = angles.z + angle_z;
+
+            //todo
+            //1-45  = -44
+            //1-1.5 = -0.5
+            //1-0.5 = 0.5
+
+          
+            float min_angle = 2f; //허용 최소 각도
+            if ((min_angle - Mathf.Abs(angles.x)) > 0) angles.x = 0;
+            if ((min_angle - Mathf.Abs(angles.z)) > 0) angles.z = 0;
+
+
+            //DebugWide.LogRed(angles); //chamto test
+            //_mainBody.transform.localEulerAngles = angles;
+
+            _mainBody.GetComponent<Rigidbody>().AddForce(Vector3.down * 4f * Time.deltaTime, ForceMode.Force);
+              
+           
+        }
+
         public void Up(float MAX_SECOND)
         {
             MAX_SECOND = 0.5f; //test value
@@ -319,22 +360,28 @@ namespace ProtoGame
 
             //보간, 이동 처리
             float delta = Interpolation.easeInOutBack(0f, 0.2f, accumulate / MAX_SECOND);
-            //_mainBody.Translate(Vector3.forward * delta);
+            _mainBody.Translate(Vector3.forward * delta);
 
-            //=============
+            //=============s
             //chamto test
             Vector3 dir = this.GetForwardDirect();
             dir.Normalize();
-            //_mainBody.GetComponent<Rigidbody>().AddRelativeForce(dir*10f, ForceMode.Impulse);
-            _mainBody.GetComponent<Rigidbody>().AddForce(dir * 150f * delta, ForceMode.Impulse);
+            //_mainBody.GetComponent<Rigidbody>().AddForce(dir * 50f * delta, ForceMode.VelocityChange);
+
+
+            //chamto test
+            //_mainBody.GetComponent<Rigidbody>().AddExplosionForce(300f, _mainBody.transform.position, 20f, 10f);
+
+            //chamto test2
+            //_mainBody.GetComponent<Rigidbody>().MovePosition(_mainBody.position + (dir * 3f));
         }
 
         public void Down(float MAX_SECOND)
         {
             MAX_SECOND = 4f; //test value
 
-            _mainBody.Translate(Vector3.back * Time.deltaTime * MAX_SECOND); //one second per 4 move
 
+            _mainBody.Translate(Vector3.back * Time.deltaTime * MAX_SECOND); //one second per 4 move
         }
 
 
@@ -456,6 +503,7 @@ namespace ProtoGame
 
 		void FixedUpdate()
         {
+            _move.PostureRecovery(); //chamto test
             this.Up();
             this.Down();
             this.Left();
