@@ -226,23 +226,33 @@ namespace ProtoGame
 
 
         //글종류에 해당하는 전체 목록을 반환 
-        public List<XML_Data.VocaInfo> GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
+        public XML_Data.VocaInfoList GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
         {
             return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(eKind);
         }
 
         //글묶음 번호에 해당하는 목록을 반환 
-        public List<XML_Data.VocaInfo> GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
+        public XML_Data.VocaInfoList GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
         {
             return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(groupNum);
         }
 
-        public AudioClip GetAudioClip(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, XML_Data.DictInfo.eKind dictKind, int vocaListNum)
+        public AudioClip GetAudioClip(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, XML_Data.DictInfo.eKind dictKind, int vocaSeqNum)
         {
             AudioClips clips = this.GetVoiceClip(voiceKind);
-            List<XML_Data.VocaInfo> seq = GetVocaInfoList(XML_dictInfoNum, dictKind);
+            XML_Data.VocaInfoList list = GetVocaInfoList(XML_dictInfoNum, dictKind);
 
-            int hashKey = seq[vocaListNum].hashKey;
+            int hashKey = list.GetVocaHashKey(vocaSeqNum).hashKey;
+
+            return clips[hashKey];
+        }
+
+        public AudioClip GetAudioClip_Group(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, int dictGroupNum, int groupSeqNum)
+        {
+            AudioClips clips = this.GetVoiceClip(voiceKind);
+            XML_Data.VocaInfoList list = GetVocaInfoGroup(XML_dictInfoNum, dictGroupNum);
+
+            int hashKey = list.GetVocaHashKey(groupSeqNum).hashKey;
 
             return clips[hashKey];
         }
@@ -258,9 +268,9 @@ namespace ProtoGame
             AudioClip clip = this.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
 
             //_audioSource.Play (); //chamto test
-            
 
-            //List<XML_Data.DictInfo.VocaInfo> seq = this.GetDictEng()._dictInfoMap[100].GetSequence(6); //100 , 9 임시 처리
+
+            //clip = this.GetAudioClip_Group(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, 9, 0); //100 : 사전넘버 , 9 : 그룹번호(묶음) , 0 : 그룹의 첫번째 데이터 
             _audioSource.Stop();
             _audioSource.PlayOneShot(clip);
             _voiceSequence++;

@@ -141,9 +141,13 @@ namespace XML_Data
 
     public class VocaInfoList : List<VocaInfo>
     {
-        public VocaInfo GetVocaHashKey(int sec)
+        public VocaInfo GetVocaHashKey(int sequenceNum)
         {
-            return this[sec];
+            if(sequenceNum < base.Count)
+                return this[sequenceNum];
+            
+            //잘못된 순서값
+            return null;
         }
     }
 
