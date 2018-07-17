@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,6 +51,11 @@ public class PullOut : MonoBehaviour
 
         _ai_2p._ref_objects = _objects;
 
+
+        //sound test
+
+
+
 	}
 	
 	// Update is called once per frame
@@ -76,6 +82,208 @@ public class PullOut : MonoBehaviour
 
 
 }
+
+//========================================================
+//==================     소리a     ==================
+//========================================================
+namespace ProtoGame
+{
+    public struct VoiceInfo
+    {
+
+        public enum eKind
+        {
+            None,
+            Eng_NaverMan_1 = 1,
+            Eng_NaverWoman_2 = 2,
+            Eng_AmazonMan_3 = 3,
+            Eng_AmazonMan_4 = 4,
+            Eng_AmazonMan_5 = 5,
+            Eng_AmazonWoman_6 = 6,
+            Eng_AmazonWoman_7 = 7,
+            Eng_AmazonWoman_8 = 8,
+            Max,
+        }
+
+        public int number;
+        public int hash;
+        public eKind kind;
+        public int speed;
+
+
+        public VoiceInfo(string fileName)
+        {
+            number = -1;
+            hash = -1;
+            kind = eKind.None;
+            speed = -1;
+
+            Parsing_VoiceClipName(fileName);
+        }
+
+        private void Parsing_VoiceClipName(string fileName)
+        {
+            //파일저장양식 
+            //(0)number _ (1)hash value _ (2)목소리종류 _ (3)말하기속도 _(4)말하기텍스트 
+            const int MAX_COUNT = 5;
+
+            char[] delimiterChars = { '_' };
+            string[] parts = fileName.Split(delimiterChars, System.StringSplitOptions.RemoveEmptyEntries);
+
+            if (MAX_COUNT == parts.Count())
+            {
+                number = int.Parse(parts[0]);
+                hash = int.Parse(parts[1]);
+                kind = (eKind)int.Parse(parts[2]);
+                speed = int.Parse(parts[3]);
+            }
+
+        }
+
+        public string ToString()
+        {
+            return "[ " + number + " ]" + "[ " + hash + " ]" + "[ " + kind + " ]" + "[ " + speed + " ]";
+        }
+    }
+
+    public class AudioClips : Dictionary<int, AudioClip> { } //해쉬키 , 오디오클립
+    public class VoiceClipMap : Dictionary<VoiceInfo.eKind, AudioClips>
+    {
+        public AudioClips GetClips(VoiceInfo.eKind kind)
+        {
+            if (false == this.ContainsKey(kind))
+            {
+                this.Add(kind, new AudioClips());
+            }
+            return this[kind];
+        }
+    }
+
+    //fixme : Dict_English.cs 로 옮기기 
+    public class VocaInfoList : List<XML_Data.DictInfo.VocaInfo>
+    {
+        public XML_Data.DictInfo.VocaInfo GetVocaHashKey(int sec)
+        {
+            return this[sec];
+        }
+    }
+
+
+
+    public class VoiceClipManager
+    {
+        
+        private VoiceClipMap _voiceClipMap = new VoiceClipMap();
+
+
+        //==================== XML_DATA ====================
+        public XML_Data.Dict_English _dictEng = new XML_Data.Dict_English();
+
+
+
+        //==================== Get / Set ====================
+       
+
+        //==================== <Method> ====================
+
+
+        public void ClearAll()
+        {
+           
+            _voiceClipMap.Clear();
+            _dictEng.ClearAll();
+        }
+
+        public void Init()
+        {
+           
+            this.ClearAll();
+
+            //====== LOAD ======
+            this.Load_XML();
+          
+            this.Load_AudioClip();
+        }
+
+        public void Load_XML()
+        {
+            CounterBlock.Single.coroutine.Start_Sync(_dictEng.LoadXML(), null, "DICT_ENGLISH");
+        }
+
+
+        public void Load_AudioClip()
+        {
+            AudioClip[] clips = Resources.LoadAll<AudioClip>("Sound/Voice");
+
+            VoiceInfo vInfo;
+            for (int i = 0; i < clips.Length; i++)
+            {
+                vInfo = new VoiceInfo(clips[i].name);
+                //DebugWide.LogBlue(clips [i].name);
+                //DebugWide.LogBlue(vInfo.ToString()); //chamto test
+
+                _voiceClipMap.GetClips(vInfo.kind).Add(vInfo.hash, clips[i]);
+
+            }
+        }
+
+
+        public AudioClips GetVoiceClip(VoiceInfo.eKind eKind)
+        {
+            return _voiceClipMap.GetClips(eKind);
+        }
+
+
+        //글종류에 해당하는 전체 목록을 반환 
+        public List<XML_Data.DictInfo.VocaInfo> GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
+        {
+            return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(eKind);
+        }
+
+        //글묶음 번호에 해당하는 목록을 반환 
+        public List<XML_Data.DictInfo.VocaInfo> GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
+        {
+            return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(groupNum);
+        }
+
+        public AudioClip GetAudioClip(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, XML_Data.DictInfo.eKind dictKind, int vocaListNum)
+        {
+            AudioClips clips = this.GetVoiceClip(voiceKind);
+            List<XML_Data.DictInfo.VocaInfo> seq = GetVocaInfoList(XML_dictInfoNum, dictKind);
+
+            int hashKey = seq[vocaListNum].hashKey;
+
+            return clips[hashKey];
+        }
+
+        public AudioSource _audioSource;
+        public int _voiceSequence = 0;
+        public void Test()
+        {
+            const int XML_VIVA_LA_VIDA = 0;
+
+            //=================================================
+           
+            AudioClip clip = this.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
+
+            //_audioSource.Play (); //chamto test
+            
+
+            //List<XML_Data.DictInfo.VocaInfo> seq = this.GetDictEng()._dictInfoMap[100].GetSequence(6); //100 , 9 임시 처리
+            _audioSource.Stop();
+            _audioSource.PlayOneShot(clip);
+            _voiceSequence++;
+            //_voiceSequence = _voiceSequence % (seq.Count);
+            //=================================================
+        }
+
+
+    }//end class
+
+
+}//end namespace
+
+
 
 //========================================================
 //==================     게임 스테이지     ==================
