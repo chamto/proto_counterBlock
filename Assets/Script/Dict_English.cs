@@ -128,6 +128,25 @@ namespace XML_Data
 
 	}
 
+    public class Meaning : List<int> { }
+
+    //<eng> 정보
+    public class VocaInfo
+    {
+        public int groupNum = -1;
+        public DictInfo.eKind kind = DictInfo.eKind.None;
+        public int hashKey;
+
+    }
+
+    public class VocaInfoList : List<VocaInfo>
+    {
+        public VocaInfo GetVocaHashKey(int sec)
+        {
+            return this[sec];
+        }
+    }
+
 	public class DictInfo
 	{
 		public enum eKind
@@ -139,22 +158,12 @@ namespace XML_Data
 			Part,		//문장의 부분
 		}
 
-		public class Meaning : List<int> { }
-
-		//<eng> 정보
-		public class VocaInfo
-		{
-			public int 		groupNum = -1;
-			public eKind 	kind = eKind.None;
-			public int 		hashKey;
-
-		}
-
+		
 		private int _id_number = -1; //고유번호 
 		private int _hashTitle = -1;
 
 		private ValueToKeyMap _valueToKeyMap = new ValueToKeyMap();
-		private Dictionary<int, DictInfo.Meaning> _data = new Dictionary<int, DictInfo.Meaning> ();
+		private Dictionary<int, Meaning> _data = new Dictionary<int, Meaning> ();
 
 		//xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
 		private Dictionary<eKind, List<VocaInfo>> _sequenceKind = new Dictionary<eKind, List<VocaInfo>>(); //<종류, 해쉬목록> 
@@ -169,7 +178,7 @@ namespace XML_Data
 			return _id_number;
 		}
 
-		public Dictionary<int, DictInfo.Meaning> GetData()
+		public Dictionary<int, Meaning> GetData()
 		{
 			return _data;
 		}
@@ -193,7 +202,7 @@ namespace XML_Data
 			_hashTitle = hashTitle;
 		}
 
-		public void Add(int hashKey, DictInfo.Meaning mMore, int groupNum, eKind kind)
+		public void Add(int hashKey, Meaning mMore, int groupNum, eKind kind)
 		{
 			
 			if (_data.ContainsKey (hashKey)) 
@@ -304,7 +313,7 @@ namespace XML_Data
 			{
 				DebugWide.LogBlue ("=== DictInfo - title : " + info.GetTitle ());
 
-				foreach (KeyValuePair<int,DictInfo.Meaning> kv in info.GetData()) 
+				foreach (KeyValuePair<int,Meaning> kv in info.GetData()) 
 				{
 					DebugWide.LogBlue ("========= DictInfo - <eng> : " + Single.hashString.GetString(kv.Key));
 
@@ -393,7 +402,7 @@ namespace XML_Data
 				item.SetTitle(xmlNode.Value.GetHashCode());
 
 
-				DictInfo.Meaning meaning = null;
+				Meaning meaning = null;
 				int 			groupNum = -1;
 				DictInfo.eKind 	eKind = DictInfo.eKind.None;
 				//==================== <eng> ====================
@@ -405,7 +414,7 @@ namespace XML_Data
 						continue;
 					
 					//==================== <kor> ====================
-					meaning = new DictInfo.Meaning ();
+					meaning = new Meaning ();
 					fourthList = thirdList[j].ChildNodes; //<kor>
 					for (int k = 0; k < fourthList.Count; ++k) 
 					{

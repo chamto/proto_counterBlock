@@ -159,16 +159,7 @@ namespace ProtoGame
         }
     }
 
-    //fixme : Dict_English.cs 로 옮기기 
-    public class VocaInfoList : List<XML_Data.DictInfo.VocaInfo>
-    {
-        public XML_Data.DictInfo.VocaInfo GetVocaHashKey(int sec)
-        {
-            return this[sec];
-        }
-    }
-
-
+   
 
     public class VoiceClipManager
     {
@@ -235,13 +226,13 @@ namespace ProtoGame
 
 
         //글종류에 해당하는 전체 목록을 반환 
-        public List<XML_Data.DictInfo.VocaInfo> GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
+        public List<XML_Data.VocaInfo> GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
         {
             return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(eKind);
         }
 
         //글묶음 번호에 해당하는 목록을 반환 
-        public List<XML_Data.DictInfo.VocaInfo> GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
+        public List<XML_Data.VocaInfo> GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
         {
             return this._dictEng._dictInfoMap[XML_dictInfoNum].GetSequence(groupNum);
         }
@@ -249,7 +240,7 @@ namespace ProtoGame
         public AudioClip GetAudioClip(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, XML_Data.DictInfo.eKind dictKind, int vocaListNum)
         {
             AudioClips clips = this.GetVoiceClip(voiceKind);
-            List<XML_Data.DictInfo.VocaInfo> seq = GetVocaInfoList(XML_dictInfoNum, dictKind);
+            List<XML_Data.VocaInfo> seq = GetVocaInfoList(XML_dictInfoNum, dictKind);
 
             int hashKey = seq[vocaListNum].hashKey;
 

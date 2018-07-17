@@ -52,7 +52,7 @@ public class GameMode_Couple : MonoBehaviour
 
 	public void RandomTableSetting()
 	{
-		List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
+		List<XML_Data.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
 
 		int rnd_num = -1;
 		rnd_num = Single.rand.Next (0, seq.Count - 1 - 3);
@@ -315,7 +315,7 @@ public class PineCone_Card : MonoBehaviour
 			clips = Single.resource.GetVoiceClipMap ().GetClips (VoiceInfo.eKind.Eng_NaverWoman_2);
 		}
 		//_audioSource.Play (); //chamto test
-		List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
+		List<XML_Data.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(XML_Data.DictInfo.eKind.Sentence); //100 임시 처리
 		//List<XML_Data.DictInfo.VocaInfo> seq = Single.resource.GetDictEng()._dictInfoMap[100].GetSequence(6); //100 , 9 임시 처리
 		_audioSource.Stop ();
 		_audioSource.PlayOneShot(clips[seq[_coupleNumber].hashKey]);
