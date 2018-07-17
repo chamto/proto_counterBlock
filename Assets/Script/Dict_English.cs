@@ -166,8 +166,8 @@ namespace XML_Data
 		private Dictionary<int, Meaning> _data = new Dictionary<int, Meaning> ();
 
 		//xml 데이터의 순서를 기록한다. 가사를 순서대로 재생하기 위하여 필요함 
-		private Dictionary<eKind, List<VocaInfo>> _sequenceKind = new Dictionary<eKind, List<VocaInfo>>(); //<종류, 해쉬목록> 
-		private Dictionary<int, List<VocaInfo>> _sequenceGroupNum = new Dictionary<int, List<VocaInfo>>(); //<그룹번호, 해쉬목록>
+        private Dictionary<eKind, VocaInfoList> _sequenceKind = new Dictionary<eKind, VocaInfoList>(); //<종류, 해쉬목록> 
+        private Dictionary<int, VocaInfoList> _sequenceGroupNum = new Dictionary<int, VocaInfoList>(); //<그룹번호, 해쉬목록>
 
 		public void SetID_Number(int number)
 		{
@@ -183,12 +183,12 @@ namespace XML_Data
 			return _data;
 		}
 
-		public List<VocaInfo> GetSequence(eKind kind)
+        public VocaInfoList GetSequence(eKind kind)
 		{
 			return _sequenceKind[kind];
 		}
 
-		public List<VocaInfo> GetSequence(int groupNum)
+        public VocaInfoList GetSequence(int groupNum)
 		{
 			return _sequenceGroupNum[groupNum];
 		}
@@ -232,10 +232,10 @@ namespace XML_Data
 		{
 			//DebugWide.LogBlue ("AddSequence ............ " + kind + "__" + hashKey ); //chamto test
 			
-			List<VocaInfo> getList = null;
+            VocaInfoList getList = null;
 			if (false == _sequenceKind.TryGetValue (voca.kind, out getList)) 
 			{
-				getList = new List<VocaInfo> ();
+                getList = new VocaInfoList ();
 				_sequenceKind.Add (voca.kind, getList);
 			}
 			getList.Add (voca);
@@ -243,10 +243,10 @@ namespace XML_Data
 
 		public void AddSequence_GroupNum(VocaInfo voca)
 		{
-			List<VocaInfo> getList = null;
+            VocaInfoList getList = null;
 			if (false == _sequenceGroupNum.TryGetValue (voca.groupNum, out getList)) 
 			{
-				getList = new List<VocaInfo> ();
+                getList = new VocaInfoList ();
 				_sequenceGroupNum.Add (voca.groupNum, getList);
 			}
 			getList.Add (voca);
