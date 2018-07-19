@@ -17,10 +17,17 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_2p = null;
 
     private ProtoGame.GObjects _objects = new ProtoGame.GObjects();
+    private ProtoGame.VoiceClipManager _voiceManager = new ProtoGame.VoiceClipManager();
 
 	// Use this for initialization
 	void Start () 
     {
+
+        _voiceManager.Init();
+
+
+        //========================================================================
+        //========================================================================
 
         _objects._characters.Add(_target_1p);
         _objects._characters.Add(_target_2p);
@@ -84,7 +91,7 @@ public class PullOut : MonoBehaviour
 }
 
 //========================================================
-//==================     소리a     ==================
+//==================      음성 관리기      ==================
 //========================================================
 namespace ProtoGame
 {
@@ -245,7 +252,7 @@ namespace ProtoGame
             return clips[hashKey];
         }
 
-        public AudioSource _audioSource;
+        public AudioSource _audioSource = null;
         public int _voiceSequence = 0;
         public void Test()
         {
@@ -254,15 +261,15 @@ namespace ProtoGame
             //=================================================
            
             AudioClip clip = this.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
+            int voiceCount = this._dictEng.GetVocaInfoList(XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence).Count;
 
             //_audioSource.Play (); //chamto test
-
-
             //clip = this.GetAudioClip_Group(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, 9, 0); //100 : 사전넘버 , 9 : 그룹번호(묶음) , 0 : 그룹의 첫번째 데이터 
+
             _audioSource.Stop();
             _audioSource.PlayOneShot(clip);
             _voiceSequence++;
-            //_voiceSequence = _voiceSequence % (seq.Count);
+            _voiceSequence = _voiceSequence % (voiceCount);
             //=================================================
         }
 
