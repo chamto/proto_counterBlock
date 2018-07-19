@@ -7,7 +7,7 @@ using Utility;
 
 public class PullOut : MonoBehaviour 
 {
-
+    public Transform _root_chatterbox = null;
     public Transform _target_1p = null;
     public Transform _target_2p = null;
     public bool _active_ai_1p = false;
@@ -31,6 +31,12 @@ public class PullOut : MonoBehaviour
 
         _objects._characters.Add(_target_1p);
         _objects._characters.Add(_target_2p);
+
+        for (int i = 0; i < 2;i++)
+        {
+            _objects.Create_Chatterbox(_root_chatterbox, i);
+        }
+
 
         //========================================================================
         //========================================================================
@@ -322,14 +328,34 @@ namespace ProtoGame
             return null;
         }
 
-        public void Create_Chatterbox()
+        public GameObject CreatePrefab(string prefabPath, Transform parent, string name)
         {
-            
+            const string root = "Prefab/";
+            GameObject obj = MonoBehaviour.Instantiate(Resources.Load(root + prefabPath)) as GameObject;
+            obj.transform.SetParent(parent, false);
+            obj.transform.name = name;
+
+
+            return obj;
+        }
+
+        public GameObject Create_Chatterbox(Transform parent, int id)
+        {
+            GameObject obj = CreatePrefab("Proto/PullOut/Cube_00",parent, "Cube_"+id.ToString("00"));
+            Chatterbox cbox = obj.AddComponent<Chatterbox>();
+            _chatterboxes.Add(obj.transform);
+            cbox.id = id;
+
+            return obj;
         }
     }
 
     public class Chatterbox : MonoBehaviour
     {
+
+        public int id
+        { get; set; }
+
 		private void Start()
 		{
 			
@@ -337,7 +363,23 @@ namespace ProtoGame
 
         public void Speaking()
         {
-            
+            DebugWide.LogBlue("Speaking --------- ");
+        }
+
+
+        void OnCollisionEnter(Collision col)
+        {
+            DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
+
+            Speaking();
+        }
+        void OnCollisionStay(Collision col)
+        {
+            DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
+        }
+        void OnCollisionExit(Collision col)
+        {
+            DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
         }
 	}
 
