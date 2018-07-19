@@ -197,6 +197,7 @@ namespace XML_Data
 			return _sequenceGroupNum[groupNum];
 		}
 
+
 		public string GetTitle()
 		{
 			return Single.hashString.GetString(_hashTitle);
@@ -293,6 +294,7 @@ namespace XML_Data
 			return this.GetTextFromValue (meaningValue.GetHashCode());
 		}
 
+
 	}
 	
 	public class Dict_English : FileToMemoryStream
@@ -307,6 +309,19 @@ namespace XML_Data
 		}
 
 		public Dictionary<int, DictInfo> _dictInfoMap = new Dictionary<int, DictInfo>();
+
+
+        //글종류에 해당하는 전체 목록을 반환 
+        public VocaInfoList GetVocaInfoList(int XML_dictInfoNum, XML_Data.DictInfo.eKind eKind)
+        {
+            return this._dictInfoMap[XML_dictInfoNum].GetSequence(eKind);
+        }
+
+        //글묶음 번호에 해당하는 목록을 반환 
+        public VocaInfoList GetVocaInfoGroup(int XML_dictInfoNum, int groupNum)
+        {
+            return this._dictInfoMap[XML_dictInfoNum].GetSequence(groupNum);
+        }
 
 
 
