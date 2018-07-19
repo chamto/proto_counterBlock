@@ -219,7 +219,7 @@ namespace ProtoGame
         }
 
 
-        public AudioClips GetVoiceClip(VoiceInfo.eKind eKind)
+        public AudioClips GetVoiceClips(VoiceInfo.eKind eKind)
         {
             return _voiceClipMap.GetClips(eKind);
         }
@@ -227,7 +227,7 @@ namespace ProtoGame
 
         public AudioClip GetAudioClip(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, XML_Data.DictInfo.eKind dictKind, int vocaSeqNum)
         {
-            AudioClips clips = this.GetVoiceClip(voiceKind);
+            AudioClips clips = this.GetVoiceClips(voiceKind);
             XML_Data.VocaInfoList list = this._dictEng.GetVocaInfoList(XML_dictInfoNum, dictKind);
 
             int hashKey = list.GetVocaHashKey(vocaSeqNum).hashKey;
@@ -237,7 +237,7 @@ namespace ProtoGame
 
         public AudioClip GetAudioClip_Group(VoiceInfo.eKind voiceKind, int XML_dictInfoNum, int dictGroupNum, int groupSeqNum)
         {
-            AudioClips clips = this.GetVoiceClip(voiceKind);
+            AudioClips clips = this.GetVoiceClips(voiceKind);
             XML_Data.VocaInfoList list = this._dictEng.GetVocaInfoGroup(XML_dictInfoNum, dictGroupNum);
 
             int hashKey = list.GetVocaHashKey(groupSeqNum).hashKey;
