@@ -327,7 +327,7 @@ namespace XML_Data
 
 		public void Print ()
 		{
-			DebugWide.LogBlue ("==================== "+ m_strFileName +" ====================");
+            DebugWide.LogBlue ("==================== "+ m_strFileName +" ==================== " +_dictInfoMap.Count);
 			foreach(DictInfo info in _dictInfoMap.Values)
 			{
 				DebugWide.LogBlue ("=== DictInfo - title : " + info.GetTitle ());

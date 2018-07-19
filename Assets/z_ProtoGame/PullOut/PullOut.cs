@@ -17,13 +17,12 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_2p = null;
 
     private ProtoGame.GObjects _objects = new ProtoGame.GObjects();
-    private ProtoGame.VoiceClipManager _voiceManager = new ProtoGame.VoiceClipManager();
 
 	// Use this for initialization
 	void Start () 
     {
 
-        _voiceManager.Init();
+        ProtoGame.Single.voiceManager.Init();
 
 
         //========================================================================
@@ -31,10 +30,11 @@ public class PullOut : MonoBehaviour
 
         _objects._characters.Add(_target_1p);
         _objects._characters.Add(_target_2p);
-
-        for (int i = 0; i < 2;i++)
+        Vector3 chatPos = new Vector3(0, 0.5f, 0);
+        for (int i = 0; i < 10;i++)
         {
-            _objects.Create_Chatterbox(_root_chatterbox, i);
+            chatPos.x = (i*1.5f) - 7f;
+            _objects.Create_Chatterbox(_root_chatterbox, i, chatPos );
         }
 
 
@@ -95,6 +95,26 @@ public class PullOut : MonoBehaviour
 
 
 }
+
+//========================================================
+//==================      전역  객체      ==================
+//========================================================
+namespace ProtoGame
+{
+    public static class Single
+    {
+
+        public static VoiceClipManager voiceManager
+        {
+            get
+            {
+                return CSingleton<VoiceClipManager>.Instance;
+            }
+        }
+    }
+
+}//end namespace
+
 
 //========================================================
 //==================      음성 관리기      ==================
@@ -262,7 +282,7 @@ namespace ProtoGame
         public int _voiceSequence = 0;
         public void Test()
         {
-            const int XML_VIVA_LA_VIDA = 0;
+            const int XML_VIVA_LA_VIDA = 100;
 
             //=================================================
            
@@ -339,12 +359,13 @@ namespace ProtoGame
             return obj;
         }
 
-        public GameObject Create_Chatterbox(Transform parent, int id)
+        public GameObject Create_Chatterbox(Transform parent, int id,  Vector3 pos)
         {
             GameObject obj = CreatePrefab("Proto/PullOut/Cube_00",parent, "Cube_"+id.ToString("00"));
             Chatterbox cbox = obj.AddComponent<Chatterbox>();
             _chatterboxes.Add(obj.transform);
             cbox.id = id;
+            cbox.transform.localPosition = pos;
 
             return obj;
         }
@@ -356,30 +377,53 @@ namespace ProtoGame
         public int id
         { get; set; }
 
+        private AudioSource _audioSource = null;
+
 		private void Start()
 		{
-			
+            _audioSource = this.GetComponent<AudioSource>();
 		}
 
+       
+        public int _voiceSequence = 0;
         public void Speaking()
         {
-            DebugWide.LogBlue("Speaking --------- ");
+            if (null == _audioSource) return;
+            if (true == _audioSource.isPlaying) return;
+
+            //DebugWide.LogBlue("Speaking --------- " + _voiceSequence);
+
+            const int XML_VIVA_LA_VIDA = 100;
+
+            //=================================================
+
+            AudioClip clip = Single.voiceManager.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
+            int voiceCount = Single.voiceManager._dictEng.GetVocaInfoList(XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence).Count;
+
+            //_audioSource.Play (); //chamto test
+            //clip = this.GetAudioClip_Group(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, 9, 0); //100 : 사전넘버 , 9 : 그룹번호(묶음) , 0 : 그룹의 첫번째 데이터 
+
+            _audioSource.Stop();
+            _audioSource.PlayOneShot(clip);
+            _voiceSequence++;
+            _voiceSequence = _voiceSequence % (voiceCount);
+            //=================================================
         }
 
 
         void OnCollisionEnter(Collision col)
         {
-            DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
+            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
 
             Speaking();
         }
         void OnCollisionStay(Collision col)
         {
-            DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
+            //DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
         }
         void OnCollisionExit(Collision col)
         {
-            DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
+            //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
         }
 	}
 
