@@ -363,6 +363,26 @@ namespace ProtoGame
             return null;
         }
 
+
+        //다른 수다박스가 재생중인지 알려준다 
+        public bool IsPlaying_ChatterBoxes()
+        {
+            AudioSource audio = null;
+            foreach(Transform t in _chatterboxes)
+            {
+                audio = t.GetComponent<AudioSource>();
+                if(null != audio)
+                {
+                    //하나라도 재생중
+                    if (true == audio.isPlaying)
+                        return true;
+                }
+            }
+
+            //하나도 재생중 아님
+            return false;
+        }
+
         public GameObject CreatePrefab(string prefabPath, Transform parent, string name)
         {
             const string root = "Prefab/";
@@ -428,14 +448,17 @@ namespace ProtoGame
         //다른 수다박스가 말하지 않을때만 말할 수 있다  
         public void Speaking_JustOne()
         {
-            
+            if (true == Single.objectManager.IsPlaying_ChatterBoxes()) return;
+
+            this.Speaking();
         }
 
         void OnCollisionEnter(Collision col)
         {
             //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
 
-            Speaking();
+            //Speaking();
+            Speaking_JustOne();
         }
         void OnCollisionStay(Collision col)
         {
