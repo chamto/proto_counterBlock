@@ -16,7 +16,7 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_1p = null;
     private ProtoGame.AI _ai_2p = null;
 
-    private ProtoGame.ObjectManager _objects = new ProtoGame.ObjectManager();
+    //private ProtoGame.ObjectManager _objects = new ProtoGame.ObjectManager();
 
 	// Use this for initialization
 	void Start () 
@@ -28,13 +28,13 @@ public class PullOut : MonoBehaviour
         //========================================================================
         //========================================================================
 
-        _objects._characters.Add(_target_1p);
-        _objects._characters.Add(_target_2p);
+        ProtoGame.Single.objectManager._characters.Add(_target_1p);
+        ProtoGame.Single.objectManager._characters.Add(_target_2p);
         Vector3 chatPos = new Vector3(0, 0.5f, 0);
         for (int i = 0; i < 10;i++)
         {
             chatPos.x = (i*1.5f) - 7f;
-            _objects.Create_Chatterbox(_root_chatterbox, i, chatPos );
+            ProtoGame.Single.objectManager.Create_Chatterbox(_root_chatterbox, i, chatPos );
         }
 
 
@@ -49,7 +49,7 @@ public class PullOut : MonoBehaviour
         _ai_1p.SetMainBody(_target_1p);
         _ai_1p.enabled = false;
 
-        _ai_1p._ref_objects = _objects;
+        //_ai_1p._ref_objects = ProtoGame.Single.objectManager;
         //========================================================================
         //========================================================================
 
@@ -62,7 +62,7 @@ public class PullOut : MonoBehaviour
         _ai_2p.SetMainBody(_target_2p);
         _ai_2p.enabled = false;
 
-        _ai_2p._ref_objects = _objects;
+        //_ai_2p._ref_objects = ProtoGame.Single.objectManager;
 
 
         //sound test
@@ -461,7 +461,7 @@ namespace ProtoGame
         private Transform _target = null;
         private Move _move = new Move();
 
-        public ObjectManager _ref_objects = null;
+        //public ObjectManager _ref_objects = null;
 
         public enum eState
         {
@@ -567,7 +567,7 @@ namespace ProtoGame
 
 
 
-                        _target = _ref_objects.GetNearCharacter(_mainBody, 10f); 
+                        _target = ProtoGame.Single.objectManager.GetNearCharacter(_mainBody, 10f); 
 
                         switch(_move.DirectionalInspection(_target.localPosition))
                         {
