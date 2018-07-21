@@ -16,7 +16,7 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_1p = null;
     private ProtoGame.AI _ai_2p = null;
 
-    private ProtoGame.GObjects _objects = new ProtoGame.GObjects();
+    private ProtoGame.ObjectManager _objects = new ProtoGame.ObjectManager();
 
 	// Use this for initialization
 	void Start () 
@@ -109,6 +109,14 @@ namespace ProtoGame
             get
             {
                 return CSingleton<VoiceClipManager>.Instance;
+            }
+        }
+
+        public static ProtoGame.ObjectManager objectManager
+        {
+            get
+            {
+                return CSingleton<ProtoGame.ObjectManager>.Instance;
             }
         }
     }
@@ -334,7 +342,7 @@ namespace ProtoGame
 //========================================================
 namespace ProtoGame
 {
-    public class GObjects
+    public class ObjectManager
     {
         public List<Transform> _characters = new List<Transform>();
         public List<Transform> _chatterboxes = new List<Transform>();   //말하는 장애물 
@@ -453,7 +461,7 @@ namespace ProtoGame
         private Transform _target = null;
         private Move _move = new Move();
 
-        public GObjects _ref_objects = null;
+        public ObjectManager _ref_objects = null;
 
         public enum eState
         {
