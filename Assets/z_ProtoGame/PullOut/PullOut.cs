@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Utility;
 
@@ -21,6 +22,7 @@ public class PullOut : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
+        this.gameObject.AddComponent<ProtoGame.UI_Control>();
 
         ProtoGame.Single.voiceManager.Init();
 
@@ -117,6 +119,14 @@ namespace ProtoGame
             get
             {
                 return CSingleton<ProtoGame.ObjectManager>.Instance;
+            }
+        }
+
+        public static UI_Control uiControl
+        {
+            get
+            {
+                return CSingletonMono<UI_Control>.Instance;
             }
         }
     }
@@ -314,6 +324,28 @@ namespace ProtoGame
 }//end namespace
 
 
+//========================================================
+//==================        U  I        ==================
+//========================================================
+namespace ProtoGame
+{
+    public class UI_Control : MonoBehaviour
+    {
+        public Text _text_stage = null;
+        public Text _text_info = null;
+        public GameObject _button_retry = null;
+
+		private void Start()
+		{
+            _text_stage = GameObject.Find("Text_stage").GetComponent<Text>();
+            _text_info = GameObject.Find("Text_info").GetComponent<Text>();
+            _button_retry = GameObject.Find("Button_retry");
+
+            _button_retry.SetActive(false);
+		}
+
+	}
+}//end namespace
 
 //========================================================
 //==================     게임 스테이지     ==================
@@ -333,6 +365,14 @@ namespace ProtoGame
         //1. 일정 횟수 이상으로 공을 굴린후 떨어뜨리기
         //1. 특정 음성이 나올때 떨어뜨리기
         //1. 공이 특정 색으로 변할때 떨어뜨리기a
+
+
+        //지정된 시간이 지나면 죽게 처리
+        //죽음 처리 - 시간경과 , 목표 미달
+        //죽음 처리 - 판에서 떨어진 경우 
+
+        //점수 처리 , 게임 다시시작 , 레벨디자인 진행
+
     }
 
 }//end namespace
