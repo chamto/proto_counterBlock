@@ -17,7 +17,7 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_1p = null;
     private ProtoGame.AI _ai_2p = null;
 
-    //private ProtoGame.ObjectManager _objects = new ProtoGame.ObjectManager();
+    private ProtoGame.GStage _gStage = new ProtoGame.GStage();
 
 	// Use this for initialization
 	void Start () 
@@ -51,7 +51,7 @@ public class PullOut : MonoBehaviour
         _ai_1p.SetMainBody(_target_1p);
         _ai_1p.enabled = false;
 
-        //_ai_1p._ref_objects = ProtoGame.Single.objectManager;
+
         //========================================================================
         //========================================================================
 
@@ -64,12 +64,11 @@ public class PullOut : MonoBehaviour
         _ai_2p.SetMainBody(_target_2p);
         _ai_2p.enabled = false;
 
-        //_ai_2p._ref_objects = ProtoGame.Single.objectManager;
 
+        //========================================================================
+        //========================================================================
 
-        //sound test
-
-
+        _gStage.Init();
 
 	}
 	
@@ -91,6 +90,8 @@ public class PullOut : MonoBehaviour
         {
             _ai_2p.enabled = false;
         }
+
+        _gStage.Update();
 		
 	}
 
@@ -344,6 +345,21 @@ namespace ProtoGame
             _button_retry.SetActive(false);
 		}
 
+
+        //1초 = 1000ms , 1분 = 1000 * 60
+        public void SetTextInfo(float s , uint score)
+        {
+            string t_s = s.ToString("00.00");
+
+            _text_info.text = "시간 : "+t_s+"   점수 : "+score.ToString("00")+" ";
+
+        }
+
+        public void SetTextStage(uint stageNum)
+        {
+            _text_stage.text = "[ "+stageNum.ToString("00")+" 단계 ] ";
+        }
+
 	}
 }//end namespace
 
@@ -372,6 +388,27 @@ namespace ProtoGame
         //죽음 처리 - 판에서 떨어진 경우 
 
         //점수 처리 , 게임 다시시작 , 레벨디자인 진행
+
+        private uint _stageNum = 1;
+        private float _gameTime_s = 60f;
+        private uint _score = 0;
+
+        public void Init()
+        {
+            
+        }
+
+        public void Update()
+        {
+            if (0 < _gameTime_s)
+                _gameTime_s -= Time.deltaTime;
+            else
+                _gameTime_s = 0f;
+
+            //ui갱신
+            Single.uiControl.SetTextStage(_stageNum);
+            Single.uiControl.SetTextInfo(_gameTime_s, _score);
+        }
 
     }
 
