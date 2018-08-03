@@ -489,12 +489,39 @@ namespace ProtoGame
         public int id
         { get; set; }
 
+        private int _hp = 10;
+        private bool _isLive = true;
+
         private AudioSource _audioSource = null;
 
 		private void Start()
 		{
             _audioSource = this.GetComponent<AudioSource>();
 		}
+
+        private void Update()
+        {
+            if (true == _isLive && 0 == _hp)
+            {
+                Death();
+            }
+        }
+
+        void OnCollisionEnter(Collision col)
+        {
+            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
+
+            //Speaking();
+            Speaking_JustOne();
+        }
+        void OnCollisionStay(Collision col)
+        {
+            //DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
+        }
+        void OnCollisionExit(Collision col)
+        {
+            //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
+        }
 
        
         public int _voiceSequence = 0;
@@ -530,20 +557,16 @@ namespace ProtoGame
             this.Speaking();
         }
 
-        void OnCollisionEnter(Collision col)
+        public void SetHP_Plus(int plus)
         {
-            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
+            _hp = _hp + plus;
+            if (0 > _hp) _hp = 0;
+        }
 
-            //Speaking();
-            Speaking_JustOne();
-        }
-        void OnCollisionStay(Collision col)
+		public void Death()
         {
-            //DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
-        }
-        void OnCollisionExit(Collision col)
-        {
-            //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
+            _isLive = false;
+            _hp = 0;
         }
 	}
 
