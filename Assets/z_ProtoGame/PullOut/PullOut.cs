@@ -460,6 +460,10 @@ namespace ProtoGame
             return false;
         }
 
+        //____________________________________________
+        //                  객체 생성 
+        //____________________________________________
+
         public GameObject CreatePrefab(string prefabPath, Transform parent, string name)
         {
             const string root = "Prefab/";
@@ -481,6 +485,9 @@ namespace ProtoGame
 
             return obj;
         }
+
+
+
     }
 
     public class Chatterbox : MonoBehaviour
@@ -489,7 +496,7 @@ namespace ProtoGame
         public int id
         { get; set; }
 
-        private int _hp = 10;
+        public int _hp = 10;
         private bool _isLive = true;
 
         private AudioSource _audioSource = null;
@@ -505,11 +512,21 @@ namespace ProtoGame
             {
                 Death();
             }
+
+            //Judge_OffTheRing();
         }
 
         void OnCollisionEnter(Collision col)
         {
-            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name);
+
+            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name + "   " + col.gameObject.tag);
+
+            //캐릭터에만 영향을 받는다 
+            if("character" == col.gameObject.tag)
+            {
+                Judge_FirstAttacked();
+            }
+
 
             //Speaking();
             Speaking_JustOne();
@@ -524,6 +541,7 @@ namespace ProtoGame
         }
 
        
+        //정해진 순서로 말한다. (다른 수다박스와 상관없이 동작) 
         public int _voiceSequence = 0;
         public void Speaking()
         {
@@ -567,6 +585,27 @@ namespace ProtoGame
         {
             _isLive = false;
             _hp = 0;
+        }
+
+        //____________________________________________
+        //                객체 상태 판단 
+        //____________________________________________
+
+        //첫번째 공격으로 공격당함
+        public void Judge_FirstAttacked()
+        {
+            this.SetHP_Plus(-1); //hp -1 
+        }
+
+
+        //링에서 떨어짐 
+        public bool Judge_OffTheRing()
+        {
+            const float FLOOR_HEIGHT = 0f;
+            if (FLOOR_HEIGHT > this.transform.position.y)
+                return true;
+
+            return false;
         }
 	}
 
