@@ -129,6 +129,24 @@ namespace ProtoGame
                 return CSingletonMono<UI_Control>.Instance;
             }
         }
+
+        private static Canvas _canvasRoot = null;
+        public static Canvas canvasRoot
+        {
+            get
+            {
+                if (null == _canvasRoot)
+                {
+                    GameObject obj = GameObject.Find("Canvas");
+                    if(null != obj)
+                    {
+                        _canvasRoot = obj.GetComponent<Canvas>();
+                    }
+
+                }
+                return _canvasRoot;
+            }
+        }
     }
 
 }//end namespace
@@ -370,10 +388,17 @@ namespace ProtoGame
 
         public void Update()
         {
-            if (0 < _gameTime_s)
+            if      (0 < _gameTime_s)
                 _gameTime_s -= Time.deltaTime;
-            else
+            else if (0 > _gameTime_s)
+            {
+                
                 _gameTime_s = 0f;
+
+                Single.uiControl.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
+            }
+            else if(0 == _gameTime_s)
+            {}
 
 
             _score = OBJMGR.Count_DeathChatterBox();

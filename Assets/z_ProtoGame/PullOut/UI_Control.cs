@@ -37,7 +37,32 @@ namespace ProtoGame
             _text_stage.text = "[ " + stageNum.ToString("00") + " 단계 ] ";
         }
 
-        public void event_Button_Retry()
+        //____________________________________________
+        //                 UI 활성/비활성  
+        //____________________________________________
+        private RectTransform __buttonRetry = null;
+		public void Active_Button_Retry(bool value)
+		{
+            if(null == __buttonRetry)
+            {
+                foreach (RectTransform t in Single.canvasRoot.GetComponentsInChildren<RectTransform>(true))
+                {
+                    if (t.name.Equals("Button_retry"))
+                    {
+                        __buttonRetry = t;
+                        break;
+                    }
+                }
+            }
+
+            __buttonRetry.gameObject.SetActive(value);
+		}
+
+		//____________________________________________
+		//                콜백 이벤트 함수 
+		//____________________________________________
+
+		public void event_Button_Retry()
         {
             DebugWide.LogBlue("event Button Retry");
         }
