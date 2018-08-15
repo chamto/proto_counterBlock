@@ -511,12 +511,20 @@ namespace ProtoGame
 
         private void Update()
         {
-            if (true == _isLive && 0 == _hp)
+            if (true == _isLive)
             {
-                Death();
+                if(true == Judge_OffTheRing())
+                {
+                    Death();
+                }
+                if(0 == _hp)
+                {
+                    Death();    
+                }
+
             }
 
-            //Judge_OffTheRing();
+
         }
 
         void OnCollisionEnter(Collision col)
@@ -527,6 +535,7 @@ namespace ProtoGame
             //캐릭터에만 영향을 받는다 
             if("character" == col.gameObject.tag)
             {
+                //DebugWide.LogBlue("coll time : " + Time.fixedTime); //chamto test
                 Judge_FirstAttacked();
             }
 
@@ -613,7 +622,8 @@ namespace ProtoGame
         public bool Judge_OffTheRing()
         {
             const float FLOOR_HEIGHT = 0f;
-            if (FLOOR_HEIGHT > this.transform.position.y)
+            const float DELAY = 3f;
+            if (FLOOR_HEIGHT - DELAY > this.transform.position.y)
                 return true;
 
             return false;
