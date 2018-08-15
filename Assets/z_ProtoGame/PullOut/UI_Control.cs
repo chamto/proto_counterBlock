@@ -15,9 +15,10 @@ namespace ProtoGame
 
         private void Start()
         {
-            _text_stage = GameObject.Find("Text_stage").GetComponent<Text>();
-            _text_info = GameObject.Find("Text_info").GetComponent<Text>();
-            _button_retry = GameObject.Find("Button_retry");
+            
+            _text_stage = this.FindUI("Text_stage").GetComponent<Text>();
+            _text_info = this.FindUI("Text_info").GetComponent<Text>();
+            _button_retry = this.FindUI("Button_retry").gameObject;
 
             _button_retry.SetActive(false);
         }
@@ -37,28 +38,30 @@ namespace ProtoGame
             _text_stage.text = "[ " + stageNum.ToString("00") + " 단계 ] ";
         }
 
-        //____________________________________________
-        //                 UI 활성/비활성  
-        //____________________________________________
-        private RectTransform __buttonRetry = null;
-		public void Active_Button_Retry(bool value)
-		{
-            if(null == __buttonRetry)
+        public Transform FindUI(string find_name)
+        {
+            foreach (Transform t in Single.canvasRoot.GetComponentsInChildren<Transform>(true))
             {
-                foreach (RectTransform t in Single.canvasRoot.GetComponentsInChildren<RectTransform>(true))
+                //DebugWide.LogBlue(t.name); //chamto test
+                if (t.name.Equals(find_name))
                 {
-                    if (t.name.Equals("Button_retry"))
-                    {
-                        __buttonRetry = t;
-                        break;
-                    }
+                    return t;
                 }
             }
 
-            __buttonRetry.gameObject.SetActive(value);
+            return null;
+        }
+
+        //____________________________________________
+        //                 UI 활성/비활성  
+        //____________________________________________
+
+		public void Active_Button_Retry(bool value)
+		{
+            _button_retry.SetActive(value);
 		}
 
-		//____________________________________________
+		//___________________________________________
 		//                콜백 이벤트 함수 
 		//____________________________________________
 
