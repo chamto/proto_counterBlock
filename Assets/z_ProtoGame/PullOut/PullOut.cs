@@ -496,14 +496,17 @@ namespace ProtoGame
         public int id
         { get; set; }
 
-        public int _hp = 10;
+        private int _hp = 10;
         private bool _isLive = true;
 
         private AudioSource _audioSource = null;
+        private TextMesh _text_hp = null;
 
 		private void Start()
 		{
             _audioSource = this.GetComponent<AudioSource>();
+            _text_hp = this.GetComponentInChildren<TextMesh>(true);
+            this.SetHP(_hp);
 		}
 
         private void Update()
@@ -575,16 +578,24 @@ namespace ProtoGame
             this.Speaking();
         }
 
+        public void SetHP(int hp)
+        {
+            _hp = hp;
+            this._text_hp.text = _hp.ToString();
+        }
+
         public void SetHP_Plus(int plus)
         {
             _hp = _hp + plus;
             if (0 > _hp) _hp = 0;
+            this.SetHP(_hp);
         }
 
 		public void Death()
         {
             _isLive = false;
-            _hp = 0;
+            //_hp = 0;
+            this.SetHP(0);
         }
 
         //____________________________________________
