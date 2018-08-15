@@ -393,9 +393,13 @@ namespace ProtoGame
         private float _gameTime_s = 60f;
         private uint _score = 0;
 
+        private ObjectManager OBJMGR = null;
+        private UI_Control UICTR = null;
+
         public void Init()
         {
-            
+            OBJMGR = ProtoGame.Single.objectManager;
+            UICTR = ProtoGame.Single.uiControl;
         }
 
         public void Update()
@@ -405,9 +409,12 @@ namespace ProtoGame
             else
                 _gameTime_s = 0f;
 
+
+            _score = OBJMGR.Count_DeathChatterBox();
+
             //ui갱신
-            Single.uiControl.SetTextStage(_stageNum);
-            Single.uiControl.SetTextInfo(_gameTime_s, _score);
+            UICTR.SetTextStage(_stageNum);
+            UICTR.SetTextInfo(_gameTime_s, _score);
         }
 
     }
@@ -422,7 +429,7 @@ namespace ProtoGame
     public class ObjectManager
     {
         public List<Transform> _characters = new List<Transform>();
-        public List<Transform> _chatterboxes = new List<Transform>();   //말하는 장애물 
+        public List<Chatterbox> _chatterboxes = new List<Chatterbox>();   //말하는 장애물 
 
         //최대 반경이내에서 가장 가까운 객체를 반환한다
         public Transform GetNearCharacter(Transform exceptChar , float maxRadius)
@@ -445,7 +452,7 @@ namespace ProtoGame
         public bool IsPlaying_ChatterBoxes()
         {
             AudioSource audio = null;
-            foreach(Transform t in _chatterboxes)
+            foreach(Chatterbox t in _chatterboxes)
             {
                 audio = t.GetComponent<AudioSource>();
                 if(null != audio)
@@ -458,6 +465,19 @@ namespace ProtoGame
 
             //하나도 재생중 아님
             return false;
+        }
+
+        public uint Count_DeathChatterBox()
+        {
+            uint count = 0;
+            foreach (Chatterbox t in _chatterboxes)
+            {
+                if(false == t._isLive)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         //____________________________________________
@@ -479,7 +499,7 @@ namespace ProtoGame
         {
             GameObject obj = CreatePrefab("Proto/PullOut/Cube_00",parent, "Cube_"+id.ToString("00"));
             Chatterbox cbox = obj.AddComponent<Chatterbox>();
-            _chatterboxes.Add(obj.transform);
+            _chatterboxes.Add(cbox);
             cbox.id = id;
             cbox.transform.localPosition = pos;
 
@@ -497,7 +517,7 @@ namespace ProtoGame
         { get; set; }
 
         private int _hp = 10;
-        private bool _isLive = true;
+        public bool _isLive = true;
 
         private AudioSource _audioSource = null;
         private TextMesh _text_hp = null;
