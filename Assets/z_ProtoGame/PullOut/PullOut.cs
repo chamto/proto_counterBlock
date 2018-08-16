@@ -7,7 +7,7 @@ using Utility;
 
 public class PullOut : MonoBehaviour 
 {
-    public Transform _root_chatterbox = null;
+    //public Transform _root_chatterbox = null;
     public Transform _target_1p = null;
     public Transform _target_2p = null;
     public bool _active_ai_1p = false;
@@ -16,7 +16,7 @@ public class PullOut : MonoBehaviour
     private ProtoGame.AI _ai_1p = null;
     private ProtoGame.AI _ai_2p = null;
 
-    private ProtoGame.GStage _gStage = new ProtoGame.GStage();
+    //private ProtoGame.GStage _gStage = new ProtoGame.GStage();
 
 	// Use this for initialization
 	void Start () 
@@ -29,14 +29,14 @@ public class PullOut : MonoBehaviour
         //========================================================================
         //========================================================================
 
-        ProtoGame.Single.objectManager._characters.Add(_target_1p);
-        ProtoGame.Single.objectManager._characters.Add(_target_2p);
-        Vector3 chatPos = new Vector3(0, 0.5f, 0);
-        for (int i = 0; i < 10;i++)
-        {
-            chatPos.x = (i*1.5f) - 7f;
-            ProtoGame.Single.objectManager.Create_Chatterbox(_root_chatterbox, i, chatPos );
-        }
+        //ProtoGame.Single.objectManager._characters.Add(_target_1p);
+        //ProtoGame.Single.objectManager._characters.Add(_target_2p);
+        //Vector3 chatPos = new Vector3(0, 0.5f, 0);
+        //for (int i = 0; i < 10;i++)
+        //{
+        //    chatPos.x = (i*1.5f) - 7f;
+        //    ProtoGame.Single.objectManager.Create_Chatterbox(_root_chatterbox, i, chatPos );
+        //}
 
 
         //========================================================================
@@ -67,8 +67,9 @@ public class PullOut : MonoBehaviour
         //========================================================================
         //========================================================================
 
-        _gStage.Init();
-
+        //_gStage.Init();
+        ProtoGame.Single.gstage.Init();
+        ProtoGame.Single.gstage.JumpStage(1);
 	}
 	
 	// Update is called once per frame
@@ -90,7 +91,8 @@ public class PullOut : MonoBehaviour
             _ai_2p.enabled = false;
         }
 
-        _gStage.Update();
+        //_gStage.Update();
+        ProtoGame.Single.gstage.Update();
 		
 	}
 
@@ -105,6 +107,14 @@ namespace ProtoGame
 {
     public static class Single
     {
+
+        public static GStage gstage
+        {
+            get
+            {
+                return CSingleton<GStage>.Instance;
+            }
+        }
 
         public static VoiceClipManager voiceManager
         {
@@ -145,6 +155,24 @@ namespace ProtoGame
 
                 }
                 return _canvasRoot;
+            }
+        }
+
+        private static Transform _chatterboxRoot = null;
+        public static Transform chatterboxRoot
+        {
+            get
+            {
+                if (null == _chatterboxRoot)
+                {
+                    GameObject obj = GameObject.Find("0_chatterbox");
+                    if (null != obj)
+                    {
+                        _chatterboxRoot = obj.GetComponent<Transform>();
+                    }
+
+                }
+                return _chatterboxRoot;
             }
         }
     }
@@ -395,7 +423,7 @@ namespace ProtoGame
                 
                 _gameTime_s = 0f;
 
-                Single.uiControl.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
+                UICTR.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
             }
             else if(0 == _gameTime_s)
             {}
@@ -406,6 +434,18 @@ namespace ProtoGame
             //ui갱신
             UICTR.SetTextStage(_stageNum);
             UICTR.SetTextInfo(_gameTime_s, _score);
+        }
+
+
+        public void JumpStage(uint stageNum)
+        {
+            _stageNum = stageNum;
+            _gameTime_s = 60f;
+            _score = 0;
+
+            UICTR.Active_Button_Retry(false);
+            OBJMGR.CreateFor_StageInfo(stageNum);
+
         }
 
     }
@@ -421,6 +461,20 @@ namespace ProtoGame
     {
         public List<Transform> _characters = new List<Transform>();
         public List<Chatterbox> _chatterboxes = new List<Chatterbox>();   //말하는 장애물 
+
+
+
+        public void ClearAll()
+        {
+            
+            foreach(Chatterbox t in _chatterboxes)
+            {
+                GameObject.Destroy(t.gameObject);
+            }
+
+            _characters.Clear();
+            _chatterboxes.Clear();
+        }
 
         //최대 반경이내에서 가장 가까운 객체를 반환한다
         public Transform GetNearCharacter(Transform exceptChar , float maxRadius)
@@ -495,6 +549,27 @@ namespace ProtoGame
             cbox.transform.localPosition = pos;
 
             return obj;
+        }
+
+        public GameObject Create_Character(Transform parent, int id, Vector3 pos)
+        {
+            GameObject obj = null;
+            return obj;
+        }
+
+        public void CreateFor_StageInfo(uint stageNum)
+        {
+
+            this.ClearAll();
+
+            //ProtoGame.Single.objectManager._characters.Add(_target_1p);
+            //ProtoGame.Single.objectManager._characters.Add(_target_2p);
+            Vector3 chatPos = new Vector3(0, 0.5f, 0);
+            for (int i = 0; i < 10; i++)
+            {
+                chatPos.x = (i * 1.5f) - 7f;
+                Create_Chatterbox(Single.chatterboxRoot, i, chatPos);
+            }
         }
 
 
