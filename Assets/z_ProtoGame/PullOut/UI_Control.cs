@@ -15,7 +15,8 @@ namespace ProtoGame
 
         private void Start()
         {
-            
+            ResolutionController.CalcViewportRect(Single.canvasRoot, Single.mainCamera); //화면크기조정
+
             _text_stage = this.FindUI("Text_stage").GetComponent<Text>();
             _text_info = this.FindUI("Text_info").GetComponent<Text>();
             _button_retry = this.FindUI("Button_retry").gameObject;

@@ -127,6 +127,26 @@ namespace ProtoGame
             }
         }
 
+        private static Camera _mainCamera = null;
+        public static Camera mainCamera
+        {
+            get
+            {
+                if (null == _mainCamera)
+                {
+
+                    GameObject obj = GameObject.Find("Main Camera");
+                    if (null != obj)
+                    {
+                        _mainCamera = obj.GetComponent<Camera>();
+                    }
+
+                }
+                return _mainCamera;
+            }
+        }
+
+
         private static Canvas _canvasRoot = null;
         public static Canvas canvasRoot
         {
