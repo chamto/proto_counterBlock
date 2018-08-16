@@ -8,60 +8,47 @@ using Utility;
 public class PullOut : MonoBehaviour 
 {
     //public Transform _root_chatterbox = null;
-    public Transform _target_1p = null;
-    public Transform _target_2p = null;
+    //public Transform _target_1p = null;
+    //public Transform _target_2p = null;
     public bool _active_ai_1p = false;
     public bool _active_ai_2p = false;
 
-    private ProtoGame.AI _ai_1p = null;
-    private ProtoGame.AI _ai_2p = null;
+    //private ProtoGame.AI _ai_1p = null;
+    //private ProtoGame.AI _ai_2p = null;
 
     //private ProtoGame.GStage _gStage = new ProtoGame.GStage();
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start () 
     {
-        //this.gameObject.AddComponent<ProtoGame.UI_Control>();
-
+        
         ProtoGame.Single.voiceManager.Init();
 
 
         //========================================================================
         //========================================================================
 
-        //ProtoGame.Single.objectManager._characters.Add(_target_1p);
-        //ProtoGame.Single.objectManager._characters.Add(_target_2p);
-        //Vector3 chatPos = new Vector3(0, 0.5f, 0);
-        //for (int i = 0; i < 10;i++)
-        //{
-        //    chatPos.x = (i*1.5f) - 7f;
-        //    ProtoGame.Single.objectManager.Create_Chatterbox(_root_chatterbox, i, chatPos );
-        //}
+
+        //ProtoGame.KeyInput key1p = _target_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
+        //key1p.SetMainBody(_target_1p);
+        //key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
+
+        //_ai_1p = _target_1p.gameObject.AddComponent<ProtoGame.AI>();
+        //_ai_1p.SetMainBody(_target_1p);
+        //_ai_1p.enabled = false;
 
 
-        //========================================================================
-        //========================================================================
-
-        ProtoGame.KeyInput key1p = _target_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
-        key1p.SetMainBody(_target_1p);
-        key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
-
-        _ai_1p = _target_1p.gameObject.AddComponent<ProtoGame.AI>();
-        _ai_1p.SetMainBody(_target_1p);
-        _ai_1p.enabled = false;
+        ////========================================================================
+        ////========================================================================
 
 
-        //========================================================================
-        //========================================================================
+        //ProtoGame.KeyInput key2p = _target_2p.gameObject.AddComponent<ProtoGame.KeyInput>();
+        //key2p.SetMainBody(_target_2p);
+        //key2p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
 
-
-        ProtoGame.KeyInput key2p = _target_2p.gameObject.AddComponent<ProtoGame.KeyInput>();
-        key2p.SetMainBody(_target_2p);
-        key2p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
-
-        _ai_2p = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
-        _ai_2p.SetMainBody(_target_2p);
-        _ai_2p.enabled = false;
+        //_ai_2p = _target_2p.gameObject.AddComponent<ProtoGame.AI>();
+        //_ai_2p.SetMainBody(_target_2p);
+        //_ai_2p.enabled = false;
 
 
         //========================================================================
@@ -70,31 +57,31 @@ public class PullOut : MonoBehaviour
         //_gStage.Init();
         ProtoGame.Single.gstage.Init();
         ProtoGame.Single.gstage.JumpStage(1);
-	}
-	
-	// Update is called once per frame
-	void Update () 
+    }
+    
+    // Update is called once per frame
+    void Update () 
     {
-        if(true == _active_ai_1p)
-        {
-            _ai_1p.enabled = true;
-        }else
-        {
-            _ai_1p.enabled = false;
-        }
+        //if(true == _active_ai_1p)
+        //{
+        //    _ai_1p.enabled = true;
+        //}else
+        //{
+        //    _ai_1p.enabled = false;
+        //}
 
-        if (true == _active_ai_2p)
-        {
-            _ai_2p.enabled = true;
-        }else
-        {
-            _ai_2p.enabled = false;
-        }
+        //if (true == _active_ai_2p)
+        //{
+        //    _ai_2p.enabled = true;
+        //}else
+        //{
+        //    _ai_2p.enabled = false;
+        //}
 
         //_gStage.Update();
         ProtoGame.Single.gstage.Update();
-		
-	}
+        
+    }
 
 
 
@@ -175,6 +162,25 @@ namespace ProtoGame
                 return _chatterboxRoot;
             }
         }
+
+        private static Transform _characterRoot = null;
+        public static Transform characterRoot
+        {
+            get
+            {
+                if (null == _characterRoot)
+                {
+                    GameObject obj = GameObject.Find("0_character");
+                    if (null != obj)
+                    {
+                        _characterRoot = obj.GetComponent<Transform>();
+                    }
+
+                }
+                return _characterRoot;
+            }
+        }
+
     }
 
 }//end namespace
@@ -426,7 +432,10 @@ namespace ProtoGame
                 UICTR.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
             }
             else if(0 == _gameTime_s)
-            {}
+            {
+                int PLAYER_1_ID = 0;
+                OBJMGR.GetCharacterMove(PLAYER_1_ID).canNot_Move = true;
+            }
 
 
             _score = OBJMGR.Count_DeathChatterBox();
@@ -459,14 +468,19 @@ namespace ProtoGame
 {
     public class ObjectManager
     {
-        public List<Transform> _characters = new List<Transform>();
+        public List<Character> _characters = new List<Character>();
         public List<Chatterbox> _chatterboxes = new List<Chatterbox>();   //말하는 장애물 
 
 
 
         public void ClearAll()
         {
-            
+
+            foreach (Character t in _characters)
+            {
+                GameObject.Destroy(t.gameObject);
+            }
+
             foreach(Chatterbox t in _chatterboxes)
             {
                 GameObject.Destroy(t.gameObject);
@@ -476,17 +490,30 @@ namespace ProtoGame
             _chatterboxes.Clear();
         }
 
+        public Movable GetCharacterMove(int id)
+        {
+            foreach (Character c in _characters)
+            {
+                if(c.id == id)
+                {
+                    return c.GetComponent<Movable>();
+                }
+            }
+
+            return null;
+        }
+
         //최대 반경이내에서 가장 가까운 객체를 반환한다
         public Transform GetNearCharacter(Transform exceptChar , float maxRadius)
         {
 
             //todo : 추후구현하기
 
-            foreach(Transform t in _characters)
+            foreach(Character t in _characters)
             {
-                if (t == exceptChar) continue;
+                if (t.transform == exceptChar) continue;
 
-                return t;
+                return t.transform;
             }
 
             return null;
@@ -540,7 +567,7 @@ namespace ProtoGame
             return obj;
         }
 
-        public GameObject Create_Chatterbox(Transform parent, int id,  Vector3 pos)
+        public Chatterbox Create_Chatterbox(Transform parent, int id,  Vector3 pos)
         {
             GameObject obj = CreatePrefab("Proto/PullOut/Cube_00",parent, "Cube_"+id.ToString("00"));
             Chatterbox cbox = obj.AddComponent<Chatterbox>();
@@ -548,13 +575,18 @@ namespace ProtoGame
             cbox.id = id;
             cbox.transform.localPosition = pos;
 
-            return obj;
+            return cbox;
         }
 
-        public GameObject Create_Character(Transform parent, int id, Vector3 pos)
+        public Character Create_Character(Transform parent, int id, Vector3 pos)
         {
-            GameObject obj = null;
-            return obj;
+            GameObject obj = CreatePrefab("Proto/PullOut/jongdali", parent, "jongdali_" + id.ToString("00"));
+            Character cha = obj.AddComponent<Character>();
+            _characters.Add(cha);
+            cha.id = id;
+            cha.transform.localPosition = pos;
+
+            return cha;
         }
 
         public void CreateFor_StageInfo(uint stageNum)
@@ -562,9 +594,25 @@ namespace ProtoGame
 
             this.ClearAll();
 
-            //ProtoGame.Single.objectManager._characters.Add(_target_1p);
-            //ProtoGame.Single.objectManager._characters.Add(_target_2p);
-            Vector3 chatPos = new Vector3(0, 0.5f, 0);
+            Vector3 chatPos = new Vector3(0, 0.5f, -6f);
+
+            Character cha_1p = Create_Character(Single.characterRoot, 0, chatPos);
+
+            //========================================================================
+            //========================================================================
+
+            cha_1p.gameObject.AddComponent<ProtoGame.Movable>();
+            ProtoGame.KeyInput key1p = cha_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
+            key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
+
+            AI ai_1p = cha_1p.gameObject.AddComponent<ProtoGame.AI>();
+            ai_1p.enabled = false;
+
+
+            //========================================================================
+            //========================================================================
+
+            chatPos.z = 0;
             for (int i = 0; i < 10; i++)
             {
                 chatPos.x = (i * 1.5f) - 7f;
@@ -575,6 +623,137 @@ namespace ProtoGame
 
 
     }
+
+    //캐릭터 정보 객체 만들기 - 캐릭터 움직임 정보를 얻기 위해서 
+
+    public class Character : MonoBehaviour
+    {
+        public int id
+        { get; set; }
+
+        private int _hp = 10;
+        public bool _isLive = true;
+
+        private AudioSource _audioSource = null;
+        private TextMesh _text_hp = null;
+
+        private void Start()
+        {
+            _audioSource = this.GetComponent<AudioSource>();
+            _text_hp = this.GetComponentInChildren<TextMesh>(true);
+            this.SetHP(_hp);
+        }
+
+        private void Update()
+        {
+            if (true == _isLive)
+            {
+                if (true == Judge_OffTheRing())
+                {
+                    Death();
+                }
+                if (0 == _hp)
+                {
+                    Death();
+                }
+
+            }
+
+
+        }
+
+        void OnCollisionEnter(Collision col)
+        {
+
+            //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name + "   " + col.gameObject.tag);
+
+            //캐릭터에만 영향을 받는다 
+            if ("character" == col.gameObject.tag)
+            {
+                
+            }
+
+
+            if (true == _isLive)
+            {
+                //Speaking();
+
+            }
+
+        }
+        void OnCollisionStay(Collision col)
+        {
+            //DebugWide.LogBlue("OnCollisionStay:  " + col.gameObject.name);
+        }
+        void OnCollisionExit(Collision col)
+        {
+            //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
+        }
+
+
+        //정해진 순서로 말한다. (다른 수다박스와 상관없이 동작) 
+        public int _voiceSequence = 0;
+        public void Speaking()
+        {
+            if (null == _audioSource) return;
+            if (true == _audioSource.isPlaying) return;
+
+            //DebugWide.LogBlue("Speaking --------- " + _voiceSequence);
+
+            const int XML_VIVA_LA_VIDA = 100;
+
+            //=================================================
+
+            AudioClip clip = Single.voiceManager.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
+            int voiceCount = Single.voiceManager._dictEng.GetVocaInfoList(XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence).Count;
+
+            //_audioSource.Play (); //chamto test
+            //clip = this.GetAudioClip_Group(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, 9, 0); //100 : 사전넘버 , 9 : 그룹번호(묶음) , 0 : 그룹의 첫번째 데이터 
+
+            _audioSource.Stop();
+            _audioSource.PlayOneShot(clip);
+            _voiceSequence++;
+            _voiceSequence = _voiceSequence % (voiceCount);
+            //=================================================
+        }
+
+        public void SetHP(int hp)
+        {
+            _hp = hp;
+            this._text_hp.text = _hp.ToString();
+        }
+
+        public void SetHP_Plus(int plus)
+        {
+            _hp = _hp + plus;
+            if (0 > _hp) _hp = 0;
+            this.SetHP(_hp);
+        }
+
+        public void Death()
+        {
+            _isLive = false;
+            //_hp = 0;
+            this.SetHP(0);
+        }
+
+        //____________________________________________
+        //                객체 상태 판단 
+        //____________________________________________
+
+
+        //링에서 떨어짐 
+        public bool Judge_OffTheRing()
+        {
+            const float FLOOR_HEIGHT = 0f;
+            const float DELAY = 3f;
+            if (FLOOR_HEIGHT - DELAY > this.transform.position.y)
+                return true;
+
+            return false;
+        }
+    }
+
 
     public class Chatterbox : MonoBehaviour
     {
@@ -588,12 +767,12 @@ namespace ProtoGame
         private AudioSource _audioSource = null;
         private TextMesh _text_hp = null;
 
-		private void Start()
-		{
+        private void Start()
+        {
             _audioSource = this.GetComponent<AudioSource>();
             _text_hp = this.GetComponentInChildren<TextMesh>(true);
             this.SetHP(_hp);
-		}
+        }
 
         private void Update()
         {
@@ -680,7 +859,9 @@ namespace ProtoGame
         public void SetHP(int hp)
         {
             _hp = hp;
-            this._text_hp.text = _hp.ToString();
+
+            if(null != _text_hp)
+                this._text_hp.text = _hp.ToString();
         }
 
         public void SetHP_Plus(int plus)
@@ -690,7 +871,7 @@ namespace ProtoGame
             this.SetHP(_hp);
         }
 
-		public void Death()
+        public void Death()
         {
             _isLive = false;
             //_hp = 0;
@@ -718,7 +899,7 @@ namespace ProtoGame
 
             return false;
         }
-	}
+    }
 
 }//end namespace 
 
@@ -730,11 +911,9 @@ namespace ProtoGame
 {
     public class AI : MonoBehaviour
     {
-        private Transform _mainBody = null;
+        //private Transform _mainBody = null;
         private Transform _target = null;
-        private Move _move = new Move();
-
-        //public ObjectManager _ref_objects = null;
+        private Movable _move = null;
 
         public enum eState
         {
@@ -746,18 +925,23 @@ namespace ProtoGame
         }
         private eState _state = eState.Roaming;
 
-        public void SetMainBody(Transform mainBody)
+        private void Start()
         {
-            _mainBody = mainBody;
-            _move._mainBody = mainBody;
+            _move = this.GetComponent<Movable>();          
         }
 
-		private void FixedUpdate()
-		{
-            if (null == _mainBody) return;
+        //public void SetMainBody(Transform mainBody)
+        //{
+        //    _mainBody = mainBody;
+        //    _move._mainBody = mainBody;
+        //}
+
+        private void FixedUpdate()
+        {
+            //if (null == _mainBody) return;
 
             this.StateUpdate();
-		}
+        }
 
 
         public bool Situation_Is_AttackTarget()
@@ -840,17 +1024,17 @@ namespace ProtoGame
 
 
 
-                        _target = ProtoGame.Single.objectManager.GetNearCharacter(_mainBody, 10f); 
+                        _target = ProtoGame.Single.objectManager.GetNearCharacter(this.transform, 10f); 
 
                         switch(_move.DirectionalInspection(_target.localPosition))
                         {
-                            case Move.eDirection.LEFT:
+                            case Movable.eDirection.LEFT:
                                 {
                                     _move.Left(0f);
                                     //DebugWide.LogBlue("LEFT");
                                 }
                                 break;
-                            case Move.eDirection.RIGHT:
+                            case Movable.eDirection.RIGHT:
                                 {
                                     _move.Right(0f);
                                     //DebugWide.LogBlue("RIGHT");
@@ -865,7 +1049,7 @@ namespace ProtoGame
             }
         }
 
-	}
+    }
 
 
 
@@ -906,7 +1090,7 @@ namespace ProtoGame
         }
     }
 
-    public class Move
+    public class Movable : MonoBehaviour
     {
         public enum eDirection
         {
@@ -915,19 +1099,37 @@ namespace ProtoGame
             RIGHT,
         }
 
-        public Transform _mainBody = null;
+        //public Transform _mainBody = null;
 
         private CallInterval _Interval_Up = new CallInterval();
         private CallInterval _Interval_Left = new CallInterval();
         private CallInterval _Interval_Right = new CallInterval();
 
+        private bool _canNot_Move = false;
+        public bool canNot_Move
+        {
+            get
+            {
+                return _canNot_Move;
+            }
+            set
+            {
+                _canNot_Move = value;
+            }
+        }
+
+
+        //private void Start()
+        //{
+            
+        //}
 
         public void PostureRecovery()
         {
             //chamto test
             //DebugWide.LogBlue(_mainBody.transform.localEulerAngles); //chamto test
 
-            Vector3 angles = _mainBody.transform.localEulerAngles;
+            Vector3 angles = this.transform.localEulerAngles;
             float angle_x = -1.5f * Time.deltaTime;
             float angle_z = -1.5f * Time.deltaTime;
 
@@ -958,13 +1160,16 @@ namespace ProtoGame
             //DebugWide.LogRed(angles); //chamto test
             //_mainBody.transform.localEulerAngles = angles;
 
-            _mainBody.GetComponent<Rigidbody>().AddForce(Vector3.down * 4f * Time.deltaTime, ForceMode.Force);
+            this.GetComponent<Rigidbody>().AddForce(Vector3.down * 4f * Time.deltaTime, ForceMode.Force);
               
            
         }
 
         public void Up(float MAX_SECOND)
         {
+
+            if (true == _canNot_Move) return;
+
             MAX_SECOND = 0.5f; //test value
 
             //0.2거리 가는데 0.5초 걸림
@@ -975,7 +1180,7 @@ namespace ProtoGame
 
             //보간, 이동 처리
             float delta = Interpolation.easeInOutBack(0f, 0.2f, accumulate / MAX_SECOND);
-            _mainBody.Translate(Vector3.forward * delta);
+            this.transform.Translate(Vector3.forward * delta);
 
             //=============s
             //chamto test
@@ -993,15 +1198,19 @@ namespace ProtoGame
 
         public void Down(float MAX_SECOND)
         {
+            if (true == _canNot_Move) return;
+
             MAX_SECOND = 4f; //test value
 
 
-            _mainBody.Translate(Vector3.back * Time.deltaTime * MAX_SECOND); //one second per 4 move
+            this.transform.Translate(Vector3.back * Time.deltaTime * MAX_SECOND); //one second per 4 move
         }
 
 
         public void Left(float MAX_SECOND)
         {
+            if (true == _canNot_Move) return;
+
             MAX_SECOND = 0.2f; //test value
 
             float angle = 5f; //5도 회전하는데 0.2초 걸림 
@@ -1017,12 +1226,14 @@ namespace ProtoGame
 
             //=============
             //물리 처리로 변경 
-            _mainBody.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta , ForceMode.VelocityChange);
+            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta , ForceMode.VelocityChange);
         }
 
 
         public void Right(float MAX_SECOND)
         {
+            if (true == _canNot_Move) return;
+
             MAX_SECOND = 0.2f; //test value
 
             float angle = 5f;
@@ -1038,7 +1249,7 @@ namespace ProtoGame
 
             //=============
             //물리 처리로 변경 
-            _mainBody.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * 1f * delta , ForceMode.VelocityChange);
+            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * 1f * delta , ForceMode.VelocityChange);
 
         }
 
@@ -1046,7 +1257,7 @@ namespace ProtoGame
         //객체의 전진 방향을 반환한다.
         public Vector3 GetForwardDirect()
         {
-            return Quaternion.Euler(_mainBody.localEulerAngles) * Vector3.forward;
+            return Quaternion.Euler(this.transform.localEulerAngles) * Vector3.forward;
         }
 
 
@@ -1056,7 +1267,7 @@ namespace ProtoGame
 
             Vector3 mainDir = GetForwardDirect();
 
-            Vector3 targetTo = targetPos - _mainBody.localPosition;
+            Vector3 targetTo = targetPos - this.transform.localPosition;
 
             //mainDir.Normalize();
             //targetTo.Normalize();
@@ -1102,7 +1313,12 @@ namespace ProtoGame
         private string[,] _keys = { { "w", "s", "a", "d" } , { "up", "down", "left", "right" }};
 
 
-        private Move _move = new Move();
+        private Movable _move = null;
+
+        private void Start()
+        {
+            _move = GetComponent<Movable>();
+        }
 
 
         public void SelectPlayerNum(ePlayerNum playerNum)
@@ -1110,13 +1326,19 @@ namespace ProtoGame
             _playerNum = playerNum;
         }
 
-        public void SetMainBody(Transform mainBody)
-        {
-            _move._mainBody = mainBody;
-        }
-		
+        //public void SetMainBody(Transform mainBody)
+        //{
+        //    _move._mainBody = mainBody;
+        //}
+        
+        //이동 가능 또는 불가능 설정한다 
+        //public void SetMovable(bool move)
+        //{
+        //    _move.canNot_Move = move;
+        //}
 
-		void FixedUpdate()
+
+        void FixedUpdate()
         {
             _move.PostureRecovery(); //chamto test
             this.Up();

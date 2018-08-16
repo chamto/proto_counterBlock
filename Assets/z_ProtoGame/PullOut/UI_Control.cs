@@ -58,6 +58,8 @@ namespace ProtoGame
 
 		public void Active_Button_Retry(bool value)
 		{
+            if (null == _button_retry) return;
+
             _button_retry.SetActive(value);
 		}
 
