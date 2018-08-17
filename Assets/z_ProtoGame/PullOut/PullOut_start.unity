@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44659382, g: 0.49643022, b: 0.57482576, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -163,11 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1024, y: 600}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -632,7 +632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 103.949974, y: 119.8}
+  m_AnchoredPosition: {x: 373, y: 278.2}
   m_SizeDelta: {x: 221.1, y: 28.4}
   m_Pivot: {x: 0.4999999, y: 0.5}
 --- !u!114 &653575370
@@ -855,8 +855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05c66a5f4048d4949b032554e09471a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target_1p: {fileID: 0}
-  _target_2p: {fileID: 499059868}
   _active_ai_1p: 0
   _active_ai_2p: 0
 --- !u!1 &1120595110
@@ -891,7 +889,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -176.1, y: 120.6}
+  m_AnchoredPosition: {x: -469, y: 279}
   m_SizeDelta: {x: 64, y: 26.8}
   m_Pivot: {x: 0.4999999, y: 0.5}
 --- !u!114 &1120595112

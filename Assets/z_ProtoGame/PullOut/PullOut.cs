@@ -442,20 +442,24 @@ namespace ProtoGame
 
         public void Update()
         {
-            if      (0 < _gameTime_s)
-                _gameTime_s -= Time.deltaTime;
-            else if (0 > _gameTime_s)
+            if (0 < _gameTime_s)
             {
-                
+                _gameTime_s -= Time.deltaTime;
+            }
+
+            if (0 > _gameTime_s)
+            {
                 _gameTime_s = 0f;
+
+                int PLAYER_1_ID = 0;
+                OBJMGR.GetCharacterMove(PLAYER_1_ID).canNot_Move = true;
 
                 UICTR.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
             }
-            else if(0 == _gameTime_s)
-            {
-                int PLAYER_1_ID = 0;
-                OBJMGR.GetCharacterMove(PLAYER_1_ID).canNot_Move = true;
-            }
+            //else if(0 == _gameTime_s)
+            //{
+                
+            //}
 
 
             _score = OBJMGR.Count_DeathChatterBox();
@@ -469,7 +473,7 @@ namespace ProtoGame
         public void JumpStage(uint stageNum)
         {
             _stageNum = stageNum;
-            _gameTime_s = 60f;
+            _gameTime_s = 10f;
             _score = 0;
 
             UICTR.Active_Button_Retry(false);
@@ -508,6 +512,19 @@ namespace ProtoGame
 
             _characters.Clear();
             _chatterboxes.Clear();
+        }
+
+        public Character GetCharacter(int id)
+        {
+            foreach (Character c in _characters)
+            {
+                if (c.id == id)
+                {
+                    return c;
+                }
+            }
+
+            return null;
         }
 
         public Movable GetCharacterMove(int id)
@@ -656,6 +673,12 @@ namespace ProtoGame
 
         private AudioSource _audioSource = null;
         private TextMesh _text_hp = null;
+
+
+        public Camera GetCamera()
+        {
+            return this.GetComponentInChildren<Camera>(true);
+        }
 
         private void Start()
         {
