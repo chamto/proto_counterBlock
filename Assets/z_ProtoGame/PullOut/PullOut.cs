@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 using Utility;
 
-public class PullOut : MonoBehaviour 
+public class PullOut : MonoBehaviour
 {
     //public Transform _root_chatterbox = null;
     //public Transform _target_1p = null;
@@ -19,9 +20,9 @@ public class PullOut : MonoBehaviour
     //private ProtoGame.GStage _gStage = new ProtoGame.GStage();
 
     // Use this for initialization
-    void Start () 
+    void Start()
     {
-        
+
         ProtoGame.Single.voiceManager.Init();
 
 
@@ -58,9 +59,9 @@ public class PullOut : MonoBehaviour
         ProtoGame.Single.gstage.Init();
         ProtoGame.Single.gstage.JumpStage(1);
     }
-    
+
     // Update is called once per frame
-    void Update () 
+    void Update()
     {
         //if(true == _active_ai_1p)
         //{
@@ -80,7 +81,7 @@ public class PullOut : MonoBehaviour
 
         //_gStage.Update();
         ProtoGame.Single.gstage.Update();
-        
+
     }
 
 
@@ -155,7 +156,7 @@ namespace ProtoGame
                 if (null == _canvasRoot)
                 {
                     GameObject obj = GameObject.Find("Canvas");
-                    if(null != obj)
+                    if (null != obj)
                     {
                         _canvasRoot = obj.GetComponent<Canvas>();
                     }
@@ -282,11 +283,11 @@ namespace ProtoGame
         }
     }
 
-   
+
 
     public class VoiceClipManager
     {
-        
+
         private VoiceClipMap _voiceClipMap = new VoiceClipMap();
 
 
@@ -296,26 +297,26 @@ namespace ProtoGame
 
 
         //==================== Get / Set ====================
-       
+
 
         //==================== <Method> ====================
 
 
         public void ClearAll()
         {
-           
+
             _voiceClipMap.Clear();
             _dictEng.ClearAll();
         }
 
         public void Init()
         {
-           
+
             this.ClearAll();
 
             //====== LOAD ======
             this.Load_XML();
-          
+
             this.Load_AudioClip();
         }
 
@@ -375,7 +376,7 @@ namespace ProtoGame
             const int XML_VIVA_LA_VIDA = 100;
 
             //=================================================
-           
+
             AudioClip clip = this.GetAudioClip(VoiceInfo.eKind.Eng_NaverMan_1, XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence, _voiceSequence);
             int voiceCount = this._dictEng.GetVocaInfoList(XML_VIVA_LA_VIDA, XML_Data.DictInfo.eKind.Sentence).Count;
 
@@ -458,7 +459,7 @@ namespace ProtoGame
             }
             //else if(0 == _gameTime_s)
             //{
-                
+
             //}
 
 
@@ -505,7 +506,7 @@ namespace ProtoGame
                 GameObject.Destroy(t.gameObject);
             }
 
-            foreach(Chatterbox t in _chatterboxes)
+            foreach (Chatterbox t in _chatterboxes)
             {
                 GameObject.Destroy(t.gameObject);
             }
@@ -531,7 +532,7 @@ namespace ProtoGame
         {
             foreach (Character c in _characters)
             {
-                if(c.id == id)
+                if (c.id == id)
                 {
                     return c.GetComponent<Movable>();
                 }
@@ -541,12 +542,12 @@ namespace ProtoGame
         }
 
         //최대 반경이내에서 가장 가까운 객체를 반환한다
-        public Transform GetNearCharacter(Transform exceptChar , float maxRadius)
+        public Transform GetNearCharacter(Transform exceptChar, float maxRadius)
         {
 
             //todo : 추후구현하기
 
-            foreach(Character t in _characters)
+            foreach (Character t in _characters)
             {
                 if (t.transform == exceptChar) continue;
 
@@ -561,10 +562,10 @@ namespace ProtoGame
         public bool IsPlaying_ChatterBoxes()
         {
             AudioSource audio = null;
-            foreach(Chatterbox t in _chatterboxes)
+            foreach (Chatterbox t in _chatterboxes)
             {
                 audio = t.GetComponent<AudioSource>();
-                if(null != audio)
+                if (null != audio)
                 {
                     //하나라도 재생중
                     if (true == audio.isPlaying)
@@ -581,7 +582,7 @@ namespace ProtoGame
             uint count = 0;
             foreach (Chatterbox t in _chatterboxes)
             {
-                if(false == t._isLive)
+                if (false == t._isLive)
                 {
                     count++;
                 }
@@ -604,9 +605,9 @@ namespace ProtoGame
             return obj;
         }
 
-        public Chatterbox Create_Chatterbox(Transform parent, int id,  Vector3 pos)
+        public Chatterbox Create_Chatterbox(Transform parent, int id, Vector3 pos)
         {
-            GameObject obj = CreatePrefab("Proto/PullOut/Cube_00",parent, "Cube_"+id.ToString("00"));
+            GameObject obj = CreatePrefab("Proto/PullOut/Cube_00", parent, "Cube_" + id.ToString("00"));
             Chatterbox cbox = obj.AddComponent<Chatterbox>();
             _chatterboxes.Add(cbox);
             cbox.id = id;
@@ -713,7 +714,7 @@ namespace ProtoGame
             //캐릭터에만 영향을 받는다 
             if ("character" == col.gameObject.tag)
             {
-                
+
             }
 
 
@@ -821,13 +822,13 @@ namespace ProtoGame
         {
             if (true == _isLive)
             {
-                if(true == Judge_OffTheRing())
+                if (true == Judge_OffTheRing())
                 {
                     Death();
                 }
-                if(0 == _hp)
+                if (0 == _hp)
                 {
-                    Death();    
+                    Death();
                 }
 
             }
@@ -841,7 +842,7 @@ namespace ProtoGame
             //DebugWide.LogBlue("OnCollisionEnter:  " + col.gameObject.name + "   " + col.gameObject.tag);
 
             //캐릭터에만 영향을 받는다 
-            if("character" == col.gameObject.tag)
+            if ("character" == col.gameObject.tag)
             {
                 //DebugWide.LogBlue("coll time : " + Time.fixedTime); //chamto test
                 Judge_FirstAttacked();
@@ -864,7 +865,7 @@ namespace ProtoGame
             //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
         }
 
-       
+
         //정해진 순서로 말한다. (다른 수다박스와 상관없이 동작) 
         public int _voiceSequence = 0;
         public void Speaking()
@@ -903,7 +904,7 @@ namespace ProtoGame
         {
             _hp = hp;
 
-            if(null != _text_hp)
+            if (null != _text_hp)
                 this._text_hp.text = _hp.ToString();
         }
 
@@ -970,7 +971,7 @@ namespace ProtoGame
 
         private void Start()
         {
-            _move = this.GetComponent<Movable>();          
+            _move = this.GetComponent<Movable>();
         }
 
         //public void SetMainBody(Transform mainBody)
@@ -999,12 +1000,12 @@ namespace ProtoGame
 
         public void StateUpdate()
         {
-            switch(_state)
+            switch (_state)
             {
                 case eState.Detect:
-                {
+                    {
                         //공격대상이 맞으면 추격한다.
-                        if(true == Situation_Is_AttackTarget())
+                        if (true == Situation_Is_AttackTarget())
                         {
                             _state = eState.Chase;
                         }
@@ -1014,12 +1015,13 @@ namespace ProtoGame
                             _state = eState.Roaming;
                         }
 
-                }break;
-                
+                    }
+                    break;
+
                 case eState.Chase:
-                {
+                    {
                         //공격사정거리까지 이동했으면 공격한다. 
-                        if(true == Situation_Is_AttackRange())
+                        if (true == Situation_Is_AttackRange())
                         {
                             _state = eState.Attack;
                         }
@@ -1028,10 +1030,10 @@ namespace ProtoGame
                             _state = eState.Roaming;
                         }
 
-                }
-                break;
+                    }
+                    break;
                 case eState.Attack:
-                {
+                    {
                         //못이길것 같으면 도망간다.
                         {
                             _state = eState.Escape;
@@ -1042,10 +1044,10 @@ namespace ProtoGame
                             _state = eState.Roaming;
                         }
 
-                }
-                break;
+                    }
+                    break;
                 case eState.Escape:
-                {
+                    {
                         //일정 거리 안에 적이 있으면 탐지한다.
                         {
                             _state = eState.Detect;
@@ -1055,21 +1057,21 @@ namespace ProtoGame
                         {
                             _state = eState.Roaming;
                         }
-                }
-                break;
+                    }
+                    break;
                 case eState.Roaming:
-                {
+                    {
                         //일정 거리 안에 적이 있으면 탐지한다.
-                        if(false)
+                        if (false)
                         {
                             _state = eState.Detect;
                         }
 
 
 
-                        _target = ProtoGame.Single.objectManager.GetNearCharacter(this.transform, 10f); 
+                        _target = ProtoGame.Single.objectManager.GetNearCharacter(this.transform, 10f);
 
-                        switch(_move.DirectionalInspection(_target.localPosition))
+                        switch (_move.DirectionalInspection(_target.localPosition))
                         {
                             case Movable.eDirection.LEFT:
                                 {
@@ -1087,8 +1089,8 @@ namespace ProtoGame
 
                         _move.Up(0f);
 
-                }
-                break;
+                    }
+                    break;
             }
         }
 
@@ -1100,7 +1102,7 @@ namespace ProtoGame
 
 
 //========================================================
-//================== 이동 처리 , 키입력 처리 ==================
+//================== 이동 처리 , 입력 처리 ==================
 //========================================================
 namespace ProtoGame
 {
@@ -1164,7 +1166,7 @@ namespace ProtoGame
 
         //private void Start()
         //{
-            
+
         //}
 
         public void PostureRecovery()
@@ -1194,7 +1196,7 @@ namespace ProtoGame
             //1-1.5 = -0.5
             //1-0.5 = 0.5
 
-          
+
             float min_angle = 2f; //허용 최소 각도
             if ((min_angle - Mathf.Abs(angles.x)) > 0) angles.x = 0;
             if ((min_angle - Mathf.Abs(angles.z)) > 0) angles.z = 0;
@@ -1204,8 +1206,8 @@ namespace ProtoGame
             //_mainBody.transform.localEulerAngles = angles;
 
             this.GetComponent<Rigidbody>().AddForce(Vector3.down * 4f * Time.deltaTime, ForceMode.Force);
-              
-           
+
+
         }
 
         public void Up(float MAX_SECOND)
@@ -1269,7 +1271,7 @@ namespace ProtoGame
 
             //=============
             //물리 처리로 변경 
-            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta , ForceMode.VelocityChange);
+            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta, ForceMode.VelocityChange);
         }
 
 
@@ -1292,7 +1294,7 @@ namespace ProtoGame
 
             //=============
             //물리 처리로 변경 
-            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * 1f * delta , ForceMode.VelocityChange);
+            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * 1f * delta, ForceMode.VelocityChange);
 
         }
 
@@ -1330,12 +1332,12 @@ namespace ProtoGame
             else if (dir.y > 0)
                 return eDirection.RIGHT;
 
-            return eDirection.CENTER; 
+            return eDirection.CENTER;
         }
 
     }
 
-    public class KeyInput : MonoBehaviour 
+    public class KeyInput : MonoBehaviour
     {
         public enum ePlayerNum
         {
@@ -1353,7 +1355,7 @@ namespace ProtoGame
         private ePlayerNum _playerNum = ePlayerNum.Player_1;
 
 
-        private string[,] _keys = { { "w", "s", "a", "d" } , { "up", "down", "left", "right" }};
+        private string[,] _keys = { { "w", "s", "a", "d" }, { "up", "down", "left", "right" } };
 
 
         private Movable _move = null;
@@ -1373,7 +1375,7 @@ namespace ProtoGame
         //{
         //    _move._mainBody = mainBody;
         //}
-        
+
         //이동 가능 또는 불가능 설정한다 
         //public void SetMovable(bool move)
         //{
@@ -1393,7 +1395,7 @@ namespace ProtoGame
 
         public void Up()
         {
-            if (Input.GetKeyUp(_keys[(int)_playerNum,(int)eKeyName.UP]) )
+            if (Input.GetKeyUp(_keys[(int)_playerNum, (int)eKeyName.UP]))
             {
                 //Debug.Log ("key-up: up state");
             }
@@ -1408,16 +1410,16 @@ namespace ProtoGame
         {
             if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.DOWN]))
             {
-                _move.Down(0f);   
+                _move.Down(0f);
             }
         }
 
-        
+
         public void Left()
         {
             if (Input.GetKeyUp(_keys[(int)_playerNum, (int)eKeyName.LEFT]))
             {
-                
+
             }
             else if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.LEFT]))
             {
@@ -1425,12 +1427,12 @@ namespace ProtoGame
             }
         }
 
-        
+
         public void Right()
         {
             if (Input.GetKeyUp(_keys[(int)_playerNum, (int)eKeyName.RIGHT]))
             {
-                
+
             }
             else if (Input.GetKey(_keys[(int)_playerNum, (int)eKeyName.RIGHT]))
             {
@@ -1439,4 +1441,235 @@ namespace ProtoGame
         }
     }//end class
 
+
+
+}//end namespace
+
+
+//========================================================
+//==================      터치  처리      ==================
+//========================================================
+namespace ProtoGame
+{
+
+    public class TouchProcess : MonoBehaviour
+    {
+        
+        private GameObject  _TouchedObject = null;
+
+        private Vector2 _prevTouchMovedPos = Vector3.zero;
+        public Vector2 prevTouchMovedPos
+        {
+            get
+            {
+                return _prevTouchMovedPos;
+            }
+        }
+
+
+
+        void Awake()
+        {
+
+            Input.simulateMouseWithTouches = false;
+            Input.multiTouchEnabled = false;
+
+        }
+
+        // Use this for initialization
+        void Start()
+        {
+
+           
+        }
+
+        //void Update()
+        void FixedUpdate()
+        {
+
+            if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                Send_Device_Touch();
+            }
+            else if (Application.platform == RuntimePlatform.OSXEditor)
+            {
+                Send_Editor_Mouse();
+            }
+        }
+
+        //==========================================
+        //                 보조  함수
+        //==========================================
+
+        public  Vector2 GetTouchPos()
+        {
+            if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                return Input.GetTouch(0).position;
+            }
+            else if (Application.platform == RuntimePlatform.OSXEditor)
+            {
+                return Input.mousePosition;
+            }
+
+            return Vector2.zero;
+        }
+
+        public  bool GetMouseButtonMove(int button)
+        {
+            if (Input.GetMouseButton(button) && Input.GetMouseButtonDown(button) == false)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        //==========================================
+        //                 이벤트  함수
+        //==========================================
+
+        private void Send_Device_Touch()
+        {
+            if (Input.touchCount > 0)
+            {
+                if (Input.GetTouch(0).phase == TouchPhase.Began)
+                {
+                    //DebugWide.LogError("Update : TouchPhase.Began"); //chamto test
+                    _prevTouchMovedPos = this.GetTouchPos();
+                    _TouchedObject = SendMessage_TouchObject("TouchBegan", Input.GetTouch(0).position);
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)
+                {
+                    //DebugWide.LogError("Update : TouchPhase.Moved"); //chamto test
+
+                    if (null != _TouchedObject)
+                        _TouchedObject.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+
+                    _prevTouchMovedPos = this.GetTouchPos();
+
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    //DebugWide.LogError("Update : TouchPhase.Ended"); //chamto test
+                    if (null != _TouchedObject)
+                        _TouchedObject.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+                    _TouchedObject = null;
+                }
+                else
+                {
+                    DebugWide.LogError("Update : Exception Input Event : " + Input.GetTouch(0).phase);
+                }
+            }
+        }
+
+
+        private bool f_isEditorDraging = false;
+        private void Send_Editor_Mouse()
+        {
+            //Debug.Log("mousedown:" +Input.GetMouseButtonDown(0)+ "  mouseup:" + Input.GetMouseButtonUp(0) + " state:" +Input.GetMouseButton(0)); //chamto test
+            if (Input.GetMouseButtonDown(0))
+            {
+                //Debug.Log ("______________ MouseBottonDown ______________" + m_TouchedObject); //chamto test
+
+                //=================================
+                //    mouse Down
+                //=================================
+                if (false == f_isEditorDraging)
+                {
+
+                    _TouchedObject = SendMessage_TouchObject("TouchBegan", Input.mousePosition);
+                    if (null != _TouchedObject)
+                        f_isEditorDraging = true;
+                }
+
+            }
+
+            //=================================
+            //    mouse Up
+            //=================================
+            if (Input.GetMouseButtonUp(0))
+            {
+
+                //Debug.Log ("______________ MouseButtonUp ______________" + m_TouchedObject); //chamto test
+                f_isEditorDraging = false;
+
+                if (null != _TouchedObject)
+                {
+                    _TouchedObject.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+                }
+
+                _TouchedObject = null;
+
+            }
+
+
+            //=================================
+            //    mouse Move
+            //=================================
+            if (Input_Unity.GetMouseButtonMove(0))
+            {
+
+                //=================================
+                //     mouse Down + Move (Drag) 
+                //=================================
+                if (f_isEditorDraging)
+                {
+                    //Debug.Log ("______________ MouseMoved ______________" + m_TouchedObject); //chamto test
+
+                    if (null != _TouchedObject)
+                        _TouchedObject.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+
+
+                }//if
+            }//if
+        }
+
+
+
+        private GameObject SendMessage_TouchObject(string callbackMethod, Vector3 touchPos)
+        {
+           
+            Ray ray = Camera.main.ScreenPointToRay(touchPos);
+
+            //Debug.Log ("  -- currentSelectedGameObject : " + EventSystem.current.currentSelectedGameObject); //chamto test
+
+            //1. uisystem input event test
+            if (null != EventSystem.current && null != EventSystem.current.currentSelectedGameObject)
+            {
+                return null;
+            }
+
+            //2. game input event test
+            //RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction);
+
+            //if (hit2D)
+            //{
+            //    //DebugWide.Log(hit.transform.gameObject.name); //chamto test
+            //    hit2D.transform.gameObject.SendMessage(callbackMethod, 0, SendMessageOptions.DontRequireReceiver);
+
+            //    return hit2D.transform.gameObject;
+            //}
+
+            RaycastHit hit3D;
+            if (true == Physics.Raycast(ray, out hit3D, Mathf.Infinity))
+            {
+                hit3D.transform.gameObject.SendMessage(callbackMethod, 0, SendMessageOptions.DontRequireReceiver);
+
+                return hit3D.transform.gameObject;
+            }
+
+
+            return null;
+        }
+
+
+        //콜백함수 원형
+        private void TouchBegan() { }
+        private void TouchMoved() { }
+        private void TouchEnded() { }
+
+
+    }
+    
 }//end namespace
