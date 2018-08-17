@@ -1445,7 +1445,8 @@ namespace ProtoGame
 
 }//end namespace
 
-
+//가속도계 참고할것  :  https://docs.unity3d.com/kr/530/Manual/MobileInput.html
+//마우스 시뮬레이션  :  https://docs.unity3d.com/kr/530/ScriptReference/Input.html   마우스 => 터치로 변환
 //========================================================
 //==================      터치  처리      ==================
 //========================================================
