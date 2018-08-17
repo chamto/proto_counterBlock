@@ -845,14 +845,14 @@ namespace ProtoGame
             {
                 //DebugWide.LogBlue("coll time : " + Time.fixedTime); //chamto test
                 Judge_FirstAttacked();
+
+                if (true == _isLive)
+                {
+                    //Speaking();
+                    Speaking_JustOne();
+                }
             }
 
-
-            if(true == _isLive)
-            {
-                //Speaking();
-                Speaking_JustOne();    
-            }
 
         }
         void OnCollisionStay(Collision col)
