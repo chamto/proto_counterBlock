@@ -74,7 +74,7 @@ namespace ProtoGame
 
 		public void event_Button_Retry()
         {
-            DebugWide.LogBlue("event Button Retry");
+            //DebugWide.LogBlue("event Button Retry");
             Single.gstage.JumpStage(2);
         }
 

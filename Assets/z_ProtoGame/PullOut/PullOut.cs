@@ -490,7 +490,7 @@ namespace ProtoGame
         public void JumpStage(uint stageNum)
         {
             _stageNum = stageNum;
-            _gameTime_s = 10f;
+            _gameTime_s = 60f;
             _score = 0;
 
             Single.touchProcess.DetachAll(); //등록된 모든 터치이벤트 대상 제거
@@ -654,15 +654,28 @@ namespace ProtoGame
             Character cha_1p = Create_Character(Single.characterRoot, 0, chatPos);
             Single.touchProcess.Attach_SendObject(cha_1p.gameObject); //전역 터치 이벤트 대상에 등록 
 
-            //========================================================================
-            //========================================================================
-
             cha_1p.gameObject.AddComponent<ProtoGame.Movable>();
             ProtoGame.KeyInput key1p = cha_1p.gameObject.AddComponent<ProtoGame.KeyInput>();
             key1p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_2);
 
-            AI ai_1p = cha_1p.gameObject.AddComponent<ProtoGame.AI>();
-            ai_1p.enabled = false;
+            //========================================================================
+            //========================================================================
+
+
+            Character cha_2p = Create_Character(Single.characterRoot, 1, chatPos);
+            cha_2p.gameObject.SetActive(false);
+
+            cha_2p.gameObject.AddComponent<ProtoGame.Movable>();
+            ProtoGame.KeyInput key2p = cha_2p.gameObject.AddComponent<ProtoGame.KeyInput>();
+            key2p.SelectPlayerNum(ProtoGame.KeyInput.ePlayerNum.Player_1);
+
+            AI ai_2p = cha_2p.gameObject.AddComponent<ProtoGame.AI>();
+            ai_2p.enabled = false;
+
+            //========================================================================
+            //========================================================================
+
+
 
 
             //========================================================================
@@ -819,13 +832,64 @@ namespace ProtoGame
         //                터치 이벤트 받기 
         //____________________________________________
 
+        Vector2 __touchStart = Vector3.zero;
         private void TouchBegan() 
-        { 
+        {
             //DebugWide.LogGreen("TouchBegan " + this.name); 
+
+            __touchStart = Single.touchProcess.GetTouchPos();
+
+            //DebugWide.LogGreen(__touchStart);
         }
+
+        Vector2 __touchDir = Vector3.zero;
         private void TouchMoved() 
-        { 
+        {
             //DebugWide.LogBlue("TouchMoved " + this.name); 
+            Movable move = this.GetComponent<Movable>();
+            __touchDir = __touchStart - Single.touchProcess.GetTouchPos();
+            //__touchDir.Normalize();
+
+            //회전방식 구상 
+            //1안. 터치한 위치로 회전
+            //2안. 터치드래그 위치로 회전
+
+            //move.Rotation(__touchDir);
+            //move.Up(0f);
+            Ray ray = Camera.main.ScreenPointToRay(Single.touchProcess.GetTouchPos());
+            RaycastHit hit3D;
+            if (true == Physics.Raycast(ray, out hit3D, Mathf.Infinity))
+            {
+
+                transform.position = hit3D.point; //클릭위치를 정확히 구해야 한다 
+                //switch (move.DirectionalInspection(hit3D.point))
+                //{
+                //    case Movable.eDirection.LEFT:
+                //        {
+                //            move.Left(0f);
+                //            DebugWide.LogBlue("LEFT " + hit3D.point);
+                //        }
+                //        break;
+                //    case Movable.eDirection.RIGHT:
+                //        {
+                //            move.Right(0f);
+                //            DebugWide.LogBlue("RIGHT " + hit3D.point);
+                //        }
+                //        break;
+                //    default:
+                //        {
+                //            move.Up(0f);
+                //            DebugWide.LogRed("UP");
+                //        }
+                //        break;
+                //}
+
+
+
+            }
+
+
+            //DebugWide.LogBlue(__touchDir); 
         }
         private void TouchEnded() 
         { 
@@ -1104,24 +1168,27 @@ namespace ProtoGame
 
 
                         _target = ProtoGame.Single.objectManager.GetNearCharacter(this.transform, 10f);
-
-                        switch (_move.DirectionalInspection(_target.localPosition))
+                        if(null != _target)
                         {
-                            case Movable.eDirection.LEFT:
-                                {
-                                    _move.Left(0f);
-                                    //DebugWide.LogBlue("LEFT");
-                                }
-                                break;
-                            case Movable.eDirection.RIGHT:
-                                {
-                                    _move.Right(0f);
-                                    //DebugWide.LogBlue("RIGHT");
-                                }
-                                break;
+                            switch (_move.DirectionalInspection(_target.localPosition))
+                            {
+                                case Movable.eDirection.LEFT:
+                                    {
+                                        _move.Left(0f);
+                                        //DebugWide.LogBlue("LEFT");
+                                    }
+                                    break;
+                                case Movable.eDirection.RIGHT:
+                                    {
+                                        _move.Right(0f);
+                                        //DebugWide.LogBlue("RIGHT");
+                                    }
+                                    break;
+                            }
+
+                            _move.Up(0f);   
                         }
 
-                        _move.Up(0f);
 
                     }
                     break;
@@ -1265,7 +1332,7 @@ namespace ProtoGame
             //chamto test
             Vector3 dir = this.GetForwardDirect();
             dir.Normalize();
-            //_mainBody.GetComponent<Rigidbody>().AddForce(dir * 50f * delta, ForceMode.VelocityChange);
+            //this.GetComponent<Rigidbody>().AddForce(dir * 50f * delta, ForceMode.VelocityChange);
 
 
             //chamto test
@@ -1332,6 +1399,41 @@ namespace ProtoGame
 
         }
 
+        public void Rotation(Vector3 targetDir)
+        {
+            if (true == _canNot_Move) return;
+
+            // 목표 방향에 도달했는지 검사 
+            float dot = Vector3.Dot(targetDir, this.GetForwardDirect());
+            dot = Mathf.Abs(dot);
+            if (dot < 0.1f) return; 
+
+
+            float crossDir = Vector3.SignedAngle(GetForwardDirect(), targetDir, Vector3.up);
+            if (crossDir > 0)
+                crossDir = 1f;
+            else
+                crossDir = -1f;
+
+            //5도 회전하는데 0.2초 걸림 
+            float ANGLE = 5f * crossDir;
+            float MAX_SECOND = 0.2f; 
+
+            //연속호출 상황시 시간증가값 구하기
+            float accumulate = _Interval_Up.GetTimeAccumulate(MAX_SECOND);
+
+
+            //보간, 이동 처리
+            float delta = Interpolation.easeOutCirc(0f, ANGLE, accumulate / MAX_SECOND);
+            //_mainBody.Rotate(Vector3.up, -1 * delta);
+
+
+            //=============
+            //물리 처리로 변경 
+            this.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.down * 1f * delta, ForceMode.VelocityChange);
+        
+        }
+
 
         //객체의 전진 방향을 반환한다.
         public Vector3 GetForwardDirect()
@@ -1369,6 +1471,14 @@ namespace ProtoGame
             return eDirection.CENTER;
         }
 
+
+        //회전할 각도 구하기
+        public float CalcRotationAngle(Vector3 targetDir)
+        {
+            //atan2로 각도 구하는 것과 같음. -180 ~ 180 사이의 값을 반환
+            return Vector3.SignedAngle(GetForwardDirect(), targetDir, Vector3.up);
+            
+        }
     }
 
     public class KeyInput : MonoBehaviour
