@@ -440,43 +440,50 @@ namespace ProtoGame
         private uint _stageNum = 1;
         private float _gameTime_s = 60f;
         private uint _score = 0;
-
-        private ObjectManager OBJMGR = null;
-        private UI_Control UICTR = null;
+        private const int _PLAYER_1_ID = 0;
 
         public void Init()
         {
-            OBJMGR = ProtoGame.Single.objectManager;
-            UICTR = ProtoGame.Single.uiControl;
         }
 
         public void Update()
         {
+            
+
             if (0 < _gameTime_s)
             {
                 _gameTime_s -= Time.deltaTime;
+
+                if (false == Single.objectManager.GetCharacter(_PLAYER_1_ID)._isLive)
+                {
+                    Retry();
+                }
+
             }
 
             if (0 > _gameTime_s)
             {
                 _gameTime_s = 0f;
 
-                int PLAYER_1_ID = 0;
-                OBJMGR.GetCharacterMove(PLAYER_1_ID).canNot_Move = true;
+                Retry();
 
-                UICTR.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
             }
             //else if(0 == _gameTime_s)
             //{
 
             //}
 
-
-            _score = OBJMGR.Count_DeathChatterBox();
+            _score = Single.objectManager.Count_DeathChatterBox();
 
             //ui갱신
-            UICTR.SetTextStage(_stageNum);
-            UICTR.SetTextInfo(_gameTime_s, _score);
+            Single.uiControl.SetTextStage(_stageNum);
+            Single.uiControl.SetTextInfo(_gameTime_s, _score);
+        }
+
+        public void Retry()
+        {
+            Single.objectManager.GetCharacterMove(_PLAYER_1_ID).canNot_Move = true;
+            Single.uiControl.Active_Button_Retry(true); //시간 초과시 다시하기 단추 켜기
         }
 
 
@@ -487,8 +494,8 @@ namespace ProtoGame
             _score = 0;
 
             Single.touchProcess.DetachAll(); //등록된 모든 터치이벤트 대상 제거
-            UICTR.Active_Button_Retry(false);
-            OBJMGR.CreateFor_StageInfo(stageNum);
+            Single.uiControl.Active_Button_Retry(false);
+            Single.objectManager.CreateFor_StageInfo(stageNum);
 
         }
 
