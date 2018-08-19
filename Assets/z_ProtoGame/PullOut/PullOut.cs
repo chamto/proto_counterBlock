@@ -24,7 +24,7 @@ public class PullOut : MonoBehaviour
     {
 
         ProtoGame.Single.voiceManager.Init();
-
+        this.gameObject.AddComponent<ProtoGame.TouchProcess>();
 
         //========================================================================
         //========================================================================
@@ -128,6 +128,14 @@ namespace ProtoGame
             }
         }
 
+        public static TouchProcess touchProcess
+        {
+            get
+            {
+                return CSingletonMono<TouchProcess>.Instance;
+            }
+        }
+
         private static Camera _mainCamera = null;
         public static Camera mainCamera
         {
@@ -201,6 +209,7 @@ namespace ProtoGame
                 return _characterRoot;
             }
         }
+
 
     }
 
@@ -477,6 +486,7 @@ namespace ProtoGame
             _gameTime_s = 10f;
             _score = 0;
 
+            Single.touchProcess.DetachAll(); //등록된 모든 터치이벤트 대상 제거
             UICTR.Active_Button_Retry(false);
             OBJMGR.CreateFor_StageInfo(stageNum);
 
@@ -630,11 +640,12 @@ namespace ProtoGame
         public void CreateFor_StageInfo(uint stageNum)
         {
 
-            this.ClearAll();
+            this.ClearAll(); //스테이지 객체 생성전 기존 객체 모두 제거
 
             Vector3 chatPos = new Vector3(0, 0.5f, -6f);
 
             Character cha_1p = Create_Character(Single.characterRoot, 0, chatPos);
+            Single.touchProcess.Attach_SendObject(cha_1p.gameObject); //전역 터치 이벤트 대상에 등록 
 
             //========================================================================
             //========================================================================
@@ -796,6 +807,23 @@ namespace ProtoGame
 
             return false;
         }
+
+        //____________________________________________
+        //                터치 이벤트 받기 
+        //____________________________________________
+
+        private void TouchBegan() 
+        { 
+            //DebugWide.LogGreen("TouchBegan " + this.name); 
+        }
+        private void TouchMoved() 
+        { 
+            //DebugWide.LogBlue("TouchMoved " + this.name); 
+        }
+        private void TouchEnded() 
+        { 
+            //DebugWide.LogRed("TouchEnded " + this.name); 
+        }
     }
 
 
@@ -864,7 +892,6 @@ namespace ProtoGame
         {
             //DebugWide.LogBlue("OnCollisionExit:  " + col.gameObject.name);
         }
-
 
         //정해진 순서로 말한다. (다른 수다박스와 상관없이 동작) 
         public int _voiceSequence = 0;
@@ -1457,6 +1484,7 @@ namespace ProtoGame
     {
         
         private GameObject  _TouchedObject = null;
+        private List<GameObject> _sendList = new List<GameObject>();
 
         private Vector2 _prevTouchMovedPos = Vector3.zero;
         public Vector2 prevTouchMovedPos
@@ -1484,23 +1512,47 @@ namespace ProtoGame
            
         }
 
+
         //void Update()
         void FixedUpdate()
         {
+            //화면상 ui를 터치했을 경우 터치이벤트를 보내지 않는다 
+            if (null != EventSystem.current && null != EventSystem.current.currentSelectedGameObject)
+            {
+                return;
+            }
 
             if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                Send_Device_Touch();
+                SendTouchEvent_Device_Target();
+                SendTouchEvent_Device_NonTarget();
             }
             else if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                Send_Editor_Mouse();
+                SendMouseEvent_Editor_Target();
+                SendMouseEvent_Editor_NonTarget();
             }
         }
 
         //==========================================
         //                 보조  함수
         //==========================================
+
+        public void Attach_SendObject(GameObject obj)
+        {
+            _sendList.Add(obj);
+        }
+
+        public void Detach_SendObject(GameObject obj)
+        {
+            _sendList.Remove(obj);
+        }
+
+        public void DetachAll()
+        {
+            _sendList.Clear();
+        }
+
 
         public  Vector2 GetTouchPos()
         {
@@ -1530,7 +1582,96 @@ namespace ProtoGame
         //                 이벤트  함수
         //==========================================
 
-        private void Send_Device_Touch()
+        private void SendTouchEvent_Device_NonTarget()
+        {
+            foreach(GameObject o in _sendList)
+            {
+                if (Input.touchCount > 0)
+                {
+                    if (Input.GetTouch(0).phase == TouchPhase.Began)
+                    {
+
+                        o.SendMessage("TouchBegan", 0, SendMessageOptions.DontRequireReceiver);
+
+                    }
+                    else if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)
+                    {
+
+                        o.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+
+                    }
+                    else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                    {
+
+                        o.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+
+                    }
+                    else
+                    {
+                        DebugWide.LogError("Update : Exception Input Event : " + Input.GetTouch(0).phase);
+                    }
+                }
+            }
+
+        }
+
+        private bool __touchBegan = false;
+        private void SendMouseEvent_Editor_NonTarget()
+        {
+            foreach (GameObject o in _sendList)
+            {
+                //=================================
+                //    mouse Down
+                //=================================
+                if (Input.GetMouseButtonDown(0))
+                {
+                    //DebugWide.LogBlue("SendMouseEvent_Editor_NonTarget : TouchPhase.Began"); //chamto test
+                    if (false == __touchBegan)
+                    {
+                        o.SendMessage("TouchBegan", 0, SendMessageOptions.DontRequireReceiver);
+
+                        __touchBegan = true;
+
+                    }
+                }
+
+                //=================================
+                //    mouse Up
+                //=================================
+                if (Input.GetMouseButtonUp(0))
+                {
+
+                    if (true == __touchBegan)
+                    {
+                        __touchBegan = false;
+
+                        o.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+                    }
+
+                }
+
+
+                //=================================
+                //    mouse Move
+                //=================================
+                if (Input_Unity.GetMouseButtonMove(0))
+                {
+
+                    //=================================
+                    //     mouse Drag 
+                    //=================================
+                    if (true == __touchBegan)
+                    {
+
+                        o.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+
+                    }//if
+                }//if
+            }
+
+        }
+
+        private void SendTouchEvent_Device_Target()
         {
             if (Input.touchCount > 0)
             {
@@ -1538,14 +1679,14 @@ namespace ProtoGame
                 {
                     //DebugWide.LogError("Update : TouchPhase.Began"); //chamto test
                     _prevTouchMovedPos = this.GetTouchPos();
-                    _TouchedObject = SendMessage_TouchObject("TouchBegan", Input.GetTouch(0).position);
+                    _TouchedObject = SendMessage_TouchObject("TouchBegan_Target", Input.GetTouch(0).position);
                 }
                 else if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)
                 {
                     //DebugWide.LogError("Update : TouchPhase.Moved"); //chamto test
 
                     if (null != _TouchedObject)
-                        _TouchedObject.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+                        _TouchedObject.SendMessage("TouchMoved_Target", 0, SendMessageOptions.DontRequireReceiver);
 
                     _prevTouchMovedPos = this.GetTouchPos();
 
@@ -1554,7 +1695,7 @@ namespace ProtoGame
                 {
                     //DebugWide.LogError("Update : TouchPhase.Ended"); //chamto test
                     if (null != _TouchedObject)
-                        _TouchedObject.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+                        _TouchedObject.SendMessage("TouchEnded_Target", 0, SendMessageOptions.DontRequireReceiver);
                     _TouchedObject = null;
                 }
                 else
@@ -1566,20 +1707,20 @@ namespace ProtoGame
 
 
         private bool f_isEditorDraging = false;
-        private void Send_Editor_Mouse()
+        private void SendMouseEvent_Editor_Target()
         {
+
+            //=================================
+            //    mouse Down
+            //=================================
             //Debug.Log("mousedown:" +Input.GetMouseButtonDown(0)+ "  mouseup:" + Input.GetMouseButtonUp(0) + " state:" +Input.GetMouseButton(0)); //chamto test
             if (Input.GetMouseButtonDown(0))
             {
                 //Debug.Log ("______________ MouseBottonDown ______________" + m_TouchedObject); //chamto test
-
-                //=================================
-                //    mouse Down
-                //=================================
                 if (false == f_isEditorDraging)
                 {
 
-                    _TouchedObject = SendMessage_TouchObject("TouchBegan", Input.mousePosition);
+                    _TouchedObject = SendMessage_TouchObject("TouchBegan_Target", Input.mousePosition);
                     if (null != _TouchedObject)
                         f_isEditorDraging = true;
                 }
@@ -1597,7 +1738,7 @@ namespace ProtoGame
 
                 if (null != _TouchedObject)
                 {
-                    _TouchedObject.SendMessage("TouchEnded", 0, SendMessageOptions.DontRequireReceiver);
+                    _TouchedObject.SendMessage("TouchEnded_Target", 0, SendMessageOptions.DontRequireReceiver);
                 }
 
                 _TouchedObject = null;
@@ -1612,14 +1753,14 @@ namespace ProtoGame
             {
 
                 //=================================
-                //     mouse Down + Move (Drag) 
+                //     mouse Drag 
                 //=================================
                 if (f_isEditorDraging)
                 {
                     //Debug.Log ("______________ MouseMoved ______________" + m_TouchedObject); //chamto test
 
                     if (null != _TouchedObject)
-                        _TouchedObject.SendMessage("TouchMoved", 0, SendMessageOptions.DontRequireReceiver);
+                        _TouchedObject.SendMessage("TouchMoved_Target", 0, SendMessageOptions.DontRequireReceiver);
 
 
                 }//if
@@ -1635,22 +1776,16 @@ namespace ProtoGame
 
             //Debug.Log ("  -- currentSelectedGameObject : " + EventSystem.current.currentSelectedGameObject); //chamto test
 
-            //1. uisystem input event test
-            if (null != EventSystem.current && null != EventSystem.current.currentSelectedGameObject)
-            {
-                return null;
-            }
 
             //2. game input event test
-            //RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction);
+            RaycastHit2D hit2D = Physics2D.Raycast(ray.origin, ray.direction);
+            if (hit2D)
+            {
+                //DebugWide.Log(hit.transform.gameObject.name); //chamto test
+                hit2D.transform.gameObject.SendMessage(callbackMethod, 0, SendMessageOptions.DontRequireReceiver);
 
-            //if (hit2D)
-            //{
-            //    //DebugWide.Log(hit.transform.gameObject.name); //chamto test
-            //    hit2D.transform.gameObject.SendMessage(callbackMethod, 0, SendMessageOptions.DontRequireReceiver);
-
-            //    return hit2D.transform.gameObject;
-            //}
+                return hit2D.transform.gameObject;
+            }
 
             RaycastHit hit3D;
             if (true == Physics.Raycast(ray, out hit3D, Mathf.Infinity))
@@ -1664,11 +1799,15 @@ namespace ProtoGame
             return null;
         }
 
-
-        //콜백함수 원형
+        //콜백함수 원형 : 지정 객체 아래로 터치이벤트를 보낸다 
         private void TouchBegan() { }
         private void TouchMoved() { }
         private void TouchEnded() { }
+
+        //콜백함수 원형 : 지정 객체에 터치이벤트를 보낸다 
+        private void TouchBegan_Target() { }
+        private void TouchMoved_Target() { }
+        private void TouchEnded_Target() { }
 
 
     }
